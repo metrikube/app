@@ -1,0 +1,16 @@
+{
+  "projects": {
+    "aws_plugin": {
+      "type": "library",
+      "root": "libs/aws_plugin",
+      "entryFile": "index",
+      "sourceRoot": "libs/aws_plugin/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/aws_plugin/tsconfig.lib.json"
+      }
+    }
+  },
+  "compilerOptions": {
+    "webpack": true
+  }
+}
