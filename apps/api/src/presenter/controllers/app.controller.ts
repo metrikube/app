@@ -1,6 +1,6 @@
-import { Controller, Get, Inject } from '@nestjs/common';
+import { Controller, Get, Inject, Post } from '@nestjs/common';
 import { PluginUseCaseInterface } from "../../domain/interfaces/use-cases/plugin.use-case.interface";
-import { Plugin } from "../../domain/models/plugin.model";
+import { Plugin } from "../../infrastructure/database/entities/plugin.entity";
 
 @Controller()
 export class AppController {
@@ -11,7 +11,12 @@ export class AppController {
   }
 
   @Get()
-  getHello(): Promise<Plugin> {
-    return this.pluginUseCase.getPluginById('1')
+  getHello(): Promise<Plugin[]> {
+    return this.pluginUseCase.getPlugins()
+  }
+
+  @Post()
+  create(): Promise<Plugin> {
+    return this.pluginUseCase.create(new Plugin());
   }
 }

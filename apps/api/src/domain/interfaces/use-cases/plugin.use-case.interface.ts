@@ -1,6 +1,7 @@
-import { Plugin } from "../../models/plugin.model";
+import { Plugin } from "../../../infrastructure/database/entities/plugin.entity";
 
 
 export interface PluginUseCaseInterface {
-  getPluginById(id: string): Promise<Plugin>;
+  getPlugins(): Promise<Plugin[]>;
+  create(plugin: Plugin): Promise<Plugin>;
 }
