@@ -14,7 +14,20 @@
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
-    "paths": {}
+    "paths": {
+      "@metrikube/aws": ["libs/aws/src/index.ts"],
+      "@metrikube/aws-plugin": ["libs/aws-plugin/src/index.ts"],
+      "@metrikube/core": ["libs/core/src/index.ts"],
+      "@metrikube/db-analytics-plugin": [
+        "libs/db-analytics-plugin/src/index.ts"
+      ],
+      "@metrikube/github-plugin": ["libs/github-plugin/src/index.ts"],
+      "@metrikube/infra": ["libs/infra/src/index.ts"],
+      "@metrikube/plugins/aws": ["libs/plugins/aws/src/index.ts"],
+      "@metrikube/plugins/github-plugin": [
+        "libs/plugins/github-plugin/src/index.ts"
+      ]
+    }
   },
   "exclude": ["node_modules", "tmp"]
 }
