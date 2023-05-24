@@ -1,7 +1,5 @@
 import { Module } from "@nestjs/common";
-import { getRepositoryToken, TypeOrmModule } from "@nestjs/typeorm";
-import { DataSource } from "typeorm";
-import { Plugin } from "./database/entities/plugin.entity";
+import { getRepositoryToken } from "@nestjs/typeorm";
 import { PluginInMemoryRepositoryImpl } from "./database/in-memory/plugin-in-memory.repository";
 import { DatabaseModule } from "./config/typeorm/database.module";
 import { PluginRepositoryImpl } from "./database/repositories/plugin.repository";
@@ -10,18 +8,9 @@ import { PluginRepositoryImpl } from "./database/repositories/plugin.repository"
   imports: [DatabaseModule],
   providers: [
     PluginRepositoryImpl,
-    PluginInMemoryRepositoryImpl,
-    {
-      provide: 'DB',
-      inject: [DataSource],
-      useFactory: (connection: DataSource) => connection.getRepository(Plugin),
-    }
+    PluginInMemoryRepositoryImpl
   ],
-  exports: [
-    PluginRepositoryImpl,
-    PluginInMemoryRepositoryImpl,
-    'DB'
-  ],
+  exports: [PluginRepositoryImpl, PluginInMemoryRepositoryImpl],
 })
 export class InfrastructureModule {
 }

@@ -1,5 +1,7 @@
-import { Inject, Injectable } from "@nestjs/common";
-import { Repository } from "typeorm";
+import {  Injectable } from "@nestjs/common";
+import { randomStringGenerator } from "@nestjs/common/utils/random-string-generator.util";
+import { InjectDataSource } from "@nestjs/typeorm";
+import { DataSource, Repository } from "typeorm";
 import { Plugin } from "../entities/plugin.entity";
 
 import { PluginRepository } from "../../../domain/interfaces/repository/plugin.repository";
@@ -7,16 +9,16 @@ import { PluginRepository } from "../../../domain/interfaces/repository/plugin.r
 
 @Injectable()
 export class PluginRepositoryImpl implements PluginRepository {
+  db: Repository<Plugin>;
 
   constructor(
-    @Inject('DB') private db: Repository<Plugin>,
+    @InjectDataSource() private readonly connection: DataSource,
   ) {
+    this.db = connection.getRepository(Plugin);
   }
 
   createPlugin(plugin: Plugin): Promise<Plugin> {
-    return this.db.save({
-      name: 'TTESTTT'
-    } as Plugin);
+    return this.db.save({ ...plugin, name: randomStringGenerator() });
   }
 
   getPlugins(): Promise<Plugin[]> {

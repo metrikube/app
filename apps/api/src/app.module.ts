@@ -6,7 +6,7 @@ import { InfrastructureModule } from "./infrastructure/infrastructure.module";
 import { AppController } from "./presenter/controllers/app.controller";
 
 @Module({
-  imports: [UseCaseModule, InfrastructureModule],
+  imports: [UseCaseModule],
   controllers: [AppController],
   providers: [
     {
