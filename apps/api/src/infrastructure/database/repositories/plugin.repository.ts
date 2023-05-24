@@ -1,4 +1,5 @@
 import { Inject, Injectable } from "@nestjs/common";
+import { Repository } from "typeorm";
 import { Plugin } from "../entities/plugin.entity";
 
 import { PluginRepository } from "../../../domain/interfaces/repository/plugin.repository";
@@ -8,16 +9,18 @@ import { PluginRepository } from "../../../domain/interfaces/repository/plugin.r
 export class PluginRepositoryImpl implements PluginRepository {
 
   constructor(
-    @Inject('DB') private db: any,
+    @Inject('DB') private db: Repository<Plugin>,
   ) {
   }
 
   createPlugin(plugin: Plugin): Promise<Plugin> {
-    return this.db.save(plugin);
+    return this.db.save({
+      name: 'TTESTTT'
+    } as Plugin);
   }
 
   getPlugins(): Promise<Plugin[]> {
-    return Promise.resolve([]);
+    return this.db.manager.find(Plugin);
   }
 }
 

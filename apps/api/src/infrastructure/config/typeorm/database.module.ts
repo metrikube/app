@@ -1,6 +1,7 @@
 import { Logger, Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { DataSource } from "typeorm";
+import { Plugin } from "../../database/entities/plugin.entity";
 
 
 @Module({
@@ -12,6 +13,7 @@ import { DataSource } from "typeorm";
       username: 'root',
       password: 'root',
       database: 'test',
+      entities: [Plugin],
       autoLoadEntities: true,
       synchronize: true
     }),

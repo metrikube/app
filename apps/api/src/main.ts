@@ -9,6 +9,7 @@ async function bootstrap() {
     cors: true
   });
 
+  console.log('hello');
   const globalPrefix = 'api/v1';
   app.setGlobalPrefix(globalPrefix);
 
@@ -19,13 +20,11 @@ async function bootstrap() {
     .addApiKey()
     .build();
 
-  SwaggerModule.setup('swagger', app, SwaggerModule.createDocument(app, config) );
+  SwaggerModule.setup('swagger', app, SwaggerModule.createDocument(app, config));
 
   const port = process.env.PORT || 3000;
   await app.listen(port, '0.0.0.0');
-  Logger.log(
-    `🚀 Application is running on: http://localhost:${port}/${globalPrefix}`
-  );
+  Logger.log(`🚀 Application is running on: http://localhost:${port}/${globalPrefix}`);
 }
 
 bootstrap();
