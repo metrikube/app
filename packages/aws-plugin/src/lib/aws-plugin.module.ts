@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+
 import { AwsPluginService } from './aws-plugin.service';
 
 @Module({

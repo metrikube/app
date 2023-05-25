@@ -1,16 +1,15 @@
-import { Inject, Injectable } from "@nestjs/common";
-import { randomStringGenerator } from "@nestjs/common/utils/random-string-generator.util";
-import { InjectDataSource } from "@nestjs/typeorm";
-import { DataSource, EntitySchema, Repository } from "typeorm";
-import { Plugin } from "../entities/plugin.entity";
+import { DataSource, EntitySchema, Repository } from 'typeorm';
 
-import { PluginRepository } from "../../../domain/interfaces/repository/plugin.repository";
-import { BaseRepository } from "./base.repository";
+import { Inject, Injectable } from '@nestjs/common';
+import { randomStringGenerator } from '@nestjs/common/utils/random-string-generator.util';
+import { InjectDataSource } from '@nestjs/typeorm';
 
+import { PluginRepository } from '../../../domain/interfaces/repository/plugin.repository';
+import { Plugin } from '../entities/plugin.entity';
+import { BaseRepository } from './base.repository';
 
 @Injectable()
 export class PluginRepositoryImpl extends BaseRepository<Plugin> implements PluginRepository {
-
   constructor(@InjectDataSource() connection: DataSource) {
     super(connection, Plugin);
   }
@@ -23,4 +22,3 @@ export class PluginRepositoryImpl extends BaseRepository<Plugin> implements Plug
     return this.find();
   }
 }
-

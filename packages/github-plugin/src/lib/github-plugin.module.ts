@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+
 import { GithubPluginService } from './github-plugin.service';
 
 @Module({

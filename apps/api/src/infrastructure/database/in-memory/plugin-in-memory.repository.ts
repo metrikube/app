@@ -1,8 +1,7 @@
-import { Injectable } from "@nestjs/common";
-import { PluginRepository } from "../../../domain/interfaces/repository/plugin.repository";
+import { Injectable } from '@nestjs/common';
 
-import { Plugin } from "../entities/plugin.entity";
-
+import { PluginRepository } from '../../../domain/interfaces/repository/plugin.repository';
+import { Plugin } from '../entities/plugin.entity';
 
 @Injectable()
 export class PluginInMemoryRepositoryImpl implements PluginRepository {
