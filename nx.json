@@ -1,6 +1,7 @@
 {
   "$schema": "./node_modules/nx/schemas/nx-schema.json",
   "npmScope": "metrikube",
+  "defaultProject": "api",
   "tasksRunnerOptions": {
     "default": {
       "runner": "nx/tasks-runners/default",
@@ -36,6 +37,12 @@
         "default",
         "{workspaceRoot}/.eslintrc.json"
       ]
+    },
+    "e2e": {
+      "inputs": [
+        "default",
+        "^production"
+      ]
     }
   },
   "namedInputs": {
@@ -52,5 +59,21 @@
     ],
     "sharedGlobals": []
   },
-  "defaultProject": "api"
+  "generators": {
+    "@nx/react": {
+      "application": {
+        "style": "none",
+        "linter": "eslint",
+        "bundler": "vite",
+        "babel": true
+      },
+      "component": {
+        "style": "none"
+      },
+      "library": {
+        "style": "none",
+        "linter": "eslint"
+      }
+    }
+  }
 }

@@ -12,8 +12,10 @@ import { Plugin } from "../../database/entities/plugin.entity";
       port: 3306,
       username: 'root',
       password: 'root',
-      database: 'test',
-      entities: [Plugin],
+      database: 'metrikube_dev',
+      entities: [
+        __dirname + '/../../entities/*.entity{.ts,.js}',
+      ],
       autoLoadEntities: true,
       synchronize: true
     }),
