@@ -1,3 +1,1 @@
-export * from './lib/core';
-
-fetch();
+export * from './lib';

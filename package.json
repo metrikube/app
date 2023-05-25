@@ -6,6 +6,7 @@
     "start": "nx serve",
     "start:api": "NODE_ENV=local nx serve api",
     "start:all": "NODE_ENV=local nx run-many --target=serve",
+    "start:client": "nx run web:serve",
     "build": "nx build",
     "build:api": "nx build api",
     "build:all": "nx run-many --target=serve",
