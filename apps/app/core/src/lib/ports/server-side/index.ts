@@ -1,1 +1,1 @@
-export const test = "serverside"
+export * from "./PluginAdapter.port"

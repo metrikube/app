@@ -1,12 +1,11 @@
 import { useState, useEffect } from 'react';
-import { GetPlugins, GetPluginsUsecase } from "@metrikube/core"
+import { GetPlugins } from "@metrikube/core"
 
 interface Props {
-  getPlugins?: GetPlugins
+  getPlugins: GetPlugins
 }
 
-
-export function App({ getPlugins = new GetPluginsUsecase() }: Props) {
+export function App({ getPlugins }: Props) {
   const [plugins, setPlugins] = useState<{ id: string, name: string }[]>([])
   useEffect(() => {
     const fetchData = async () => {
@@ -22,7 +21,7 @@ export function App({ getPlugins = new GetPluginsUsecase() }: Props) {
       <h1>Vite + React</h1>
       {
         plugins.map(plugin => (
-          <div className="card">
+          <div key={plugin.id} className="card">
             {plugin.name}
           </div>
         ))
