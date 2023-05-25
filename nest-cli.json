@@ -2,11 +2,11 @@
   "projects": {
     "aws_plugin": {
       "type": "library",
-      "root": "libs/aws_plugin",
+      "root": "packages/aws_plugin",
       "entryFile": "index",
-      "sourceRoot": "libs/aws_plugin/src",
+      "sourceRoot": "packages/aws_plugin/src",
       "compilerOptions": {
-        "tsConfigPath": "libs/aws_plugin/tsconfig.lib.json"
+        "tsConfigPath": "packages/aws_plugin/tsconfig.lib.json"
       }
     }
   },

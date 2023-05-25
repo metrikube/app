@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, EntitySchema } from 'typeorm';
+import { Column, Entity, EntitySchema, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class Plugin {

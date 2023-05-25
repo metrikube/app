@@ -1,5 +1,4 @@
-import { DataSource, EntityManager, EntityTarget, ObjectLiteral, QueryRunner } from "typeorm";
-
+import { DataSource, EntityManager, EntityTarget, ObjectLiteral, QueryRunner } from 'typeorm';
 
 export class BaseRepository<Entity extends ObjectLiteral> {
   readonly manager: EntityManager;

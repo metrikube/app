@@ -1,21 +1,21 @@
 {
   "name": "github-plugin",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/github-plugin/src",
+  "sourceRoot": "packages/github-plugin/src",
   "projectType": "library",
   "targets": {
     "lint": {
       "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["libs/github-plugin/**/*.ts"]
+        "lintFilePatterns": ["packages/github-plugin/**/*.ts"]
       }
     },
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
-        "jestConfig": "libs/github-plugin/jest.config.ts",
+        "jestConfig": "packages/github-plugin/jest.config.ts",
         "passWithNoTests": true
       },
       "configurations": {

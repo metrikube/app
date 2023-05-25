@@ -1,21 +1,21 @@
 {
   "name": "db-analytics-plugin",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/db-analytics-plugin/src",
+  "sourceRoot": "packages/db-analytics-plugin/src",
   "projectType": "library",
   "targets": {
     "lint": {
       "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["libs/db-analytics-plugin/**/*.ts"]
+        "lintFilePatterns": ["packages/db-analytics-plugin/**/*.ts"]
       }
     },
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
-        "jestConfig": "libs/db-analytics-plugin/jest.config.ts",
+        "jestConfig": "packages/db-analytics-plugin/jest.config.ts",
         "passWithNoTests": true
       },
       "configurations": {

@@ -1,4 +1,5 @@
 import { Test } from '@nestjs/testing';
+
 import { DbAnalyticsPluginService } from './db-analytics-plugin.service';
 
 describe('DbAnalyticsPluginService', () => {
