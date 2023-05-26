@@ -1,25 +1,36 @@
-import { DataSource } from 'typeorm';
+import { Module } from '@nestjs/common';
+import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 
-import { Logger, Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { EnvironmentConfigModule } from '../environment/environment-config.module';
+import { EnvironmentConfigService } from '../environment/environment-config.service';
 
-import { Plugin } from '../../database/entities/plugin.entity';
+export const getTypeOrmModuleOptions = (config: EnvironmentConfigService): TypeOrmModuleOptions =>
+  ({
+    type: 'mariadb',
+    host: config.getDatabaseHost(),
+    port: config.getDatabasePort(),
+    username: config.getDatabaseUser(),
+    password: config.getDatabasePassword(),
+    database: config.getDatabaseName(),
+    // entities: [__dirname + './../../**/*.entity{.ts,.js}'],
+    entities: [__dirname + '/../../entities/*.entity{.ts,.js}'],
+    synchronize: false,
+    autoLoadEntities: true,
+    migrationsRun: true,
+    migrations: [__dirname + '/../../**/migrations/**/*{.ts,.js}'],
+    cli: {
+      migrationsDir: 'src/migrations',
+    },
+  } as TypeOrmModuleOptions);
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot({
-      type: 'mariadb',
-      host: 'localhost',
-      port: 3306,
-      username: 'root',
-      password: 'root',
-      database: 'metrikube_dev',
-      entities: [__dirname + '/../../entities/*.entity{.ts,.js}'],
-      autoLoadEntities: true,
-      synchronize: true,
+    TypeOrmModule.forRootAsync({
+      imports: [EnvironmentConfigModule],
+      inject: [EnvironmentConfigService],
+      useFactory: getTypeOrmModuleOptions,
     }),
   ],
-  providers: [],
   exports: [TypeOrmModule],
 })
 export class DatabaseModule {}
