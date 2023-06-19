@@ -11,11 +11,11 @@ export class BaseRepository<Entity extends ObjectLiteral> {
     this.entity = entity;
   }
 
-  save(entity: Entity): Promise<Entity> {
-    return this.manager.save(entity);
+  save(entity): Promise<Entity> {
+    return this.manager.save(this.entity, entity);
   }
 
   find(): Promise<Entity[]> {
-    return this.manager.find(this.entity);
+    return this.manager.find(this.entity, {});
   }
 }

@@ -1,6 +1,4 @@
-import { DataSource } from 'typeorm';
-
-import { Logger, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { Plugin } from '../../database/entities/plugin.entity';
@@ -8,18 +6,13 @@ import { Plugin } from '../../database/entities/plugin.entity';
 @Module({
   imports: [
     TypeOrmModule.forRoot({
-      type: 'mariadb',
-      host: 'localhost',
-      port: 3306,
-      username: 'root',
-      password: 'root',
-      database: 'metrikube_dev',
-      entities: [__dirname + '/../../entities/*.entity{.ts,.js}'],
-      autoLoadEntities: true,
+      type: 'sqlite',
+      database: 'db',
+      // entities: [Plugin],
+      entities: [__dirname + '/../../database/entities/*.entity{.ts,.js}'],
       synchronize: true,
     }),
   ],
-  providers: [],
   exports: [TypeOrmModule],
 })
 export class DatabaseModule {}
