@@ -8,7 +8,7 @@ services:
     ports:
       - '3309:3306'
     env_file:
-      - ./../apps/api/env/.env.local
+      - ../.env.local
     command: ['--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci']
     volumes:
       - ../data/db-data:/var/lib/mysql
