@@ -7,7 +7,7 @@ tmp
 /data/db-data
 # dependencies
 node_modules
-
+db
 # IDEs and editors
 /.idea
 .project

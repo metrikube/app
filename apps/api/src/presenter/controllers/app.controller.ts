@@ -9,13 +9,11 @@ export class AppController {
 
   @Get()
   getHello(): Promise<Plugin[]> {
-    console.log('ici get');
     return this.pluginUseCase.getPlugins();
   }
 
   @Post()
   create(): Promise<Plugin> {
-    console.log('ici post');
     return this.pluginUseCase.create(new Plugin());
   }
 }

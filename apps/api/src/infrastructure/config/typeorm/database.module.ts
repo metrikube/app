@@ -1,8 +1,5 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
-
-import { EnvironmentConfigModule } from '../environment/environment-config.module';
-import { EnvironmentConfigService } from '../environment/environment-config.service';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 export const getTypeOrmModuleOptions = (config: EnvironmentConfigService): TypeOrmModuleOptions =>
   ({
@@ -25,10 +22,12 @@ export const getTypeOrmModuleOptions = (config: EnvironmentConfigService): TypeO
 
 @Module({
   imports: [
-    TypeOrmModule.forRootAsync({
-      imports: [EnvironmentConfigModule],
-      inject: [EnvironmentConfigService],
-      useFactory: getTypeOrmModuleOptions,
+    TypeOrmModule.forRoot({
+      type: 'sqlite',
+      database: 'db',
+      // entities: [Plugin],
+      entities: [__dirname + '/../../database/entities/*.entity{.ts,.js}'],
+      synchronize: true,
     }),
   ],
   exports: [TypeOrmModule],
