@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { GetPlugins } from "@metrikube/core"
 
 interface Props {
@@ -6,21 +6,20 @@ interface Props {
 }
 
 export function App({ getPlugins }: Props) {
-  const [plugins, setPlugins] = useState<{ id: string, name: string }[]>([])
-  useEffect(() => {
-    const fetchData = async () => {
-      const result = await getPlugins.execute()
-      setPlugins(result)
+  const { isLoading, isSuccess, data: plugins } = useQuery({
+    queryKey: ['plugins'],
+    queryFn: async () => getPlugins.execute()
+  })
 
-    }
-    fetchData()
-  }, [getPlugins])
+  if (isLoading) return (
+    <div>Loading...</div>
+  )
 
   return (
     <div>
       <h1>Vite + React</h1>
       {
-        plugins.map(plugin => (
+        isSuccess && plugins.map(plugin => (
           <div key={plugin.id} className="card">
             {plugin.name}
           </div>
