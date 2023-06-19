@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { GetPlugins } from "@metrikube/core"
+import { Switch } from './components/atoms/Switch';
 
 interface Props {
   getPlugins: GetPlugins
@@ -18,6 +19,7 @@ export function App({ getPlugins }: Props) {
   return (
     <div>
       <h1>Vite + React</h1>
+      <Switch/>
       {
         isSuccess && plugins.map(plugin => (
           <div key={plugin.id} className="card">
