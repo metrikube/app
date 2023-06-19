@@ -6,15 +6,6 @@ export class GetPluginsUsecase implements GetPlugins {
     constructor(private readonly pluginAdapter: PluginAdapter) { }
 
     async execute(): Promise<{ id: string, name: string }[]> {
-        return Promise.resolve([
-            {
-                id: "test-1",
-                name: "AWS"
-            },
-            {
-                id: "test-2",
-                name: "Github"
-            }
-        ])
+        return this.pluginAdapter.getPlugins()
     }
 }
