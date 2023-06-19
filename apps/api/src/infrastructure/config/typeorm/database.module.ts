@@ -1,12 +1,16 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { Plugin } from '../../database/entities/plugin.entity';
+
+const entities = [Plugin];
+
 @Module({
   imports: [
     TypeOrmModule.forRoot({
       type: 'sqlite',
       database: 'db',
-      entities: [__dirname + '/../../database/entities/*.entity{.ts,.js}'],
+      entities,
       synchronize: true,
     }),
   ],
