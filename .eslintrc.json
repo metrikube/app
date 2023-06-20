@@ -5,6 +5,12 @@
   "overrides": [
     {
       "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
+      "extends": [
+        "eslint:recommended",
+        "plugin:eslint-plugin/recommended",
+        "plugin:node/recommended",
+        "plugin:@typescript-eslint/recommended"
+      ],
       "rules": {
         "@nx/enforce-module-boundaries": [
           "error",
