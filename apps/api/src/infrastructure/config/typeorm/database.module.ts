@@ -1,9 +1,10 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { Plugin } from '../../database/entities/plugin.entity';
+import { CredentialEntity } from '../../database/entities/credential.entity';
+import { PluginEntity } from '../../database/entities/plugin.entity';
 
-const entities = [Plugin];
+const entities = [PluginEntity, CredentialEntity];
 
 @Module({
   imports: [
@@ -12,8 +13,9 @@ const entities = [Plugin];
       database: 'db',
       entities,
       synchronize: true,
-    }),
+      autoLoadEntities: true
+    })
   ],
-  exports: [TypeOrmModule],
+  exports: [TypeOrmModule]
 })
 export class DatabaseModule {}
