@@ -1,24 +1,31 @@
-import { DataSource, EntitySchema, Repository } from 'typeorm';
+import { DataSource } from 'typeorm';
 
-import { Inject, Injectable } from '@nestjs/common';
-import { randomStringGenerator } from '@nestjs/common/utils/random-string-generator.util';
+import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 
 import { PluginRepository } from '../../../domain/interfaces/repository/plugin.repository';
-import { Plugin } from '../entities/plugin.entity';
+import { Plugin } from '../../../domain/models/plugin.model';
+import { PluginEntity } from '../entities/plugin.entity';
 import { BaseRepository } from './base.repository';
 
 @Injectable()
-export class PluginRepositoryImpl extends BaseRepository<Plugin> implements PluginRepository {
+export class PluginRepositoryImpl extends BaseRepository<PluginEntity> implements PluginRepository {
   constructor(@InjectDataSource() connection: DataSource) {
-    super(connection, Plugin);
+    super(connection, PluginEntity);
   }
 
-  createPlugin(plugin: Plugin): Promise<Plugin> {
-    return this.save({ ...plugin, name: randomStringGenerator() });
+  createPlugin(plugin: Plugin): Promise<PluginEntity> {
+    return this.save(this.create(plugin));
   }
 
-  getPlugins(): Promise<Plugin[]> {
+  getPlugins(): Promise<PluginEntity[]> {
     return this.find();
+  }
+
+  findPluginByIdWithCredential(id: string): Promise<PluginEntity> {
+    return this.findOneOrFail({
+      where: { id },
+      relations: { credential: true }
+    });
   }
 }

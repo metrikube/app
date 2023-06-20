@@ -1,19 +1,25 @@
 import { Injectable } from '@nestjs/common';
 
 import { PluginRepository } from '../../../domain/interfaces/repository/plugin.repository';
-import { Plugin } from '../entities/plugin.entity';
+import { Plugin } from '../../../domain/models/plugin.model';
+import { PluginEntity } from '../entities/plugin.entity';
 
 @Injectable()
 export class PluginInMemoryRepositoryImpl implements PluginRepository {
-  db: Plugin[] = [];
+  db: PluginEntity[] = [];
 
   constructor() {}
 
-  createPlugin(plugin: Plugin): Promise<Plugin> {
-    return Promise.resolve(plugin);
+  createPlugin(plugin: Plugin): Promise<PluginEntity> {
+    this.db.push(plugin as unknown as PluginEntity);
+    return Promise.resolve(plugin as unknown as PluginEntity);
   }
 
-  getPlugins(): Promise<Plugin[]> {
-    return Promise.resolve([]);
+  getPlugins(): Promise<PluginEntity[]> {
+    return Promise.resolve(this.db);
+  }
+
+  findPluginByIdWithCredential(id: string): Promise<PluginEntity> {
+    return Promise.resolve(this.db.find((plugin) => plugin.id === id));
   }
 }
