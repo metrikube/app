@@ -1,8 +1,9 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
 
 import { UseCaseModule } from '../application/use-case.module';
 import { PluginUseCase } from '../application/use-cases/plugin/plugin.use-case';
 import { PluginRepositoryImpl } from '../infrastructure/database/repositories/plugin.repository';
+import { HttpLoggerMiddleware } from '../infrastructure/middlewares/http-logger.middleware';
 import { AppController } from './controllers/app.controller';
 
 @Module({
@@ -11,12 +12,12 @@ import { AppController } from './controllers/app.controller';
   providers: [
     {
       provide: 'PLUGIN_USE_CASE',
-      useClass: PluginUseCase,
+      useClass: PluginUseCase
     },
     {
       provide: 'PLUGIN_REPOSITORY',
-      useClass: PluginRepositoryImpl,
-    },
-  ],
+      useClass: PluginRepositoryImpl
+    }
+  ]
 })
 export class ControllersModule {}
