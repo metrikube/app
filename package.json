@@ -2,8 +2,12 @@
   "name": "metrikube",
   "version": "0.1.0",
   "license": "MIT",
+  "engines": {
+    "node": "18.16.0"
+  },
+  "main": "dist/apps/api/main.js",
   "scripts": {
-    "start": "nx serve",
+    "start": "node dist/apps/api/main.js",
     "start:api": "NODE_ENV=local nx serve api",
     "start:all": "NODE_ENV=local nx run-many --target=serve",
     "start:client": "nx run web:serve",
