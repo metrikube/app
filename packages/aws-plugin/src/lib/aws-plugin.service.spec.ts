@@ -1,6 +1,6 @@
 import { Test } from '@nestjs/testing';
 
-import { AwsPluginService } from './aws-plugin.service';
+import { AwsPluginService } from '../services/aws-client.service';
 
 describe('AwsPluginService', () => {
   let service: AwsPluginService;

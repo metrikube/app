@@ -21,7 +21,8 @@
       "@metrikube/github-plugin": ["packages/github-plugin/src/index.ts"],
       "@metrikube/infrastructure": ["apps/app/infrastructure/src/index.ts"],
       "@metrikube/ui": ["apps/app/ui/src/index.ts"],
-      "@metrikube/web": ["apps/app/web/src/index.ts"]
+      "@metrikube/web": ["apps/app/web/src/index.ts"],
+      "@metrikube/common": ["common/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

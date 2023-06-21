@@ -1,10 +1,11 @@
 import { Module } from '@nestjs/common';
 
-import { AwsPluginService } from './aws-plugin.service';
+import { AwsClientService } from '../services/aws-client.service';
+import { CostExplorerService } from '../services/cost-explorer.service';
 
 @Module({
   controllers: [],
-  providers: [AwsPluginService],
-  exports: [AwsPluginService],
+  providers: [AwsClientService, CostExplorerService],
+  exports: [AwsClientService, CostExplorerService],
 })
 export class AwsPluginModule {}
