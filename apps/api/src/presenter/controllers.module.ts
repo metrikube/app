@@ -1,4 +1,4 @@
-import { CostExplorerService, EC2Service } from '@metrikube/aws-plugin';
+import { AWSService } from '@metrikube/aws-plugin';
 
 import { Module } from '@nestjs/common';
 
@@ -20,12 +20,8 @@ import { AppController } from './controllers/app.controller';
       useClass: PluginRepositoryImpl,
     },
     {
-      provide: 'COST_EXPLORER_SERVICE',
-      useClass: CostExplorerService,
-    },
-    {
-      provide: 'EC2_SERVICE',
-      useClass: EC2Service,
+      provide: 'AWS_PLUGIN',
+      useClass: AWSService,
     },
   ],
 })

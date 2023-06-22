@@ -1,4 +1,4 @@
-import { AwsPluginModule, CostExplorerService, EC2Service } from '@metrikube/aws-plugin';
+import { AWSService, AwsPluginModule } from '@metrikube/aws-plugin';
 
 import { Module } from '@nestjs/common';
 
@@ -13,12 +13,8 @@ import { InfrastructureModule } from '../infrastructure/infrastructure.module';
       useClass: PluginRepositoryImpl,
     },
     {
-      provide: 'COST_EXPLORER_SERVICE',
-      useClass: CostExplorerService,
-    },
-    {
-      provide: 'EC2_SERVICE',
-      useClass: EC2Service,
+      provide: 'AWS_PLUGIN',
+      useClass: AWSService,
     },
   ],
   exports: [],

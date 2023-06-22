@@ -1,22 +1,27 @@
-import * as AWS from 'aws-sdk';
+import { DescribeInstancesCommand, DescribeInstancesCommandInput, EC2Client } from '@aws-sdk/client-ec2';
+import { AwsCredentialIdentityProvider } from '@aws-sdk/types';
 
-import { Injectable } from '@nestjs/common';
-
-import { AwsClientService } from './aws-client.service';
-
-@Injectable()
-export class EC2Service extends AwsClientService {
-  protected override readonly client: AWS.EC2;
-  constructor() {
-    super();
-    // set the region to us-east-1 because cost explorer is global
-    AWS.config.update({ region: 'us-east-1' });
-    this.client = new AWS.EC2({ apiVersion: '2017-10-25' });
+export class EC2Service {
+  private readonly client: EC2Client;
+  constructor(credentials: AwsCredentialIdentityProvider, region: string) {
+    this.client = new EC2Client({
+      region: region,
+      credentials: credentials,
+    });
   }
-
-  async getInstances(params: AWS.EC2.DescribeInstancesRequest): Promise<AWS.EC2.DescribeInstancesResult> {
+  async getInstances(
+    params: DescribeInstancesCommandInput = {
+      Filters: [
+        {
+          Name: 'instance-state-name',
+          Values: ['running'],
+        },
+      ],
+    },
+  ): Promise<any> {
     try {
-      return await this.client.describeInstances(params).promise();
+      const data = await this.client.send(new DescribeInstancesCommand(params));
+      return data;
     } catch (error) {
       console.error('Error fetching EC2 instances :', error);
       throw error;
