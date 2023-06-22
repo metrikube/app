@@ -13,7 +13,7 @@ import { axiosInstance } from './config/axios';
 
 import "./assets/styles/index.css"
 import { CssBaseline, ThemeProvider } from '@mui/material';
-import { theme } from './config/MUI';
+import { theme } from './config/mui';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -29,7 +29,7 @@ root.render(
     <QueryClientProvider client={queryClient}>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        <App getPlugins={getPluginsUsecase} />
+        <App />
       </ThemeProvider>
     </QueryClientProvider>
   </StrictMode>
