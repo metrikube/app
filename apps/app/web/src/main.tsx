@@ -11,6 +11,10 @@ import { GetPluginsUsecase } from "@metrikube/core"
 import { PluginAdapterImpl } from '@metrikube/infrastructure';
 import { axiosInstance } from './config/axios';
 
+import "./assets/styles/index.css"
+import { CssBaseline, ThemeProvider } from '@mui/material';
+import { theme } from './config/MUI';
+
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
@@ -23,7 +27,10 @@ const getPluginsUsecase = new GetPluginsUsecase(pluginAdapter)
 root.render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
-      <App getPlugins={getPluginsUsecase} />
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <App getPlugins={getPluginsUsecase} />
+      </ThemeProvider>
     </QueryClientProvider>
   </StrictMode>
 );
