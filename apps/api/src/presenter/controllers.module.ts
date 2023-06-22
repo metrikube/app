@@ -11,18 +11,9 @@ import { AppController } from './controllers/app.controller';
   imports: [UseCaseModule],
   controllers: [AppController],
   providers: [
-    {
-      provide: 'PLUGIN_USE_CASE',
-      useClass: PluginUseCase
-    },
-    {
-      provide: 'PLUGIN_REPOSITORY',
-      useClass: PluginRepositoryImpl
-    },
-    {
-      provide: 'CREDENTIAL_REPOSITORY',
-      useClass: CredentialRepositoryImpl
-    }
+    { provide: 'PLUGIN_USE_CASE', useClass: PluginUseCase },
+    { provide: 'PLUGIN_REPOSITORY', useClass: PluginRepositoryImpl },
+    { provide: 'CREDENTIAL_REPOSITORY', useClass: CredentialRepositoryImpl }
   ]
 })
 export class ControllersModule {}
