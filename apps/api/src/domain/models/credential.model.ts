@@ -1,6 +1,7 @@
 export type CredentialType = {
   readonly apiKey: { apiKey: string };
   readonly userPassword: { username: string; password: string };
+  readonly apiEndpoint: { apiEndpoint: string };
   readonly passport: { passportConfig: unknown; strategyName: string };
 };
 

@@ -3,5 +3,6 @@ import { Plugin } from '../../models/plugin.model';
 
 export interface PluginUseCaseInterface {
   getPlugins(): Promise<PluginEntity[]>;
+
   create(plugin: Plugin): Promise<PluginEntity>;
 }
