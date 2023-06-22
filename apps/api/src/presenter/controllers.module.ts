@@ -1,10 +1,12 @@
-import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
+import { CostExplorerService } from '@metrikube/aws-plugin';
+import { EC2Service } from '@metrikube/aws-plugin';
+
+import { Module } from '@nestjs/common';
 
 import { UseCaseModule } from '../application/use-case.module';
 import { PluginUseCase } from '../application/use-cases/plugin/plugin.use-case';
 import { CredentialRepositoryImpl } from '../infrastructure/database/repositories/credential.repository';
 import { PluginRepositoryImpl } from '../infrastructure/database/repositories/plugin.repository';
-import { HttpLoggerMiddleware } from '../infrastructure/middlewares/http-logger.middleware';
 import { AppController } from './controllers/app.controller';
 
 @Module({
@@ -13,7 +15,9 @@ import { AppController } from './controllers/app.controller';
   providers: [
     { provide: 'PLUGIN_USE_CASE', useClass: PluginUseCase },
     { provide: 'PLUGIN_REPOSITORY', useClass: PluginRepositoryImpl },
-    { provide: 'CREDENTIAL_REPOSITORY', useClass: CredentialRepositoryImpl }
+    { provide: 'CREDENTIAL_REPOSITORY', useClass: CredentialRepositoryImpl },
+    { provide: 'COST_EXPLORER_SERVICE', useClass: CostExplorerService },
+    { provide: 'EC2_SERVICE', useClass: EC2Service }
   ]
 })
 export class ControllersModule {}

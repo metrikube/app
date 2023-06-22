@@ -13,6 +13,7 @@ async function bootstrap() {
   const globalPrefix = 'api/v1';
   app.setGlobalPrefix(globalPrefix);
 
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
   const { version } = require('../../../package.json');
 
   const options = new DocumentBuilder().setTitle('Metrikube API').setDescription('API').setVersion(version).build();
