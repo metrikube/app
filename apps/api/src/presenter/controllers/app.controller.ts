@@ -1,22 +1,26 @@
 import { ICostExplorerParams } from '@metrikube/common';
+import * as AWS from 'aws-sdk';
 
-import { Controller, Get, Inject, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Inject, Post, Query } from '@nestjs/common';
+import { ApiProperty } from '@nestjs/swagger';
 
 import { PluginUseCaseInterface } from '../../domain/interfaces/use-cases/plugin.use-case.interface';
-import { Plugin } from '../../infrastructure/database/entities/plugin.entity';
+import { Plugin } from '../../domain/models/plugin.model';
+import { PluginEntity } from '../../infrastructure/database/entities/plugin.entity';
 
-@Controller()
+@Controller('/')
 export class AppController {
   constructor(@Inject('PLUGIN_USE_CASE') private readonly pluginUseCase: PluginUseCaseInterface) {}
 
   @Get()
-  getHello(): Promise<Plugin[]> {
+  @ApiProperty({})
+  getHello(): Promise<PluginEntity[]> {
     return this.pluginUseCase.getPlugins();
   }
 
   @Post()
-  create(): Promise<Plugin> {
-    return this.pluginUseCase.create(new Plugin());
+  create(@Body() payload: Plugin): Promise<PluginEntity> {
+    return this.pluginUseCase.create(payload);
   }
 
   @Get('/aws/cost-explorer')
@@ -24,9 +28,9 @@ export class AppController {
     const params: ICostExplorerParams = {
       timePeriod: {
         Start: start,
-        End: end,
+        End: end
       },
-      metrics: Array.isArray(metrics) ? metrics : [metrics],
+      metrics: Array.isArray(metrics) ? metrics : [metrics]
     };
     console.log('params', params);
     return this.pluginUseCase.getCosts(params);

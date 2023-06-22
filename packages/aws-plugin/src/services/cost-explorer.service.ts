@@ -8,6 +8,7 @@ import { AwsClientService } from './aws-client.service';
 @Injectable()
 export class CostExplorerService extends AwsClientService {
   protected override readonly client: AWS.CostExplorer;
+
   constructor() {
     super();
     // set the region to us-east-1 because cost explorer is global
@@ -50,7 +51,7 @@ export class CostExplorerService extends AwsClientService {
       const currentYear = currentDateTime.getFullYear();
       const defaultTimePeriod = {
         Start: `${currentYear}-${currentMonth}-01`,
-        End: `${currentYear}-${currentMonth}-${currentDay}`,
+        End: `${currentYear}-${currentMonth}-${currentDay}`
       };
       console.log('defaultTimePeriod :', defaultTimePeriod);
       const costExplorerParams: AWS.CostExplorer.GetCostAndUsageRequest = {
@@ -59,8 +60,8 @@ export class CostExplorerService extends AwsClientService {
         Granularity: 'MONTHLY',
         GroupBy: [
           { Type: 'DIMENSION', Key: 'SERVICE' },
-          { Type: 'DIMENSION', Key: 'REGION' },
-        ],
+          { Type: 'DIMENSION', Key: 'REGION' }
+        ]
       };
       const costs = await this.client.getCostAndUsage(costExplorerParams).promise();
       const formattedCosts = await this.formatCosts(costs);

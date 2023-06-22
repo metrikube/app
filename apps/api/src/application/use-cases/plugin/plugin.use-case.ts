@@ -1,21 +1,29 @@
+import { CostExplorerService, EC2Service } from '@metrikube/aws-plugin';
 import { ICostExplorerParams } from '@metrikube/common';
 
 import { Inject, Injectable } from '@nestjs/common';
 
+import { CredentialRepository } from '../../../domain/interfaces/repository/credential.repository';
 import { PluginRepository } from '../../../domain/interfaces/repository/plugin.repository';
 import { PluginUseCaseInterface } from '../../../domain/interfaces/use-cases/plugin.use-case.interface';
-import { Plugin } from '../../../infrastructure/database/entities/plugin.entity';
+import { Plugin } from '../../../domain/models/plugin.model';
+import { PluginEntity } from '../../../infrastructure/database/entities/plugin.entity';
 
 @Injectable()
 export class PluginUseCase implements PluginUseCaseInterface {
-  constructor(@Inject('PLUGIN_REPOSITORY') private readonly pluginRepository: PluginRepository, @Inject('COST_EXPLORER_SERVICE') private readonly costExplorerService: any, @Inject('EC2_SERVICE') private readonly ec2Service) {}
+  constructor(
+    @Inject('PLUGIN_REPOSITORY') private readonly pluginRepository: PluginRepository,
+    @Inject('CREDENTIAL_REPOSITORY') private readonly credentialRepository: CredentialRepository,
+    @Inject('COST_EXPLORER_SERVICE') private readonly costExplorerService: CostExplorerService,
+    @Inject('EC2_SERVICE') private readonly ec2Service: EC2Service
+  ) {}
 
-  getPlugins(): Promise<Plugin[]> {
+  getPlugins(): Promise<PluginEntity[]> {
     return this.pluginRepository.getPlugins();
   }
 
-  create(plugin: Plugin): Promise<Plugin> {
-    return this.pluginRepository.createPlugin(plugin);
+  async create(plugin: Plugin): Promise<PluginEntity> {
+    return await this.pluginRepository.createPlugin(plugin);
   }
 
   getCosts(params: ICostExplorerParams): Promise<AWS.CostExplorer.GetCostAndUsageResponse> {

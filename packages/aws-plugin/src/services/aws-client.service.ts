@@ -14,9 +14,9 @@ export class AwsClientService {
     AWS.config.update({
       credentials: {
         accessKeyId,
-        secretAccessKey,
+        secretAccessKey
       },
-      region: 'eu-central-1', // Remplacez par votre région AWS souhaitée
+      region: 'eu-central-1' // Remplacez par votre région AWS souhaitée
     });
 
     // init base client
