@@ -5,7 +5,7 @@ enum Environment {
   Local = 'local',
   Staging = 'staging',
   Production = 'production',
-  Test = 'test',
+  Test = 'test'
 }
 
 class EnvironmentVariables {

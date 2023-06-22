@@ -1,9 +1,7 @@
-import { DataSource, DeepPartial, DeleteResult, EntityManager, EntityTarget, FindManyOptions, FindOptionsWhere, InsertResult, ObjectId, ObjectLiteral, QueryRunner, RemoveOptions, SaveOptions } from 'typeorm';
+import { DataSource, DeleteResult, EntityManager, EntityTarget, FindManyOptions, FindOptionsWhere, InsertResult, ObjectLiteral, QueryRunner, RemoveOptions } from 'typeorm';
 import { FindOneOptions } from 'typeorm/find-options/FindOneOptions';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { UpdateResult } from 'typeorm/query-builder/result/UpdateResult';
-
-import { PluginEntity } from '../entities/plugin.entity';
 
 export class BaseRepository<Entity extends ObjectLiteral> {
   readonly manager: EntityManager;
@@ -37,7 +35,7 @@ export class BaseRepository<Entity extends ObjectLiteral> {
   }
 
   insert(entity: QueryDeepPartialEntity<Entity> | QueryDeepPartialEntity<Entity>[]): Promise<InsertResult> {
-    return this.manager.insert(this.entity, entity);
+    return this.manager.insert(this.entity, this.create(entity));
   }
 
   update(criteria: FindOptionsWhere<Entity>, partialEntity: QueryDeepPartialEntity<Entity>): Promise<UpdateResult> {
