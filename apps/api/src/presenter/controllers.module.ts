@@ -15,7 +15,6 @@ import { PluginController } from './controllers/plugin.controller';
   controllers: [AppController, PluginController],
   providers: [
     { provide: 'PLUGIN_USE_CASE', useClass: PluginUseCase },
-    { provide: 'PLUGIN_REPOSITORY', useClass: PluginRepositoryImpl },
     { provide: 'AWS_PLUGIN', useClass: AWSService },
     { provide: 'API_MONITORING', useClass: ApiMonitoringService },
     { provide: 'CREDENTIAL_REPOSITORY', useClass: CredentialRepositoryImpl }

@@ -11,7 +11,7 @@ export class PluginController {
 
   @Get('/:id/:metric')
   @ApiOperation({ summary: 'Get plugin data' })
-  getPluginData(@Param('id') pluginId: string, @Param('metric') metric: MetricType): PluginResult<typeof metric> {
+  getPluginData(@Param('id') pluginId: string, @Param('metric') metric: string): PluginResult<MetricType> {
     // Todo : get the data and credentials for this plugin from the database
     // Todo : call the plugin service to get the data
     // Todo : return the data

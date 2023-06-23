@@ -23,6 +23,6 @@ import { InfrastructureModule } from '../infrastructure/infrastructure.module';
       useClass: AWSService
     }
   ],
-  exports: []
+  exports: ['PLUGIN_REPOSITORY']
 })
 export class UseCaseModule {}
