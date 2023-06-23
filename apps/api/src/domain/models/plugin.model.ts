@@ -1,36 +1,19 @@
 import { Credential } from './credential.model';
+import { Metric } from './metric.model';
 
 export type Plugin = {
   readonly id: string; // UUID
   readonly type: string; // PluginType
   readonly name: string;
   readonly description: string;
+  readonly instruction: string;
   readonly credential: Credential;
-  readonly createdAt: Date;
+  readonly credentialId: string;
   readonly category: string; // cloud | database | versioning
-  readonly widgets: Widget[];
-};
-
-export type Widget = {
-  readonly id: string; // UUID
-  readonly name: string;
-  readonly description: string;
-  readonly refreshInterval: number; // in seconds
-  readonly type: string; // WidgetType
+  readonly metrics?: Metric[];
   readonly createdAt: Date;
 };
 
-// type WidgetType =
-//   | 'aws_bucket_single_instance'
-//   | 'aws_bucket_multiple_instances'
-//   | 'aws_ec2_multiple_instances_usage'
-//   | 'aws_ec2_single_instance_usage'
-//   | 'github_last_pr'
-//   | 'database_queries'
-//   | 'database_size'
-//   | 'database_connections'
-//   | 'database_slow_queries';
-//
 // const provider: Plugin = {
 //   id: 'P1',
 //   type: 'aws',
@@ -43,7 +26,7 @@ export type Widget = {
 //     }
 //   },
 //   createdAt: new Date(),
-//   widgets: [
+//   metrics: [
 //     {
 //       id: 'W1',
 //       providerId: 'P1',
