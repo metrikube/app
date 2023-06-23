@@ -15,8 +15,8 @@
     "lint": "nx lint",
     "prepare": "husky install",
     "start": "node dist/apps/api/main.js",
-    "start:all": "NODE_ENV=local nx run-many --target=serve --skip-nx-cache",
-    "start:api": "NODE_ENV=local nx serve api --skip-nx-cache",
+    "start:all": "NODE_ENV=local && npm run cache:clear && nx run-many --target=serve --skip-nx-cache",
+    "start:api": "NODE_ENV=local && npm run cache:clear && nx serve api --skip-nx-cache",
     "start:client": "nx run web:serve --skip-nx-cache",
     "test": "nx test",
     "test:all": "nx run-many --target=test"
@@ -35,6 +35,7 @@
     "@nestjs/common": "9.4.2",
     "@nestjs/config": "^2.3.2",
     "@nestjs/core": "9.4.2",
+    "@nestjs/platform-express": "^9.1.1",
     "@nestjs/platform-fastify": "^9.4.2",
     "@nestjs/serve-static": "^4.0.0",
     "@nestjs/swagger": "^6.3.0",
