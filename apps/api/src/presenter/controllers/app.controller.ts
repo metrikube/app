@@ -1,8 +1,5 @@
-import { ICostExplorerParams } from '@metrikube/common';
-import * as AWS from 'aws-sdk';
-
-import { Body, Controller, Get, Inject, Post, Query } from '@nestjs/common';
-import { ApiProperty } from '@nestjs/swagger';
+import { Body, Controller, Get, HttpCode, HttpStatus, Inject, Post } from '@nestjs/common';
+import { ApiOperation } from '@nestjs/swagger';
 
 import { PluginUseCaseInterface } from '../../domain/interfaces/use-cases/plugin.use-case.interface';
 import { CredentialUseCaseInterface } from '../../domain/interfaces/use-cases/credential.use-case.interface';
@@ -21,45 +18,53 @@ export class AppController {
     ){}
 
   @Get()
-  @ApiProperty({})
-  getHello(): Promise<PluginEntity[]> {
+  @ApiOperation({ summary: 'Get all plugins' })
+  list(): Promise<PluginEntity[]> {
     return this.pluginUseCase.getPlugins();
   }
 
   @Post()
+  @ApiOperation({ summary: 'Create a new plugin' })
+  @HttpCode(HttpStatus.CREATED)
   create(@Body() payload: Plugin): Promise<PluginEntity> {
     return this.pluginUseCase.create(payload);
   }
 
   @Get('/aws/cost-explorer')
-  getCosts(@Query('start') start: string, @Query('end') end: string, @Query('metrics') metrics: string[]): Promise<AWS.CostExplorer.GetCostAndUsageResponse> {
-    const params: ICostExplorerParams = {
-      timePeriod: {
-        Start: start,
-        End: end
-      },
-      metrics: Array.isArray(metrics) ? metrics : [metrics]
-    };
-    console.log('params', params);
-    return this.pluginUseCase.getCosts(params);
-    // {
-    //   TimePeriod: {
-    //     Start: '2022-07-01',
-    //     End: '2023-06-01',
-    //   },
-    //   Granularity: 'MONTHLY',
-    //   Metrics: ['BlendedCost', 'UsageQuantity'],
-    // }
+  @ApiOperation({ summary: 'Get AWS cost explorer' })
+  getCosts(): any {
+    return this.pluginUseCase.getAWSPlugin().getCostExplorerService().getCosts();
   }
 
-  @Get('aws/ec2')
-  getEc2Instances(): Promise<AWS.EC2.DescribeInstancesResult> {
-    console.log('getEc2Instances from controller');
-    return this.pluginUseCase.getEc2Instances({});
+  @Get('/aws/ec2')
+  @ApiOperation({ summary: 'Get AWS EC2 instances' })
+  getInstance(): any {
+    return this.pluginUseCase.getAWSPlugin().getEc2Service('us-east-1').getInstances();
   }
   @Post('db-plugin/connection')
   dbCreateConnection(@Body() payload: Credential): Promise<CredentialEntity> {
     return this.credentialUseCase.dbCreateConnection(payload);
   }
+
+  // @Get('/aws/cost-explorer')
+  // getCosts(@Query('start') start: string, @Query('end') end: string, @Query('metrics') metrics: string[]): Promise<AWS.CostExplorer.GetCostAndUsageResponse> {
+  //   const params: ICostExplorerParams = {
+  //     timePeriod: {
+  //       Start: start,
+  //       End: end,
+  //     },
+  //     metrics: Array.isArray(metrics) ? metrics : [metrics],
+  //   };
+  //   console.log('params', params);
+  //   return this.pluginUseCase.getCosts(params);
+  //   // {
+  //   //   TimePeriod: {
+  //   //     Start: '2022-07-01',
+  //   //     End: '2023-06-01',
+  //   //   },
+  //   //   Granularity: 'MONTHLY',
+  //   //   Metrics: ['BlendedCost', 'UsageQuantity'],
+  //   // }
+  // }
 }
 

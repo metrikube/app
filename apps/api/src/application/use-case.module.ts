@@ -1,4 +1,5 @@
-import { AwsPluginModule, CostExplorerService, EC2Service } from '@metrikube/aws-plugin';
+import { ApiMonitoringModule, ApiMonitoringService } from '@metrikube/api-monitoring';
+import { AWSService, AwsPluginModule } from '@metrikube/aws-plugin';
 
 import { Module } from '@nestjs/common';
 
@@ -7,7 +8,7 @@ import { PluginRepositoryImpl } from '../infrastructure/database/repositories/pl
 import { InfrastructureModule } from '../infrastructure/infrastructure.module';
 
 @Module({
-  imports: [InfrastructureModule, AwsPluginModule],
+  imports: [InfrastructureModule, AwsPluginModule, ApiMonitoringModule],
   providers: [
     {
       provide: 'PLUGIN_REPOSITORY',
@@ -18,14 +19,10 @@ import { InfrastructureModule } from '../infrastructure/infrastructure.module';
       useClass: CredentialRepositoryImpl
     },
     {
-      provide: 'COST_EXPLORER_SERVICE',
-      useClass: CostExplorerService
-    },
-    {
-      provide: 'EC2_SERVICE',
-      useClass: EC2Service
+      provide: 'AWS_PLUGIN',
+      useClass: AWSService
     }
   ],
-  exports: []
+  exports: ['PLUGIN_REPOSITORY']
 })
 export class UseCaseModule {}

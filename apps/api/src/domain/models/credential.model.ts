@@ -1,4 +1,5 @@
 import { Plugin } from './plugin.model';
+import { CredentialType, GenericCredentialType } from '@metrikube/common';
 
 export type CredentialType = {
   readonly apiKey: { apiKey: string };
@@ -11,8 +12,7 @@ export type CredentialType = {
 };
 
 export type Credential = {
-  readonly type: keyof CredentialType;
-  readonly value: CredentialType[keyof CredentialType];
+  readonly type: CredentialType;
+  readonly value: GenericCredentialType | string;
   readonly plugin: string;
-
 };

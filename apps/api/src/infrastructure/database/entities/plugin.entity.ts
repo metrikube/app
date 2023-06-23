@@ -3,6 +3,13 @@ import { Column, CreateDateColumn, Entity, Generated,  PrimaryColumn,} from 'typ
 import { ApiProperty } from '@nestjs/swagger';
 
 
+const pluginInstructionExample = `
+  *1. Create an IAM user with the following permissions:*
+      - AmazonEC2ReadOnlyAccess, AmazonS3ReadOnlyAccess, AmazonSNSReadOnlyAccess [...]
+  *2. Create a new credential with the following parameters:*
+  *3. Enjoy!*
+`;
+
 @Entity('plugin')
 export class PluginEntity {
   @Generated('uuid')
@@ -10,51 +17,29 @@ export class PluginEntity {
   @ApiProperty({ name: 'id', type: String, description: 'Plugin id', example: 'fab8f183-7021-4a42-b429-447ee7415b93' })
   id: string;
 
-  @ApiProperty({
-    name: 'name',
-    type: String,
-    description: 'Plugin name',
-    example: 'AWS'
-  })
+  @ApiProperty({ name: 'name', type: String, description: 'Plugin name', example: 'AWS' })
   @Column()
   name: string;
 
   @Column()
-  @ApiProperty({
-    name: 'type',
-    type: String,
-    description: 'Plugin type',
-    example: 'aws'
-  })
+  @ApiProperty({ name: 'type', type: String, description: 'Plugin type', example: 'aws' })
   type: string;
 
   @Column()
-  @ApiProperty({
-    name: 'description',
-    type: String,
-    description: 'Plugin description',
-    example: 'Plugin AWS'
-  })
+  @ApiProperty({ name: 'description', type: String, description: 'Plugin description', example: 'Plugin AWS' })
   description: string;
 
   @Column()
-  @ApiProperty({
-    name: 'category',
-    type: String,
-    description: 'Plugin category',
-    example: 'cloud'
-  })
+  @ApiProperty({ name: 'instruction', type: String, format: 'markdown', example: pluginInstructionExample })
+  instruction: string;
+
+  @Column()
+  @ApiProperty({ name: 'category', type: String, description: 'Plugin category', example: 'cloud' })
   category: string;
 
   @CreateDateColumn()
-  @ApiProperty({
-    name: 'createdAt',
-    type: Date,
-    description: 'Plugin creation date',
-    example: '2023-01-01T00:00:00.000Z'
-  })
+  @ApiProperty({ name: 'createdAt', type: Date, description: 'Plugin creation date', example: '2023-01-01T00:00:00.000Z' })
   createdAt: Date;
-
 
   // @BeforeInsert()
   // credentialToBase64() {
@@ -65,4 +50,5 @@ export class PluginEntity {
   // base64ToCredential() {
   //   this.credential.value = JSON.parse(Buffer.from(this.credential.value, 'base64').toString('utf8'));
   // }
+
 }
