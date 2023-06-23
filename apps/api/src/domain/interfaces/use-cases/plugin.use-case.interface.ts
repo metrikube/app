@@ -1,3 +1,4 @@
+// import { ICostExplorerParams } from 'common';
 import { ICostExplorerParams } from '@metrikube/common';
 import * as AWS from 'aws-sdk';
 
@@ -9,7 +10,9 @@ export interface PluginUseCaseInterface {
 
   create(plugin: Plugin): Promise<PluginEntity>;
 
-  getCosts(params: ICostExplorerParams): Promise<AWS.CostExplorer.GetCostAndUsageResponse>;
+  // getCosts(params: ICostExplorerParams): Promise<AWS.CostExplorer.GetCostAndUsageResponse>;
 
-  getEc2Instances(params): Promise<AWS.EC2.DescribeInstancesResult>;
+  // getEc2Instances(params): Promise<AWS.EC2.DescribeInstancesResult>;
+
+  getAWSPlugin(): any;
 }
