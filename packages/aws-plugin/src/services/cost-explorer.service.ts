@@ -64,22 +64,22 @@ export class CostExplorerService {
   constructor(credentials: AwsCredentialIdentityProvider) {
     this.client = new CostExplorerClient({
       region: 'us-east-1',
-      credentials: credentials,
+      credentials: credentials
     });
   }
   async getCosts(
     params: GetCostAndUsageCommandInput = {
       TimePeriod: {
         Start: '2023-06-01',
-        End: '2023-06-30',
+        End: '2023-06-30'
       },
       Granularity: 'MONTHLY',
       Metrics: ['BlendedCost'],
       GroupBy: [
         { Type: 'DIMENSION', Key: 'SERVICE' },
-        { Type: 'DIMENSION', Key: 'REGION' },
-      ],
-    },
+        { Type: 'DIMENSION', Key: 'REGION' }
+      ]
+    }
   ) {
     const command = new GetCostAndUsageCommand(params);
 

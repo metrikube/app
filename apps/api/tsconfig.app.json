@@ -1,11 +1,22 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "outDir": "../../dist/out-tsc",
     "module": "commonjs",
-    "types": ["node"],
+    "declaration": true,
+    "removeComments": true,
     "emitDecoratorMetadata": true,
-    "target": "es2015"
+    "experimentalDecorators": true,
+    "target": "ES2021",
+    "outDir": "./dist",
+    "incremental": true,
+    "skipLibCheck": true,
+    "strictNullChecks": false,
+    "noImplicitAny": false,
+    "strictBindCallApply": false,
+    "forceConsistentCasingInFileNames": false,
+    "noFallthroughCasesInSwitch": false,
+    "moduleResolution": "node",
+    "lib": ["ESNext", "ES2022"]
   },
   "exclude": ["jest.config.ts", "**/*.spec.ts", "**/*.test.ts"],
   "include": ["**/*.ts"]
