@@ -1,7 +1,8 @@
-import { AfterInsert, BeforeInsert, Column, Entity, Generated, PrimaryGeneratedColumn } from 'typeorm';
+import { AfterInsert, BeforeInsert, Column, Entity, Generated, PrimaryGeneratedColumn, JoinColumn, ManyToOne, RelationId } from 'typeorm';
 
 import { Logger } from '@nestjs/common';
 import { ApiProperty } from '@nestjs/swagger';
+import { PluginEntity } from './plugin.entity';
 
 @Entity('credential')
 export class CredentialEntity {
@@ -12,20 +13,30 @@ export class CredentialEntity {
 
   @Column()
   @ApiProperty({
-    name: 'name',
+    name: 'type',
     type: String,
     description: 'Credential value type',
     example: 'apiKey'
   })
   type: string;
 
-  @Column()
+  @Column({type: "json"})
   @ApiProperty({
     name: 'value',
     type: String,
     description: 'base64 encoded credential value { key: value }'
   })
-  value: string;
+  value: any;
+
+  @JoinColumn()
+  @ManyToOne(() => PluginEntity, (plugin: PluginEntity) => plugin.id, {
+    createForeignKeyConstraints: true,
+    nullable: false,
+  })
+  plugin: PluginEntity;
+
+  @RelationId((credential: CredentialEntity) => credential.plugin)
+  pluginId: PluginEntity['id'];
 
   @BeforeInsert()
   beforeInsert() {

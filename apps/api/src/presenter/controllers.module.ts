@@ -5,6 +5,8 @@ import { Module } from '@nestjs/common';
 
 import { UseCaseModule } from '../application/use-case.module';
 import { PluginUseCase } from '../application/use-cases/plugin/plugin.use-case';
+import { CredentialUseCase } from '../application/use-cases/credential.use-case';
+
 import { CredentialRepositoryImpl } from '../infrastructure/database/repositories/credential.repository';
 import { PluginRepositoryImpl } from '../infrastructure/database/repositories/plugin.repository';
 import { AppController } from './controllers/app.controller';
@@ -17,7 +19,8 @@ import { AppController } from './controllers/app.controller';
     { provide: 'PLUGIN_REPOSITORY', useClass: PluginRepositoryImpl },
     { provide: 'CREDENTIAL_REPOSITORY', useClass: CredentialRepositoryImpl },
     { provide: 'COST_EXPLORER_SERVICE', useClass: CostExplorerService },
-    { provide: 'EC2_SERVICE', useClass: EC2Service }
+    { provide: 'EC2_SERVICE', useClass: EC2Service },
+    { provide: 'CREDENTIAL_USE_CASE', useClass: CredentialUseCase },
   ]
 })
 export class ControllersModule {}

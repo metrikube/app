@@ -22,10 +22,5 @@ export class PluginRepositoryImpl extends BaseRepository<PluginEntity> implement
     return this.find();
   }
 
-  findPluginByIdWithCredential(id: string): Promise<PluginEntity> {
-    return this.findOneOrFail({
-      where: { id },
-      relations: { credential: true }
-    });
-  }
+
 }

@@ -1,8 +1,7 @@
-import { Column, CreateDateColumn, Entity, Generated, JoinColumn, OneToOne, PrimaryColumn, RelationId } from 'typeorm';
+import { Column, CreateDateColumn, Entity, Generated,  PrimaryColumn,} from 'typeorm';
 
 import { ApiProperty } from '@nestjs/swagger';
 
-import { CredentialEntity } from './credential.entity';
 
 @Entity('plugin')
 export class PluginEntity {
@@ -56,14 +55,6 @@ export class PluginEntity {
   })
   createdAt: Date;
 
-  @JoinColumn()
-  @OneToOne(() => CredentialEntity, (credential: CredentialEntity) => credential.id, {
-    createForeignKeyConstraints: true
-  })
-  credential: CredentialEntity;
-
-  @RelationId((plugin: PluginEntity) => plugin.credential)
-  credentialId: CredentialEntity['id'];
 
   // @BeforeInsert()
   // credentialToBase64() {

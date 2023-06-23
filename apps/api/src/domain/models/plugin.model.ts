@@ -1,11 +1,8 @@
-import { Credential } from './credential.model';
-
 export type Plugin = {
   readonly id: string; // UUID
   readonly type: string; // PluginType
   readonly name: string;
   readonly description: string;
-  readonly credential: Credential;
   readonly createdAt: Date;
   readonly category: string; // cloud | database | versioning
   readonly widgets: Widget[];

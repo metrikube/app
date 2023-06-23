@@ -5,12 +5,20 @@ import { Body, Controller, Get, Inject, Post, Query } from '@nestjs/common';
 import { ApiProperty } from '@nestjs/swagger';
 
 import { PluginUseCaseInterface } from '../../domain/interfaces/use-cases/plugin.use-case.interface';
+import { CredentialUseCaseInterface } from '../../domain/interfaces/use-cases/credential.use-case.interface';
+
 import { Plugin } from '../../domain/models/plugin.model';
+import { Credential } from '../../domain/models/credential.model';
 import { PluginEntity } from '../../infrastructure/database/entities/plugin.entity';
+import { CredentialEntity } from '../../infrastructure/database/entities/credential.entity';
+
 
 @Controller('/')
 export class AppController {
-  constructor(@Inject('PLUGIN_USE_CASE') private readonly pluginUseCase: PluginUseCaseInterface) {}
+  constructor(
+      @Inject('PLUGIN_USE_CASE') private readonly pluginUseCase: PluginUseCaseInterface,
+      @Inject('CREDENTIAL_USE_CASE') private readonly credentialUseCase: CredentialUseCaseInterface
+    ){}
 
   @Get()
   @ApiProperty({})
@@ -49,4 +57,9 @@ export class AppController {
     console.log('getEc2Instances from controller');
     return this.pluginUseCase.getEc2Instances({});
   }
+  @Post('db-plugin/connection')
+  dbCreateConnection(@Body() payload: Credential): Promise<CredentialEntity> {
+    return this.credentialUseCase.dbCreateConnection(payload);
+  }
 }
+
