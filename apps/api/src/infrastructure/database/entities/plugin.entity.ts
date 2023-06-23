@@ -1,8 +1,7 @@
-import { Column, CreateDateColumn, Entity, Generated, JoinColumn, OneToOne, PrimaryColumn, RelationId } from 'typeorm';
+import { Column, CreateDateColumn, Entity, Generated,  PrimaryColumn,} from 'typeorm';
 
 import { ApiProperty } from '@nestjs/swagger';
 
-import { CredentialEntity } from './credential.entity';
 
 const pluginInstructionExample = `
   *1. Create an IAM user with the following permissions:*
@@ -42,12 +41,14 @@ export class PluginEntity {
   @ApiProperty({ name: 'createdAt', type: Date, description: 'Plugin creation date', example: '2023-01-01T00:00:00.000Z' })
   createdAt: Date;
 
-  @JoinColumn()
-  @OneToOne(() => CredentialEntity, (credential: CredentialEntity) => credential.id, {
-    createForeignKeyConstraints: true
-  })
-  credential: CredentialEntity;
+  // @BeforeInsert()
+  // credentialToBase64() {
+  //   this.credential.value = Buffer.from(JSON.stringify(this.credential.value)).toString('base64');
+  // }
+  //
+  // @AfterLoad()
+  // base64ToCredential() {
+  //   this.credential.value = JSON.parse(Buffer.from(this.credential.value, 'base64').toString('utf8'));
+  // }
 
-  @RelationId((plugin: PluginEntity) => plugin.credential)
-  credentialId: CredentialEntity['id'];
 }

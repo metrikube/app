@@ -7,8 +7,6 @@ export type Plugin = {
   readonly name: string;
   readonly description: string;
   readonly instruction: string;
-  readonly credential: Credential;
-  readonly credentialId: string;
   readonly category: string; // cloud | database | versioning
   readonly metrics?: Metric[];
   readonly createdAt: Date;

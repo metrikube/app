@@ -5,6 +5,4 @@ export interface PluginRepository {
   getPlugins(): Promise<PluginEntity[]>;
 
   createPlugin(plugin: Plugin): Promise<PluginEntity>;
-
-  findPluginByIdWithCredential(id: string): Promise<PluginEntity>;
 }

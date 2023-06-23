@@ -2,12 +2,20 @@ import { Body, Controller, Get, HttpCode, HttpStatus, Inject, Post } from '@nest
 import { ApiOperation } from '@nestjs/swagger';
 
 import { PluginUseCaseInterface } from '../../domain/interfaces/use-cases/plugin.use-case.interface';
+import { CredentialUseCaseInterface } from '../../domain/interfaces/use-cases/credential.use-case.interface';
+
 import { Plugin } from '../../domain/models/plugin.model';
+import { Credential } from '../../domain/models/credential.model';
 import { PluginEntity } from '../../infrastructure/database/entities/plugin.entity';
+import { CredentialEntity } from '../../infrastructure/database/entities/credential.entity';
+
 
 @Controller('/')
 export class AppController {
-  constructor(@Inject('PLUGIN_USE_CASE') private readonly pluginUseCase: PluginUseCaseInterface) {}
+  constructor(
+      @Inject('PLUGIN_USE_CASE') private readonly pluginUseCase: PluginUseCaseInterface,
+      @Inject('CREDENTIAL_USE_CASE') private readonly credentialUseCase: CredentialUseCaseInterface
+    ){}
 
   @Get()
   @ApiOperation({ summary: 'Get all plugins' })
@@ -33,6 +41,10 @@ export class AppController {
   getInstance(): any {
     return this.pluginUseCase.getAWSPlugin().getEc2Service('us-east-1').getInstances();
   }
+  @Post('db-plugin/connection')
+  dbCreateConnection(@Body() payload: Credential): Promise<CredentialEntity> {
+    return this.credentialUseCase.dbCreateConnection(payload);
+  }
 
   // @Get('/aws/cost-explorer')
   // getCosts(@Query('start') start: string, @Query('end') end: string, @Query('metrics') metrics: string[]): Promise<AWS.CostExplorer.GetCostAndUsageResponse> {
@@ -55,3 +67,4 @@ export class AppController {
   //   // }
   // }
 }
+
