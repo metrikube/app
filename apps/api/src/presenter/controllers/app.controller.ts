@@ -1,8 +1,5 @@
-import { ICostExplorerParams } from '@metrikube/common';
-import * as AWS from 'aws-sdk';
-
-import { Body, Controller, Get, Inject, Post, Query } from '@nestjs/common';
-import { ApiProperty } from '@nestjs/swagger';
+import { Body, Controller, Get, HttpCode, HttpStatus, Inject, Post } from '@nestjs/common';
+import { ApiOperation } from '@nestjs/swagger';
 
 import { PluginUseCaseInterface } from '../../domain/interfaces/use-cases/plugin.use-case.interface';
 import { Plugin } from '../../domain/models/plugin.model';
@@ -13,22 +10,26 @@ export class AppController {
   constructor(@Inject('PLUGIN_USE_CASE') private readonly pluginUseCase: PluginUseCaseInterface) {}
 
   @Get()
-  @ApiProperty({})
-  getHello(): Promise<PluginEntity[]> {
+  @ApiOperation({ summary: 'Get all plugins' })
+  list(): Promise<PluginEntity[]> {
     return this.pluginUseCase.getPlugins();
   }
 
   @Post()
+  @ApiOperation({ summary: 'Create a new plugin' })
+  @HttpCode(HttpStatus.CREATED)
   create(@Body() payload: Plugin): Promise<PluginEntity> {
     return this.pluginUseCase.create(payload);
   }
 
   @Get('/aws/cost-explorer')
+  @ApiOperation({ summary: 'Get AWS cost explorer' })
   getCosts(): any {
     return this.pluginUseCase.getAWSPlugin().getCostExplorerService().getCosts();
   }
 
   @Get('/aws/ec2')
+  @ApiOperation({ summary: 'Get AWS EC2 instances' })
   getInstance(): any {
     return this.pluginUseCase.getAWSPlugin().getEc2Service('us-east-1').getInstances();
   }
