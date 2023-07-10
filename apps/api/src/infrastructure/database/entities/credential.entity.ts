@@ -26,7 +26,16 @@ export class CredentialEntity {
   })
   type: string; // CredentialType;
 
-  @Column()
+  @Column({
+    transformer: {
+      from(value: any): any {
+        return JSON.parse(Buffer.from(value, 'base64').toString('utf-8'));
+      },
+      to(value: any): any {
+        return value;
+      }
+    }
+  })
   @ApiProperty({
     name: 'value',
     type: String,
