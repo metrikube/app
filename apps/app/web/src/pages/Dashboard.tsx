@@ -1,18 +1,20 @@
-import React from 'react'
+import React, { useState } from 'react'
 import styled from '@emotion/styled'
-import { Grid, Button } from '@mui/material';
+import { Button } from '@mui/material';
 import DefaultLayout from '../layouts/DefaultLayout'
 import { AddCircleOutline } from '@mui/icons-material';
-import ProviderModal from '../components/organisms/Provider.modal';
+import ProviderModal from '../components/organisms/modals/Provider.modal';
 
 const Dashboard = () => {
+  const [openedModal, setOpenModal] = useState(false)
+
   const Header = styled.header`
     display: flex;
     align-items: center;
     justify-content: space-between;
   `
 
-  const Body = styled.body`
+  const Body = styled.div`
     flex: 1;
     display: flex;
     flex-direction: column;
@@ -21,7 +23,7 @@ const Dashboard = () => {
   `
 
   const openProviderModalHandler = () => {
-    console.log("openProviderModalHandler")
+    setOpenModal(true)
   }
 
   return (
@@ -40,7 +42,7 @@ const Dashboard = () => {
       <Body>
         There is no plugin installed
       </Body>
-      <ProviderModal />
+      <ProviderModal open={openedModal} setOpenModal={setOpenModal} />
     </DefaultLayout>
   )
 }

@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import styled from '@emotion/styled'
 import { CSSObject, ListItemIcon, ListItemText, MenuItem, MenuList, Paper } from '@mui/material';
 import { DashboardRounded, SettingsRounded } from '@mui/icons-material';
 
@@ -15,7 +14,6 @@ const MenuListStyle: CSSObject = {
 }
 
 const Sidebar = () => {
-    const [isSidebarOpened, setIsSidebarOpened] = useState(true)
     return (
         <Paper elevation={6} sx={PaperStyle}>
             <h2>METRIKUBE.</h2>
