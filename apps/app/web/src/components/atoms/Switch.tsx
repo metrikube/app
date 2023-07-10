@@ -1,6 +1,6 @@
-import * as React from 'react'
-import { styled } from '@mui/material/styles'
+import styled from '@emotion/styled'
 import { Switch as MuiSwitch } from '@mui/material'
+import * as React from 'react'
 
 export const Switch = styled(MuiSwitch)(({ theme }) => ({
   padding: 8,

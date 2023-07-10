@@ -19,7 +19,7 @@
       "inputs": ["default", "^production", "{workspaceRoot}/jest.preset.js"]
     },
     "lint": {
-      "inputs": ["default", "{workspaceRoot}/.eslintrc.json"]
+      "inputs": ["default", "{workspaceRoot}/.eslintrc.js"]
     },
     "e2e": {
       "inputs": ["default", "^production"]

@@ -33,9 +33,16 @@ export class HttpExceptionFilter implements ExceptionFilter {
 
   private logMessage(request: any, message: IError, status: number, exception: any) {
     if (status === 500) {
-      this.logger.error(`End Request for ${request.path}`, `method=${request.method} status=${status} code_error=${message.code_error ? message.code_error : null} message=${message.message ? message.message : null}`, status >= 500 ? exception.stack : '');
+      this.logger.error(
+        `End Request for ${request.path}`,
+        `method=${request.method} status=${status} code_error=${message.code_error ? message.code_error : null} message=${message.message ? message.message : null}`,
+        status >= 500 ? exception.stack : ''
+      );
     } else {
-      this.logger.warn(`End Request for ${request.path}`, `method=${request.method} status=${status} code_error=${message.code_error ? message.code_error : null} message=${message.message ? message.message : null}`);
+      this.logger.warn(
+        `End Request for ${request.path}`,
+        `method=${request.method} status=${status} code_error=${message.code_error ? message.code_error : null} message=${message.message ? message.message : null}`
+      );
     }
   }
 }
