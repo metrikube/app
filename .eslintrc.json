@@ -1,10 +1,11 @@
 {
   "root": true,
-  // "ignorePatterns": ["**/*"],
-  "plugins": ["@nx"],
+  "ignorePatterns": ["**/*"],
+  "plugins": ["@nx", "prettier", "eslint-plugin-prettier", "unused-imports"],
   "overrides": [
     {
       "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
+      "extends": [],
       "rules": {
         "@nx/enforce-module-boundaries": [
           "error",

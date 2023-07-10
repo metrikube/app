@@ -15,7 +15,9 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@metrikube/api-monitoring": ["packages/api-monitoring/src/index.ts"],
       "@metrikube/aws-plugin": ["packages/aws-plugin/src/index.ts"],
+      "@metrikube/common": ["common/index.ts"],
       "@metrikube/core": ["apps/app/core/src/index.ts"],
       "@metrikube/db-analytics-plugin": ["packages/db-analytics-plugin/src/index.ts"],
       "@metrikube/github-plugin": ["packages/github-plugin/src/index.ts"],

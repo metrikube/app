@@ -1,7 +1,7 @@
 {
   "plugins": ["@trivago/prettier-plugin-sort-imports"],
   "importOrderParserPlugins": ["typescript", "decorators-legacy"],
-  "printWidth": 350,
+  "printWidth": 200,
   "trailingComma": "none",
   "tabWidth": 2,
   "semi": false,
