@@ -1,14 +1,15 @@
-import { ApiMonitoringModule } from '@metrikube/api-monitoring';
-import { AWSService, AwsPluginModule } from '@metrikube/aws-plugin';
+import { ApiMonitoringModule } from '@metrikube/api-monitoring'
+import { AWSService, AwsPluginModule } from '@metrikube/aws-plugin'
 
-import { Module } from '@nestjs/common';
+import { Module } from '@nestjs/common'
 
-import { AlertRepositoryImpl } from '../infrastructure/database/repositories/alert.repository';
-import { CredentialRepositoryImpl } from '../infrastructure/database/repositories/credential.repository';
-import { MetricRepositoryImpl } from '../infrastructure/database/repositories/metric.repository';
-import { PluginRepositoryImpl } from '../infrastructure/database/repositories/plugin.repository';
-import { InfrastructureModule } from '../infrastructure/infrastructure.module';
-import { AlertUseCase } from './use-cases/alert/alert.use-case';
+import { AlertRepositoryImpl } from '../infrastructure/database/repositories/alert.repository'
+import { CredentialRepositoryImpl } from '../infrastructure/database/repositories/credential.repository'
+import { MetricRepositoryImpl } from '../infrastructure/database/repositories/metric.repository'
+import { PluginRepositoryImpl } from '../infrastructure/database/repositories/plugin.repository'
+import { NodemailerAdapter } from '../infrastructure/email/nodemailer.adapter'
+import { InfrastructureModule } from '../infrastructure/infrastructure.module'
+import { AlertUseCase } from './use-cases/alert/alert.use-case'
 
 @Module({
   imports: [InfrastructureModule, AwsPluginModule, ApiMonitoringModule],
@@ -18,7 +19,8 @@ import { AlertUseCase } from './use-cases/alert/alert.use-case';
     { provide: 'AWS_PLUGIN', useClass: AWSService },
     { provide: 'CREDENTIAL_REPOSITORY', useClass: CredentialRepositoryImpl },
     { provide: 'PLUGIN_REPOSITORY', useClass: PluginRepositoryImpl },
-    { provide: 'METRIC_REPOSITORY', useClass: MetricRepositoryImpl }
+    { provide: 'METRIC_REPOSITORY', useClass: MetricRepositoryImpl },
+    { provide: 'MAILER', useClass: NodemailerAdapter }
   ],
   exports: ['PLUGIN_REPOSITORY', 'ALERT_REPOSITORY', 'CREDENTIAL_REPOSITORY', 'AWS_PLUGIN', 'PLUGIN_REPOSITORY', 'ALERT_USE_CASE', 'METRIC_REPOSITORY']
 })
