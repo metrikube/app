@@ -4,10 +4,12 @@
   "printWidth": 200,
   "trailingComma": "none",
   "tabWidth": 2,
-  "semi": true,
+  "semi": false,
   "singleQuote": true,
   "endOfLine": "auto",
   "importOrder": ["^(@nestjs/(.*)$)|^(@nestjs$)", "^[./]"],
   "importOrderSeparation": true,
-  "importOrderSortSpecifiers": true
+  "importOrderSortSpecifiers": true,
+  "jsxBracketSameLine": true
 }
+
