@@ -1,12 +1,11 @@
-import React, { useState } from 'react'
-import styled from '@emotion/styled'
-import { Button } from '@mui/material';
+import ProviderModal from '../components/organisms/modals/Provider.modal'
 import DefaultLayout from '../layouts/DefaultLayout'
-import { AddCircleOutline } from '@mui/icons-material';
-import ProviderModal from '../components/organisms/modals/Provider.modal';
+import styled from '@emotion/styled'
+import { AddCircleOutline } from '@mui/icons-material'
+import { Button } from '@mui/material'
+import React, { useState } from 'react'
 
 const Dashboard = () => {
-
   const [openedModal, setOpenModal] = useState(false)
   const openProviderModalHandler = () => {
     setOpenModal(true)
@@ -29,9 +28,7 @@ const Dashboard = () => {
           </Button>
         </div>
       </StyledHeader>
-      <StyledBody>
-        There is no plugin installed
-      </StyledBody>
+      <StyledBody>There is no plugin installed</StyledBody>
       <ProviderModal open={openedModal} setOpenModal={setOpenModal} />
     </DefaultLayout>
   )
