@@ -1,6 +1,6 @@
 import { Inject, Injectable, Logger } from '@nestjs/common'
 
-import { NodemailerInterface } from '../../../domain/interfaces/adapters/nodemailer.interface'
+import { NotificationInterface } from '../../../domain/interfaces/adapters/notification.interface'
 import { AlertRepository } from '../../../domain/interfaces/repository/alert.repository'
 import { Alert, MetricThresholdOperator } from '../../../domain/models/alert.model'
 import { Metric } from '../../../domain/models/metric.model'
@@ -8,7 +8,7 @@ import { AlertEntity } from '../../../infrastructure/database/entities/alert.ent
 
 @Injectable()
 export class AlertUseCase {
-  constructor(@Inject('ALERT_REPOSITORY') private readonly alertRepository: AlertRepository, @Inject('MAILER') private readonly mailer: NodemailerInterface) {}
+  constructor(@Inject('ALERT_REPOSITORY') private readonly alertRepository: AlertRepository, @Inject('MAILER') private readonly mailer: NotificationInterface) {}
 
   async createAlert(metricId: Metric['id'], alert: Partial<Alert>): Promise<AlertEntity> {
     return this.alertRepository.createAlert(alert)

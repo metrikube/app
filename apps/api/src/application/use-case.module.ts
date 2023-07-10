@@ -7,8 +7,8 @@ import { AlertRepositoryImpl } from '../infrastructure/database/repositories/ale
 import { CredentialRepositoryImpl } from '../infrastructure/database/repositories/credential.repository'
 import { MetricRepositoryImpl } from '../infrastructure/database/repositories/metric.repository'
 import { PluginRepositoryImpl } from '../infrastructure/database/repositories/plugin.repository'
-import { NodemailerAdapter } from '../infrastructure/email/nodemailer.adapter'
 import { InfrastructureModule } from '../infrastructure/infrastructure.module'
+import { NotificationAdapter } from '../infrastructure/notification/notification.adapter'
 import { AlertUseCase } from './use-cases/alert/alert.use-case'
 
 @Module({
@@ -20,7 +20,7 @@ import { AlertUseCase } from './use-cases/alert/alert.use-case'
     { provide: 'CREDENTIAL_REPOSITORY', useClass: CredentialRepositoryImpl },
     { provide: 'PLUGIN_REPOSITORY', useClass: PluginRepositoryImpl },
     { provide: 'METRIC_REPOSITORY', useClass: MetricRepositoryImpl },
-    { provide: 'MAILER', useClass: NodemailerAdapter }
+    { provide: 'MAILER', useClass: NotificationAdapter }
   ],
   exports: ['PLUGIN_REPOSITORY', 'ALERT_REPOSITORY', 'CREDENTIAL_REPOSITORY', 'AWS_PLUGIN', 'PLUGIN_REPOSITORY', 'ALERT_USE_CASE', 'METRIC_REPOSITORY']
 })

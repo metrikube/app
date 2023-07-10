@@ -2,10 +2,10 @@ import { SentMessageInfo, Transporter, createTransport } from 'nodemailer'
 
 import { Injectable } from '@nestjs/common'
 
-import { NodemailerInterface } from '../../domain/interfaces/adapters/nodemailer.interface'
+import { NotificationInterface } from '../../domain/interfaces/adapters/notification.interface'
 
 @Injectable()
-export class NodemailerAdapter implements NodemailerInterface {
+export class NotificationAdapter implements NotificationInterface {
   mailer: Transporter
 
   constructor() {
