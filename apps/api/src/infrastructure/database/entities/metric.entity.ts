@@ -1,4 +1,4 @@
-import { Column, CreateDateColumn, Entity, Generated, JoinColumn, OneToOne, PrimaryColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, Generated, JoinColumn, OneToOne, PrimaryColumn, RelationId } from 'typeorm';
 
 import { ApiProperty } from '@nestjs/swagger';
 
@@ -32,6 +32,10 @@ export class MetricEntity {
   @JoinColumn()
   @ApiProperty({ name: 'plugin', type: PluginEntity, isArray: true, description: 'Metric plugins' })
   plugin: PluginEntity;
+
+  @RelationId((metric: MetricEntity) => metric.plugin)
+  @ApiProperty({ name: 'pluginId', type: String, description: 'Metric plugin id', example: 'fab8f183-7021-4a42-b429-447ee7415b93' })
+  pluginId: string;
 
   @OneToOne(() => AlertEntity, { cascade: ['insert'] })
   @JoinColumn()

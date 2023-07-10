@@ -28,4 +28,11 @@ export class CredentialRepositoryImpl extends BaseRepository<CredentialEntity> i
       relations: { plugin: true }
     });
   }
+
+  findCrendentialByPluginId(pluginId: string): Promise<CredentialEntity> {
+    return this.findOneOrFail({
+      where: { pluginId: pluginId },
+      relations: { plugin: true }
+    });
+  }
 }
