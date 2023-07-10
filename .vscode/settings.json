@@ -1,0 +1,21 @@
+{
+  "editor.tabSize": 2,
+  "eslint.options": {
+    "extensions": [".html", ".js", ".ts", ".jsx", ".tsx"]
+  },
+  "eslint.validate": ["html", "jsx", "javascript", "typescript", "javascriptreact", "typescriptreact", "tsx"],
+  "files.insertFinalNewline": true,
+  "files.trimFinalNewlines": false,
+  "git.autofetch": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  },
+  "javascript.format.insertSpaceBeforeAndAfterBinaryOperators": false,
+  "typescript.format.insertSpaceAfterSemicolonInForStatements": false,
+  "editor.formatOnPaste": true,
+  "editor.formatOnSave": false,
+  "editor.formatOnType": true,
+  "eslint.format.enable": true,
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "eslint.workingDirectories": [{"directory": "./apps/app/**/*", "changeProcessCWD": true}]
+}

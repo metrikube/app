@@ -1,5 +1,6 @@
-import { GetPlugins } from "@metrikube/core"
-import Dashboard from "./pages/Dashboard";
+import Dashboard from './pages/Dashboard'
+import { GetPlugins } from '@metrikube/core'
+import React from 'react'
 
 export function App() {
   // const { isLoading, isSuccess, data: plugins } = useQuery({
@@ -7,9 +8,7 @@ export function App() {
   //   queryFn: async () => getPlugins.execute()
   // })
 
-  return (
-    <Dashboard />
-  );
+  return <Dashboard />
 }
 
-export default App;
+export default App
