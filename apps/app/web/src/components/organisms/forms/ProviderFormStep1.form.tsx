@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext, useState } from 'react'
 import styled from '@emotion/styled'
 import { providerCategoriesMock, providersMock } from "@metrikube/core"
 import ProviderCard from '../../molecules/ProviderCard'
@@ -14,6 +14,7 @@ interface Props {
 
 const ProviderFormStep1 = ({ providerCategory, handleProviderCategory, handleProvider }: Props) => {
     const { selectedProvider } = useContext(ProviderFormContext);
+    const [providers, setProviders] = useState<unknown[]>(providersMock)
 
     const FormContainer = styled.form`
         display: flex;
@@ -30,6 +31,12 @@ const ProviderFormStep1 = ({ providerCategory, handleProviderCategory, handlePro
         display: flex;
         gap: 16px;
     `
+    const filterProviderByCategory = (providerCategory: string): unknown[] => {
+        if (!providerCategory) {
+            return providers
+        }
+        return providers.filter(provider => provider.category === providerCategory)
+    }
     return <FormContainer>
         <ChipContainer>
             {/* FIX It's just mock now */}
@@ -44,7 +51,7 @@ const ProviderFormStep1 = ({ providerCategory, handleProviderCategory, handlePro
             ))}
         </ChipContainer>
         <ProvidersContainer>
-            {providersMock.map(provider => (
+            {filterProviderByCategory(providerCategory).map(provider => (
                 <ProviderCard
                     key={provider.id}
                     logo={AwsLogo}
