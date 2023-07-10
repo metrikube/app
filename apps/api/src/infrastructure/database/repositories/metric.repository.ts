@@ -25,4 +25,8 @@ export class MetricRepositoryImpl extends BaseRepository<MetricEntity> implement
   findMetricByPluginId(pluginId: string): Promise<MetricEntity[]> {
     return this.find({ where: { pluginId } });
   }
+
+  findByPluginIdAndMetricType(pluginId: string, metricType: string): Promise<MetricEntity> {
+    return this.findOne({ where: { plugin: { id: pluginId }, type: metricType } });
+  }
 }

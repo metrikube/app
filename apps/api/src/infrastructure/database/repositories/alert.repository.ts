@@ -25,4 +25,8 @@ export class AlertRepositoryImpl extends BaseRepository<AlertEntity> implements 
   createAlert(payload): Promise<AlertEntity> {
     return this.save(payload);
   }
+
+  async updateAlert(id: string, payload: Partial<AlertEntity>): Promise<void> {
+    await this.updateAlert(id, payload);
+  }
 }

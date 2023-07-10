@@ -2,12 +2,13 @@ import { ApiMonitoringService } from '@metrikube/api-monitoring';
 import { AWSService } from '@metrikube/aws-plugin';
 import { ApiEndpointCredentialType, ApiHealthCheckResult, CredentialType, GenericCredentialType, MetricType, PluginResult } from '@metrikube/common';
 
-import { BadRequestException, Inject, Injectable } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable, Logger } from '@nestjs/common';
 
 import { CredentialRepository } from '../../../domain/interfaces/repository/credential.repository';
 import { PluginRepository } from '../../../domain/interfaces/repository/plugin.repository';
 import { AlertUseCaseInterface } from '../../../domain/interfaces/use-cases/alert.use-case.interface';
 import { PluginUseCaseInterface } from '../../../domain/interfaces/use-cases/plugin.use-case.interface';
+import { Alert } from '../../../domain/models/alert.model';
 import { Plugin } from '../../../domain/models/plugin.model';
 import { CredentialEntity } from '../../../infrastructure/database/entities/credential.entity';
 import { PluginEntity } from '../../../infrastructure/database/entities/plugin.entity';
@@ -34,22 +35,16 @@ export class PluginUseCase implements PluginUseCaseInterface {
     const credentials = await this.credentialRepository.findCrendentialByPluginId(pluginId);
     if (!credentials) throw new BadRequestException('No credentials found for this plugin');
 
-    const parsedCredentials: GenericCredentialType = JSON.parse(Buffer.from(credentials.type, 'base64').toString('utf-8'));
+    const pluginMetric = await this.metricRepository.findByPluginIdAndMetricType(pluginId, metric);
 
-    console.log('credentials : ', credentials);
-    console.log('parsedCredentials : ', parsedCredentials);
-
-    const pluginMetric = await this.metricRepository.findOne({ where: { pluginId, type: metric } });
-    const alert = await this.alertRepository.findOne({ where: { metricId: pluginMetric.id } });
-
-    console.log('alert : ', alert);
+    const alert = await this.alertRepository.findOne({ where: { metric: { id: pluginMetric.id } } });
 
     switch (metric) {
       case 'api_endpoint_health_check': {
         const result: ApiHealthCheckResult = await this.apiMonitoringService.apiHealthCheck({
-          apiEndpoint: (parsedCredentials as ApiEndpointCredentialType).apiEndpoint
+          apiEndpoint: (JSON.parse(Buffer.from(credentials.value, 'base64').toString('utf-8')) as ApiEndpointCredentialType).apiEndpoint
         });
-        await this.alertUseCase.checkContiditionAndNotify(result, alert.condition); // todo : send to event emitter
+        await this.alertUseCase.checkContiditionAndNotify(result, alert); // todo : send to event emitter
         return result;
       }
       default:

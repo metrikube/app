@@ -1,6 +1,7 @@
 import { Test } from '@nestjs/testing';
 
 import { Alert, MetricThresholdOperator } from '../../../domain/models/alert.model';
+import { AlertEntity } from '../../../infrastructure/database/entities/alert.entity';
 import { AlertInMemoryRepositoryImpl } from '../../../infrastructure/database/in-memory/alert-in-memory.repository';
 import { AlertUseCase } from './alert.use-case';
 
@@ -61,15 +62,23 @@ describe('AlertUseCase', () => {
     const metricData = {
       field: 10
     };
-    const condition = {
-      field: 'field',
-      operator: 'gte' as MetricThresholdOperator,
-      threshold: 5
+    const alert = {
+      id: 'alert-id',
+      label: 'alert-name',
+      condition: {
+        field: 'field',
+        operator: 'gte' as MetricThresholdOperator,
+        threshold: 5
+      }
     };
 
+    const metricId = 'metric-id';
+
+    await useCase.createAlert(metricId, alert as Alert);
+
     const spy = jest.spyOn(useCase, 'checkConditionThreshold');
-    await useCase.checkContiditionAndNotify(metricData, condition);
+    await useCase.checkContiditionAndNotify(metricData, alert as AlertEntity);
     expect(spy).toHaveBeenCalled();
-    expect(spy).toHaveBeenCalledWith(metricData.field, condition.operator, condition.threshold);
+    expect(spy).toHaveBeenCalledWith(metricData.field, alert.condition.operator, alert.condition.threshold);
   });
 });

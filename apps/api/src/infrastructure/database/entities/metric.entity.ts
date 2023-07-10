@@ -35,12 +35,16 @@ export class MetricEntity {
 
   @RelationId((metric: MetricEntity) => metric.plugin)
   @ApiProperty({ name: 'pluginId', type: String, description: 'Metric plugin id', example: 'fab8f183-7021-4a42-b429-447ee7415b93' })
-  pluginId: string;
+  pluginId: PluginEntity['id'];
 
   @OneToOne(() => AlertEntity, { cascade: ['insert'] })
   @JoinColumn()
   @ApiProperty({ name: 'alert', type: 'AlertEntity', description: 'Metric alert' })
   alert: AlertEntity;
+
+  @RelationId((metric: MetricEntity) => metric.alert)
+  @ApiProperty({ name: 'alertId', type: String, description: 'Alert id', example: 'fab8f183-7021-4a42-b429-447ee7415b93' })
+  alertId: AlertEntity['id'];
 
   @CreateDateColumn()
   @ApiProperty({ name: 'createdAt', type: Date, description: 'Plugin creation date', example: '2023-01-01T00:00:00.000Z' })

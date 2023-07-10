@@ -6,4 +6,6 @@ export interface AlertRepository {
   getAlerts(criterias: FindManyOptions<AlertEntity> | FindOptionsWhere<AlertEntity>): Promise<AlertEntity[]>;
 
   createAlert(payload): Promise<AlertEntity>;
+
+  updateAlert(id: string, payload: Partial<AlertEntity>): Promise<void>;
 }

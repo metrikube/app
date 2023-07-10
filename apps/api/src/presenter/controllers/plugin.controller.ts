@@ -15,13 +15,16 @@ export class PluginController {
     @Inject('PLUGIN_USE_CASE') private readonly pluginUseCase: PluginUseCaseInterface
   ) {}
 
-  @Get('/:id/:metric')
+  @Get('/:id/:metricType')
   @ApiOperation({ summary: 'Get plugin data' })
-  async getPluginData(@Param('id') pluginId: string, @Param('metric') metric: string): Promise<PluginResult<MetricType>> {
+  async getPluginData(
+    @Param('id') pluginId: string,
+    @Param('metricType') metricType: string
+  ): Promise<PluginResult<MetricType>> {
     // Todo : get the data and credentials for this plugin from the database
     // Todo : call the plugin service to get the data
     // Todo : return the data
-    return this.pluginUseCase.refreshPluginMetric(pluginId, metric);
+    return this.pluginUseCase.refreshPluginMetric(pluginId, metricType);
     // return this.apiMonitoring.apiHealthCheck({
     //   apiEndpoint: 'https://httpstat.us/503'
     // });

@@ -1,3 +1,4 @@
+import { GenericCredentialType } from '@metrikube/common';
 import { AfterInsert, BeforeInsert, Column, Entity, Generated, JoinColumn, ManyToOne, PrimaryGeneratedColumn, RelationId } from 'typeorm';
 
 import { Logger } from '@nestjs/common';
@@ -26,16 +27,7 @@ export class CredentialEntity {
   })
   type: string; // CredentialType;
 
-  @Column({
-    transformer: {
-      from(value: any): any {
-        return JSON.parse(Buffer.from(value, 'base64').toString('utf-8'));
-      },
-      to(value: any): any {
-        return value;
-      }
-    }
-  })
+  @Column()
   @ApiProperty({
     name: 'value',
     type: String,
@@ -53,14 +45,14 @@ export class CredentialEntity {
   @RelationId((credential: CredentialEntity) => credential.plugin)
   pluginId: PluginEntity['id'];
 
-  @BeforeInsert()
-  beforeInsert() {
-    Logger.debug(`BeforeInsert : ${this.value.toString()}`, 'CredentialEntity');
-    this.value = Buffer.from(JSON.stringify(this.value)).toString('base64');
-  }
+  // @BeforeInsert()
+  // beforeInsert() {
+  //   Logger.debug(`BeforeInsert : ${this.value.toString()}`, 'CredentialEntity');
+  //   this.value = Buffer.from(JSON.stringify(this.value)).toString('base64');
+  // }
 
-  @AfterInsert()
-  afterInsert() {
-    Logger.debug(`AfterInsert : ${this.value}`, 'CredentialEntity');
-  }
+  // @AfterInsert()
+  // afterInsert() {
+  //   Logger.debug(`AfterInsert : ${this.value}`, 'CredentialEntity');
+  // }
 }

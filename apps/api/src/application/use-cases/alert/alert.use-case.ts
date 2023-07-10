@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 
 import { AlertRepository } from '../../../domain/interfaces/repository/alert.repository';
 import { Alert, MetricThresholdOperator } from '../../../domain/models/alert.model';
@@ -13,12 +13,17 @@ export class AlertUseCase {
     return this.alertRepository.createAlert(alert);
   }
 
-  async checkContiditionAndNotify(metricData: any, condition: Alert['condition']): Promise<void> {
-    const { field, operator, threshold } = condition;
+  async checkContiditionAndNotify(metricData: unknown, alert: AlertEntity): Promise<void> {
+    const { field, operator, threshold } = alert.condition;
     const isConditionMet = this.checkConditionThreshold(metricData[field], operator, threshold);
-    if (isConditionMet) {
-      console.log('condition met, notify', metricData, condition);
-      // this.alertService.notify();
+    if (!isConditionMet && alert.triggered) {
+      Logger.log("L'alerte passe sous le seuil", this.constructor.name);
+      return this.alertRepository.updateAlert(alert.id, { triggered: false });
+    }
+
+    if (isConditionMet && !alert.triggered) {
+      Logger.warn('La condition est remplie, on doit notifier', this.constructor.name);
+      return this.alertRepository.updateAlert(alert.id, { triggered: true });
     }
   }
 

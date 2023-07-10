@@ -32,7 +32,7 @@ export class CredentialRepositoryImpl extends BaseRepository<CredentialEntity> i
 
   findCrendentialByPluginId(pluginId: string): Promise<CredentialEntity> {
     return this.findOneOrFail({
-      where: { pluginId: pluginId },
+      where: { plugin: { id: pluginId } },
       relations: { plugin: true }
     });
   }

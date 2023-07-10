@@ -15,22 +15,23 @@ export class ApiMonitoringService {
       const response: AxiosResponse = await axios.get(url);
       const end = Date.now();
       const responseTime = end - start;
-      Logger.log(`Api health check for ${url} took ${responseTime}ms with status ${response.status}`, 'ApiMonitoringService');
+      Logger.log(`Ping to "${url}" took ${responseTime}ms with status ${response.status}`, 'ApiMonitoringService');
 
       return {
         status: response.status,
         value: responseTime,
         unit: 'ms',
-        details: response.headers
+        details: `Api responded with status ${response.status} in ${responseTime}ms`
       };
     } catch (error) {
       const end = Date.now();
       const responseTime = end - start;
+      Logger.log(`Ping to "${url}" took ${responseTime}ms with status ${(error as AxiosError)?.response?.status}`, 'ApiMonitoringService');
       return {
         status: (error as AxiosError)?.response?.status || 500,
         value: responseTime,
         unit: 'ms',
-        details: (error as Error)?.message || `Unreachable endpoint ${url}`
+        details: `Api responded with status ${(error as AxiosError)?.response?.status || 500} in ${responseTime}ms`
       };
     }
   }
