@@ -1,28 +1,27 @@
-import { ApiMonitoringModule, ApiMonitoringService } from '@metrikube/api-monitoring';
-import { AWSService, AwsPluginModule } from '@metrikube/aws-plugin';
+import { ApiMonitoringModule } from '@metrikube/api-monitoring'
+import { AWSService, AwsPluginModule } from '@metrikube/aws-plugin'
 
-import { Module } from '@nestjs/common';
+import { Module } from '@nestjs/common'
 
-import { CredentialRepositoryImpl } from '../infrastructure/database/repositories/credential.repository';
-import { PluginRepositoryImpl } from '../infrastructure/database/repositories/plugin.repository';
-import { InfrastructureModule } from '../infrastructure/infrastructure.module';
+import { AlertRepositoryImpl } from '../infrastructure/database/repositories/alert.repository'
+import { CredentialRepositoryImpl } from '../infrastructure/database/repositories/credential.repository'
+import { MetricRepositoryImpl } from '../infrastructure/database/repositories/metric.repository'
+import { PluginRepositoryImpl } from '../infrastructure/database/repositories/plugin.repository'
+import { InfrastructureModule } from '../infrastructure/infrastructure.module'
+import { NotificationAdapter } from '../infrastructure/notification/notification.adapter'
+import { AlertUseCase } from './use-cases/alert/alert.use-case'
 
 @Module({
   imports: [InfrastructureModule, AwsPluginModule, ApiMonitoringModule],
   providers: [
-    {
-      provide: 'PLUGIN_REPOSITORY',
-      useClass: PluginRepositoryImpl
-    },
-    {
-      provide: 'CREDENTIAL_REPOSITORY',
-      useClass: CredentialRepositoryImpl
-    },
-    {
-      provide: 'AWS_PLUGIN',
-      useClass: AWSService
-    }
+    { provide: 'ALERT_REPOSITORY', useClass: AlertRepositoryImpl },
+    { provide: 'ALERT_USE_CASE', useClass: AlertUseCase },
+    { provide: 'AWS_PLUGIN', useClass: AWSService },
+    { provide: 'CREDENTIAL_REPOSITORY', useClass: CredentialRepositoryImpl },
+    { provide: 'PLUGIN_REPOSITORY', useClass: PluginRepositoryImpl },
+    { provide: 'METRIC_REPOSITORY', useClass: MetricRepositoryImpl },
+    { provide: 'MAILER', useClass: NotificationAdapter }
   ],
-  exports: ['PLUGIN_REPOSITORY']
+  exports: ['PLUGIN_REPOSITORY', 'ALERT_REPOSITORY', 'CREDENTIAL_REPOSITORY', 'AWS_PLUGIN', 'PLUGIN_REPOSITORY', 'ALERT_USE_CASE', 'METRIC_REPOSITORY']
 })
 export class UseCaseModule {}

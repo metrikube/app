@@ -3,7 +3,7 @@ import { Metric } from './metric.model';
 
 export type Plugin = {
   readonly id: string; // UUID
-  readonly type: string; // PluginType
+  readonly type: string; // PluginType  // aws | gcp | azure | ...
   readonly name: string;
   readonly description: string;
   readonly instruction: string;

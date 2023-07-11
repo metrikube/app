@@ -22,9 +22,9 @@ export interface MetricRepository {
    */
   findById(criterias: FindOptionsWhere<MetricEntity>): Promise<MetricEntity>;
 
-  /**
-   * Activate widget with plugin
-   * @param payload
-   */
-  activateWidget(pluginId: string, payload: { active: boolean }): Promise<MetricEntity>;
+  // /**
+  //  * Activate widget with plugin
+  //  * @param payload
+  //  */
+  // activateWidget(pluginId: string, payload: { active: boolean }): Promise<MetricEntity>;
 }
