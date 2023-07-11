@@ -10,6 +10,7 @@ export type Plugin = {
   readonly category: string; // cloud | database | versioning
   readonly metrics?: Metric[];
   readonly createdAt: Date;
+  readonly credential?: Credential;
 };
 
 // const provider: Plugin = {

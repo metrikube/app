@@ -1,13 +1,14 @@
-import { CostExplorerClient, GetCostAndUsageCommand, GetCostAndUsageCommandInput, Group } from '@aws-sdk/client-cost-explorer'
-import { AwsCredentialIdentityProvider } from '@aws-sdk/types'
+import { CostExplorerClient, GetCostAndUsageCommand, GetCostAndUsageCommandInput, Group } from '@aws-sdk/client-cost-explorer';
+import { AwsCredentialIdentityProvider } from '@aws-sdk/types';
 
 export class CostExplorerService {
-  private readonly client: CostExplorerClient
+  private readonly client: CostExplorerClient;
+
   constructor(credentials: AwsCredentialIdentityProvider) {
     this.client = new CostExplorerClient({
       region: 'us-east-1',
       credentials: credentials
-    })
+    });
   }
 
   async getCosts(
@@ -26,14 +27,14 @@ export class CostExplorerService {
       ]
     }
   ) {
-    const command = new GetCostAndUsageCommand(params)
+    const command = new GetCostAndUsageCommand(params);
 
     try {
-      const response = await this.client.send(command)
-      return response
+      const response = await this.client.send(command);
+      return response;
     } catch (error) {
-      console.error('Error fetching costs:', error)
-      throw error
+      console.error('Error fetching costs:', error);
+      throw error;
     }
   }
 
@@ -55,26 +56,26 @@ export class CostExplorerService {
           Type: 'DIMENSION'
         }
       ]
-    }
+    };
 
-    const command = new GetCostAndUsageCommand(params)
-    const response = await this.client.send(command)
+    const command = new GetCostAndUsageCommand(params);
+    const response = await this.client.send(command);
 
     if (!response?.ResultsByTime?.[0]?.Groups || response?.ResultsByTime?.[0]?.Groups?.length === 0) {
-      return []
+      return [];
     }
 
     return response?.ResultsByTime?.[0]?.Groups?.map((group: Group) => {
-      const serviceName = group?.Keys?.[0]
-      const totalCost = group?.Metrics?.['UnblendedCost']?.Amount
-      const currency = group?.Metrics?.['UnblendedCost']?.Unit
+      const serviceName = group?.Keys?.[0];
+      const totalCost = group?.Metrics?.['UnblendedCost']?.Amount;
+      const currency = group?.Metrics?.['UnblendedCost']?.Unit;
 
       return {
         serviceName,
         totalCost,
         currency
-      }
-    })
+      };
+    });
   }
 
   /**
@@ -98,18 +99,18 @@ export class CostExplorerService {
           }
         },
         Metrics: ['UnblendedCost']
-      }
-      const command = new GetCostAndUsageCommand(params)
-      const response = await this.client.send(command)
-      const currentCost = response?.ResultsByTime?.[0]?.Total?.['UnblendedCost']?.Amount
-      const currency = response?.ResultsByTime?.[0]?.Total?.['UnblendedCost']?.Unit
+      };
+      const command = new GetCostAndUsageCommand(params);
+      const response = await this.client.send(command);
+      const currentCost = response?.ResultsByTime?.[0]?.Total?.['UnblendedCost']?.Amount;
+      const currency = response?.ResultsByTime?.[0]?.Total?.['UnblendedCost']?.Unit;
       return {
         currentCost,
         currency
-      }
+      };
     } catch (error) {
-      console.error('Error fetching instance costs:', error)
-      throw error
+      console.error('Error fetching instance costs:', error);
+      throw error;
     }
   }
 }
