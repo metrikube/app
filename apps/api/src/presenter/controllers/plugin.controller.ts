@@ -1,8 +1,8 @@
-import { ApiMonitoringService } from '@metrikube/api-monitoring';
-import { MetricType, PluginResult } from '@metrikube/common';
+import { ApiMonitoringService } from '@metrikube/api-monitoring'
+import { MetricType, PluginResult } from '@metrikube/common'
 
-import { Controller, Get, Inject, Param } from '@nestjs/common';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Controller, Get, Inject, Param } from '@nestjs/common'
+import { ApiOperation, ApiTags } from '@nestjs/swagger'
 
 @ApiTags('plugin')
 @Controller('plugin')
@@ -17,6 +17,6 @@ export class PluginController {
     // Todo : return the data
     return this.apiMonitoring.apiHealthCheck({
       apiEndpoint: 'https://jsonplaceholder.typicode.com/users'
-    });
+    })
   }
 }

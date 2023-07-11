@@ -1,12 +1,12 @@
-import { AWSService } from '@metrikube/aws-plugin';
+import { AWSService } from '@metrikube/aws-plugin'
 
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common'
 
-import { CredentialRepository } from '../../../domain/interfaces/repository/credential.repository';
-import { PluginRepository } from '../../../domain/interfaces/repository/plugin.repository';
-import { PluginUseCaseInterface } from '../../../domain/interfaces/use-cases/plugin.use-case.interface';
-import { Plugin } from '../../../domain/models/plugin.model';
-import { PluginEntity } from '../../../infrastructure/database/entities/plugin.entity';
+import { CredentialRepository } from '../../../domain/interfaces/repository/credential.repository'
+import { PluginRepository } from '../../../domain/interfaces/repository/plugin.repository'
+import { PluginUseCaseInterface } from '../../../domain/interfaces/use-cases/plugin.use-case.interface'
+import { Plugin } from '../../../domain/models/plugin.model'
+import { PluginEntity } from '../../../infrastructure/database/entities/plugin.entity'
 
 @Injectable()
 export class PluginUseCase implements PluginUseCaseInterface {
@@ -17,14 +17,14 @@ export class PluginUseCase implements PluginUseCaseInterface {
   ) {}
 
   getPlugins(): Promise<PluginEntity[]> {
-    return this.pluginRepository.getPlugins();
+    return this.pluginRepository.getPlugins()
   }
 
   async create(plugin: Plugin): Promise<PluginEntity> {
-    return this.pluginRepository.createPlugin(plugin);
+    return this.pluginRepository.createPlugin(plugin)
   }
 
   getAWSPlugin() {
-    return this.AWSService;
+    return this.AWSService
   }
 }

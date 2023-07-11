@@ -1,12 +1,12 @@
-import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { Module } from '@nestjs/common'
+import { TypeOrmModule } from '@nestjs/typeorm'
 
-import { AlertEntity } from '../../database/entities/alert.entity';
-import { CredentialEntity } from '../../database/entities/credential.entity';
-import { MetricEntity } from '../../database/entities/metric.entity';
-import { PluginEntity } from '../../database/entities/plugin.entity';
+import { AlertEntity } from '../../database/entities/alert.entity'
+import { CredentialEntity } from '../../database/entities/credential.entity'
+import { MetricEntity } from '../../database/entities/metric.entity'
+import { PluginEntity } from '../../database/entities/plugin.entity'
 
-const entities = [PluginEntity, CredentialEntity, MetricEntity, AlertEntity];
+const entities = [PluginEntity, CredentialEntity, MetricEntity, AlertEntity]
 
 @Module({
   imports: [

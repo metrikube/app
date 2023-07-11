@@ -8,4 +8,4 @@ export type MetricType =
   | 'database_queries'
   | 'database_size'
   | 'database_connections'
-  | 'database_slow_queries';
+  | 'database_slow_queries'

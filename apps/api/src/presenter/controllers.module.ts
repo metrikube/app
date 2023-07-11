@@ -1,16 +1,15 @@
-import { ApiMonitoringService } from '@metrikube/api-monitoring';
-import { AWSService } from '@metrikube/aws-plugin';
+import { ApiMonitoringService } from '@metrikube/api-monitoring'
+import { AWSService } from '@metrikube/aws-plugin'
 
-import { Module } from '@nestjs/common';
+import { Module } from '@nestjs/common'
 
-import { UseCaseModule } from '../application/use-case.module';
-import { PluginUseCase } from '../application/use-cases/plugin/plugin.use-case';
-import { CredentialUseCase } from '../application/use-cases/credential.use-case';
-import { CredentialRepositoryImpl } from '../infrastructure/database/repositories/credential.repository';
-import { PluginRepositoryImpl } from '../infrastructure/database/repositories/plugin.repository';
-import { AppController } from './controllers/app.controller';
-import { PluginController } from './controllers/plugin.controller';
-
+import { UseCaseModule } from '../application/use-case.module'
+import { CredentialUseCase } from '../application/use-cases/credential.use-case'
+import { PluginUseCase } from '../application/use-cases/plugin/plugin.use-case'
+import { CredentialRepositoryImpl } from '../infrastructure/database/repositories/credential.repository'
+import { PluginRepositoryImpl } from '../infrastructure/database/repositories/plugin.repository'
+import { AppController } from './controllers/app.controller'
+import { PluginController } from './controllers/plugin.controller'
 
 @Module({
   imports: [UseCaseModule],

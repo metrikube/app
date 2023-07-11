@@ -1,13 +1,13 @@
-import { Column, CreateDateColumn, Entity, Generated, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, Generated, PrimaryGeneratedColumn } from 'typeorm'
 
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger'
 
 @Entity('alert')
 export class AlertEntity {
   @Generated('uuid')
   @PrimaryGeneratedColumn('uuid')
   @ApiProperty({ name: 'id', type: String, description: 'Alert id', example: 'fab8f183-7021-4a42-b429-447ee7415b93' })
-  id: string;
+  id: string
 
   @Column()
   @ApiProperty({
@@ -16,7 +16,7 @@ export class AlertEntity {
     description: 'Alert label',
     example: 'EC2 Instance usage alert when cost is greater than 100$'
   })
-  label: string;
+  label: string
 
   @ApiProperty({
     name: 'triggered',
@@ -25,7 +25,7 @@ export class AlertEntity {
     example: false
   })
   @Column()
-  triggered: boolean;
+  triggered: boolean
 
   @ApiProperty({
     name: 'condition',
@@ -34,10 +34,10 @@ export class AlertEntity {
   })
   @Column({ type: 'json' })
   condition: {
-    field: string;
-    operator: string;
-    value: number;
-  };
+    field: string
+    operator: string
+    value: number
+  }
 
   @CreateDateColumn()
   @ApiProperty({
@@ -46,5 +46,5 @@ export class AlertEntity {
     description: 'Plugin creation date',
     example: '2023-01-01T00:00:00.000Z'
   })
-  createdAt: Date;
+  createdAt: Date
 }

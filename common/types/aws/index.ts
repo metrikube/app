@@ -1,3 +1,1 @@
-export type AnyType = {
-  id: string;
-};
+export type AWSServiceType = 'co' | 'ec2';
