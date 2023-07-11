@@ -1,62 +1,4 @@
-// export class CostExplorerService {
-//   protected readonly client: AWS.CostExplorer;
-//   constructor() {
-//     // set the region to us-east-1 because cost explorer is global
-//     this.client = new AWS.CostExplorer({ region: 'us-east-1', apiVersion: '2017-10-25' });
-//   }
-//   async formatCosts(costs: AWS.CostExplorer.GetCostAndUsageResponse): Promise<{ [service: string]: number }> {
-//     const results: { [service: string]: number } = {};
-//     if (costs.ResultsByTime && costs.ResultsByTime.length > 0) {
-//       const firstResult = costs.ResultsByTime[0];
-//       if (firstResult.Groups && firstResult.Groups.length > 0) {
-//         const serviceGroup = firstResult.Groups[0];
-//         const metrics = serviceGroup.Metrics;
-//         for (const metricKey in metrics) {
-//           if (Object.prototype.hasOwnProperty.call(metrics, metricKey)) {
-//             const metricValue = metrics[metricKey].Amount;
-//             if (typeof metricValue === 'string') {
-//               const parsedValue = parseFloat(metricValue);
-//               if (!isNaN(parsedValue)) {
-//                 results[metricKey] = parsedValue;
-//               }
-//             }
-//           }
-//         }
-//       }
-//     }
-//     return results;
-//   }
-//   async getCosts(params: ICostExplorerParams): Promise<AWS.CostExplorer.GetCostAndUsageResponse> {
-//     try {
-//       const currentDateTime = new Date();
-//       const currentDay = currentDateTime.getDate().toLocaleString(undefined, { minimumIntegerDigits: 2 });
-//       const currentMonth = (currentDateTime.getMonth() + 1).toLocaleString(undefined, { minimumIntegerDigits: 2 });
-//       const currentYear = currentDateTime.getFullYear();
-//       const defaultTimePeriod = {
-//         Start: `${currentYear}-${currentMonth}-01`,
-//         End: `${currentYear}-${currentMonth}-${currentDay}`,
-//       };
-//       console.log('defaultTimePeriod :', defaultTimePeriod);
-//       const costExplorerParams: AWS.CostExplorer.GetCostAndUsageRequest = {
-//         TimePeriod: params?.timePeriod ? params.timePeriod : defaultTimePeriod,
-//         Metrics: params?.metrics ? params.metrics : ['BlendedCost', 'UsageQuantity'],
-//         Granularity: 'MONTHLY',
-//         GroupBy: [
-//           { Type: 'DIMENSION', Key: 'SERVICE' },
-//           { Type: 'DIMENSION', Key: 'REGION' },
-//         ],
-//       };
-//       const costs = await this.client.getCostAndUsage(costExplorerParams).promise();
-//       const formattedCosts = await this.formatCosts(costs);
-//       console.log('formattedCosts :', formattedCosts);
-//       return costs;
-//     } catch (error) {
-//       console.error('Error fetching costs :', error);
-//       throw error;
-//     }
-//   }
-// }
-import { CostExplorerClient, GetCostAndUsageCommand, GetCostAndUsageCommandInput } from '@aws-sdk/client-cost-explorer';
+import { CostExplorerClient, GetCostAndUsageCommand, GetCostAndUsageCommandInput, Group } from '@aws-sdk/client-cost-explorer';
 import { AwsCredentialIdentityProvider } from '@aws-sdk/types';
 
 export class CostExplorerService {
@@ -67,14 +9,17 @@ export class CostExplorerService {
       credentials: credentials,
     });
   }
+
   async getCosts(
     params: GetCostAndUsageCommandInput = {
       TimePeriod: {
-        Start: '2023-06-01',
-        End: '2023-06-30',
+        // Get the first day of the current month in the format of YYYY-MM (e.g. 2021-01)
+        Start: new Date().toISOString().split('T')[0].slice(0, -2) + '01',
+        // Get the current date in the format of YYYY-MM-DD (e.g. 2021-01-31)
+        End: new Date().toISOString().split('T')[0],
       },
       Granularity: 'MONTHLY',
-      Metrics: ['BlendedCost'],
+      Metrics: ['UnblendedCost'],
       GroupBy: [
         { Type: 'DIMENSION', Key: 'SERVICE' },
         { Type: 'DIMENSION', Key: 'REGION' },
@@ -88,6 +33,82 @@ export class CostExplorerService {
       return response;
     } catch (error) {
       console.error('Error fetching costs:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Get the total cost for all services
+   * @returns
+   */
+  async getServicesCosts(): Promise<any[]> {
+    const params = {
+      TimePeriod: {
+        Start: new Date().toISOString().split('T')[0].slice(0, -2) + '01',
+        End: new Date().toISOString().split('T')[0],
+      },
+      Granularity: 'MONTHLY',
+      Metrics: ['UnblendedCost'],
+      GroupBy: [
+        {
+          Key: 'SERVICE',
+          Type: 'DIMENSION',
+        },
+      ],
+    };
+
+    const command = new GetCostAndUsageCommand(params);
+    const response = await this.client.send(command);
+
+    if (!response?.ResultsByTime?.[0]?.Groups || response?.ResultsByTime?.[0]?.Groups?.length === 0) {
+      return [];
+    }
+
+    return response?.ResultsByTime?.[0]?.Groups?.map((group: Group) => {
+      const serviceName = group?.Keys?.[0];
+      const totalCost = group?.Metrics?.['UnblendedCost']?.Amount;
+      const currency = group?.Metrics?.['UnblendedCost']?.Unit;
+
+      return {
+        serviceName,
+        totalCost,
+        currency,
+      };
+    });
+  }
+
+  /**
+   * Retrieve instance costs for EC2 instances
+   * @param instanceId
+   * @param param1
+   * @returns
+   */
+  async getInstanceCost(instanceId: string, { startDate, endDate }: { startDate: string; endDate: string }) {
+    try {
+      const params: GetCostAndUsageCommandInput = {
+        Granularity: 'MONTHLY',
+        TimePeriod: {
+          Start: startDate,
+          End: endDate,
+        },
+        Filter: {
+          Tags: {
+            Key: 'InstanceId',
+            Values: [instanceId],
+          },
+        },
+        Metrics: ['UnblendedCost'],
+      };
+      const command = new GetCostAndUsageCommand(params);
+      const response = await this.client.send(command);
+      const currentCost = response?.ResultsByTime?.[0]?.Total?.['UnblendedCost']?.Amount;
+      const currency = response?.ResultsByTime?.[0]?.Total?.['UnblendedCost']?.Unit;
+      return {
+        currentCost,
+        currency,
+      };
+    } catch (error) {
+      console.error('Error fetching instance costs:', error);
       throw error;
     }
   }

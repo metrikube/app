@@ -1,4 +1,1 @@
-export type ICostExplorerParams = {
-  timePeriod?: AWS.CostExplorer.DateInterval;
-  metrics?: AWS.CostExplorer.MetricName[];
-};
+export type AWSServiceType = 'co' | 'ec2';
