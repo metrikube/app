@@ -1,6 +1,8 @@
-import { Plugin } from '../../../infrastructure/database/entities/plugin.entity';
+import { PluginEntity } from '../../../infrastructure/database/entities/plugin.entity'
+import { Plugin } from '../../models/plugin.model'
 
 export interface PluginRepository {
-  getPlugins(): Promise<Plugin[]>;
-  createPlugin(plugin: Plugin): Promise<Plugin>;
+  getPlugins(): Promise<PluginEntity[]>
+
+  createPlugin(plugin: Plugin): Promise<PluginEntity>
 }
