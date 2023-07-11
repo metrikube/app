@@ -1,5 +1,4 @@
-import { DataSource, FindManyOptions, FindOptionsWhere } from 'typeorm'
-import { FindOneOptions } from 'typeorm/find-options/FindOneOptions'
+import { DataSource, FindManyOptions, FindOneOptions, FindOptionsWhere } from 'typeorm'
 
 import { Injectable } from '@nestjs/common'
 import { InjectDataSource } from '@nestjs/typeorm'

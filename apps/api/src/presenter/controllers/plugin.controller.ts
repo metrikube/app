@@ -1,10 +1,10 @@
-import { ApiMonitoringService } from '@metrikube/api-monitoring';
-import { MetricType, PluginResult } from '@metrikube/common';
+import { ApiMonitoringService } from '@metrikube/api-monitoring'
+import { MetricType, PluginResult } from '@metrikube/common'
 
-import { Controller, Get, Inject, Param } from '@nestjs/common';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Controller, Get, Inject, Param } from '@nestjs/common'
+import { ApiOperation, ApiTags } from '@nestjs/swagger'
 
-import { PluginUseCaseInterface } from '../../domain/interfaces/use-cases/plugin.use-case.interface';
+import { PluginUseCaseInterface } from '../../domain/interfaces/use-cases/plugin.use-case.interface'
 
 // prettier-ignore
 @ApiTags('plugin')
@@ -21,12 +21,6 @@ export class PluginController {
     @Param('id') pluginId: string,
     @Param('metricType') metricType: string
   ): Promise<PluginResult<MetricType>> {
-    // Todo : get the data and credentials for this plugin from the database
-    // Todo : call the plugin service to get the data
-    // Todo : return the data
     return this.pluginUseCase.refreshPluginMetric(pluginId, metricType);
-    // return this.apiMonitoring.apiHealthCheck({
-    //   apiEndpoint: 'https://httpstat.us/503'
-    // });
   }
 }

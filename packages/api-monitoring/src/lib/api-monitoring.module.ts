@@ -1,8 +1,8 @@
-import axios from 'axios';
+import axios from 'axios'
 
-import { Module } from '@nestjs/common';
+import { Module } from '@nestjs/common'
 
-import { ApiMonitoringService } from './api-monitoring.service';
+import { ApiMonitoringService } from './api-monitoring.service'
 
 @Module({
   controllers: [],
