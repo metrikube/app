@@ -11,9 +11,6 @@ export class CredentialUseCase implements CredentialUseCaseInterface {
   constructor(@Inject('CREDENTIAL_REPOSITORY') private readonly credentialRepository: CredentialRepository) {}
 
   async insertCredentialForPlugin(pluginId: Plugin['id'], paylad: Credential): Promise<CredentialEntity> {
-    return this.credentialRepository.createCredential({
-      pluginId,
-      ...paylad
-    });
+    return this.credentialRepository.createCredential({ pluginId, ...paylad });
   }
 }

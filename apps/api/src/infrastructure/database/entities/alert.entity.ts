@@ -3,7 +3,7 @@ import { Column, CreateDateColumn, Entity, Generated, JoinColumn, ManyToOne, One
 import { ApiProperty } from '@nestjs/swagger';
 
 import { MetricThresholdOperator } from '../../../domain/models/alert.model';
-import { MetricEntity } from './metric.entity';
+import { PluginToMetricEntity } from './plugin_to_metric.entity';
 
 @Entity('alert')
 export class AlertEntity {
@@ -35,11 +35,11 @@ export class AlertEntity {
   })
   triggered: boolean;
 
-  @ManyToOne(() => MetricEntity, (metric) => metric.alerts)
-  metric: MetricEntity;
+  @ManyToOne(() => PluginToMetricEntity, (pluginToMetric: PluginToMetricEntity) => pluginToMetric.metric)
+  pluginToMetric: PluginToMetricEntity;
 
-  @RelationId((alert: AlertEntity) => alert.metric)
-  metricId: MetricEntity['id'];
+  @RelationId((alert: AlertEntity) => alert.pluginToMetric)
+  pluginToMetricId: PluginToMetricEntity['id'];
 
   @Column({ type: 'json' })
   @ApiProperty({

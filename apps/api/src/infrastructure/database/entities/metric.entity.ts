@@ -1,8 +1,7 @@
-import { Column, CreateDateColumn, Entity, Generated, JoinColumn, OneToMany, OneToOne, PrimaryColumn, RelationId } from 'typeorm';
+import { Column, CreateDateColumn, Entity, Generated, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryColumn, RelationId } from 'typeorm';
 
 import { ApiProperty } from '@nestjs/swagger';
 
-import { AlertEntity } from './alert.entity';
 import { PluginEntity } from './plugin.entity';
 import { PluginToMetricEntity } from './plugin_to_metric.entity';
 
@@ -19,35 +18,17 @@ export class MetricEntity {
   id: string;
 
   @JoinColumn()
-  @OneToOne(() => PluginEntity, (plugin: PluginEntity) => plugin.id)
-  @ApiProperty({
-    name: 'plugin',
-    type: PluginEntity,
-    isArray: true,
-    description: 'Metric plugins'
-  })
+  @ManyToOne(() => PluginEntity, (plugin: PluginEntity) => plugin.id)
+  @ApiProperty({ name: 'plugin', type: PluginEntity, description: 'Metric plugins' })
   plugin: PluginEntity;
 
+  // @Column({ type: 'uuid', nullable: false })
   @RelationId((metric: MetricEntity) => metric.plugin)
-  @ApiProperty({
-    name: 'pluginId',
-    type: String,
-    description: 'Metric plugin id',
-    example: 'fab8f183-7021-4a42-b429-447ee7415b93'
-  })
+  @ApiProperty({ name: 'pluginId', type: String, description: 'Metric plugin id', example: 'fab8f183-7021-4a42-b429-447ee7415b93' })
   pluginId: PluginEntity['id'];
 
-  @JoinColumn()
-  @OneToMany(() => AlertEntity, (alert: AlertEntity) => alert.metric)
-  alerts: AlertEntity[];
-
   @Column()
-  @ApiProperty({
-    name: 'type',
-    type: String,
-    description: 'Metric type',
-    example: 'aws_single_instance_cost'
-  })
+  @ApiProperty({ name: 'type', type: String, description: 'Metric type', example: 'aws_single_instance_cost' })
   type: string;
 
   @Column()
@@ -59,8 +40,17 @@ export class MetricEntity {
   })
   name: string;
 
-  @OneToMany(() => PluginToMetricEntity, (pluginToMetric: PluginToMetricEntity) => pluginToMetric.metric)
+  @Column({ name: 'refreshInterval', type: 'int', default: 60, nullable: false })
+  @ApiProperty({
+    name: 'refreshInterval',
+    type: Number,
+    description: 'Metric refresh interval in seconds',
+    example: 60
+  })
+  refreshInterval: number;
+
   @JoinColumn()
+  @OneToMany(() => PluginToMetricEntity, (pluginToMetric: PluginToMetricEntity) => pluginToMetric.metric)
   @ApiProperty({
     name: 'pluginToMetrics',
     type: PluginToMetricEntity,
@@ -68,6 +58,16 @@ export class MetricEntity {
     description: 'Plugin available metrics'
   })
   pluginToMetrics: PluginToMetricEntity[];
+
+  @Column({ name: 'isNotifiable', type: 'boolean', default: false, nullable: false })
+  @ApiProperty({
+    name: 'isNotifiable',
+    type: Boolean,
+    default: false,
+    description: 'Metric is notifiable',
+    example: false
+  })
+  isNotifiable: boolean;
 
   @CreateDateColumn()
   @ApiProperty({

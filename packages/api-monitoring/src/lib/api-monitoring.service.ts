@@ -8,7 +8,7 @@ import { Injectable, Logger } from '@nestjs/common';
 export class ApiMonitoringService {
   constructor() {}
 
-  async apiHealthCheck({ apiEndpoint: url }: ApiEndpointCredentialType): Promise<PluginResult<'api_endpoint_health_check'>> {
+  async apiHealthCheck({ apiEndpoint: url }: ApiEndpointCredentialType): Promise<PluginResult<'api-endpoint-health-check'>> {
     const start = Date.now();
     Logger.log(`Api health check for ${url}`, 'ApiMonitoringService');
     try {
