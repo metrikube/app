@@ -1,3 +1,4 @@
+import { MetricType } from '@metrikube/common';
 import { FindManyOptions, FindOptionsWhere } from 'typeorm';
 
 import { MetricEntity } from '../../../infrastructure/database/entities/metric.entity';
@@ -27,4 +28,7 @@ export interface MetricRepository {
   //  * @param payload
   //  */
   // activateWidget(pluginId: string, payload: { active: boolean }): Promise<MetricEntity>;
+  // async;
+
+  findMetricByType(pluginId: string, metricType: MetricType): Promise<MetricEntity>;
 }

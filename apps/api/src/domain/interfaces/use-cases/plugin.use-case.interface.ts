@@ -1,18 +1,18 @@
-import { AWSService } from '@metrikube/aws-plugin'
-import { MetricType, PluginResult } from '@metrikube/common'
+import { AWSService } from '@metrikube/aws-plugin';
+import { MetricType, PluginResult } from '@metrikube/common';
 
-import { CredentialEntity } from '../../../infrastructure/database/entities/credential.entity'
-import { PluginEntity } from '../../../infrastructure/database/entities/plugin.entity'
-import { Plugin } from '../../models/plugin.model'
+import { CredentialEntity } from '../../../infrastructure/database/entities/credential.entity';
+import { PluginEntity } from '../../../infrastructure/database/entities/plugin.entity';
+import { Plugin } from '../../models/plugin.model';
 
 export interface PluginUseCaseInterface {
-  create(plugin: Plugin): Promise<PluginEntity>
+  create(plugin: Plugin): Promise<PluginEntity>;
 
-  getAWSPlugin(): AWSService
+  getAWSPlugin(): AWSService;
 
-  getPluginCredentials(pluginId: string): Promise<CredentialEntity>
+  getPluginCredentials(pluginId: string): Promise<CredentialEntity>;
 
-  getPlugins(): Promise<PluginEntity[]>
+  getPlugins(): Promise<Plugin[]>;
 
-  refreshPluginMetric(pluginId: string, metric: string): PluginResult<MetricType>
+  refreshPluginMetric(pluginId: string, metric: string): PluginResult<MetricType>;
 }
