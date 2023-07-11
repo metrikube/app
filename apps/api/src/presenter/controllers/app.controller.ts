@@ -46,6 +46,11 @@ export class AppController {
     return this.credentialUseCase.dbCreateConnection(payload);
   }
 
+  @Get('db-plugin/get-data')
+  dbGetData(): any {
+    return this.credentialUseCase.getDataDb();
+  }
+
   // @Get('/aws/cost-explorer')
   // getCosts(@Query('start') start: string, @Query('end') end: string, @Query('metrics') metrics: string[]): Promise<AWS.CostExplorer.GetCostAndUsageResponse> {
   //   const params: ICostExplorerParams = {
