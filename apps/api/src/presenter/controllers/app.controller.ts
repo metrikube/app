@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Inject, Post } from '@nestjs/common'
+import { Body, Controller, Get, HttpCode, HttpStatus, Inject, Post, Query } from '@nestjs/common'
 import { ApiOperation } from '@nestjs/swagger'
 
 import { AWSServiceType } from '../../../../../common/types/aws'

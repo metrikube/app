@@ -1,10 +1,10 @@
-// import { ICostExplorerParams } from 'common';
-import { AWSService } from '@metrikube/aws-plugin';
+import { AWSService } from '@metrikube/aws-plugin'
 
-import { Plugin } from '../../../infrastructure/database/entities/plugin.entity';
+import { PluginEntity } from '../../../infrastructure/database/entities/plugin.entity'
+import { Plugin } from '../../models/plugin.model'
 
 export interface PluginUseCaseInterface {
-  getPlugins(): Promise<Plugin[]>;
-  getAWSPlugin(): AWSService;
-  create(plugin: Plugin): Promise<Plugin>;
+  getPlugins(): Promise<PluginEntity[]>
+  getAWSPlugin(): AWSService
+  create(plugin: Plugin): Promise<PluginEntity>
 }
