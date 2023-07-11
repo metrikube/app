@@ -1,3 +1,4 @@
+import { GenericCredentialType } from '@metrikube/common'
 import { AfterInsert, BeforeInsert, Column, Entity, Generated, JoinColumn, ManyToOne, PrimaryGeneratedColumn, RelationId } from 'typeorm'
 
 import { Logger } from '@nestjs/common'
@@ -9,7 +10,12 @@ import { PluginEntity } from './plugin.entity'
 export class CredentialEntity {
   @Generated('uuid')
   @PrimaryGeneratedColumn('uuid')
-  @ApiProperty({ name: 'id', type: String, description: 'Credential id', example: 'fab8f183-7021-4a42-b429-447ee7415b93' })
+  @ApiProperty({
+    name: 'id',
+    type: String,
+    description: 'Credential id',
+    example: 'fab8f183-7021-4a42-b429-447ee7415b93'
+  })
   id: string
 
   @Column()
@@ -19,15 +25,15 @@ export class CredentialEntity {
     description: 'Credential value type',
     example: 'apiKey'
   })
-  type: string
+  type: string // CredentialType;
 
-  @Column({ type: 'json' })
+  @Column()
   @ApiProperty({
     name: 'value',
     type: String,
     description: 'base64 encoded credential value { key: value }'
   })
-  value: any
+  value: string
 
   @JoinColumn()
   @ManyToOne(() => PluginEntity, (plugin: PluginEntity) => plugin.id, {
@@ -39,14 +45,14 @@ export class CredentialEntity {
   @RelationId((credential: CredentialEntity) => credential.plugin)
   pluginId: PluginEntity['id']
 
-  @BeforeInsert()
-  beforeInsert() {
-    Logger.debug(`BeforeInsert : ${this.value.toString()}`, 'CredentialEntity')
-    this.value = Buffer.from(JSON.stringify(this.value)).toString('base64')
-  }
+  // @BeforeInsert()
+  // beforeInsert() {
+  //   Logger.debug(`BeforeInsert : ${this.value.toString()}`, 'CredentialEntity');
+  //   this.value = Buffer.from(JSON.stringify(this.value)).toString('base64');
+  // }
 
-  @AfterInsert()
-  afterInsert() {
-    Logger.debug(`AfterInsert : ${this.value}`, 'CredentialEntity')
-  }
+  // @AfterInsert()
+  // afterInsert() {
+  //   Logger.debug(`AfterInsert : ${this.value}`, 'CredentialEntity');
+  // }
 }

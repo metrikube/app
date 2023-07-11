@@ -1,4 +1,4 @@
-import { DataSource, FindManyOptions, FindOptionsWhere } from 'typeorm'
+import { DataSource, FindManyOptions, FindOneOptions, FindOptionsWhere } from 'typeorm'
 
 import { Injectable } from '@nestjs/common'
 import { InjectDataSource } from '@nestjs/typeorm'
@@ -17,7 +17,15 @@ export class AlertRepositoryImpl extends BaseRepository<AlertEntity> implements 
     return this.find(criterias)
   }
 
+  findOne(optionsOrConditions: FindOneOptions<AlertEntity> | FindOptionsWhere<AlertEntity>): Promise<AlertEntity | undefined> {
+    return super.findOne(optionsOrConditions)
+  }
+
   createAlert(payload): Promise<AlertEntity> {
     return this.save(payload)
+  }
+
+  async updateAlert(id: string, payload: Partial<AlertEntity>): Promise<void> {
+    await this.update({ id }, payload)
   }
 }

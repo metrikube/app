@@ -1,1 +1,1 @@
-export type AWSServiceType = 'co' | 'ec2';
+export type AWSServiceType = 'co' | 'ec2'

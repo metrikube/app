@@ -7,5 +7,5 @@ export type MetricType =
   | 'github_last_pr'
   | 'database_queries'
   | 'database_size'
-  | 'database_connections'
   | 'database_slow_queries'
+  | 'database_connections'

@@ -1,16 +1,16 @@
-import { Credential } from './credential.model'
-import { Metric } from './metric.model'
+import { Credential } from './credential.model';
+import { Metric } from './metric.model';
 
 export type Plugin = {
-  readonly id: string // UUID
-  readonly type: string // PluginType
-  readonly name: string
-  readonly description: string
-  readonly instruction: string
-  readonly category: string // cloud | database | versioning
-  readonly metrics?: Metric[]
-  readonly createdAt: Date
-}
+  readonly id: string; // UUID
+  readonly type: string; // PluginType  // aws | gcp | azure | ...
+  readonly name: string;
+  readonly description: string;
+  readonly instruction: string;
+  readonly category: string; // cloud | database | versioning
+  readonly metrics?: Metric[];
+  readonly createdAt: Date;
+};
 
 // const provider: Plugin = {
 //   id: 'P1',

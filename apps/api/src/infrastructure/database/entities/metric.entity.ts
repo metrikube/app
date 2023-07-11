@@ -1,4 +1,4 @@
-import { Column, CreateDateColumn, Entity, Generated, JoinColumn, OneToOne, PrimaryColumn } from 'typeorm'
+import { Column, CreateDateColumn, Entity, Generated, JoinColumn, OneToOne, PrimaryColumn, RelationId } from 'typeorm'
 
 import { ApiProperty } from '@nestjs/swagger'
 
@@ -21,22 +21,21 @@ export class MetricEntity {
   name: string
 
   @Column()
-  @ApiProperty({ name: 'resourceId', type: String, description: 'Metric tracked resource id', example: 'i-0c1f7d7e0e7f3e7f3' })
-  resourceId: string
+  @ApiProperty({ name: 'resourceId', type: String, description: 'Metric tracked resource id', example: 'i-0c1f7d7e0e7f3e7f3', nullable: true })
+  resourceId?: string
 
   @Column({ default: 15 })
   @ApiProperty({ name: 'refreshInterval', type: Number, description: 'Metric refresh interval', example: 15, default: 15 })
   refreshInterval: number // in seconds
 
-  @OneToOne(() => PluginEntity)
+  @OneToOne(() => PluginEntity, (plugin: PluginEntity) => plugin.id, { cascade: true })
   @JoinColumn()
   @ApiProperty({ name: 'plugin', type: PluginEntity, isArray: true, description: 'Metric plugins' })
   plugin: PluginEntity
 
-  @OneToOne(() => AlertEntity, { cascade: ['insert'] })
-  @JoinColumn()
-  @ApiProperty({ name: 'alert', type: 'AlertEntity', description: 'Metric alert' })
-  alert: AlertEntity
+  @RelationId((metric: MetricEntity) => metric.plugin)
+  @ApiProperty({ name: 'pluginId', type: String, description: 'Metric plugin id', example: 'fab8f183-7021-4a42-b429-447ee7415b93' })
+  pluginId: PluginEntity['id']
 
   @CreateDateColumn()
   @ApiProperty({ name: 'createdAt', type: Date, description: 'Plugin creation date', example: '2023-01-01T00:00:00.000Z' })
