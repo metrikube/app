@@ -24,6 +24,7 @@ export class AlertUseCase {
 
     if (isConditionMet && !alert.triggered) {
       Logger.warn(`La condition est remplie [${metricData[field]} ${operator} ${threshold}] 👉🏼 on doit notifier`, this.constructor.name)
+      // pass the user_email when running the container
       await this.mailer.sendMail(process.env.USER_EMAIL, '🚨 Metrikube : alerte dépassement seuil', 'Seuil limite dépassé')
       return this.alertRepository.updateAlert(alert.id, { triggered: true })
     }
