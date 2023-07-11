@@ -8,31 +8,35 @@ export const providerCategoriesMock = [
     },
     {
         label: "Database",
-        value: "database"
+        value: "db"
     },
     {
         label: "Versioning",
-        value: "versioning"
+        value: "versionning"
+    },
+    {
+        label: "API",
+        value: "api"
     }
 ]
 // METRICS
 export const awsSingleInstance: MetricModel = {
     id: "aws-1",
-    type: "aws_ec2_single_instance_usage",
+    type: "aws-ec2-single-instance-usage",
     name: "Cost of EC2 single instance",
-    description: "Description cout et service",
+    // description: "Description cout et service",
     refreshInterval: 30
 }
 export const awsBucketInstance: MetricModel = {
     id: "aws-metric-2",
-    type: "aws_bucket_single_instance",
+    type: "aws-bucket-single-instance",
     name: "Cost of Amazon S3 Bucket",
     description: "Description S3",
     refreshInterval: 30,
 }
 export const githubLastPr: MetricModel = {
     id: "github-metric-1",
-    type: "github_last_pr",
+    type: "github-last-pr",
     name: "Last pull requests",
     description: "Description last PR",
     refreshInterval: 30,
@@ -55,14 +59,16 @@ export const AWSProviderMock: PluginModel = {
     type: "aws",
     category: "cloud",
     description: "Cloud provider",
+    instruction: "*1. Create an IAM user with the following permissions:*\n- AmazonEC2ReadOnlyAccess, AmazonS3ReadOnlyAccess, AmazonSNSReadOnlyAccess [...] \n*2. Create a new credential with the following parameters:* \n*3. Enjoy!*",
     credential: {
-        type: "apiKey",
+        type: "awsCredential",
         value: {
-            apiKey: ""
+            accessKeyId: "",
+            secretAccessKey: "",
+            region: ""
         }
     },
     metrics: AWSMetricsMock,
-    instruction: "",
 }
 
 export const githubProviderMock: PluginModel = {
@@ -71,12 +77,13 @@ export const githubProviderMock: PluginModel = {
     type: "github",
     category: "versioning",
     description: "Versioning",
-    instruction: "",
+    instruction: "Pas d'instruction",
     credential: {
-        type: "userPassword",
+        type: "githubCredential",
         value: {
-            username: "",
-            password: ""
+            accessToken: "",
+            owner: "",
+            repo: ""
         }
     },
     metrics: GithubMetricsMock,

@@ -1,5 +1,6 @@
 import PluginEmptyStateImg from '../assets/img/undraws/undraw_online_stats.svg'
 import ProviderModal from '../components/organisms/modals/Provider.modal'
+import { PluginProvider } from '../contexts/plugin.context'
 import DefaultLayout from '../layouts/DefaultLayout'
 import { EmptyStateLayout } from '../layouts/EmptyStateLayout'
 import styled from '@emotion/styled'
@@ -8,7 +9,7 @@ import { Button } from '@mui/material'
 import React, { useState } from 'react'
 
 const Dashboard = () => {
-  const [openedModal, setOpenModal] = useState(false)
+  const [openedModal, setOpenModal] = useState(true)
   const openProviderModalHandler = () => {
     setOpenModal(true)
   }
@@ -37,7 +38,9 @@ const Dashboard = () => {
         buttonLabel="Add a new provider"
         imageAsset={PluginEmptyStateImg}
       />
-      <ProviderModal open={openedModal} setOpenModal={setOpenModal} />
+      <PluginProvider>
+        <ProviderModal open={openedModal} setOpenModal={setOpenModal} />
+      </PluginProvider>
     </DefaultLayout>
   )
 }
@@ -46,14 +49,6 @@ const StyledHeader = styled.header`
   display: flex;
   align-items: center;
   justify-content: space-between;
-`
-
-const StyledBody = styled.body`
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
 `
 
 export default Dashboard

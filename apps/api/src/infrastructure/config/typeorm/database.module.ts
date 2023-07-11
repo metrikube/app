@@ -14,7 +14,7 @@ const entities = [PluginEntity, CredentialEntity, MetricEntity, AlertEntity, Plu
   imports: [
     TypeOrmModule.forRoot({
       type: 'better-sqlite3',
-      database: 'data/db',
+      database: 'data/db.db',
       entities,
       synchronize: true,
       autoLoadEntities: true

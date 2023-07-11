@@ -10,6 +10,7 @@ import { PluginUseCase } from '../application/use-cases/plugin/plugin.use-case';
 import { CredentialRepositoryImpl } from '../infrastructure/database/repositories/credential.repository';
 import { AppController } from './controllers/app.controller';
 import { PluginsController } from './controllers/plugins.controller';
+import { CredentialRepositoryImpl } from '../infrastructure/database/repositories/credential.repository';
 
 @Module({
   imports: [UseCaseModule],

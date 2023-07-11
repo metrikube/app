@@ -1,49 +1,30 @@
-import { ProviderFormContext } from '../../../contexts/provider-form.context'
+import { PluginContext } from '../../../contexts/plugin.context'
 import OutlinedCard from '../../molecules/OutlinedCard'
+import AwsCredentialForm from './credentials/AwsCredentialForm'
+import GithubCredentialForm from './credentials/GithubCredentialForm'
 import styled from '@emotion/styled'
-import { CREDENTIALS, AWSMetricsMock, GithubMetricsMock, MetricModel } from '@metrikube/core'
-import LoadingButton from '@mui/lab/LoadingButton'
 import { Autocomplete, TextField } from '@mui/material'
 import React, { useContext } from 'react'
+import ReactMarkdown from 'react-markdown'
 
-interface Props {
-  handleMetric: (metric: MetricModel) => void
-}
-
-const ProviderFormStep2 = ({ handleMetric }: Props) => {
-  const { selectedProvider, selectedMetric } = useContext(ProviderFormContext)
-
-  const credentialType = selectedProvider?.credential.type
+const ProviderFormStep2 = () => {
+  const { selectedProvider, selectedMetric, setSelectedMetric } = useContext(PluginContext)
+  const credentialType = selectedProvider?.credential?.type || ''
 
   return (
     <Step2Container>
-      <OutlinedCard
-        title="Credentials"
-        actionButtonTitle="Connection test"
-        onActionButtonClick={() => console.log('testing connection')}>
-        {credentialType === CREDENTIALS.USER_PASSWORD.code && (
-          <UserPasswordForm>
-            <TextField
-              required
-              id="username"
-              name="username"
-              label="Username"
-              variant="outlined"
-              size="small"
-            />
-
-            <TextField
-              required
-              id="password"
-              name="password"
-              label="Password"
-              variant="outlined"
-              size="small"
-            />
-          </UserPasswordForm>
+      <OutlinedCard title="Instructions">
+        <h3>Instructions</h3>
+        {selectedProvider?.instruction && (
+          <ReactMarkdown>{selectedProvider.instruction}</ReactMarkdown>
         )}
-        {credentialType === CREDENTIALS.API_KEY.code && (
-          <TextField multiline required label="API Key" variant="outlined" size="small" />
+      </OutlinedCard>
+      <OutlinedCard title="Credential">
+        {credentialType && (
+          <>
+            {credentialType === 'github' && <GithubCredentialForm />}
+            {credentialType === 'aws' && <AwsCredentialForm />}
+          </>
         )}
       </OutlinedCard>
       <OutlinedCard title="Metrics">
@@ -52,7 +33,7 @@ const ProviderFormStep2 = ({ handleMetric }: Props) => {
           options={selectedProvider?.metrics || []}
           value={selectedMetric}
           getOptionLabel={(option) => option.name}
-          onChange={(event, value) => value && handleMetric(value)}
+          onChange={(event, value) => value && setSelectedMetric(value)}
           renderInput={(params) => (
             <TextField
               {...params}
@@ -69,12 +50,6 @@ const ProviderFormStep2 = ({ handleMetric }: Props) => {
 
 const Step2Container = styled.div`
   margin-top: 1rem;
-`
-const Credential = styled.section``
-
-const UserPasswordForm = styled.form`
-  display: flex;
-  justify-content: space-evenly;
 `
 
 export default ProviderFormStep2

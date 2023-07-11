@@ -2,7 +2,7 @@ import * as mysql from 'mysql2';
 
 import { Injectable } from '@nestjs/common';
 
-import { DbConnectionCredentialType } from '../../../../common/types/credential';
+import { DbConnectionCredentialType } from '@metrikube/common';
 
 @Injectable()
 export class DbAnalyticsPluginService {
