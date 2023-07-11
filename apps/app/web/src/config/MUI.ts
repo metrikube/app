@@ -8,12 +8,13 @@ export const theme = createTheme({
   components: {
     MuiCssBaseline: {
       styleOverrides: `
-            @font-face {
-                font-family: "Poppins";
-                font-style: normal;
-                font-display: swap;
-                src: url("../fonts/Poppins/Poppins-Regular.ttf");
-            }`
+        @font-face {
+            font-family: "Poppins";
+            font-style: normal;
+            font-display: swap;
+            src: url("../fonts/Poppins/Poppins-Regular.ttf");
+        }
+      `
     }
   }
 })
