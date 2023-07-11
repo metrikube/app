@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 
 import { PluginRepository } from '../../../domain/interfaces/repository/plugin.repository'
-import { Plugin } from '../../../domain/models/plugin.model'
+import { Plugin } from '../../../../../../common/types/plugin/plugin'
 import { PluginEntity } from '../entities/plugin.entity'
 
 @Injectable()

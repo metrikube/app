@@ -1,3 +1,4 @@
+import { MetricModel } from 'apps/app/core/src/lib/domain/models/Metric.model'
 import { ProviderFormContext } from '../../../contexts/provider-form.context'
 import ProviderFormStepper from '../ProviderFormStepper'
 import ProviderFormStep1 from '../forms/ProviderFormStep1.form'
@@ -16,6 +17,7 @@ import {
   Tooltip
 } from '@mui/material'
 import React, { Dispatch, SetStateAction, useEffect, useState } from 'react'
+import { PluginModel } from 'apps/app/core/src/lib/domain/models/Plugin.model'
 
 interface Props {
   open: boolean
@@ -29,13 +31,9 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
     'Configure your provider'
   ]
   const [selectedProviderCategory, setSelectedProviderCategory] = useState('')
-  const [selectedProvider, setSelectedProvider] = useState<{
-    id: string
-    name: string
-    credential: {}
-  } | null>(null)
-  const [selectedMetric, setselectedMetric] = useState<unknown[]>([])
-  const [isProviderChose, setIsProviderChose] = useState(selectedProvider !== null)
+  const [selectedProvider, setSelectedProvider] = useState<PluginModel | null>(null)
+  const [selectedMetric, setselectedMetric] = useState<MetricModel| null>(null)
+  const [isProviderChose, setIsProviderChose] = useState<boolean>(selectedProvider !== null)
   const [activeStep, setActiveStep] = useState(0)
 
   const handleNext = () => {
@@ -54,20 +52,20 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
     }
   }
 
-  const handleProviderChange = (provider: any) => {
+  const handleProviderChange = (provider: PluginModel) => {
     setSelectedProvider({ ...provider })
   }
 
-  const handleMetricChange = (metric: unknown) => {
+  const handleMetricChange = (metric: MetricModel) => {
     setselectedMetric({ ...metric })
   }
 
-  const handleReset = () => {
-    setActiveStep(0)
-    setSelectedProviderCategory('')
-    setselectedMetric([])
-    setSelectedProvider(null)
-  }
+  // const handleReset = () => {
+  //   setActiveStep(0)
+  //   setSelectedProviderCategory('')
+  //   setselectedMetric({})
+  //   setSelectedProvider({})
+  // }
 
   const isFirstStepForm: boolean = activeStep === 0
 
@@ -106,7 +104,7 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
               handleProvider={handleProviderChange}
             />
           )}
-          {activeStep === 1 && <ProviderFormStep2 handleMetrics={handleMetricChange} />}
+          {activeStep === 1 && <ProviderFormStep2 handleMetric={handleMetricChange} />}
           {activeStep === 2 && <ProviderFormStep3 />}
         </DialogContent>
         <DialogActions sx={dialogActionStyle}>

@@ -1,29 +1,18 @@
 import { ProviderFormContext } from '../../../contexts/provider-form.context'
 import styled from '@emotion/styled'
-import { CREDENTIALS, AWSMetricsMock, GithubMetricsMock } from '@metrikube/core'
+import { CREDENTIALS, AWSMetricsMock, GithubMetricsMock, MetricModel } from '@metrikube/core'
 import LoadingButton from '@mui/lab/LoadingButton'
 import { Autocomplete, TextField } from '@mui/material'
 import React, { useContext } from 'react'
 
 interface Props {
-  handleMetrics: (metrics: unknown[]) => void
+  handleMetric: (metric: MetricModel) => void
 }
 
-const ProviderFormStep2 = ({ handleMetrics }: Props) => {
+const ProviderFormStep2 = ({ handleMetric }: Props) => {
   const { selectedProvider, selectedMetric } = useContext(ProviderFormContext)
 
   const credentialType = selectedProvider?.credential.type
-
-  const getMetricsByProvider = (selectedProvider: any): unknown[] => {
-    switch (selectedProvider.type) {
-      case 'aws':
-        return AWSMetricsMock
-      case 'github':
-        return GithubMetricsMock
-      default:
-        return []
-    }
-  }
 
   return (
     <Step2Container>
@@ -62,10 +51,10 @@ const ProviderFormStep2 = ({ handleMetrics }: Props) => {
         <h3>Metrics</h3>
         <Autocomplete
           id="tags-standard"
-          options={getMetricsByProvider(selectedProvider)}
+          options={selectedProvider?.metrics || []}
           value={selectedMetric}
           getOptionLabel={(option) => option.name}
-          onChange={(event, value) => handleMetrics(value)}
+          onChange={(event, value) => value && handleMetric(value)}
           renderInput={(params) => (
             <TextField
               {...params}

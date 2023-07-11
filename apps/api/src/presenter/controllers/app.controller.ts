@@ -1,4 +1,4 @@
-import { AWSServiceType } from '@metrikube/common';
+import { AWSServiceType, Plugin } from '@metrikube/common';
 
 import { Body, Controller, Get, HttpCode, HttpStatus, Inject, Post, Query } from '@nestjs/common';
 import { ApiOperation } from '@nestjs/swagger';
@@ -6,7 +6,6 @@ import { ApiOperation } from '@nestjs/swagger';
 import { CredentialUseCaseInterface } from '../../domain/interfaces/use-cases/credential.use-case.interface';
 import { PluginUseCaseInterface } from '../../domain/interfaces/use-cases/plugin.use-case.interface';
 import { Credential } from '../../domain/models/credential.model';
-import { Plugin } from '../../domain/models/plugin.model';
 import { CredentialEntity } from '../../infrastructure/database/entities/credential.entity';
 import { PluginEntity } from '../../infrastructure/database/entities/plugin.entity';
 import { PluginResponseDto } from '../dto/plugins.dto';

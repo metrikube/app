@@ -1,7 +1,6 @@
 import { FindManyOptions, FindOptionsWhere } from 'typeorm';
-
 import { PluginEntity } from '../../../infrastructure/database/entities/plugin.entity';
-import { Plugin } from '../../models/plugin.model';
+import { Plugin } from '@metrikube/common';
 
 export interface PluginRepository {
   getPlugins(criterias?: FindManyOptions<PluginEntity> | FindOptionsWhere<PluginEntity>): Promise<PluginEntity[]>;

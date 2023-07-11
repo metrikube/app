@@ -2,26 +2,20 @@ import AwsLogo from '../../../assets/img/aws.png'
 import { ProviderFormContext } from '../../../contexts/provider-form.context'
 import ProviderCard from '../../molecules/ProviderCard'
 import styled from '@emotion/styled'
-import { providerCategoriesMock, providersMock } from '@metrikube/core'
+import { FilterPluginsByCategoryUsecase, providerCategoriesMock, providersMock } from '@metrikube/core'
 import { Chip } from '@mui/material'
-import React, { useContext, useState } from 'react'
+import { PluginModel } from 'apps/app/core/src/lib/domain/models/Plugin.model'
+import React, { useContext } from 'react'
 
 interface Props {
   providerCategory: string
   handleProviderCategory: (categoryValue: string) => void
-  handleProvider: (provider: unknown) => void
+  handleProvider: (provider: PluginModel) => void
 }
 
 const ProviderFormStep1 = ({ providerCategory, handleProviderCategory, handleProvider }: Props) => {
   const { selectedProvider } = useContext(ProviderFormContext)
-  const [providers, setProviders] = useState<unknown[]>(providersMock)
-
-  const filterProviderByCategory = (providerCategory: string): unknown[] => {
-    if (!providerCategory) {
-      return providers
-    }
-    return providers.filter((provider) => provider.category === providerCategory)
-  }
+  const filterPlugins = new FilterPluginsByCategoryUsecase()
 
   return (
     <FormContainer>
@@ -39,7 +33,7 @@ const ProviderFormStep1 = ({ providerCategory, handleProviderCategory, handlePro
         ))}
       </ChipContainer>
       <ProvidersContainer>
-        {filterProviderByCategory(providerCategory).map((provider) => (
+        {filterPlugins.execute(providersMock, providerCategory).map((provider) => (
           <ProviderCard
             key={provider.id}
             logo={AwsLogo}
