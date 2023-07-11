@@ -1,3 +1,4 @@
+// TODO transforn to enum
 export const CREDENTIALS = {
     API_KEY: {
         code: "apiKey"
@@ -9,7 +10,7 @@ export const CREDENTIALS = {
 
 export const PROVIDERS = {
     GITHUB: {
-        code: "github"
+        code: "github",
     },
     AWS: {
         code: "aws"

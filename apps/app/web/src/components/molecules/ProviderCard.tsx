@@ -6,12 +6,12 @@ interface Props {
   logo: string
   label: string
   selected: boolean
-  action: (...args: any[]) => void
+  onClick: () => void
 }
 
-const ProviderCard = ({ logo, label, selected, action }: Props) => {
+const ProviderCard = ({ logo, label, selected, onClick }: Props) => {
   return (
-    <ButtonBase onClick={() => action()}>
+    <ButtonBase onClick={onClick}>
       <StyledPaper selected={selected}>
         <Logo src={logo} />
         <ProviderLabel>{label}</ProviderLabel>
@@ -35,11 +35,7 @@ const StyledPaper = styled(Paper)<{ selected: boolean }>`
   max-width: 185px;
   padding: 12px;
 
-  ${({ selected }) =>
-    selected &&
-    `
-			border: '1px solid #2196f3'
-		`}
+  ${({ selected }) => selected && `border: 1px solid #2196f3`}
 `
 
 export default ProviderCard

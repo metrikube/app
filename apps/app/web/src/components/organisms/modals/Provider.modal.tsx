@@ -46,7 +46,7 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1)
   }
 
-  const handleProviderCategory = (categoryValue: string) => {
+  const handleFilterChange = (categoryValue: string) => {
     if (categoryValue === selectedProviderCategory) {
       setSelectedProviderCategory('')
     } else {
@@ -54,18 +54,18 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
     }
   }
 
-  const handleProvider = (provider: any) => {
+  const handleProviderChange = (provider: any) => {
     setSelectedProvider({ ...provider })
   }
 
-  const handleMetric = (metric: unknown) => {
+  const handleMetricChange = (metric: unknown) => {
     setselectedMetric({ ...metric })
   }
 
   const handleReset = () => {
     setActiveStep(0)
     setSelectedProviderCategory('')
-    setselectedMetrics([])
+    setselectedMetric([])
     setSelectedProvider(null)
   }
 
@@ -102,11 +102,11 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
           {activeStep === 0 && (
             <ProviderFormStep1
               providerCategory={selectedProviderCategory}
-              handleProviderCategory={handleProviderCategory}
-              handleProvider={handleProvider}
+              handleProviderCategory={handleFilterChange}
+              handleProvider={handleProviderChange}
             />
           )}
-          {activeStep === 1 && <ProviderFormStep2 handleMetrics={handleMetric} />}
+          {activeStep === 1 && <ProviderFormStep2 handleMetrics={handleMetricChange} />}
           {activeStep === 2 && <ProviderFormStep3 />}
         </DialogContent>
         <DialogActions sx={dialogActionStyle}>

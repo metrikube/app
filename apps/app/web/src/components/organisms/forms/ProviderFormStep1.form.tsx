@@ -22,6 +22,7 @@ const ProviderFormStep1 = ({ providerCategory, handleProviderCategory, handlePro
     }
     return providers.filter((provider) => provider.category === providerCategory)
   }
+
   return (
     <FormContainer>
       <ChipContainer>
@@ -43,8 +44,8 @@ const ProviderFormStep1 = ({ providerCategory, handleProviderCategory, handlePro
             key={provider.id}
             logo={AwsLogo}
             label={provider.name}
-            isProviderChose={provider.name === selectedProvider?.name}
-            action={() => handleProvider(provider)}
+            selected={provider.name === selectedProvider?.name}
+            onClick={() => handleProvider(provider)}
           />
         ))}
       </ProvidersContainer>
