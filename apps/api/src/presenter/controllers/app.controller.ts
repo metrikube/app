@@ -33,12 +33,12 @@ export class AppController {
 
   @Post('db-plugin/connection')
   dbCreateConnection(@Body() payload: Credential): Promise<CredentialEntity> {
-    return this.credentialUseCase.dbCreateConnection(payload);
+    return this.credentialUseCase.insertCredentialForPlugin(payload["plugin"], payload);
   }
 
   @Get('db-plugin/get-data')
-  dbGetData(): any {
-    return this.credentialUseCase.getDataDb();
+  dbGetData(pluginId: Plugin['id']): any {
+    return this.credentialUseCase.getDataDb(pluginId);
   }
 
   // @Get('/aws/cost-explorer')

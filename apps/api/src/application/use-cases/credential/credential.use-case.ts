@@ -5,15 +5,33 @@ import { CredentialUseCaseInterface } from '../../../domain/interfaces/use-cases
 import { Credential } from '../../../domain/models/credential.model';
 import { Plugin } from '../../../domain/models/plugin.model';
 import { CredentialEntity } from '../../../infrastructure/database/entities/credential.entity';
+import { DbAnalyticsPluginService } from '@metrikube/db-analytics-plugin';
+
 
 @Injectable()
 export class CredentialUseCase implements CredentialUseCaseInterface {
-  constructor(@Inject('CREDENTIAL_REPOSITORY') private readonly credentialRepository: CredentialRepository) {}
+  constructor(
+    @Inject('CREDENTIAL_REPOSITORY') private readonly credentialRepository: CredentialRepository,
+    @Inject('DB_ANALYTICS_PLUGIN') private readonly DbAnalyticsPluginService: DbAnalyticsPluginService,
 
+    ) {}
   async insertCredentialForPlugin(pluginId: Plugin['id'], paylad: Credential): Promise<CredentialEntity> {
     return this.credentialRepository.createCredential({
       pluginId,
       ...paylad
     });
+  }
+  async getDataDb(pluginId: Plugin['id']): Promise<string> {
+    const credentials = await this.credentialRepository.findCrendentialByPluginId(pluginId);
+
+    return this.DbAnalyticsPluginService.getDataDb(
+      {
+        dbName: credentials.value['dbName'],
+        dbHost: credentials.value['dbHost'],
+        dbPort: credentials.value['dbPort'],
+        dbUsername: credentials.value['dbUser'],
+        dbPassword: credentials.value['dbPassword'],
+      }
+    )
   }
 }

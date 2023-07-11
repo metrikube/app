@@ -27,7 +27,7 @@ export class CredentialEntity {
   })
   type: string; // CredentialType;
 
-  @Column()
+  @Column({type: 'json'})
   @ApiProperty({
     name: 'value',
     type: String,

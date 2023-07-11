@@ -8,6 +8,5 @@ export interface CredentialRepository {
   findCrendentialByPluginId(pluginId: string): Promise<CredentialEntity>;
   createCredential(credential: Credential): Promise<CredentialEntity>;
   findCredentialByIdWithPlugin(id: string): Promise<CredentialEntity>;
-  getCredentialsByType(type: string): Promise<CredentialEntity>;
 }
 

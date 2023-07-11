@@ -23,13 +23,6 @@ export class CredentialRepositoryImpl extends BaseRepository<CredentialEntity> i
     return this.find();
   }
 
-  getCredentialsByType(type: string): Promise<CredentialEntity> {
-    return this.findOneOrFail({
-      where: { type },
-      relations: { plugin: true }
-    });
-  }
-
   findCredentialByIdWithPlugin(id: string): Promise<CredentialEntity> {
     return this.findOneOrFail({
       where: { id },
