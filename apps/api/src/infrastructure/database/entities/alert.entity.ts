@@ -1,12 +1,20 @@
-import { Column, CreateDateColumn, Entity, Generated, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, Generated, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn, RelationId } from 'typeorm';
 
 import { ApiProperty } from '@nestjs/swagger';
+
+import { MetricThresholdOperator } from '../../../domain/models/alert.model';
+import { MetricEntity } from './metric.entity';
 
 @Entity('alert')
 export class AlertEntity {
   @Generated('uuid')
   @PrimaryGeneratedColumn('uuid')
-  @ApiProperty({ name: 'id', type: String, description: 'Alert id', example: 'fab8f183-7021-4a42-b429-447ee7415b93' })
+  @ApiProperty({
+    name: 'id',
+    type: String,
+    description: 'Alert id',
+    example: 'fab8f183-7021-4a42-b429-447ee7415b93'
+  })
   id: string;
 
   @Column()
@@ -18,25 +26,31 @@ export class AlertEntity {
   })
   label: string;
 
+  @Column({ default: false })
   @ApiProperty({
     name: 'triggered',
     type: Boolean,
-    description: 'Alert triggered',
+    description: 'Alert triggered,' + 'used to avoid multiple notifications',
     example: false
   })
-  @Column()
   triggered: boolean;
 
+  @ManyToOne(() => MetricEntity, (metric) => metric.alerts)
+  metric: MetricEntity;
+
+  @RelationId((alert: AlertEntity) => alert.metric)
+  metricId: MetricEntity['id'];
+
+  @Column({ type: 'json' })
   @ApiProperty({
     name: 'condition',
     type: 'json',
     description: 'Alert condition'
   })
-  @Column({ type: 'json' })
   condition: {
     field: string;
-    operator: string;
-    value: number;
+    operator: MetricThresholdOperator;
+    threshold: string | number;
   };
 
   @CreateDateColumn()

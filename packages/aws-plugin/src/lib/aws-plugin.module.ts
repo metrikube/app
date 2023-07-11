@@ -1,6 +1,6 @@
-import { Module } from '@nestjs/common';
+import { Module } from '@nestjs/common'
 
-import { AWSService } from '../services/aws.service';
+import { AWSService } from '../services/aws.service'
 
 @Module({
   controllers: [],

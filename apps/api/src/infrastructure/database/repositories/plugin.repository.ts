@@ -1,4 +1,4 @@
-import { DataSource } from 'typeorm';
+import { DataSource, FindManyOptions, FindOptionsWhere } from 'typeorm';
 
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
@@ -18,9 +18,7 @@ export class PluginRepositoryImpl extends BaseRepository<PluginEntity> implement
     return this.save(this.create(plugin));
   }
 
-  getPlugins(): Promise<PluginEntity[]> {
-    return this.find();
+  getPlugins(criterias: FindManyOptions<PluginEntity> | FindOptionsWhere<PluginEntity>): Promise<PluginEntity[]> {
+    return this.find(criterias);
   }
-
-
 }

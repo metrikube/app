@@ -5,8 +5,10 @@ import { AlertEntity } from '../../database/entities/alert.entity';
 import { CredentialEntity } from '../../database/entities/credential.entity';
 import { MetricEntity } from '../../database/entities/metric.entity';
 import { PluginEntity } from '../../database/entities/plugin.entity';
+import { PluginToMetricEntity } from '../../database/entities/plugin_to_metric.entity';
+import { TypeOrmLogger } from './typeorm.logger';
 
-const entities = [PluginEntity, CredentialEntity, MetricEntity, AlertEntity];
+const entities = [PluginEntity, CredentialEntity, MetricEntity, AlertEntity, PluginToMetricEntity];
 
 @Module({
   imports: [
@@ -16,6 +18,7 @@ const entities = [PluginEntity, CredentialEntity, MetricEntity, AlertEntity];
       entities,
       synchronize: true,
       autoLoadEntities: true
+      // logger: new TypeOrmLogger()
     })
   ],
   exports: [TypeOrmModule]

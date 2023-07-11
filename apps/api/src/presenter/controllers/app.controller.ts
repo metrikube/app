@@ -1,25 +1,21 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Inject, Post } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpStatus, Inject, Post, Query } from '@nestjs/common';
 import { ApiOperation } from '@nestjs/swagger';
 
-import { PluginUseCaseInterface } from '../../domain/interfaces/use-cases/plugin.use-case.interface';
+import { AWSServiceType } from '../../../../../common/types/aws';
 import { CredentialUseCaseInterface } from '../../domain/interfaces/use-cases/credential.use-case.interface';
-
-import { Plugin } from '../../domain/models/plugin.model';
+import { PluginUseCaseInterface } from '../../domain/interfaces/use-cases/plugin.use-case.interface';
 import { Credential } from '../../domain/models/credential.model';
-import { PluginEntity } from '../../infrastructure/database/entities/plugin.entity';
+import { Plugin } from '../../domain/models/plugin.model';
 import { CredentialEntity } from '../../infrastructure/database/entities/credential.entity';
-
+import { PluginEntity } from '../../infrastructure/database/entities/plugin.entity';
 
 @Controller('/')
 export class AppController {
-  constructor(
-      @Inject('PLUGIN_USE_CASE') private readonly pluginUseCase: PluginUseCaseInterface,
-      @Inject('CREDENTIAL_USE_CASE') private readonly credentialUseCase: CredentialUseCaseInterface
-    ){}
+  constructor(@Inject('PLUGIN_USE_CASE') private readonly pluginUseCase: PluginUseCaseInterface, @Inject('CREDENTIAL_USE_CASE') private readonly credentialUseCase: CredentialUseCaseInterface) {}
 
   @Get()
   @ApiOperation({ summary: 'Get all plugins' })
-  list(): Promise<PluginEntity[]> {
+  list(): Promise<Plugin[]> {
     return this.pluginUseCase.getPlugins();
   }
 
@@ -30,17 +26,11 @@ export class AppController {
     return this.pluginUseCase.create(payload);
   }
 
-  @Get('/aws/cost-explorer')
-  @ApiOperation({ summary: 'Get AWS cost explorer' })
-  getCosts(): any {
-    return this.pluginUseCase.getAWSPlugin().getCostExplorerService().getCosts();
+  @Get('/aws')
+  getAWS(@Query('region') region: string, @Query('services') services: AWSServiceType[]): any {
+    return this.pluginUseCase.getAWSPlugin().getServicesInformations(services, region);
   }
 
-  @Get('/aws/ec2')
-  @ApiOperation({ summary: 'Get AWS EC2 instances' })
-  getInstance(): any {
-    return this.pluginUseCase.getAWSPlugin().getEc2Service('us-east-1').getInstances();
-  }
   @Post('db-plugin/connection')
   dbCreateConnection(@Body() payload: Credential): Promise<CredentialEntity> {
     return this.credentialUseCase.dbCreateConnection(payload);
@@ -72,4 +62,3 @@ export class AppController {
   //   // }
   // }
 }
-

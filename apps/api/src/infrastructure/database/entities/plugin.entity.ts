@@ -1,7 +1,8 @@
-import { Column, CreateDateColumn, Entity, Generated,  PrimaryColumn,} from 'typeorm';
+import { Column, CreateDateColumn, Entity, Generated, JoinColumn, OneToMany, PrimaryColumn } from 'typeorm';
 
 import { ApiProperty } from '@nestjs/swagger';
 
+import { PluginToMetricEntity } from './plugin_to_metric.entity';
 
 const pluginInstructionExample = `
   *1. Create an IAM user with the following permissions:*
@@ -37,18 +38,17 @@ export class PluginEntity {
   @ApiProperty({ name: 'category', type: String, description: 'Plugin category', example: 'cloud' })
   category: string;
 
+  @JoinColumn()
+  @OneToMany(() => PluginToMetricEntity, (pluginToMetric: PluginToMetricEntity) => pluginToMetric.plugin)
+  @ApiProperty({
+    name: 'pluginToMetrics',
+    type: PluginToMetricEntity,
+    isArray: true,
+    description: 'Plugin available metrics'
+  })
+  pluginToMetrics: PluginToMetricEntity[];
+
   @CreateDateColumn()
   @ApiProperty({ name: 'createdAt', type: Date, description: 'Plugin creation date', example: '2023-01-01T00:00:00.000Z' })
   createdAt: Date;
-
-  // @BeforeInsert()
-  // credentialToBase64() {
-  //   this.credential.value = Buffer.from(JSON.stringify(this.credential.value)).toString('base64');
-  // }
-  //
-  // @AfterLoad()
-  // base64ToCredential() {
-  //   this.credential.value = JSON.parse(Buffer.from(this.credential.value, 'base64').toString('utf8'));
-  // }
-
 }

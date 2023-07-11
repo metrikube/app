@@ -5,13 +5,13 @@ import { DbAnalyticsPluginService } from '@metrikube/db-analytics-plugin';
 import { Module } from '@nestjs/common';
 
 import { UseCaseModule } from '../application/use-case.module';
+import { AlertUseCase } from '../application/use-cases/alert/alert.use-case';
+import { CredentialUseCase } from '../application/use-cases/credential/credential.use-case';
 import { PluginUseCase } from '../application/use-cases/plugin/plugin.use-case';
-import { CredentialUseCase } from '../application/use-cases/credential.use-case';
 import { CredentialRepositoryImpl } from '../infrastructure/database/repositories/credential.repository';
 import { PluginRepositoryImpl } from '../infrastructure/database/repositories/plugin.repository';
 import { AppController } from './controllers/app.controller';
 import { PluginController } from './controllers/plugin.controller';
-
 
 @Module({
   imports: [UseCaseModule],
@@ -23,7 +23,10 @@ import { PluginController } from './controllers/plugin.controller';
     { provide: 'CREDENTIAL_USE_CASE', useClass: CredentialUseCase },
     { provide: 'CREDENTIAL_REPOSITORY', useClass: CredentialRepositoryImpl },
     { provide: 'DB_ANALYTICS_PLUGIN', useClass: DbAnalyticsPluginService },
-
+    { provide: 'PLUGIN_USE_CASE', useClass: PluginUseCase }
+    // { provide: 'ALERT_USE_CASE', useClass: AlertUseCase },
+    // { provide: 'AWS_PLUGIN', useClass: AWSService },
+    // { provide: 'CREDENTIAL_REPOSITORY', useClass: CredentialRepositoryImpl }
   ]
 })
 export class ControllersModule {}

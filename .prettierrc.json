@@ -9,5 +9,7 @@
   "endOfLine": "auto",
   "importOrder": ["^(@nestjs/(.*)$)|^(@nestjs$)", "^[./]"],
   "importOrderSeparation": true,
-  "importOrderSortSpecifiers": true
+  "importOrderSortSpecifiers": true,
+  "jsxBracketSameLine": true
 }
+

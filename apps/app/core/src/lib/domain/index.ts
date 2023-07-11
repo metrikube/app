@@ -1,1 +1,2 @@
-export const domain = "domain" 
+export * from "./mocks"
+export * from "./constants"
