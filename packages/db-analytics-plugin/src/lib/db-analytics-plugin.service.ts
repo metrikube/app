@@ -1,7 +1,8 @@
-import { Injectable } from '@nestjs/common';
 import * as mysql from 'mysql2';
-import { DbConnectionCredentialType } from '../../../../common/types/credential';
 
+import { Injectable } from '@nestjs/common';
+
+import { DbConnectionCredentialType } from '../../../../common/types/credential';
 
 @Injectable()
 export class DbAnalyticsPluginService {
@@ -12,7 +13,7 @@ export class DbAnalyticsPluginService {
         user: credentialData.dbUsername,
         password: credentialData.dbPassword,
         database: credentialData.dbName,
-        port: credentialData.dbPort,
+        port: credentialData.dbPort
       };
 
       const connection = mysql.createConnection(dbConfig);

@@ -4,7 +4,7 @@ import { PluginEntity } from '../../../infrastructure/database/entities/plugin.e
 import { Plugin } from '../../models/plugin.model';
 
 export interface PluginRepository {
-  getPlugins(criterias: FindManyOptions<PluginEntity> | FindOptionsWhere<PluginEntity>): Promise<PluginEntity[]>;
+  getPlugins(criterias?: FindManyOptions<PluginEntity> | FindOptionsWhere<PluginEntity>): Promise<PluginEntity[]>;
 
   createPlugin(plugin: Plugin): Promise<PluginEntity>;
 }

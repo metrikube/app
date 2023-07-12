@@ -16,7 +16,7 @@ export class CredentialRepositoryImpl extends BaseRepository<CredentialEntity> i
 
   createCredential(credential: Credential): Promise<CredentialEntity> {
     const encodedValue = Buffer.from(JSON.stringify(credential.value)).toString('base64');
-    return this.save({...credential, value: encodedValue });
+    return this.save({ ...credential, value: encodedValue });
   }
 
   getCredentials(): Promise<CredentialEntity[]> {
