@@ -15,6 +15,7 @@ import { PluginUseCaseInterface } from '../../../domain/interfaces/use-cases/plu
 import { CredentialEntity } from '../../../infrastructure/database/entities/credential.entity';
 import { MetricEntity } from '../../../infrastructure/database/entities/metric.entity';
 import { PluginEntity } from '../../../infrastructure/database/entities/plugin.entity';
+import { GithubService } from '@metrikube/github-plugin';
 import { PluginResponseDto, RegisterPluginRequestDto, RegisterPluginResponseDto } from '../../../presenter/dto/plugins.dto';
 
 // prettier-ignore
@@ -23,11 +24,12 @@ export class PluginUseCase implements PluginUseCaseInterface {
   constructor(
     @Inject('PLUGIN_REPOSITORY') private readonly pluginRepository: PluginRepository,
     @Inject('CREDENTIAL_REPOSITORY') private readonly credentialRepository: CredentialRepository,
+    @Inject('AWS_PLUGIN') private readonly AWSService: AWSService,
+    @Inject('GITHUB_PLUGIN') private readonly githubService: GithubService,
+    @Inject('ALERT_USE_CASE') private readonly alertUseCase: AlertUseCaseInterface,
     @Inject('ALERT_REPOSITORY') private readonly alertRepository: AlertRepository,
     @Inject('METRIC_REPOSITORY') private readonly metricRepository: MetricRepository,
     @Inject('PLUGIN_TO_METRIC_REPOSITORY') private readonly pluginToMetricRepository: PluginToMetricRepository,
-    @Inject('ALERT_USE_CASE') private readonly alertUseCase: AlertUseCaseInterface,
-    @Inject('AWS_PLUGIN') private readonly AWSService: AWSService,
     @Inject('API_MONITORING') private readonly apiMonitoringService: ApiMonitoringService
   ) {
   }
@@ -90,6 +92,10 @@ export class PluginUseCase implements PluginUseCaseInterface {
 
   getAWSPlugin() {
     return this.AWSService;
+  }
+
+  getGithubPlugin() {
+    return this.githubService;
   }
 
   private async testPluginConnection(

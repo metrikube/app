@@ -1,5 +1,6 @@
 import { ApiMonitoringService } from '@metrikube/api-monitoring';
 import { AWSService } from '@metrikube/aws-plugin';
+import { GithubService } from '@metrikube/github-plugin';
 import { DbAnalyticsPluginService } from '@metrikube/db-analytics-plugin';
 
 import { Module } from '@nestjs/common';
@@ -10,12 +11,14 @@ import { PluginUseCase } from '../application/use-cases/plugin/plugin.use-case';
 import { CredentialRepositoryImpl } from '../infrastructure/database/repositories/credential.repository';
 import { AppController } from './controllers/app.controller';
 import { PluginsController } from './controllers/plugins.controller';
+import { GithubController } from './controllers/github.controller';
 
 @Module({
   imports: [UseCaseModule],
-  controllers: [AppController, PluginsController],
+  controllers: [AppController, PluginsController, GithubController],
   providers: [
     { provide: 'API_MONITORING', useClass: ApiMonitoringService },
+    { provide: 'GITHUB_PLUGIN', useClass: GithubService },
     { provide: 'AWS_PLUGIN', useClass: AWSService },
     { provide: 'CREDENTIAL_USE_CASE', useClass: CredentialUseCase },
     { provide: 'CREDENTIAL_REPOSITORY', useClass: CredentialRepositoryImpl },

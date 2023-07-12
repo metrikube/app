@@ -1,9 +1,8 @@
 import { ApiMonitoringModule, ApiMonitoringService } from '@metrikube/api-monitoring';
 import { AWSService, AwsPluginModule } from '@metrikube/aws-plugin';
 import { DbAnalyticsPluginModule, DbAnalyticsPluginService } from '@metrikube/db-analytics-plugin';
-
+import { GithubPluginModule, GithubService } from '@metrikube/github-plugin';
 import { Module } from '@nestjs/common';
-
 import { AlertRepositoryImpl } from '../infrastructure/database/repositories/alert.repository';
 import { CredentialRepositoryImpl } from '../infrastructure/database/repositories/credential.repository';
 import { MetricRepositoryImpl } from '../infrastructure/database/repositories/metric.repository';
@@ -13,8 +12,9 @@ import { InfrastructureModule } from '../infrastructure/infrastructure.module';
 import { NotificationService } from '../infrastructure/services/notification/notification.service';
 import { AlertUseCase } from './use-cases/alert/alert.use-case';
 
+
 @Module({
-  imports: [InfrastructureModule, AwsPluginModule, ApiMonitoringModule, DbAnalyticsPluginModule],
+  imports: [InfrastructureModule, AwsPluginModule, ApiMonitoringModule, DbAnalyticsPluginModule, GithubPluginModule],
   providers: [
     { provide: 'ALERT_REPOSITORY', useClass: AlertRepositoryImpl },
     { provide: 'ALERT_USE_CASE', useClass: AlertUseCase },
@@ -25,6 +25,8 @@ import { AlertUseCase } from './use-cases/alert/alert.use-case';
     { provide: 'PLUGIN_TO_METRIC_REPOSITORY', useClass: PluginToMetricRepositoryImpl },
     { provide: 'API_MONITORING', useClass: ApiMonitoringService },
     { provide: 'MAILER', useClass: NotificationService },
+    { provide: 'GITHUB_PLUGIN', useClass: GithubService },
+    { provide: 'PLUGIN_TO_METRIC_REPOSITORY', useClass: PluginToMetricRepositoryImpl },
     { provide: 'DB_ANALYTICS_PLUGIN', useClass: DbAnalyticsPluginService }
   ],
   exports: [
