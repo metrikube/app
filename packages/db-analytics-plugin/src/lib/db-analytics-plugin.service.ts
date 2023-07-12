@@ -18,7 +18,7 @@ export class DbAnalyticsPluginService {
     return new Promise(async (resolve, reject) => {
       connection.connect(async (error) => {
         if (error) {
-          console.error('Erreur de connexion à la base de données:', error);
+          console.error('Error generated during database connection', error);
           reject(error);
         } else {
           try {
@@ -69,7 +69,7 @@ export class DbAnalyticsPluginService {
 
             resolve(data);
           } catch (err) {
-            console.error('Erreur lors de l\'exécution des requêtes:', err);
+            console.error('Error generated during query execution: ', err);
             reject(err);
           }
 
