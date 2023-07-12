@@ -1,6 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { DbConnectionCredentialType } from '@metrikube/common';
 import * as mysql from 'mysql2';
-import { DbConnectionCredentialType } from '../../../../common/types/credential';
+
+import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class DbAnalyticsPluginService {
@@ -10,12 +11,12 @@ export class DbAnalyticsPluginService {
       user: credentialData.dbUsername,
       password: credentialData.dbPassword,
       database: credentialData.dbName,
-      port: credentialData.dbPort,
+      port: credentialData.dbPort
     };
 
     const connection = mysql.createConnection(dbConfig);
 
-    return new Promise(async (resolve, reject) => {
+    return new Promise((resolve, reject) => {
       connection.connect(async (error) => {
         if (error) {
           console.error('Error generated during database connection', error);
@@ -55,7 +56,7 @@ export class DbAnalyticsPluginService {
               this.executeQuery(connection, nbQueriesPerSecQuery),
               this.executeQuery(connection, tablesDataQuery),
               this.executeQuery(connection, avgResponseTime),
-              this.executeQuery(connection, dbSizeMb),
+              this.executeQuery(connection, dbSizeMb)
             ]);
 
             const data = {

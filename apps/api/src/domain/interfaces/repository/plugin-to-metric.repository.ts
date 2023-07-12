@@ -3,5 +3,5 @@ import { PluginToMetricEntity } from '../../../infrastructure/database/entities/
 export interface PluginToMetricRepository {
   getActiveMetrics(): Promise<unknown>;
 
-  createPluginToMetric(param: { metricId: string; pluginId: string; isActivated: boolean; ressourceId?: string }): Promise<PluginToMetricEntity>;
+  createPluginToMetric(param: { metricId: string; pluginId: string; isActivated: boolean; resourceId?: string }): Promise<PluginToMetricEntity>;
 }

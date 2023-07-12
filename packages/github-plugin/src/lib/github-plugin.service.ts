@@ -1,10 +1,11 @@
 import { GithubCredentialType, Issues, PluginConnectionInterface, PluginResult, PullRequests } from '@metrikube/common';
 import axios, { AxiosError } from 'axios';
+
 import { Injectable } from '@nestjs/common';
 
 interface GithubErrorData {
   message: string;
-} 
+}
 
 @Injectable()
 export class GithubService implements PluginConnectionInterface {
@@ -28,7 +29,7 @@ export class GithubService implements PluginConnectionInterface {
       return {
         status: (error as AxiosError)?.response?.status || 500,
         message: (error as AxiosError<GithubErrorData>)?.response?.data?.message || null
-      }
+      };
     }
   }
 
@@ -44,7 +45,7 @@ export class GithubService implements PluginConnectionInterface {
       return {
         status: (error as AxiosError)?.response?.status || 500,
         message: (error as AxiosError<GithubErrorData>)?.response?.data?.message || null
-      }
+      };
     }
   }
 

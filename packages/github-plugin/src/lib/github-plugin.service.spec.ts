@@ -7,7 +7,7 @@ describe('GithubService', () => {
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
-      providers: [GithubService],
+      providers: [GithubService]
     }).compile();
 
     service = module.get(GithubService);

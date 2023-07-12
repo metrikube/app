@@ -2,21 +2,22 @@ import { ApiMonitoringService } from '@metrikube/api-monitoring';
 import { AWSService } from '@metrikube/aws-plugin';
 import { Plugin, PluginConnectionInterface } from '@metrikube/common';
 import { ApiEndpointCredentialType, ApiHealthCheckResult, CredentialType, GenericCredentialType, MetricType, PluginResult } from '@metrikube/common';
+import { GithubService } from '@metrikube/github-plugin';
 
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 
 import { AlertRepository } from '../../../domain/interfaces/repository/alert.repository';
 import { CredentialRepository } from '../../../domain/interfaces/repository/credential.repository';
 import { MetricRepository } from '../../../domain/interfaces/repository/metric.repository';
+import { PluginToMetricRepository } from '../../../domain/interfaces/repository/plugin-to-metric.repository';
 import { PluginRepository } from '../../../domain/interfaces/repository/plugin.repository';
-import { PluginToMetricRepository } from '../../../domain/interfaces/repository/plugin_to_metric.repository';
 import { AlertUseCaseInterface } from '../../../domain/interfaces/use-cases/alert.use-case.interface';
 import { PluginUseCaseInterface } from '../../../domain/interfaces/use-cases/plugin.use-case.interface';
 import { CredentialEntity } from '../../../infrastructure/database/entities/credential.entity';
 import { MetricEntity } from '../../../infrastructure/database/entities/metric.entity';
 import { PluginEntity } from '../../../infrastructure/database/entities/plugin.entity';
-import { GithubService } from '@metrikube/github-plugin';
-import { PluginResponseDto, RegisterPluginRequestDto, RegisterPluginResponseDto } from '../../../presenter/dto/plugins.dto';
+import { PluginResponseDto } from '../../../presenter/plugin/dtos/plugins.dto';
+import { RegisterPluginRequestDto, RegisterPluginResponseDto } from '../../../presenter/plugin/dtos/register-plugin.dto';
 
 // prettier-ignore
 @Injectable()
@@ -40,7 +41,7 @@ export class PluginUseCase implements PluginUseCaseInterface {
     return new PluginResponseDto(plugins, metrics, credentials);
   }
 
-  async registerPlugin({ pluginId, metricType, credential, ressourceId }: RegisterPluginRequestDto): Promise<RegisterPluginResponseDto> {
+  async registerPlugin({ pluginId, metricType, credential, resourceId }: RegisterPluginRequestDto): Promise<RegisterPluginResponseDto> {
     const [plugin, metric]: [PluginEntity, MetricEntity] = await Promise.all([
       this.pluginRepository.findOneById(pluginId),
       this.metricRepository.findMetricByType(pluginId, metricType)
@@ -54,7 +55,7 @@ export class PluginUseCase implements PluginUseCaseInterface {
     // TODO : wrap into a transaction
     const [pluginCredential, pluginToMetric] = await Promise.all([
       this.credentialRepository.createCredential({ value: credential, plugin, type: plugin.credentialType as CredentialType }),
-      this.pluginToMetricRepository.createPluginToMetric({ pluginId, metricId: metric.id, ressourceId, isActivated: true })
+      this.pluginToMetricRepository.createPluginToMetric({ pluginId, metricId: metric.id, resourceId, isActivated: true })
     ]);
 
     // TODO : dispatch refresh interval scheduler

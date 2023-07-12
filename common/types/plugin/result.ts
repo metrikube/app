@@ -1,4 +1,5 @@
 import { Issues, PullRequests } from '@metrikube/common';
+
 import { GenericCredentialType } from '../credential';
 import { MetricType } from '../metric';
 

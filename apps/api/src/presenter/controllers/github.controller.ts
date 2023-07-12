@@ -1,11 +1,8 @@
-import { Issues, PluginResult, PullRequests } from "@metrikube/common";
-import { GithubService } from "@metrikube/github-plugin";
+import { Issues, PluginResult, PullRequests } from '@metrikube/common';
+import { GithubService } from '@metrikube/github-plugin';
 
-
-
-import { Controller, Get, Inject, Query } from "@nestjs/common";
-import { ApiOperation, ApiTags } from "@nestjs/swagger";
-
+import { Controller, Get, Inject, Query } from '@nestjs/common';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Github')
 @Controller('/github')

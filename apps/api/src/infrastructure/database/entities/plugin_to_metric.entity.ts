@@ -24,8 +24,8 @@ export class PluginToMetricEntity {
   @Column({ type: 'uuid', nullable: false })
   metricId: string;
 
-  @Column({ type: 'varchar', nullable: false })
-  ressourceId: string;
+  @Column({ type: 'varchar', nullable: true })
+  resourceId: string;
 
   @Column({ type: 'boolean', default: true })
   isActive: boolean;

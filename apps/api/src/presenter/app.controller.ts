@@ -3,12 +3,12 @@ import { Plugin } from '@metrikube/common';
 import { Body, Controller, Get, HttpCode, HttpStatus, Inject, Post } from '@nestjs/common';
 import { ApiOperation } from '@nestjs/swagger';
 
-import { CredentialUseCaseInterface } from '../../domain/interfaces/use-cases/credential.use-case.interface';
-import { PluginUseCaseInterface } from '../../domain/interfaces/use-cases/plugin.use-case.interface';
-import { Credential } from '../../domain/models/credential.model';
-import { CredentialEntity } from '../../infrastructure/database/entities/credential.entity';
-import { PluginEntity } from '../../infrastructure/database/entities/plugin.entity';
-import { PluginResponseDto } from '../dto/plugins.dto';
+import { CredentialUseCaseInterface } from '../domain/interfaces/use-cases/credential.use-case.interface';
+import { PluginUseCaseInterface } from '../domain/interfaces/use-cases/plugin.use-case.interface';
+import { Credential } from '../domain/models/credential.model';
+import { CredentialEntity } from '../infrastructure/database/entities/credential.entity';
+import { PluginEntity } from '../infrastructure/database/entities/plugin.entity';
+import { PluginResponseDto } from './plugin/dtos/plugins.dto';
 
 @Controller('/')
 export class AppController {

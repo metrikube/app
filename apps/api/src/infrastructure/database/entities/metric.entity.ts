@@ -27,11 +27,11 @@ export class MetricEntity {
   @ApiProperty({ name: 'pluginId', type: String, description: 'Metric plugin id', example: 'fab8f183-7021-4a42-b429-447ee7415b93' })
   pluginId: PluginEntity['id'];
 
-  @Column()
+  @Column({ name: 'type', type: 'varchar', nullable: false })
   @ApiProperty({ name: 'type', type: String, description: 'Metric type', example: 'aws_single_instance_cost' })
   type: string;
 
-  @Column()
+  @Column({ name: 'name', type: 'varchar', nullable: false })
   @ApiProperty({
     name: 'name',
     type: String,
@@ -40,7 +40,7 @@ export class MetricEntity {
   })
   name: string;
 
-  @Column({ name: 'refreshInterval', type: 'int', default: 60, nullable: false })
+  @Column({ name: 'refreshInterval', type: 'integer', default: 60, nullable: false })
   @ApiProperty({
     name: 'refreshInterval',
     type: Number,
