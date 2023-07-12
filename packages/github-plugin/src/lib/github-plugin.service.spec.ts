@@ -1,16 +1,16 @@
 import { Test } from '@nestjs/testing';
 
-import { GithubPluginService } from './github-plugin.service';
+import { GithubService } from './github-plugin.service';
 
-describe('GithubPluginService', () => {
-  let service: GithubPluginService;
+describe('GithubService', () => {
+  let service: GithubService;
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
-      providers: [GithubPluginService],
+      providers: [GithubService]
     }).compile();
 
-    service = module.get(GithubPluginService);
+    service = module.get(GithubService);
   });
 
   it('should be defined', () => {

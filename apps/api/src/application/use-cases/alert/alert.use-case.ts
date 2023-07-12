@@ -11,7 +11,10 @@ import { CreateAlertRequestDto, CreateAlertResponseDto } from '../../../presente
 // prettier-ignore
 @Injectable()
 export class AlertUseCase implements AlertUseCaseInterface {
-  constructor(@Inject('ALERT_REPOSITORY') private readonly alertRepository: AlertRepository, @Inject('MAILER') private readonly mailer: NotificationInterface) {}
+  constructor(
+    @Inject('ALERT_REPOSITORY') private readonly alertRepository: AlertRepository,
+    @Inject('MAILER') private readonly mailer: NotificationInterface
+  ) {}
 
   async createAlert(pluginToMetricId: PluginToMetricEntity['id'], alert: CreateAlertRequestDto): Promise<CreateAlertResponseDto> {
     const createdAlert = await this.alertRepository.createAlert({

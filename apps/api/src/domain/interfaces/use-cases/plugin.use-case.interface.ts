@@ -1,5 +1,6 @@
 import { AWSService } from '@metrikube/aws-plugin';
 import { MetricType, Plugin, PluginResult } from '@metrikube/common';
+import { GithubService } from '@metrikube/github-plugin';
 
 import { CredentialEntity } from '../../../infrastructure/database/entities/credential.entity';
 import { PluginEntity } from '../../../infrastructure/database/entities/plugin.entity';
@@ -12,6 +13,10 @@ export interface PluginUseCaseInterface {
   getAWSPlugin(): AWSService;
 
   getPluginCredentials(pluginId: string): Promise<CredentialEntity>;
+
+  getAWSPlugin(): any;
+
+  getGithubPlugin(): GithubService;
 
   listPlugins(): Promise<PluginResponseDto>;
 

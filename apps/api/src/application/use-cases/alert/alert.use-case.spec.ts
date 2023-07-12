@@ -1,8 +1,9 @@
 import { Test } from '@nestjs/testing';
 
-import { Alert, MetricThresholdOperator } from '../../../domain/models/alert.model';
+import { MetricThresholdOperator } from '../../../domain/models/alert.model';
 import { AlertEntity } from '../../../infrastructure/database/entities/alert.entity';
 import { AlertInMemoryRepositoryImpl } from '../../../infrastructure/database/in-memory/alert-in-memory.repository';
+import { CreateAlertRequestDto } from '../../../presenter/alert/dtos/create-alert.dto';
 import { AlertUseCase } from './alert.use-case';
 
 describe('AlertUseCase', () => {
@@ -15,6 +16,10 @@ describe('AlertUseCase', () => {
         {
           provide: 'ALERT_REPOSITORY',
           useClass: AlertInMemoryRepositoryImpl
+        },
+        {
+          provide: 'MAILER',
+          useValue: { sendMail: jest.fn() }
         }
       ]
     }).compile();
@@ -28,18 +33,18 @@ describe('AlertUseCase', () => {
 
   it('should create alert', async () => {
     const alert = {
-      id: 'alert-id',
+      metricId: 'metric-id',
       label: 'alert-name',
       condition: {
         field: 'field',
-        operator: 'operator',
+        operator: 'operator' as MetricThresholdOperator,
         threshold: 'threshold'
       }
-    } as unknown as Partial<Alert>;
+    } as CreateAlertRequestDto;
     const metricId = 'metric-id';
 
     const createdAlert = await useCase.createAlert(metricId, alert);
-    expect(createdAlert).toEqual(alert);
+    expect(createdAlert.pluginToMetricId).toEqual('metric-id');
   });
 
   it('should check condition threshold', () => {
@@ -63,21 +68,20 @@ describe('AlertUseCase', () => {
       field: 10
     };
     const alert = {
-      id: 'alert-id',
       label: 'alert-name',
       condition: {
         field: 'field',
         operator: 'gte' as MetricThresholdOperator,
         threshold: 5
       }
-    };
+    } as CreateAlertRequestDto;
 
     const metricId = 'metric-id';
 
-    await useCase.createAlert(metricId, alert as Alert);
+    await useCase.createAlert(metricId, alert);
 
     const spy = jest.spyOn(useCase, 'checkConditionThreshold');
-    await useCase.checkContiditionAndNotify(metricData, alert as AlertEntity);
+    await useCase.checkContiditionAndNotify(metricData, Object.assign(new AlertEntity(), alert));
     expect(spy).toHaveBeenCalled();
     expect(spy).toHaveBeenCalledWith(metricData.field, alert.condition.operator, alert.condition.threshold);
   });
