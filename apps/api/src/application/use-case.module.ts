@@ -18,25 +18,26 @@ import { AlertUseCase } from './use-cases/alert/alert.use-case';
   providers: [
     { provide: 'ALERT_REPOSITORY', useClass: AlertRepositoryImpl },
     { provide: 'ALERT_USE_CASE', useClass: AlertUseCase },
+    { provide: 'API_MONITORING', useClass: ApiMonitoringService },
     { provide: 'AWS_PLUGIN', useClass: AWSService },
     { provide: 'CREDENTIAL_REPOSITORY', useClass: CredentialRepositoryImpl },
+    { provide: 'DB_ANALYTICS_PLUGIN', useClass: DbAnalyticsPluginService },
+    { provide: 'MAILER', useClass: NotificationService },
     { provide: 'PLUGIN_REPOSITORY', useClass: PluginRepositoryImpl },
     { provide: 'METRIC_REPOSITORY', useClass: MetricRepositoryImpl },
-    { provide: 'PLUGIN_TO_METRIC_REPOSITORY', useClass: PluginToMetricRepositoryImpl },
-    { provide: 'API_MONITORING', useClass: ApiMonitoringService },
-    { provide: 'MAILER', useClass: NotificationService },
-    { provide: 'DB_ANALYTICS_PLUGIN', useClass: DbAnalyticsPluginService }
+    { provide: 'PLUGIN_TO_METRIC_REPOSITORY', useClass: PluginToMetricRepositoryImpl }
   ],
   exports: [
-    'PLUGIN_REPOSITORY',
     'ALERT_REPOSITORY',
-    'CREDENTIAL_REPOSITORY',
-    'AWS_PLUGIN',
-    'PLUGIN_REPOSITORY',
     'ALERT_USE_CASE',
+    'API_MONITORING',
+    'AWS_PLUGIN',
+    'CREDENTIAL_REPOSITORY',
+    'DB_ANALYTICS_PLUGIN',
+    'MAILER',
+    'PLUGIN_REPOSITORY',
     'METRIC_REPOSITORY',
-    'PLUGIN_TO_METRIC_REPOSITORY',
-    'DB_ANALYTICS_PLUGIN'
+    'PLUGIN_TO_METRIC_REPOSITORY'
   ]
 })
 export class UseCaseModule {}
