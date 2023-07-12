@@ -1,5 +1,5 @@
 import { AWSService } from '@metrikube/aws-plugin';
-import { GenericCredentialType, MetricType, Plugin, PluginResult } from '@metrikube/common';
+import { MetricType, Plugin, PluginResult } from '@metrikube/common';
 
 import { CredentialEntity } from '../../../infrastructure/database/entities/credential.entity';
 import { PluginEntity } from '../../../infrastructure/database/entities/plugin.entity';

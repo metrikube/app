@@ -1,6 +1,6 @@
-import { AWSServiceType, Plugin } from '@metrikube/common';
+import { Plugin } from '@metrikube/common';
 
-import { Body, Controller, Get, HttpCode, HttpStatus, Inject, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpStatus, Inject, Post } from '@nestjs/common';
 import { ApiOperation } from '@nestjs/swagger';
 
 import { CredentialUseCaseInterface } from '../../domain/interfaces/use-cases/credential.use-case.interface';
@@ -27,11 +27,6 @@ export class AppController {
     return this.pluginUseCase.create(payload);
   }
 
-  @Get('/aws')
-  getAWS(@Query('region') region: string, @Query('services') services: AWSServiceType[]): any {
-    return this.pluginUseCase.getAWSPlugin().getServicesInformations(services, region);
-  }
-
   @Post('db-plugin/connection')
   dbCreateConnection(@Body() payload: Credential): Promise<CredentialEntity> {
     return this.credentialUseCase.insertCredentialForPlugin(payload['pluginId'], payload);
@@ -41,25 +36,4 @@ export class AppController {
   dbGetData(pluginId: Plugin['id']): any {
     return this.credentialUseCase.getDataDb(pluginId);
   }
-
-  // @Get('/aws/cost-explorer')
-  // getCosts(@Query('start') start: string, @Query('end') end: string, @Query('metrics') metrics: string[]): Promise<AWS.CostExplorer.GetCostAndUsageResponse> {
-  //   const params: ICostExplorerParams = {
-  //     timePeriod: {
-  //       Start: start,
-  //       End: end,
-  //     },
-  //     metrics: Array.isArray(metrics) ? metrics : [metrics],
-  //   };
-  //   console.log('params', params);
-  //   return this.pluginUseCase.getCosts(params);
-  //   // {
-  //   //   TimePeriod: {
-  //   //     Start: '2022-07-01',
-  //   //     End: '2023-06-01',
-  //   //   },
-  //   //   Granularity: 'MONTHLY',
-  //   //   Metrics: ['BlendedCost', 'UsageQuantity'],
-  //   // }
-  // }
 }

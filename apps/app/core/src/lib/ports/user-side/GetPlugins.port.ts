@@ -1,3 +1,5 @@
+import { PluginModel } from "../../domain";
+
 export interface GetPlugins {
-    execute: () => Promise<{ id: string, name: string }[]>
+    execute: () => Promise<PluginModel[]>
 }
