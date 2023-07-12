@@ -39,6 +39,13 @@ export const theme = createTheme({
             src: url("../fonts/Poppins/Poppins-Regular.ttf");
         }
       `
+    },
+    MuiCardActions: {
+      styleOverrides: {
+        root: {
+          padding: '16px'
+        }
+      }
     }
   }
 })
