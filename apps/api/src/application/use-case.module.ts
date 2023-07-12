@@ -1,4 +1,4 @@
-import { ApiMonitoringModule } from '@metrikube/api-monitoring';
+import { ApiMonitoringModule, ApiMonitoringService } from '@metrikube/api-monitoring';
 import { AWSService, AwsPluginModule } from '@metrikube/aws-plugin';
 import { DbAnalyticsPluginModule, DbAnalyticsPluginService } from '@metrikube/db-analytics-plugin';
 
@@ -23,6 +23,7 @@ import { AlertUseCase } from './use-cases/alert/alert.use-case';
     { provide: 'PLUGIN_REPOSITORY', useClass: PluginRepositoryImpl },
     { provide: 'METRIC_REPOSITORY', useClass: MetricRepositoryImpl },
     { provide: 'PLUGIN_TO_METRIC_REPOSITORY', useClass: PluginToMetricRepositoryImpl },
+    { provide: 'API_MONITORING', useClass: ApiMonitoringService },
     { provide: 'MAILER', useClass: NotificationService },
     { provide: 'DB_ANALYTICS_PLUGIN', useClass: DbAnalyticsPluginService }
   ],
