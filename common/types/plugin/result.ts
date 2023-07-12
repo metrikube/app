@@ -1,3 +1,4 @@
+import { GenericCredentialType } from '../credential';
 import { MetricType } from '../metric';
 
 // @ts-ignore
@@ -27,4 +28,8 @@ export interface ApiHealthCheckResult {
   value: number;
   unit: string;
   details: unknown;
+}
+
+export interface PluginConnectionInterface {
+  testConnection(credential: GenericCredentialType): Promise<{ ok: boolean; message: string | null }>;
 }

@@ -1,5 +1,6 @@
 import { fromIni } from '@aws-sdk/credential-providers';
 import { AwsCredentialIdentityProvider } from '@aws-sdk/types';
+import { GenericCredentialType, PluginConnectionInterface } from '@metrikube/common';
 
 import { Injectable } from '@nestjs/common';
 
@@ -8,7 +9,7 @@ import { CostExplorerService } from './cost-explorer.service';
 import { EC2Service } from './ec2.service';
 
 @Injectable()
-export class AWSService {
+export class AWSService implements PluginConnectionInterface {
   private readonly credentials: AwsCredentialIdentityProvider;
   private readonly costExplorerService: CostExplorerService;
 
@@ -55,5 +56,8 @@ export class AWSService {
     }
 
     return infos;
+  }
+  testConnection(credential: GenericCredentialType): Promise<{ ok: boolean; message: string | null }> {
+    throw new Error('Method not implemented.');
   }
 }
