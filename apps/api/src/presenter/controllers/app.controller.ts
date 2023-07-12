@@ -34,7 +34,7 @@ export class AppController {
 
   @Post('db-plugin/connection')
   dbCreateConnection(@Body() payload: Credential): Promise<CredentialEntity> {
-    return this.credentialUseCase.insertCredentialForPlugin(payload['plugin'], payload);
+    return this.credentialUseCase.insertCredentialForPlugin(payload['pluginId'], payload);
   }
 
   @Get('db-plugin/get-data')
