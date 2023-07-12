@@ -1,7 +1,6 @@
 import { FindManyOptions, FindOptionsWhere } from 'typeorm';
 
 import { AlertRepository } from '../../../domain/interfaces/repository/alert.repository';
-import { Alert } from '../../../domain/models/alert.model';
 import { AlertEntity } from '../entities/alert.entity';
 
 export class AlertInMemoryRepositoryImpl implements AlertRepository {
@@ -22,6 +21,14 @@ export class AlertInMemoryRepositoryImpl implements AlertRepository {
   async updateAlert(id: string, payload: Partial<AlertEntity>): Promise<void> {
     let alert = this.alerts.find((alert) => alert.id === id);
     alert = { ...alert, ...payload };
+    return Promise.resolve();
+  }
+
+  async deleteAlert(id: string): Promise<void> {
+    this.alerts.splice(
+      this.alerts.findIndex((alert) => alert.id === id),
+      1
+    );
     return Promise.resolve();
   }
 }

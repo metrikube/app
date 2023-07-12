@@ -2,7 +2,7 @@ import { DataSource } from 'typeorm';
 
 import { InjectDataSource } from '@nestjs/typeorm';
 
-import { PluginToMetricRepository } from '../../../domain/interfaces/repository/plugin_to_metric.repository';
+import { PluginToMetricRepository } from '../../../domain/interfaces/repository/plugin-to-metric.repository';
 import { PluginToMetricEntity } from '../entities/plugin_to_metric.entity';
 import { BaseRepository } from './base.repository';
 
@@ -11,7 +11,7 @@ export class PluginToMetricRepositoryImpl extends BaseRepository<PluginToMetricE
     super(connection, PluginToMetricEntity);
   }
 
-  createPluginToMetric(payload: { metricId: string; pluginId: string; isActivated: boolean; ressourceId?: string }): Promise<PluginToMetricEntity> {
+  createPluginToMetric(payload: { metricId: string; pluginId: string; isActivated: boolean; resourceId?: string }): Promise<PluginToMetricEntity> {
     return this.save(payload);
   }
 
