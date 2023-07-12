@@ -6,7 +6,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { MetricThresholdOperatorEnum } from '../../../domain/models/alert.model';
 import { AlertEntity } from '../../../infrastructure/database/entities/alert.entity';
 
-class AlertRequestCondition {
+class AlertConditionRequestDto {
   @ApiProperty({ name: 'field', type: String, description: 'The field to check', example: 'value' })
   @IsString()
   @IsNotEmpty()
@@ -39,7 +39,7 @@ export class CreateAlertRequestDto {
   @IsDefined()
   @IsNotEmptyObject()
   @ValidateNested({ each: true })
-  @Type(() => AlertRequestCondition)
+  @Type(() => AlertConditionRequestDto)
   @ApiProperty({
     name: 'condition',
     description: 'The condition to trigger the alert',
@@ -50,7 +50,7 @@ export class CreateAlertRequestDto {
     },
     required: true
   })
-  readonly condition: AlertRequestCondition;
+  readonly condition: AlertConditionRequestDto;
 }
 
 export class CreateAlertResponseDto {
