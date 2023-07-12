@@ -1,7 +1,9 @@
+import PluginEmptyStateImg from '../assets/img/undraws/undraw_online_stats.svg'
 import ProviderModal from '../components/organisms/modals/Provider.modal'
 import DefaultLayout from '../layouts/DefaultLayout'
+import { EmptyStateLayout } from '../layouts/EmptyStateLayout'
 import styled from '@emotion/styled'
-import { AddCircleOutline } from '@mui/icons-material'
+import { AddCircleOutline, AddchartOutlined } from '@mui/icons-material'
 import { Button } from '@mui/material'
 import React, { useState } from 'react'
 
@@ -18,17 +20,23 @@ const Dashboard = () => {
         <div>
           <Button
             onClick={openProviderModalHandler}
-            size="small"
-            variant="outlined"
+            size="medium"
+            variant="contained"
             startIcon={<AddCircleOutline />}>
             Add a new provider
           </Button>
-          <Button sx={{ ml: 1 }} size="small" variant="outlined" startIcon={<AddCircleOutline />}>
+          <Button sx={{ ml: 1 }} size="medium" variant="contained" startIcon={<AddchartOutlined />}>
             Add a new widget
           </Button>
         </div>
       </StyledHeader>
-      <StyledBody>There is no plugin installed</StyledBody>
+      <EmptyStateLayout
+        title="Get started by adding a provider"
+        description="The providers are the heart of Metrikube, they allow you to visualize your metrics according to the different plugins."
+        onActionButtonClick={openProviderModalHandler}
+        buttonLabel="Add a new provider"
+        imageAsset={PluginEmptyStateImg}
+      />
       <ProviderModal open={openedModal} setOpenModal={setOpenModal} />
     </DefaultLayout>
   )

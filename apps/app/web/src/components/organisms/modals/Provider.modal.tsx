@@ -5,7 +5,7 @@ import ProviderFormStep1 from '../forms/ProviderFormStep1.form'
 import ProviderFormStep2 from '../forms/ProviderFormStep2.form'
 import ProviderFormStep3 from '../forms/ProviderFormStep3.form'
 import styled from '@emotion/styled'
-import { ArrowBack, ArrowForward, Close } from '@mui/icons-material'
+import { ArrowBack, ArrowForward, Close, Padding } from '@mui/icons-material'
 import {
   Button,
   CSSObject,
@@ -67,15 +67,10 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
   //   setSelectedProvider({})
   // }
 
-  const isFirstStepForm: boolean = activeStep === 0
+  const isFirstStep: boolean = activeStep === 0
 
   const isLastStep = (steps: string[], activeStep: number): boolean =>
     steps.length - 1 === activeStep
-
-  const dialogActionStyle: CSSObject = {
-    display: 'flex',
-    justifyContent: isFirstStepForm ? 'flex-end' : 'space-between'
-  }
 
   useEffect(() => {
     setIsProviderChose(selectedProvider !== null)
@@ -107,10 +102,10 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
           {activeStep === 1 && <ProviderFormStep2 handleMetric={handleMetricChange} />}
           {activeStep === 2 && <ProviderFormStep3 />}
         </DialogContent>
-        <DialogActions sx={dialogActionStyle}>
-          {!isFirstStepForm && (
+        <StyledDialogActions isFirstStep={isFirstStep}>
+          {!isFirstStep && (
             <Button
-              variant="text"
+              variant="outlined"
               disableRipple
               startIcon={<ArrowBack />}
               onClick={() => handleBack()}>
@@ -119,7 +114,7 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
           )}
           {isLastStep(steps, activeStep) ? (
             <Button
-              variant="text"
+              variant="contained"
               disableRipple
               disabled={!isProviderChose}
               endIcon={<ArrowForward />}>
@@ -130,7 +125,7 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
               <span>
                 <Button
                   onClick={() => handleNext()}
-                  variant="text"
+                  variant="contained"
                   disableRipple
                   disabled={!isProviderChose}
                   endIcon={<ArrowForward />}>
@@ -139,7 +134,7 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
               </span>
             </Tooltip>
           )}
-        </DialogActions>
+        </StyledDialogActions>
       </Dialog>
     </ProviderFormContext.Provider>
   )
@@ -148,6 +143,13 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
 const DialogHeader = styled.div`
   display: flex;
   justify-content: space-between;
+`
+
+const StyledDialogActions = styled(DialogActions)<{ isFirstStep: boolean }>`
+  display: flex;
+  justify-content: ${({ isFirstStep }) => (isFirstStep ? 'flex-end' : 'space-between')};
+  padding: 0 24px 24px 24px;
+  margin-top: 24px;
 `
 
 export default ProviderModal

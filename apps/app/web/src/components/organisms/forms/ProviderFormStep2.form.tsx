@@ -1,4 +1,5 @@
 import { ProviderFormContext } from '../../../contexts/provider-form.context'
+import OutlinedCard from '../../molecules/OutlinedCard'
 import styled from '@emotion/styled'
 import { CREDENTIALS, AWSMetricsMock, GithubMetricsMock, MetricModel } from '@metrikube/core'
 import LoadingButton from '@mui/lab/LoadingButton'
@@ -16,8 +17,10 @@ const ProviderFormStep2 = ({ handleMetric }: Props) => {
 
   return (
     <Step2Container>
-      <Credential>
-        <h3>Credential</h3>
+      <OutlinedCard
+        title="Credentials"
+        actionButtonTitle="Connection test"
+        onActionButtonClick={() => console.log('testing connection')}>
         {credentialType === CREDENTIALS.USER_PASSWORD.code && (
           <UserPasswordForm>
             <TextField
@@ -37,18 +40,13 @@ const ProviderFormStep2 = ({ handleMetric }: Props) => {
               variant="outlined"
               size="small"
             />
-
-            <LoadingButton size="small" loading={false} variant="outlined">
-              Connection test
-            </LoadingButton>
           </UserPasswordForm>
         )}
         {credentialType === CREDENTIALS.API_KEY.code && (
           <TextField multiline required label="API Key" variant="outlined" size="small" />
         )}
-      </Credential>
-      <Metrics>
-        <h3>Metrics</h3>
+      </OutlinedCard>
+      <OutlinedCard title="Metrics">
         <Autocomplete
           id="tags-standard"
           options={selectedProvider?.metrics || []}
@@ -58,13 +56,13 @@ const ProviderFormStep2 = ({ handleMetric }: Props) => {
           renderInput={(params) => (
             <TextField
               {...params}
-              variant="standard"
+              variant="outlined"
               label="Multiple values"
               placeholder="Favorites"
             />
           )}
         />
-      </Metrics>
+      </OutlinedCard>
     </Step2Container>
   )
 }
@@ -73,8 +71,6 @@ const Step2Container = styled.div`
   margin-top: 1rem;
 `
 const Credential = styled.section``
-
-const Metrics = styled.section``
 
 const UserPasswordForm = styled.form`
   display: flex;
