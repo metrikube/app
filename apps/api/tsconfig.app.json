@@ -19,5 +19,5 @@
     "lib": ["ESNext", "ES2022"]
   },
   "exclude": ["jest.config.ts", "**/*.spec.ts", "**/*.test.ts"],
-  "include": ["**/*.ts"]
+  "include": ["**/*.ts", "../../common/types/plugin/plugin.ts"]
 }

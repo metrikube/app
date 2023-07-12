@@ -1,6 +1,7 @@
 import { ApiMonitoringService } from '@metrikube/api-monitoring';
 import { AWSService } from '@metrikube/aws-plugin';
-import { ApiEndpointCredentialType, ApiHealthCheckResult, MetricType, PluginResult } from '@metrikube/common';
+import { Plugin } from '@metrikube/common';
+import { ApiEndpointCredentialType, ApiHealthCheckResult, CredentialType, GenericCredentialType, MetricType, PluginResult } from '@metrikube/common';
 
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 
@@ -11,7 +12,7 @@ import { PluginRepository } from '../../../domain/interfaces/repository/plugin.r
 import { PluginToMetricRepository } from '../../../domain/interfaces/repository/plugin_to_metric.repository';
 import { AlertUseCaseInterface } from '../../../domain/interfaces/use-cases/alert.use-case.interface';
 import { PluginUseCaseInterface } from '../../../domain/interfaces/use-cases/plugin.use-case.interface';
-import { Plugin } from '../../../domain/models/plugin.model';
+import { Alert } from '../../../domain/models/alert.model';
 import { CredentialEntity } from '../../../infrastructure/database/entities/credential.entity';
 import { PluginEntity } from '../../../infrastructure/database/entities/plugin.entity';
 import { PluginResponseDto } from '../../../presenter/dto/plugins.dto';

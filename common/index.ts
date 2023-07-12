@@ -4,3 +4,4 @@ export * from './types/metric'
 
 // generic plugin result types
 export * from './types/plugin/result'
+export * from './types/types'
