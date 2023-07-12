@@ -1,7 +1,7 @@
 export type Issues = Issue[]
 export type PullRequests = PullRequest[]
 
-export interface Issue {
+interface Issue {
   id: number
   node_id: string
   url: string
@@ -30,7 +30,7 @@ export interface Issue {
   author_association: string
 }
 
-export interface PullRequest {
+interface PullRequest {
   url: string
   id: number
   node_id: string
@@ -68,7 +68,7 @@ export interface PullRequest {
   draft: boolean
 }
 
-export interface Head {
+interface Head {
   label: string
   ref: string
   sha: string
@@ -76,7 +76,7 @@ export interface Head {
   repo: Repository
 }
 
-export interface Base {
+interface Base {
   label: string
   ref: string
   sha: string
@@ -84,7 +84,7 @@ export interface Base {
   repo: Repository
 }
 
-export interface RequestedTeam {
+interface RequestedTeam {
   id: number
   node_id: string
   url: string
@@ -100,7 +100,7 @@ export interface RequestedTeam {
 }
  
 
-export interface RequestedReviewer {
+interface RequestedReviewer {
   login: string
   id: number
   node_id: string
@@ -121,7 +121,7 @@ export interface RequestedReviewer {
   site_admin: boolean
 }
 
-export interface User {
+interface User {
   login: string
   id: number
   node_id: string
@@ -142,7 +142,7 @@ export interface User {
   site_admin: boolean
 }
 
-export interface Label {
+interface Label {
   id: number
   node_id: string
   url: string
@@ -152,7 +152,7 @@ export interface Label {
   default: boolean
 }
 
-export interface Assignee {
+interface Assignee {
   login: string
   id: number
   node_id: string
@@ -173,7 +173,7 @@ export interface Assignee {
   site_admin: boolean
 }
 
-export interface Assignee2 {
+interface Assignee2 {
   login: string
   id: number
   node_id: string
@@ -194,7 +194,7 @@ export interface Assignee2 {
   site_admin: boolean
 }
 
-export interface Milestone {
+interface Milestone {
   url: string
   html_url: string
   labels_url: string
@@ -213,7 +213,7 @@ export interface Milestone {
   due_on: string
 }
 
-export interface Creator {
+interface Creator {
   login: string
   id: number
   node_id: string
@@ -234,14 +234,14 @@ export interface Creator {
   site_admin: boolean
 }
 
-export interface PullRequest {
+interface PullRequest {
   url: string
   html_url: string
   diff_url: string
   patch_url: string
 }
 
-export interface Repository {
+interface Repository {
   id: number
   node_id: string
   name: string
@@ -330,7 +330,7 @@ export interface Repository {
   watchers: number
 }
 
-export interface Owner {
+interface Owner {
   login: string
   id: number
   node_id: string
@@ -351,13 +351,13 @@ export interface Owner {
   site_admin: boolean
 }
 
-export interface Permissions {
+interface Permissions {
   admin: boolean
   push: boolean
   pull: boolean
 }
 
-export interface License {
+interface License {
   key: string
   name: string
   url: string
