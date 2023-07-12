@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-
 import { DbAnalyticsPluginService } from './db-analytics-plugin.service';
 
 @Module({

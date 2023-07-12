@@ -1,11 +1,6 @@
 // TODO transforn to enum
-export const CREDENTIALS = {
-    API_KEY: {
-        code: "apiKey"
-    },
-    USER_PASSWORD: {
-        code: "userPassword"
-    }
+export enum CREDENTIALS {
+   
 }
 
 export const PROVIDERS = {
