@@ -1,15 +1,15 @@
-import { SentMessageInfo, Transporter, createTransport } from 'nodemailer'
+import { SentMessageInfo, Transporter, createTransport } from 'nodemailer';
 
-import { Injectable } from '@nestjs/common'
+import { Injectable } from '@nestjs/common';
 
-import { NotificationInterface } from '../../domain/interfaces/adapters/notification.interface'
+import { NotificationInterface } from '../../../domain/interfaces/adapters/notification.interface';
 
 @Injectable()
-export class NotificationAdapter implements NotificationInterface {
-  mailer: Transporter
+export class NotificationService implements NotificationInterface {
+  mailer: Transporter;
 
   constructor() {
-    this.mailer = this.createTransport()
+    this.mailer = this.createTransport();
   }
 
   sendMail(to: string, subject: string, content: string): Promise<SentMessageInfo> {
@@ -19,7 +19,7 @@ export class NotificationAdapter implements NotificationInterface {
       subject,
       text: content,
       html: content
-    })
+    });
   }
 
   private createTransport(): Transporter {
@@ -31,6 +31,6 @@ export class NotificationAdapter implements NotificationInterface {
         user: process.env.SMTP_USERNAME,
         pass: process.env.SMTP_PASSWORD
       }
-    })
+    });
   }
 }

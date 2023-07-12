@@ -1,10 +1,11 @@
+import { MetricModel } from 'apps/app/core/src/lib/domain/models/Metric.model'
 import { ProviderFormContext } from '../../../contexts/provider-form.context'
 import ProviderFormStepper from '../ProviderFormStepper'
 import ProviderFormStep1 from '../forms/ProviderFormStep1.form'
 import ProviderFormStep2 from '../forms/ProviderFormStep2.form'
 import ProviderFormStep3 from '../forms/ProviderFormStep3.form'
 import styled from '@emotion/styled'
-import { ArrowBack, ArrowForward, Close } from '@mui/icons-material'
+import { ArrowBack, ArrowForward, Close, Padding } from '@mui/icons-material'
 import {
   Button,
   CSSObject,
@@ -16,6 +17,7 @@ import {
   Tooltip
 } from '@mui/material'
 import React, { Dispatch, SetStateAction, useEffect, useState } from 'react'
+import { PluginModel } from 'apps/app/core/src/lib/domain/models/Plugin.model'
 
 interface Props {
   open: boolean
@@ -29,13 +31,9 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
     'Configure your provider'
   ]
   const [selectedProviderCategory, setSelectedProviderCategory] = useState('')
-  const [selectedProvider, setSelectedProvider] = useState<{
-    id: string
-    name: string
-    credential: {}
-  } | null>(null)
-  const [selectedMetric, setselectedMetric] = useState<unknown[]>([])
-  const [isProviderChose, setIsProviderChose] = useState(selectedProvider !== null)
+  const [selectedProvider, setSelectedProvider] = useState<PluginModel | null>(null)
+  const [selectedMetric, setselectedMetric] = useState<MetricModel| null>(null)
+  const [isProviderChose, setIsProviderChose] = useState<boolean>(selectedProvider !== null)
   const [activeStep, setActiveStep] = useState(0)
 
   const handleNext = () => {
@@ -54,30 +52,25 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
     }
   }
 
-  const handleProviderChange = (provider: any) => {
+  const handleProviderChange = (provider: PluginModel) => {
     setSelectedProvider({ ...provider })
   }
 
-  const handleMetricChange = (metric: unknown) => {
+  const handleMetricChange = (metric: MetricModel) => {
     setselectedMetric({ ...metric })
   }
 
-  const handleReset = () => {
-    setActiveStep(0)
-    setSelectedProviderCategory('')
-    setselectedMetric([])
-    setSelectedProvider(null)
-  }
+  // const handleReset = () => {
+  //   setActiveStep(0)
+  //   setSelectedProviderCategory('')
+  //   setselectedMetric({})
+  //   setSelectedProvider({})
+  // }
 
-  const isFirstStepForm: boolean = activeStep === 0
+  const isFirstStep: boolean = activeStep === 0
 
   const isLastStep = (steps: string[], activeStep: number): boolean =>
     steps.length - 1 === activeStep
-
-  const dialogActionStyle: CSSObject = {
-    display: 'flex',
-    justifyContent: isFirstStepForm ? 'flex-end' : 'space-between'
-  }
 
   useEffect(() => {
     setIsProviderChose(selectedProvider !== null)
@@ -106,13 +99,13 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
               handleProvider={handleProviderChange}
             />
           )}
-          {activeStep === 1 && <ProviderFormStep2 handleMetrics={handleMetricChange} />}
+          {activeStep === 1 && <ProviderFormStep2 handleMetric={handleMetricChange} />}
           {activeStep === 2 && <ProviderFormStep3 />}
         </DialogContent>
-        <DialogActions sx={dialogActionStyle}>
-          {!isFirstStepForm && (
+        <StyledDialogActions isFirstStep={isFirstStep}>
+          {!isFirstStep && (
             <Button
-              variant="text"
+              variant="outlined"
               disableRipple
               startIcon={<ArrowBack />}
               onClick={() => handleBack()}>
@@ -121,7 +114,7 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
           )}
           {isLastStep(steps, activeStep) ? (
             <Button
-              variant="text"
+              variant="contained"
               disableRipple
               disabled={!isProviderChose}
               endIcon={<ArrowForward />}>
@@ -132,7 +125,7 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
               <span>
                 <Button
                   onClick={() => handleNext()}
-                  variant="text"
+                  variant="contained"
                   disableRipple
                   disabled={!isProviderChose}
                   endIcon={<ArrowForward />}>
@@ -141,7 +134,7 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
               </span>
             </Tooltip>
           )}
-        </DialogActions>
+        </StyledDialogActions>
       </Dialog>
     </ProviderFormContext.Provider>
   )
@@ -150,6 +143,13 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
 const DialogHeader = styled.div`
   display: flex;
   justify-content: space-between;
+`
+
+const StyledDialogActions = styled(DialogActions)<{ isFirstStep: boolean }>`
+  display: flex;
+  justify-content: ${({ isFirstStep }) => (isFirstStep ? 'flex-end' : 'space-between')};
+  padding: 0 24px 24px 24px;
+  margin-top: 24px;
 `
 
 export default ProviderModal

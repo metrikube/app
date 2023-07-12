@@ -8,7 +8,7 @@ export interface MetricRepository {
    * Get all the available metrics with criterias
    * @param criterias
    */
-  getMetrics(criterias: FindManyOptions<MetricEntity> | FindOptionsWhere<MetricEntity>): Promise<MetricEntity[]>;
+  getMetrics(criterias?: FindManyOptions<MetricEntity> | FindOptionsWhere<MetricEntity>): Promise<MetricEntity[]>;
 
   /**
    * Find all the available metric for a given plugin

@@ -3,4 +3,5 @@ import { Credential } from '../../models/credential.model';
 
 export interface CredentialUseCaseInterface {
   insertCredentialForPlugin(pluginId: string, credential: Credential): Promise<CredentialEntity>;
+  getDataDb(pluginId: string): Promise<string>;
 }

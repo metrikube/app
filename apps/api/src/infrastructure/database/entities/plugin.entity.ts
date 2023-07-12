@@ -1,7 +1,8 @@
-import { Column, CreateDateColumn, Entity, Generated, JoinColumn, OneToMany, PrimaryColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, Generated, JoinColumn, ManyToOne, OneToMany, PrimaryColumn } from 'typeorm';
 
 import { ApiProperty } from '@nestjs/swagger';
 
+import { MetricEntity } from './metric.entity';
 import { PluginToMetricEntity } from './plugin_to_metric.entity';
 
 const pluginInstructionExample = `
@@ -47,6 +48,29 @@ export class PluginEntity {
     description: 'Plugin available metrics'
   })
   pluginToMetrics: PluginToMetricEntity[];
+
+  @JoinColumn()
+  @OneToMany(() => MetricEntity, (metric: MetricEntity) => metric.plugin)
+  @ApiProperty({ name: 'plugin', type: MetricEntity, description: 'Metric plugins' })
+  metrics: MetricEntity;
+
+  @Column({ type: 'varchar', nullable: false })
+  @ApiProperty({
+    name: 'credentialType',
+    type: String,
+    description: 'Plugin credentialType',
+    example: 'aws'
+  })
+  credentialType: string;
+
+  @Column({ type: 'varchar', nullable: false })
+  @ApiProperty({
+    name: 'iconUrl',
+    type: String,
+    description: 'Plugin iconUrl',
+    example: 'https://www.google.com/images/branding/googleiconUrl/1x/googleiconUrl_color_272x92dp.png'
+  })
+  iconUrl: string;
 
   @CreateDateColumn()
   @ApiProperty({ name: 'createdAt', type: Date, description: 'Plugin creation date', example: '2023-01-01T00:00:00.000Z' })

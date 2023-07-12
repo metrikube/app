@@ -1,9 +1,8 @@
-import { CredentialType, GenericCredentialType } from '@metrikube/common';
-
-import { Plugin } from './plugin.model';
+import { CredentialType, GenericCredentialType, Plugin } from '@metrikube/common';
 
 export type Credential = {
   readonly type: CredentialType;
   readonly value: GenericCredentialType | string;
-  readonly pluginId: Plugin['id'];
+  readonly pluginId?: Plugin['id'];
 };
+
