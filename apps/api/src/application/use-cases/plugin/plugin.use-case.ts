@@ -40,30 +40,25 @@ export class PluginUseCase implements PluginUseCaseInterface {
     return new PluginResponseDto(plugins, metrics, credentials);
   }
 
-  async registerPlugin({
-    pluginId,
-    metricType,
-    credential,
-    ressourceId
-  }: RegisterPluginRequestDto): Promise<RegisterPluginResponseDto> {
+  async registerPlugin({ pluginId, metricType, credential, ressourceId }: RegisterPluginRequestDto): Promise<RegisterPluginResponseDto> {
     const [plugin, metric]: [PluginEntity, MetricEntity] = await Promise.all([
       this.pluginRepository.findOneById(pluginId),
       this.metricRepository.findMetricByType(pluginId, metricType)
     ]);
+
     if (!plugin || !metric) throw new BadRequestException('Plugin or metric not found');
 
     const pluginTestConnection = await this.testPluginConnection(plugin, credential);
     if (!pluginTestConnection.ok) throw new BadRequestException(pluginTestConnection.message || 'Plugin connection failed');
 
+    // TODO : wrap into a transaction
     const [pluginCredential, pluginToMetric] = await Promise.all([
-      this.credentialRepository.createCredential({ value: credential, pluginId, type: plugin.type as CredentialType }),
+      this.credentialRepository.createCredential({ value: credential, plugin, type: plugin.credentialType as CredentialType }),
       this.pluginToMetricRepository.createPluginToMetric({ pluginId, metricId: metric.id, ressourceId, isActivated: true })
     ]);
 
     // TODO : dispatch refresh interval scheduler
-    console.log('pluginCredential : ', pluginCredential);
-    console.log('pluginToMetric : ', pluginToMetric);
-    return Object.assign(new RegisterPluginResponseDto(), pluginToMetric);
+    return new RegisterPluginResponseDto(pluginToMetric);
   }
 
   async refreshPluginMetric(pluginId: string, metricType: MetricType): Promise<PluginResult<MetricType>> {
@@ -103,20 +98,20 @@ export class PluginUseCase implements PluginUseCaseInterface {
     return this.githubService;
   }
 
-  private async testPluginConnection(plugin: PluginEntity, credential: GenericCredentialType): Promise<{ ok: boolean; message: string | null }> {
+  private async testPluginConnection(
+    plugin: PluginEntity,
+    credential: GenericCredentialType
+  ): Promise<{
+    ok: boolean;
+    message: string | null
+  }> {
     const pluginConnection: Record<Plugin['type'], PluginConnectionInterface> = {
-      'api-endpoint-health-check': this.apiMonitoringService,
-      'aws-bucket-single-instance': this.apiMonitoringService,
-      'aws-bucket-multiple-instances': this.apiMonitoringService,
-      'aws-ec2-multiple-instances-usage': this.apiMonitoringService,
-      'aws-ec2-single-instance-usage': this.apiMonitoringService,
-      'github-last-pr': this.apiMonitoringService,
-      'database-queries': this.apiMonitoringService,
-      'database-size': this.apiMonitoringService,
-      'database-slow-queries': this.apiMonitoringService,
-      'database-connections': this.apiMonitoringService
+      'api': this.apiMonitoringService,
+      'api_endpoint': this.apiMonitoringService,
+      'github': this.apiMonitoringService,
+      'aws': this.AWSService,
+      'sql_database': this.apiMonitoringService
     };
-
     return pluginConnection[plugin.type].testConnection(credential);
   }
 }

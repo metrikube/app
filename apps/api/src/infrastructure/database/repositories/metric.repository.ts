@@ -23,22 +23,13 @@ export class MetricRepositoryImpl extends BaseRepository<MetricEntity> implement
   }
 
   findMetricByPluginId(pluginId: string): Promise<MetricEntity[]> {
-    return this.find({ where: { pluginId } });
+    return this.find({ where: { plugin: { id: pluginId } } });
   }
 
   findMetricByType(pluginId: string, metricType: string): Promise<MetricEntity> {
     return this.findOne({
-      where: {
-        pluginToMetrics: {
-          pluginId,
-          metric: {
-            type: metricType
-          }
-        }
-      },
-      relations: {
-        pluginToMetrics: true
-      }
+      where: { type: metricType, plugin: { id: pluginId } },
+      relations: { pluginToMetrics: true }
     });
   }
 }
