@@ -1,5 +1,6 @@
 import { ApiMonitoringModule } from '@metrikube/api-monitoring';
 import { AWSService, AwsPluginModule } from '@metrikube/aws-plugin';
+import { DbAnalyticsPluginModule, DbAnalyticsPluginService } from '@metrikube/db-analytics-plugin';
 
 import { Module } from '@nestjs/common';
 
@@ -13,7 +14,7 @@ import { NotificationService } from '../infrastructure/services/notification/not
 import { AlertUseCase } from './use-cases/alert/alert.use-case';
 
 @Module({
-  imports: [InfrastructureModule, AwsPluginModule, ApiMonitoringModule],
+  imports: [InfrastructureModule, AwsPluginModule, ApiMonitoringModule, DbAnalyticsPluginModule],
   providers: [
     { provide: 'ALERT_REPOSITORY', useClass: AlertRepositoryImpl },
     { provide: 'ALERT_USE_CASE', useClass: AlertUseCase },
@@ -22,8 +23,19 @@ import { AlertUseCase } from './use-cases/alert/alert.use-case';
     { provide: 'PLUGIN_REPOSITORY', useClass: PluginRepositoryImpl },
     { provide: 'METRIC_REPOSITORY', useClass: MetricRepositoryImpl },
     { provide: 'PLUGIN_TO_METRIC_REPOSITORY', useClass: PluginToMetricRepositoryImpl },
-    { provide: 'MAILER', useClass: NotificationService }
+    { provide: 'MAILER', useClass: NotificationService },
+    { provide: 'DB_ANALYTICS_PLUGIN', useClass: DbAnalyticsPluginService }
   ],
-  exports: ['PLUGIN_REPOSITORY', 'ALERT_REPOSITORY', 'CREDENTIAL_REPOSITORY', 'AWS_PLUGIN', 'PLUGIN_REPOSITORY', 'ALERT_USE_CASE', 'METRIC_REPOSITORY', 'PLUGIN_TO_METRIC_REPOSITORY']
+  exports: [
+    'PLUGIN_REPOSITORY',
+    'ALERT_REPOSITORY',
+    'CREDENTIAL_REPOSITORY',
+    'AWS_PLUGIN',
+    'PLUGIN_REPOSITORY',
+    'ALERT_USE_CASE',
+    'METRIC_REPOSITORY',
+    'PLUGIN_TO_METRIC_REPOSITORY',
+    'DB_ANALYTICS_PLUGIN'
+  ]
 })
 export class UseCaseModule {}

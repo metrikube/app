@@ -1,5 +1,6 @@
 import { ApiMonitoringService } from '@metrikube/api-monitoring';
 import { AWSService } from '@metrikube/aws-plugin';
+import { DbAnalyticsPluginService } from '@metrikube/db-analytics-plugin';
 
 import { Module } from '@nestjs/common';
 
@@ -16,6 +17,8 @@ import { PluginsController } from './controllers/plugins.controller';
     { provide: 'API_MONITORING', useClass: ApiMonitoringService },
     { provide: 'AWS_PLUGIN', useClass: AWSService },
     { provide: 'CREDENTIAL_USE_CASE', useClass: CredentialUseCase },
+    { provide: 'CREDENTIAL_REPOSITORY', useClass: CredentialRepositoryImpl },
+    { provide: 'DB_ANALYTICS_PLUGIN', useClass: DbAnalyticsPluginService },
     { provide: 'PLUGIN_USE_CASE', useClass: PluginUseCase }
   ]
 })
