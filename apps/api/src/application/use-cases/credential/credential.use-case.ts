@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-
+import { GenericCredentialType } from '@metrikube/common';
 import { CredentialRepository } from '../../../domain/interfaces/repository/credential.repository';
 import { CredentialUseCaseInterface } from '../../../domain/interfaces/use-cases/credential.use-case.interface';
 import { Credential } from '../../../domain/models/credential.model';
@@ -23,14 +23,15 @@ export class CredentialUseCase implements CredentialUseCaseInterface {
   }
   async getDataDb(pluginId: Plugin['id']): Promise<string> {
     const credentials = await this.credentialRepository.findCrendentialByPluginId(pluginId);
+    const credentialValue = JSON.parse(Buffer.from(credentials.value, 'base64').toString('utf-8')) as GenericCredentialType
 
     return this.DbAnalyticsPluginService.getDataDb(
       {
-        dbName: credentials.value['dbName'],
-        dbHost: credentials.value['dbHost'],
-        dbPort: credentials.value['dbPort'],
-        dbUsername: credentials.value['dbUser'],
-        dbPassword: credentials.value['dbPassword'],
+        dbName: credentialValue['dbName'],
+        dbHost: credentialValue['dbHost'],
+        dbPort: credentialValue['dbPort'],
+        dbUsername: credentialValue['dbUser'],
+        dbPassword: credentialValue['dbPassword'],
       }
     )
   }
