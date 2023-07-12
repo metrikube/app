@@ -1,11 +1,10 @@
 import { ApiMonitoringService } from '@metrikube/api-monitoring';
-import { AWSServiceType, GenericCredentialType, MetricType, PluginResult } from '@metrikube/common';
+import { AWSServiceType, AwsCredentialType, MetricType, PluginResult } from '@metrikube/common';
 
 import { Body, Controller, Get, Inject, Param, Post, Query } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { PluginUseCaseInterface } from '../../domain/interfaces/use-cases/plugin.use-case.interface';
-import { Credential } from '../../domain/models/credential.model';
 import { PluginResponseDto, RegisterPluginRequestDto } from '../dto/plugins.dto';
 
 // prettier-ignore
@@ -32,8 +31,17 @@ export class PluginsController {
     return this.pluginUseCase.refreshPluginMetric(pluginId, metricType);
   }
 
-  @Get('/aws')
-  getAWS(@Query('region') region: string, @Query('services') services: AWSServiceType[]): any {
-    return this.pluginUseCase.getAWSPlugin().getServicesInformations(services, region);
+  @Post('/aws')
+  @ApiOperation({ summary: 'Get AWS informations' })
+  async getAWS(@Body() body: { services: AWSServiceType[], credentials: AwsCredentialType }) {
+    const { services, credentials } = body;
+    return this.pluginUseCase.getAWSPlugin().getServicesInformations(credentials, services);
+  }
+
+  @Post('/aws/ec2')
+  @ApiOperation({ summary: 'Get an ec2 instance based on its id' })
+  async getAWSEc2Instance(@Body() body: { id: string, credentials: AwsCredentialType }) {
+    const { id, credentials } = body;
+    return this.pluginUseCase.getAWSPlugin().getEc2Service(credentials).getInstanceInformation(id);
   }
 }

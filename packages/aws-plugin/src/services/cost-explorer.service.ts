@@ -1,14 +1,14 @@
 import { CostExplorerClient, GetCostAndUsageCommand, GetCostAndUsageCommandInput, Group } from '@aws-sdk/client-cost-explorer';
-import { AwsCredentialIdentityProvider } from '@aws-sdk/types';
+import { ApiAWSCostExplorerResult, AwsCredentialType } from '@metrikube/common';
 
+import { Injectable } from '@nestjs/common';
+
+@Injectable()
 export class CostExplorerService {
   private readonly client: CostExplorerClient;
 
-  constructor(credentials: AwsCredentialIdentityProvider) {
-    this.client = new CostExplorerClient({
-      region: 'us-east-1',
-      credentials: credentials
-    });
+  constructor(credentials: AwsCredentialType) {
+    this.client = new CostExplorerClient({ credentials: credentials, region: 'us-east-1' });
   }
 
   async getCosts(
@@ -42,7 +42,7 @@ export class CostExplorerService {
    * Get the total cost for all services
    * @returns
    */
-  async getServicesCosts(): Promise<any[]> {
+  async getServicesCosts(): Promise<ApiAWSCostExplorerResult[]> {
     const params = {
       TimePeriod: {
         Start: new Date().toISOString().split('T')[0].slice(0, -2) + '01',
@@ -66,13 +66,13 @@ export class CostExplorerService {
     }
 
     return response?.ResultsByTime?.[0]?.Groups?.map((group: Group) => {
-      const serviceName = group?.Keys?.[0];
-      const totalCost = group?.Metrics?.['UnblendedCost']?.Amount;
-      const currency = group?.Metrics?.['UnblendedCost']?.Unit;
+      const serviceName = group?.Keys?.[0] || '';
+      const totalCost = group?.Metrics?.['UnblendedCost']?.Amount || '';
+      const currency = group?.Metrics?.['UnblendedCost']?.Unit || '';
 
       return {
-        serviceName,
-        totalCost,
+        service: serviceName,
+        cost: totalCost,
         currency
       };
     });

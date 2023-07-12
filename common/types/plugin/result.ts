@@ -19,8 +19,16 @@ export type ApiResult = {
 export interface ApiAWSSingleResourceInstanceResult {
   id: string;
   name: string;
-  status: string;
-  cost: number;
+  status: boolean;
+  cost: number | string;
+  region?: string;
+  currency?: string;
+}
+
+export interface ApiAWSCostExplorerResult {
+  service: string;
+  cost: number | string;
+  currency: string;
 }
 
 export interface ApiHealthCheckResult {
