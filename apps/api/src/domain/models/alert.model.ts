@@ -1,4 +1,4 @@
-import { Metric } from './metric.model';
+import { Metric } from '@metrikube/common';
 
 export type MetricThresholdOperator = 'gt' | 'lt' | 'eq' | 'neq' | 'gte' | 'lte';
 
