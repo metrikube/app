@@ -7,13 +7,15 @@ import { PluginRepository } from '../../../domain/interfaces/repository/plugin.r
 import { PluginUseCaseInterface } from '../../../domain/interfaces/use-cases/plugin.use-case.interface';
 import { Plugin } from '../../../domain/models/plugin.model';
 import { PluginEntity } from '../../../infrastructure/database/entities/plugin.entity';
+import { GithubService } from '@metrikube/github-plugin';
 
 @Injectable()
 export class PluginUseCase implements PluginUseCaseInterface {
   constructor(
     @Inject('PLUGIN_REPOSITORY') private readonly pluginRepository: PluginRepository,
     @Inject('CREDENTIAL_REPOSITORY') private readonly credentialRepository: CredentialRepository,
-    @Inject('AWS_PLUGIN') private readonly AWSService: AWSService
+    @Inject('AWS_PLUGIN') private readonly AWSService: AWSService,
+    @Inject('GITHUB_PLUGIN') private readonly githubService: GithubService,
   ) {}
 
   getPlugins(): Promise<PluginEntity[]> {
@@ -26,5 +28,9 @@ export class PluginUseCase implements PluginUseCaseInterface {
 
   getAWSPlugin() {
     return this.AWSService;
+  }
+
+  getGithubPlugin() {
+    return this.githubService;
   }
 }
