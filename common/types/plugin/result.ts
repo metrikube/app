@@ -1,3 +1,4 @@
+import { Issues, PullRequests } from '@metrikube/common';
 import { GenericCredentialType } from '../credential';
 import { MetricType } from '../metric';
 
@@ -10,7 +11,8 @@ export type ApiResult = {
   'aws-bucket-multiple-instances': ApiAWSSingleResourceInstanceResult[];
   'aws-ec2-single-instance-usage': ApiAWSSingleResourceInstanceResult;
   'aws-ec2-multiple-instances-usage': ApiAWSSingleResourceInstanceResult[];
-  'github-last-pr': unknown;
+  'github-last-prs': PullRequests | ApiGithubError;
+  'github-last-issues': Issues | ApiGithubError;
   'database-queries': unknown;
   'database-size': unknown;
   'database-slow-queries': unknown;
@@ -28,6 +30,11 @@ export interface ApiHealthCheckResult {
   value: number;
   unit: string;
   details: unknown;
+}
+
+export interface ApiGithubError {
+  status: number;
+  message: string | null;
 }
 
 export interface PluginConnectionInterface {
