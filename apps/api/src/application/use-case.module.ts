@@ -1,12 +1,6 @@
 import { ApiMonitoringModule } from '@metrikube/api-monitoring';
 import { AWSService, AwsPluginModule } from '@metrikube/aws-plugin';
-
-
-
 import { Module } from '@nestjs/common';
-
-
-
 import { AlertRepositoryImpl } from '../infrastructure/database/repositories/alert.repository';
 import { CredentialRepositoryImpl } from '../infrastructure/database/repositories/credential.repository';
 import { MetricRepositoryImpl } from '../infrastructure/database/repositories/metric.repository';
