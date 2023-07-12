@@ -3,13 +3,14 @@ import { Metric } from './metric.model';
 
 export type Plugin = {
   readonly id: string; // UUID
-  readonly type: string; // PluginType
+  readonly type: string; // PluginType  // aws | gcp | azure | ...
   readonly name: string;
   readonly description: string;
   readonly instruction: string;
   readonly category: string; // cloud | database | versioning
   readonly metrics?: Metric[];
   readonly createdAt: Date;
+  readonly credential?: Credential;
 };
 
 // const provider: Plugin = {

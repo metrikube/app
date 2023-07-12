@@ -1,19 +1,22 @@
 import { GithubService } from '@metrikube/github-plugin';
+import { AWSService } from '@metrikube/aws-plugin';
+import { MetricType, PluginResult } from '@metrikube/common';
+
+import { CredentialEntity } from '../../../infrastructure/database/entities/credential.entity';
 import { PluginEntity } from '../../../infrastructure/database/entities/plugin.entity';
 import { Plugin } from '../../models/plugin.model';
 
-
-
 export interface PluginUseCaseInterface {
-  getPlugins(): Promise<PluginEntity[]>;
-
   create(plugin: Plugin): Promise<PluginEntity>;
 
-  // getCosts(params: ICostExplorerParams): Promise<AWS.CostExplorer.GetCostAndUsageResponse>;
+  getAWSPlugin(): AWSService;
 
-  // getEc2Instances(params): Promise<AWS.EC2.DescribeInstancesResult>;
+  getPluginCredentials(pluginId: string): Promise<CredentialEntity>;
 
   getAWSPlugin(): any;
 
   getGithubPlugin(): GithubService;
+  getPlugins(): Promise<Plugin[]>;
+
+  refreshPluginMetric(pluginId: string, metric: string): PluginResult<MetricType>;
 }

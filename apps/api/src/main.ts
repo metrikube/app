@@ -7,7 +7,8 @@ import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(AppModule, new FastifyAdapter(), {
-    cors: true
+    cors: true,
+    logger: ['error', 'warn', 'log', 'debug', 'verbose']
   });
 
   const globalPrefix = 'api/v1';

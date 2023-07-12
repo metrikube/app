@@ -1,19 +1,19 @@
+import ProviderModal from '../components/organisms/modals/Provider.modal'
 import DefaultLayout from '../layouts/DefaultLayout'
 import styled from '@emotion/styled'
 import { AddCircleOutline } from '@mui/icons-material'
 import { Button } from '@mui/material'
-import React from 'react'
-
-// import ProviderModal from '../components/organisms/Provider.modal';
+import React, { useState } from 'react'
 
 const Dashboard = () => {
+  const [openedModal, setOpenModal] = useState(false)
   const openProviderModalHandler = () => {
-    console.log('openProviderModalHandler')
+    setOpenModal(true)
   }
 
   return (
     <DefaultLayout>
-      <Header>
+      <StyledHeader>
         <h3>NOM DU PROJET</h3>
         <div>
           <Button
@@ -27,20 +27,20 @@ const Dashboard = () => {
             Add a new widget
           </Button>
         </div>
-      </Header>
-      <Body>There is no plugin installed</Body>
-      {/* <ProviderModal /> */}
+      </StyledHeader>
+      <StyledBody>There is no plugin installed</StyledBody>
+      <ProviderModal open={openedModal} setOpenModal={setOpenModal} />
     </DefaultLayout>
   )
 }
 
-const Header = styled.header`
+const StyledHeader = styled.header`
   display: flex;
   align-items: center;
   justify-content: space-between;
 `
 
-const Body = styled.body`
+const StyledBody = styled.body`
   flex: 1;
   display: flex;
   flex-direction: column;

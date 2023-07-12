@@ -15,7 +15,8 @@ export class CredentialRepositoryImpl extends BaseRepository<CredentialEntity> i
   }
 
   createCredential(credential: Credential): Promise<CredentialEntity> {
-    return this.save(credential);
+    const encodedValue = Buffer.from(JSON.stringify(credential.value)).toString('base64');
+    return this.save({ value: encodedValue, ...credential });
   }
 
   getCredentials(): Promise<CredentialEntity[]> {
@@ -25,6 +26,13 @@ export class CredentialRepositoryImpl extends BaseRepository<CredentialEntity> i
   findCredentialByIdWithPlugin(id: string): Promise<CredentialEntity> {
     return this.findOneOrFail({
       where: { id },
+      relations: { plugin: true }
+    });
+  }
+
+  findCrendentialByPluginId(pluginId: string): Promise<CredentialEntity> {
+    return this.findOneOrFail({
+      where: { plugin: { id: pluginId } },
       relations: { plugin: true }
     });
   }
