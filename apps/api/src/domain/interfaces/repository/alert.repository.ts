@@ -6,7 +6,7 @@ import { Alert } from '../../models/alert.model';
 export interface AlertRepository {
   getAlerts(criterias: FindManyOptions<AlertEntity> | FindOptionsWhere<AlertEntity>): Promise<AlertEntity[]>;
 
-  createAlert(payload: Partial<Alert>): Promise<AlertEntity>;
+  createAlerts(alertOrAlerts: Partial<Alert[]>): Promise<AlertEntity[]>;
 
   updateAlert(id: string, payload: Partial<AlertEntity>): Promise<void>;
 

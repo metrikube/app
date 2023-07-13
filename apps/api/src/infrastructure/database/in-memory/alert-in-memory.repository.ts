@@ -12,10 +12,10 @@ export class AlertInMemoryRepositoryImpl implements AlertRepository {
     return Promise.resolve(this.alerts);
   }
 
-  createAlert(payload): Promise<AlertEntity> {
+  createAlerts(payload): Promise<AlertEntity[]> {
     const alert = Object.assign(new AlertEntity(), payload);
     this.alerts.push(alert);
-    return Promise.resolve(alert);
+    return Promise.resolve([alert]);
   }
 
   async updateAlert(id: string, payload: Partial<AlertEntity>): Promise<void> {

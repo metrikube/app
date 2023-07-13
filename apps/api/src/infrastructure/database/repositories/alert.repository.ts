@@ -4,6 +4,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 
 import { AlertRepository } from '../../../domain/interfaces/repository/alert.repository';
+import { Alert } from '../../../domain/models/alert.model';
 import { AlertEntity } from '../entities/alert.entity';
 import { BaseRepository } from './base.repository';
 
@@ -21,8 +22,8 @@ export class AlertRepositoryImpl extends BaseRepository<AlertEntity> implements 
     return super.findOne(optionsOrConditions);
   }
 
-  createAlert(payload): Promise<AlertEntity> {
-    return this.save(payload);
+  createAlerts(payload: Partial<Alert[]>): Promise<AlertEntity[]> {
+    return this.saveMany(payload);
   }
 
   async updateAlert(id: string, payload: Partial<AlertEntity>): Promise<void> {

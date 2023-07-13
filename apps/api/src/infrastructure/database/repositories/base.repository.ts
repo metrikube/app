@@ -22,6 +22,10 @@ export class BaseRepository<Entity extends ObjectLiteral> {
     return this.manager.save(this.entity, entity, { listeners: true });
   }
 
+  saveMany(entity): Promise<Entity[]> {
+    return this.manager.save(this.entity, entity, { listeners: true });
+  }
+
   find(optionsOrConditions?: FindManyOptions<Entity> | FindOptionsWhere<Entity>): Promise<Entity[]> {
     return this.manager.find(this.entity, optionsOrConditions);
   }
@@ -35,6 +39,11 @@ export class BaseRepository<Entity extends ObjectLiteral> {
   }
 
   insert(entity: QueryDeepPartialEntity<Entity> | QueryDeepPartialEntity<Entity>[]): Promise<InsertResult> {
+    if (Array.isArray(entity))
+      return this.manager.insert(
+        this.entity,
+        entity.map((e) => this.create(e))
+      );
     return this.manager.insert(this.entity, this.create(entity));
   }
 

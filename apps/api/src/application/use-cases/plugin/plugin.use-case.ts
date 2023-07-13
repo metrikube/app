@@ -36,7 +36,11 @@ export class PluginUseCase implements PluginUseCaseInterface {
   }
 
   async listPlugins(): Promise<PluginResponseDto> {
-    const [plugins, metrics, credentials] = await Promise.all([this.pluginRepository.getPlugins(), this.metricRepository.getMetrics(), this.credentialRepository.getCredentials()]);
+    const [plugins, metrics, credentials]: [PluginEntity[], MetricEntity[], CredentialEntity[]] = await Promise.all([
+      this.pluginRepository.getPlugins(),
+      this.metricRepository.getMetrics(),
+      this.credentialRepository.getCredentials()
+    ]);
 
     return new PluginResponseDto(plugins, metrics, credentials);
   }
@@ -46,11 +50,9 @@ export class PluginUseCase implements PluginUseCaseInterface {
       this.pluginRepository.findOneById(pluginId),
       this.metricRepository.findMetricByType(pluginId, metricType)
     ]);
-
     if (!plugin || !metric) throw new BadRequestException('Plugin or metric not found');
 
-    const pluginTestConnection = await this.testPluginConnection(plugin, credential);
-    if (!pluginTestConnection.ok) throw new BadRequestException(pluginTestConnection.message || 'Plugin connection failed');
+    await this.testPluginConnection(plugin, credential);
 
     // TODO : wrap into a transaction
     const [pluginCredential, pluginToMetric] = await Promise.all([
@@ -58,25 +60,20 @@ export class PluginUseCase implements PluginUseCaseInterface {
       this.pluginToMetricRepository.createPluginToMetric({ pluginId, metricId: metric.id, resourceId, isActivated: true })
     ]);
 
-    // TODO : dispatch refresh interval scheduler
-    return new RegisterPluginResponseDto(pluginToMetric);
+    const pluginDataSample = await this.refreshPluginMetric(pluginId, metricType);
+
+    return new RegisterPluginResponseDto(pluginToMetric, pluginDataSample);
   }
 
   async refreshPluginMetric(pluginId: string, metricType: MetricType): Promise<PluginResult<MetricType>> {
     const credentials = await this.credentialRepository.findCrendentialByPluginId(pluginId);
     if (!credentials) throw new BadRequestException('No credentials found for this plugin');
 
-    const metric = await this.metricRepository.findMetricByType(pluginId, metricType);
-    const [alert] = await this.alertRepository.getAlerts({ where: { pluginToMetric: { metricId: metric?.id } } });
-
     switch (metricType) {
       case 'api-endpoint-health-check': {
-        const result: ApiHealthCheckResult = await this.apiMonitoringService.apiHealthCheck({
+        return this.apiMonitoringService.apiHealthCheck({
           apiEndpoint: (JSON.parse(Buffer.from(credentials.value, 'base64').toString('utf-8')) as ApiEndpointCredentialType).apiEndpoint
         });
-        if (!alert) return result;
-        await this.alertUseCase.checkContiditionAndNotify(result, alert); // todo : send to event emitter
-        return result;
       }
       default:
         return {};
@@ -102,17 +99,16 @@ export class PluginUseCase implements PluginUseCaseInterface {
   private async testPluginConnection(
     plugin: PluginEntity,
     credential: GenericCredentialType
-  ): Promise<{
-    ok: boolean;
-    message: string | null
-  }> {
+  ): Promise<void> {
     const pluginConnection: Record<Plugin['type'], PluginConnectionInterface> = {
-      'api': this.apiMonitoringService,
-      'api_endpoint': this.apiMonitoringService,
-      'github': this.apiMonitoringService,
-      'aws': this.AWSService,
-      'sql_database': this.apiMonitoringService
+      api: this.apiMonitoringService,
+      api_endpoint: this.apiMonitoringService,
+      github: this.githubService,
+      aws: this.AWSService,
+      sql_database: this.apiMonitoringService,
+      database: this.apiMonitoringService
     };
-    return pluginConnection[plugin.type].testConnection(credential);
+    const pluginTestConnection: { ok: boolean; message: string | null } = await pluginConnection[plugin.type].testConnection(credential);
+    if (!pluginTestConnection.ok) throw new BadRequestException(pluginTestConnection.message || 'Plugin connection failed');
   }
 }

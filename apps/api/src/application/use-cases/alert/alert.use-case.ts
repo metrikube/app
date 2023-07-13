@@ -3,7 +3,7 @@ import { Inject, Injectable, Logger } from '@nestjs/common';
 import { NotificationInterface } from '../../../domain/interfaces/adapters/notification.interface';
 import { AlertRepository } from '../../../domain/interfaces/repository/alert.repository';
 import { AlertUseCaseInterface } from '../../../domain/interfaces/use-cases/alert.use-case.interface';
-import { MetricThresholdOperator } from '../../../domain/models/alert.model';
+import { Alert, MetricThresholdOperator } from '../../../domain/models/alert.model';
 import { AlertEntity } from '../../../infrastructure/database/entities/alert.entity';
 import { PluginToMetricEntity } from '../../../infrastructure/database/entities/plugin_to_metric.entity';
 import { CreateAlertRequestDto, CreateAlertResponseDto } from '../../../presenter/alert/dtos/create-alert.dto';
@@ -16,12 +16,12 @@ export class AlertUseCase implements AlertUseCaseInterface {
     @Inject('MAILER') private readonly mailer: NotificationInterface
   ) {}
 
-  async createAlert(pluginToMetricId: PluginToMetricEntity['id'], alert: CreateAlertRequestDto): Promise<CreateAlertResponseDto> {
-    const createdAlert = await this.alertRepository.createAlert({
+  async createAlert(pluginToMetricId: PluginToMetricEntity['id'], alerts: CreateAlertRequestDto[]): Promise<CreateAlertResponseDto> {
+    const createdAlert = await this.alertRepository.createAlerts(alerts.map(alert => ({
       ...alert,
       pluginToMetricId,
       triggered: false
-    });
+    })) as Alert[]);
 
     // todo : dispatch event to scheduler queue
     return new CreateAlertResponseDto(createdAlert);
