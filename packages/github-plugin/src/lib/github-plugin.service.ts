@@ -19,7 +19,7 @@ export class GithubService implements PluginConnectionInterface {
 
   async getRepoIssues(repoOwner: string, repoName: string, token: string): Promise<PluginResult<'github-last-issues'>> {
     try {
-      const { data: issues } = await this.axiosInstance.get<Issues>(`/repos/${repoOwner}/${repoName}/issues&per_page=${this.limit}`, {
+      const { data: issues } = await this.axiosInstance.get<Issues>(`/repos/${repoOwner}/${repoName}/issues?per_page=${this.limit}`, {
         headers: {
           Authorization: `token ${token}`
         }
@@ -35,7 +35,7 @@ export class GithubService implements PluginConnectionInterface {
 
   async getRepoPRs(repoOwner: string, repoName: string, token: string): Promise<PluginResult<'github-last-prs'>> {
     try {
-      const { data: prs } = await this.axiosInstance.get<PullRequests>(`/repos/${repoOwner}/${repoName}/pulls&per_page=${this.limit}`, {
+      const { data: prs } = await this.axiosInstance.get<PullRequests>(`/repos/${repoOwner}/${repoName}/pulls?per_page=${this.limit}`, {
         headers: {
           Authorization: `token ${token}`
         }
