@@ -24,6 +24,12 @@ const ProviderFormStep2 = () => {
           <>
             {credentialType === 'github' && <GithubCredentialForm />}
             {credentialType === 'aws' && <AwsCredentialForm />}
+            {credentialType === 'apiEndpoint' && (
+              <TextField required label="" variant="outlined" size="small" />
+            )}
+            {credentialType === 'dbConnection' && (
+              <TextField required label="" variant="outlined" size="small" />
+            )}
           </>
         )}
       </OutlinedCard>
@@ -42,6 +48,18 @@ const ProviderFormStep2 = () => {
               placeholder="Favorites"
             />
           )}
+        />
+        <TextField
+          onChange={(e) =>
+            setAwsCredential((prevState) => ({
+              ...prevState,
+              secretAccessKey: e.target.value
+            }))
+          }
+          required
+          label="Resource ID"
+          variant="outlined"
+          size="small"
         />
       </OutlinedCard>
     </Step2Container>

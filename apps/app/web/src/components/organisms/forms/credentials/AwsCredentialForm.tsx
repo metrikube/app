@@ -25,7 +25,7 @@ const AwsCredentialForm = () => {
           ...prevState,
           region: e.target.value
         }))
-      } required label="API Key" variant="outlined" size="small" />
+      } required label="Region" variant="outlined" size="small" />
     </StyledForm>
   )
 }

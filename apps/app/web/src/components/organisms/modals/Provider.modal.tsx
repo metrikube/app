@@ -5,9 +5,9 @@ import ProviderFormStep1 from '../forms/ProviderFormStep1.form'
 import ProviderFormStep2 from '../forms/ProviderFormStep2.form'
 import ProviderFormStep3 from '../forms/ProviderFormStep3.form'
 import styled from '@emotion/styled'
-import { SetupPluginUsecase, GetPluginsUsecase } from '@metrikube/core'
+import { SetupPluginUsecase, GetPluginsUsecase, SetupPluginRequest } from '@metrikube/core'
 import { PluginAdapterImpl } from '@metrikube/infrastructure'
-import { ArrowBack, ArrowForward, Close } from '@mui/icons-material'
+import { ArrowBack, ArrowForward, Close, Done } from '@mui/icons-material'
 import LoadingButton from '@mui/lab/LoadingButton'
 import {
   Button,
@@ -18,7 +18,7 @@ import {
   IconButton,
   Tooltip
 } from '@mui/material'
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import React, { Dispatch, SetStateAction, useContext, useEffect, useState } from 'react'
 
 interface Props {
@@ -49,6 +49,20 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
     initialData: () => []
   })
 
+  const { mutate, isLoading, status } = useMutation(
+    ({ pluginId, metricType, credential }: SetupPluginRequest) =>
+      new SetupPluginUsecase(pluginAdapter).execute(pluginId, metricType, credential),
+    {
+      onSuccess: (data) => {
+        console.log(data)
+        setActiveStep(activeStep + 1)
+      },
+      onError: () => {
+        alert('there was an error')
+      }
+    }
+  )
+
   const handleNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1)
   }
@@ -71,29 +85,40 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
     }
     switch (selectedProvider?.type) {
       case 'aws':
-        new SetupPluginUsecase(pluginAdapter).execute(
-          selectedProvider.id,
-          selectedMetric.type,
-          awsCredential
-        )
+        mutate({
+          pluginId: selectedProvider.id,
+          metricType: selectedMetric.type,
+          credential: awsCredential
+        })
         break
       case 'github':
-        new SetupPluginUsecase(pluginAdapter).execute(
-          selectedProvider.id,
-          selectedMetric.type,
-          githubCredential
-        )
+        mutate({
+          pluginId: selectedProvider.id,
+          metricType: selectedMetric.type,
+          credential: githubCredential
+        })
+        break
+      case 'api':
+        mutate({
+          pluginId: selectedProvider.id,
+          metricType: selectedMetric.type,
+          credential: {
+            apiEndpoint: 'https://jsonplaceholder.typicode.com/users'
+          }
+        })
         break
       default:
         break
     }
   }
+
   const handleReset = () => {
     setActiveStep(0)
     setSelectedProviderCategory('')
     setSelectedProvider(null)
     setSelectedMetric(null)
   }
+
   const handleModalClose = () => {
     setOpenModal(false)
     handleReset()
@@ -103,6 +128,17 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
 
   const isLastStep = (steps: string[], activeStep: number): boolean =>
     steps.length - 1 === activeStep
+
+  const setBtnColor = (btnStatus: string): 'success' | 'error' | 'primary' => {
+    switch (btnStatus) {
+      case 'success':
+        return 'success'
+      case 'error':
+        return 'error'
+      default:
+        return 'primary'
+    }
+  }
 
   useEffect(() => {
     setIsProviderChose(selectedProvider !== null)
@@ -147,17 +183,20 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
           <LoadingButton
             onClick={handleConnectionTest}
             size="small"
-            loading={false}
+            loading={isLoading}
+            color={setBtnColor(status)}
+            loadingIndicator="Loading…"
             variant="outlined">
             Tester et continuer
           </LoadingButton>
         )}
         {isLastStep(steps, activeStep) ? (
           <Button
+            onClick={() => handleModalClose()}
             variant="contained"
             disableRipple
             disabled={!isProviderChose}
-            endIcon={<ArrowForward />}>
+            endIcon={<Done />}>
             Finish
           </Button>
         ) : (

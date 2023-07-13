@@ -6,11 +6,11 @@ interface PluginContextType {
   selectedProvider: PluginModel | null
   selectedMetric: MetricModel | null
   githubCredential: GithubCredentialType
-  awsCredential: AwsCredentialType
+  awsCredential: AwsCredentialType & { ressourceId?: string }
   setSelectedProvider: Dispatch<SetStateAction<PluginModel | null>>
   setSelectedMetric: Dispatch<SetStateAction<MetricModel | null>>
   setGithubCredential: Dispatch<SetStateAction<GithubCredentialType>>
-  setAwsCredential: Dispatch<SetStateAction<AwsCredentialType>>
+  setAwsCredential: Dispatch<SetStateAction<AwsCredentialType & { ressourceId?: string }>>
 }
 
 export const PluginContext = createContext<PluginContextType>({
@@ -24,7 +24,8 @@ export const PluginContext = createContext<PluginContextType>({
   awsCredential: {
     accessKeyId: '',
     secretAccessKey: '',
-    region: ''
+    region: '',
+    ressourceId: ''
   },
   setSelectedProvider: () => ({}),
   setSelectedMetric: () => ({}),
@@ -40,10 +41,11 @@ export const PluginProvider = ({ children }: { children: JSX.Element }) => {
     repo: '',
     owner: ''
   })
-  const [awsCredential, setAwsCredential] = useState<AwsCredentialType>({
+  const [awsCredential, setAwsCredential] = useState<AwsCredentialType & { ressourceId?: string }>({
     accessKeyId: '',
     secretAccessKey: '',
-    region: ''
+    region: '',
+    ressourceId: ''
   })
 
   return (
