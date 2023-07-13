@@ -2,8 +2,8 @@ import { Column, CreateDateColumn, Entity, Generated, JoinColumn, ManyToOne, One
 
 import { ApiProperty } from '@nestjs/swagger';
 
-import { MetricThresholdOperator } from '../../../domain/models/alert.model';
 import { PluginToMetricEntity } from './plugin_to_metric.entity';
+import { MetricThresholdOperator } from '@metrikube/common';
 
 @Entity('alert')
 export class AlertEntity {

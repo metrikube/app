@@ -1,14 +1,5 @@
-import { Metric } from '@metrikube/common';
+import { Metric, MetricThresholdOperator } from '@metrikube/common';
 
-export type MetricThresholdOperator = 'gt' | 'lt' | 'eq' | 'neq' | 'gte' | 'lte';
-export enum MetricThresholdOperatorEnum {
-  GT = 'gt',
-  LT = 'lt',
-  EQ = 'eq',
-  NEQ = 'neq',
-  GTE = 'gte',
-  LTE = 'lte'
-}
 
 export type Alert = {
   readonly id: string;

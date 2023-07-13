@@ -3,8 +3,8 @@ import { IsDefined, IsEnum, IsNotEmpty, IsNotEmptyObject, IsString, IsUUID, Vali
 
 import { ApiProperty } from '@nestjs/swagger';
 
-import { MetricThresholdOperatorEnum } from '../../../domain/models/alert.model';
 import { AlertEntity } from '../../../infrastructure/database/entities/alert.entity';
+import { MetricThresholdOperatorEnum } from '@metrikube/common';
 
 class AlertConditionRequestDto {
   @ApiProperty({ name: 'field', type: String, description: 'The field to check', example: 'value' })
