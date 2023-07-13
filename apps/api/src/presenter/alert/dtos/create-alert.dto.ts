@@ -31,11 +31,6 @@ export class CreateAlertRequestDto {
   @IsNotEmpty()
   readonly label: string;
 
-  @ApiProperty({ name: 'metricId', type: String, description: 'The metric id linked to the alert', example: 'a91f4eda-8e3a-48f4-ba39-f40735352a61', required: true })
-  @IsUUID()
-  @IsNotEmpty()
-  readonly metricId: string;
-
   @IsDefined()
   @IsNotEmptyObject()
   @ValidateNested({ each: true })

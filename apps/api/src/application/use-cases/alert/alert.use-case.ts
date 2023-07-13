@@ -2,23 +2,31 @@ import { Inject, Injectable, Logger } from '@nestjs/common';
 
 import { NotificationInterface } from '../../../domain/interfaces/adapters/notification.interface';
 import { AlertRepository } from '../../../domain/interfaces/repository/alert.repository';
+import { PluginToMetricRepository } from '../../../domain/interfaces/repository/plugin-to-metric.repository';
 import { AlertUseCaseInterface } from '../../../domain/interfaces/use-cases/alert.use-case.interface';
 import { Alert, MetricThresholdOperator } from '../../../domain/models/alert.model';
 import { AlertEntity } from '../../../infrastructure/database/entities/alert.entity';
 import { PluginToMetricEntity } from '../../../infrastructure/database/entities/plugin_to_metric.entity';
+import { DiTokens } from '../../../infrastructure/di/tokens';
 import { CreateAlertRequestDto, CreateAlertResponseDto } from '../../../presenter/alert/dtos/create-alert.dto';
 
 // prettier-ignore
 @Injectable()
 export class AlertUseCase implements AlertUseCaseInterface {
-  constructor(
-    @Inject('ALERT_REPOSITORY') private readonly alertRepository: AlertRepository,
-    @Inject('MAILER') private readonly mailer: NotificationInterface
-  ) {}
 
-  async createAlert(pluginToMetricId: PluginToMetricEntity['id'], alerts: CreateAlertRequestDto[]): Promise<CreateAlertResponseDto> {
+  constructor(
+    @Inject(DiTokens.AlertRepositoryToken) private readonly alertRepository: AlertRepository,
+    @Inject(DiTokens.PluginToMetricRepositoryToken) private readonly pluginToMetricRepository: PluginToMetricRepository,
+    @Inject(DiTokens.Mailer) private readonly mailer: NotificationInterface
+  ) {
+  }
+
+  async createAlertOnActivePlugin(pluginToMetricId: PluginToMetricEntity['id'], alerts: CreateAlertRequestDto[]): Promise<CreateAlertResponseDto> {
+    const pluginToMetric = await this.pluginToMetricRepository.getPluginToMetricById(pluginToMetricId);
+
     const createdAlert = await this.alertRepository.createAlerts(alerts.map(alert => ({
       ...alert,
+      metricId: pluginToMetric.metricId,
       pluginToMetricId,
       triggered: false
     })) as Alert[]);
@@ -37,7 +45,7 @@ export class AlertUseCase implements AlertUseCaseInterface {
 
     const isBelowThresholdAndNotified = !isConditionMet && alert.triggered;
     if (isBelowThresholdAndNotified && alert.triggered !== isBelowThresholdAndNotified) {
-      Logger.log("L'alerte passe sous le seuil", this.constructor.name);
+      Logger.log('L\'alerte passe sous le seuil', this.constructor.name);
       return this.alertRepository.updateAlert(alert.id, { triggered: false });
     }
 

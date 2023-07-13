@@ -1,13 +1,15 @@
+import { Controller, Get, Inject, Query } from '@nestjs/common';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
+
 import { Issues, PluginResult, PullRequests } from '@metrikube/common';
 import { GithubService } from '@metrikube/github-plugin';
 
-import { Controller, Get, Inject, Query } from '@nestjs/common';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { DiTokens } from '../../infrastructure/di/tokens';
 
 @ApiTags('Github')
 @Controller('/github')
 export class GithubController {
-  constructor(@Inject('GITHUB_PLUGIN') private readonly githubService: GithubService) {}
+  constructor(@Inject(DiTokens.GithubServiceToken) private readonly githubService: GithubService) {}
 
   @Get('/issues')
   @ApiOperation({ summary: 'Get issues from a Github repository' })
