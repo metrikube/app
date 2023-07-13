@@ -19,7 +19,7 @@ import {
   Tooltip
 } from '@mui/material'
 import { useMutation, useQuery } from '@tanstack/react-query'
-import React, { Dispatch, SetStateAction, useContext, useEffect, useState } from 'react'
+import React, { Dispatch, SetStateAction, useContext, useEffect, useState, useMemo } from 'react'
 
 interface Props {
   open: boolean
@@ -35,6 +35,8 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
     selectedMetric,
     githubCredential,
     awsCredential,
+    apiHealthCheckCredential,
+    dbCredential,
     setSelectedProvider,
     setSelectedMetric
   } = useContext(PluginContext)
@@ -42,6 +44,10 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
   const [selectedProviderCategory, setSelectedProviderCategory] = useState('')
   const [isProviderChose, setIsProviderChose] = useState<boolean>(selectedProvider !== null)
   const [activeStep, setActiveStep] = useState(0)
+
+  useEffect(() => {
+    setIsProviderChose(selectedProvider !== null)
+  }, [selectedProvider])
 
   const { data: plugins } = useQuery({
     queryKey: ['getPlugins'],
@@ -102,9 +108,14 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
         mutate({
           pluginId: selectedProvider.id,
           metricType: selectedMetric.type,
-          credential: {
-            apiEndpoint: 'https://jsonplaceholder.typicode.com/users'
-          }
+          credential: apiHealthCheckCredential
+        })
+        break
+      case 'db':
+        mutate({
+          pluginId: selectedProvider.id,
+          metricType: selectedMetric.type,
+          credential: dbCredential
         })
         break
       default:
@@ -140,9 +151,9 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
     }
   }
 
-  useEffect(() => {
-    setIsProviderChose(selectedProvider !== null)
-  }, [selectedProvider])
+  const shouldDisableTestConnectionBtn = (): boolean => {
+    return !selectedProvider || !selectedMetric
+  }
 
   return (
     <Dialog open={open} maxWidth="md" fullWidth={true} onClose={handleModalClose}>
@@ -182,6 +193,7 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
         {activeStep === 1 && (
           <LoadingButton
             onClick={handleConnectionTest}
+            disabled={shouldDisableTestConnectionBtn()}
             size="small"
             loading={isLoading}
             color={setBtnColor(status)}
@@ -223,7 +235,7 @@ const DialogHeader = styled.div`
   justify-content: space-between;
 `
 
-const StyledDialogActions = styled(DialogActions)<{ isFirstStep: boolean }>`
+const StyledDialogActions = styled(DialogActions) <{ isFirstStep: boolean }>`
   display: flex;
   justify-content: ${({ isFirstStep }) => (isFirstStep ? 'flex-end' : 'space-between')};
   padding: 0 24px 24px 24px;

@@ -1,4 +1,9 @@
-import { AwsCredentialType, GithubCredentialType } from '@metrikube/common'
+import {
+  ApiEndpointCredentialType,
+  AwsCredentialType,
+  DbConnectionCredentialType,
+  GithubCredentialType
+} from '@metrikube/common'
 import { MetricModel, PluginModel } from '@metrikube/core'
 import React, { Dispatch, SetStateAction, createContext, useState } from 'react'
 
@@ -6,11 +11,15 @@ interface PluginContextType {
   selectedProvider: PluginModel | null
   selectedMetric: MetricModel | null
   githubCredential: GithubCredentialType
+  dbCredential: DbConnectionCredentialType
   awsCredential: AwsCredentialType & { ressourceId?: string }
+  apiHealthCheckCredential: ApiEndpointCredentialType
   setSelectedProvider: Dispatch<SetStateAction<PluginModel | null>>
   setSelectedMetric: Dispatch<SetStateAction<MetricModel | null>>
   setGithubCredential: Dispatch<SetStateAction<GithubCredentialType>>
   setAwsCredential: Dispatch<SetStateAction<AwsCredentialType & { ressourceId?: string }>>
+  setApiHealthCheckCredential: Dispatch<SetStateAction<ApiEndpointCredentialType>>
+  setDbCredential: Dispatch<SetStateAction<DbConnectionCredentialType>>
 }
 
 export const PluginContext = createContext<PluginContextType>({
@@ -27,10 +36,22 @@ export const PluginContext = createContext<PluginContextType>({
     region: '',
     ressourceId: ''
   },
+  apiHealthCheckCredential: {
+    apiEndpoint: ''
+  },
+  dbCredential: {
+    dbHost: '',
+    dbName: '',
+    dbPort: 0,
+    dbUsername: '',
+    dbPassword: ''
+  },
   setSelectedProvider: () => ({}),
   setSelectedMetric: () => ({}),
   setGithubCredential: () => ({}),
-  setAwsCredential: () => ({})
+  setAwsCredential: () => ({}),
+  setApiHealthCheckCredential: () => ({}),
+  setDbCredential: () => ({})
 })
 
 export const PluginProvider = ({ children }: { children: JSX.Element }) => {
@@ -47,6 +68,16 @@ export const PluginProvider = ({ children }: { children: JSX.Element }) => {
     region: '',
     ressourceId: ''
   })
+  const [apiHealthCheckCredential, setApiHealthCheckCredential] = useState<ApiEndpointCredentialType>({
+    apiEndpoint: ''
+  })
+  const [dbCredential, setDbCredential] = useState({
+    dbHost: '',
+    dbName: '',
+    dbPort: 0,
+    dbUsername: '',
+    dbPassword: ''
+  })
 
   return (
     <PluginContext.Provider
@@ -55,10 +86,14 @@ export const PluginProvider = ({ children }: { children: JSX.Element }) => {
         selectedMetric,
         githubCredential,
         awsCredential,
+        apiHealthCheckCredential,
+        dbCredential,
         setSelectedProvider,
         setSelectedMetric,
         setGithubCredential,
-        setAwsCredential
+        setAwsCredential,
+        setApiHealthCheckCredential,
+        setDbCredential
       }}>
       {children}
     </PluginContext.Provider>
