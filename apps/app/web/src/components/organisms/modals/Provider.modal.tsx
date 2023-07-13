@@ -28,7 +28,12 @@ interface Props {
 
 const ProviderModal = ({ open, setOpenModal }: Props) => {
   const pluginAdapter = new PluginAdapterImpl(axiosInstance)
-  const steps: string[] = ['Choose your provider', 'Fill your credential', 'Finish 🎉']
+  const steps: string[] = [
+    'Choose your provider',
+    'Fill your credential',
+    'Configure your notification',
+    'Finish 🎉'
+  ]
 
   const {
     selectedProvider,
@@ -59,8 +64,10 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
     ({ pluginId, metricType, credential }: SetupPluginRequest) =>
       new SetupPluginUsecase(pluginAdapter).execute(pluginId, metricType, credential),
     {
-      onSuccess: (data) => {
-        console.log(data)
+      onSuccess: () => {
+        if (selectedMetric?.isNotifiable) {
+          setActiveStep(activeStep + 2)
+        }
         setActiveStep(activeStep + 1)
       },
       onError: () => {
@@ -179,7 +186,7 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
         {activeStep === 1 && <ProviderFormStep2 />}
         {activeStep === 2 && <ProviderFormStep3 />}
       </DialogContent>
-
+      {/* TODO: We need to move all actions buttons in his own component, because logic is too complex */}
       <StyledDialogActions isFirstStep={isFirstStep}>
         {!isFirstStep && (
           <Button
