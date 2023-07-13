@@ -15,7 +15,7 @@ export class PluginToMetricRepositoryImpl extends BaseRepository<PluginToMetricE
     return this.save(payload);
   }
 
-  getActiveMetrics(): Promise<unknown> {
+  getActiveMetrics(): Promise<PluginToMetricEntity> {
     throw new Error('Method not implemented.');
   }
 }

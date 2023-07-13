@@ -54,16 +54,18 @@ export class CreateAlertRequestDto {
 }
 
 export class CreateAlertResponseDto {
-  @ApiProperty({ name: 'label', type: String, example: 'Alerte lorsque le temps de réponse est > 100ms' })
-  label: string;
-  @ApiProperty({ name: 'id', type: String, example: 'da703afc-daef-4bf1-8179-649454724d96' })
-  id: string;
-  @ApiProperty({ name: 'pluginToMetricId', type: String, example: '3bb59e4c-271a-4b2a-b932-3c6578d9f52e' })
-  pluginToMetricId: string;
+  @ApiProperty({ name: 'alerts', type: Object })
+  alerts: {
+    label: string;
+    id: string;
+    pluginToMetricId: string;
+  }[];
 
-  constructor(alert: AlertEntity) {
-    this.label = alert.label;
-    this.id = alert.id;
-    this.pluginToMetricId = alert.pluginToMetricId;
+  constructor(alerts: AlertEntity[]) {
+    this.alerts = alerts.map((alert) => ({
+      label: alert.label,
+      id: alert.id,
+      pluginToMetricId: alert.pluginToMetricId
+    }));
   }
 }
