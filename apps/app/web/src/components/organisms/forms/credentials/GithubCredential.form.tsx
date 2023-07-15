@@ -1,12 +1,12 @@
 import styled from '@emotion/styled'
 import { GithubCredentialType } from '@metrikube/common'
 import { TextField } from '@mui/material'
-import { PluginContext } from 'apps/app/web/src/contexts/plugin.context'
+import { SetupPluginContext } from 'apps/app/web/src/contexts/SetupPlugin.context'
 import React, { useContext } from 'react'
 import { useForm } from 'react-hook-form'
 
 const GithubCredentialForm = () => {
-  const { setGithubCredential } = useContext(PluginContext)
+  const { setGithubCredential } = useContext(SetupPluginContext)
   const {
     register,
     getValues,

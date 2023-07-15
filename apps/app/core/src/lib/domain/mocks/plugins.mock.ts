@@ -45,11 +45,11 @@ export const githubLastPr: MetricModel = {
 
 export const AWSMetricsMock: MetricModel[] = [
     { ...awsSingleInstance },
-    { ...awsBucketInstance}
+    { ...awsBucketInstance }
 ]
 
 export const GithubMetricsMock: MetricModel[] = [
-   {...githubLastPr}
+    { ...githubLastPr }
 ]
 
 // PLUGINS

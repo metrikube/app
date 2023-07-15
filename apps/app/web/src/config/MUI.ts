@@ -36,7 +36,7 @@ export const theme = createTheme({
             font-family: "Poppins";
             font-style: normal;
             font-display: swap;
-            src: url("../fonts/Poppins/Poppins-Regular.ttf");
+            src: url("../assets/fonts/Poppins/Poppins-Regular.ttf");
         }
       `
     },
