@@ -1,4 +1,4 @@
-import { GenericCredentialType, MetricType } from "@metrikube/common";
+import { GenericCredentialType, MetricType, PluginResult } from "@metrikube/common";
 import { PluginModel } from "../../domain";
 
 export type SetupPluginRequest = {
@@ -10,5 +10,5 @@ export type SetupPluginRequest = {
 
 export interface PluginAdapter {
     getPlugins: () => Promise<PluginModel[]>
-    setupPlugin: (payload: SetupPluginRequest) => Promise<unknown> // POST: /plugins
+    setupPlugin: <T extends MetricType>(payload: SetupPluginRequest) => Promise<PluginResult<T>>
 }
