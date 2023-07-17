@@ -9,7 +9,7 @@ import { Button } from '@mui/material'
 import React, { useState } from 'react'
 
 const Dashboard = () => {
-  const [openedModal, setOpenModal] = useState(true)
+  const [openedModal, setOpenModal] = useState(false)
   const openProviderModalHandler = () => {
     setOpenModal(true)
   }

@@ -1,7 +1,9 @@
 import { PluginContext } from '../../../contexts/plugin.context'
 import OutlinedCard from '../../molecules/OutlinedCard'
-import AwsCredentialForm from './credentials/AwsCredentialForm'
-import GithubCredentialForm from './credentials/GithubCredentialForm'
+import ApiCredentialForm from './credentials/ApiCredential.form'
+import AwsCredentialForm from './credentials/AwsCredential.form'
+import DbCredentialForm from './credentials/DbCredential.form'
+import GithubCredentialForm from './credentials/GithubCredential.form'
 import styled from '@emotion/styled'
 import { Autocomplete, TextField } from '@mui/material'
 import React, { useContext } from 'react'
@@ -14,7 +16,6 @@ const ProviderFormStep2 = () => {
   return (
     <Step2Container>
       <OutlinedCard title="Instructions">
-        <h3>Instructions</h3>
         {selectedProvider?.instruction && (
           <ReactMarkdown>{selectedProvider.instruction}</ReactMarkdown>
         )}
@@ -24,12 +25,14 @@ const ProviderFormStep2 = () => {
           <>
             {credentialType === 'github' && <GithubCredentialForm />}
             {credentialType === 'aws' && <AwsCredentialForm />}
+            {credentialType === 'apiEndpoint' && <ApiCredentialForm />}
+            {credentialType === 'dbConnection' && <DbCredentialForm />}
           </>
         )}
       </OutlinedCard>
       <OutlinedCard title="Metrics">
         <Autocomplete
-          id="tags-standard"
+          id="metrics"
           options={selectedProvider?.metrics || []}
           value={selectedMetric}
           getOptionLabel={(option) => option.name}
@@ -38,10 +41,22 @@ const ProviderFormStep2 = () => {
             <TextField
               {...params}
               variant="outlined"
-              label="Multiple values"
-              placeholder="Favorites"
+              label="Metrics"
+              placeholder="Select a metric"
             />
           )}
+        />
+        <TextField
+          onChange={(e) =>
+            setAwsCredential((prevState) => ({
+              ...prevState,
+              secretAccessKey: e.target.value
+            }))
+          }
+          required
+          label="Resource ID"
+          variant="outlined"
+          size="small"
         />
       </OutlinedCard>
     </Step2Container>
