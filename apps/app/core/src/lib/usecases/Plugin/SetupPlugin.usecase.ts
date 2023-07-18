@@ -6,6 +6,6 @@ export class SetupPluginUsecase implements SetupPlugin {
   constructor(private readonly pluginAdapter: PluginAdapter) { }
 
   async execute(pluginId: string, metricType: MetricType, credential: GenericCredentialType): Promise<PluginResult<typeof metricType>> {
-    return this.pluginAdapter.setupPlugin<typeof metricType>({ pluginId, metricType, credential })
+    return this.pluginAdapter.setupPlugin<MetricType>({ pluginId, metricType, credential })
   }
 }

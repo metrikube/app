@@ -82,9 +82,10 @@ export const SetupPluginProvider = ({ children }: { children: JSX.Element }) => 
     region: '',
     ressourceId: ''
   })
-  const [apiHealthCheckCredential, setApiHealthCheckCredential] = useState<ApiEndpointCredentialType>({
-    apiEndpoint: ''
-  })
+  const [apiHealthCheckCredential, setApiHealthCheckCredential] =
+    useState<ApiEndpointCredentialType>({
+      apiEndpoint: ''
+    })
   const [dbCredential, setDbCredential] = useState({
     dbHost: '',
     dbName: '',
@@ -92,7 +93,6 @@ export const SetupPluginProvider = ({ children }: { children: JSX.Element }) => 
     dbUsername: '',
     dbPassword: ''
   })
-
 
   const [metricFields, setMetricFields] = useState<PluginResult<MetricType> | null>(null)
   const [pluginToMetricId, setPluginToMetricId] = useState('')

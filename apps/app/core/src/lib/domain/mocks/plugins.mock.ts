@@ -25,31 +25,34 @@ export const awsSingleInstance: MetricModel = {
     type: "aws-ec2-single-instance-usage",
     name: "Cost of EC2 single instance",
     // description: "Description cout et service",
-    refreshInterval: 30
+    refreshInterval: 30,
+    isNotifiable: true
 }
 export const awsBucketInstance: MetricModel = {
     id: "aws-metric-2",
     type: "aws-bucket-single-instance",
     name: "Cost of Amazon S3 Bucket",
-    description: "Description S3",
+    // description: "Description S3",
     refreshInterval: 30,
+    isNotifiable: true
 }
 export const githubLastPr: MetricModel = {
     id: "github-metric-1",
-    type: "github-last-pr",
+    type: "github-last-prs",
     name: "Last pull requests",
-    description: "Description last PR",
+    // description: "Description last PR",
     refreshInterval: 30,
+    isNotifiable: true
 }
 
 
 export const AWSMetricsMock: MetricModel[] = [
-    { ...awsSingleInstance },
-    { ...awsBucketInstance }
+    awsSingleInstance,
+    // awsBucketInstance
 ]
 
 export const GithubMetricsMock: MetricModel[] = [
-    { ...githubLastPr }
+    githubLastPr
 ]
 
 // PLUGINS
@@ -61,7 +64,7 @@ export const AWSProviderMock: PluginModel = {
     description: "Cloud provider",
     instruction: "*1. Create an IAM user with the following permissions:*\n- AmazonEC2ReadOnlyAccess, AmazonS3ReadOnlyAccess, AmazonSNSReadOnlyAccess [...] \n*2. Create a new credential with the following parameters:* \n*3. Enjoy!*",
     credential: {
-        type: "awsCredential",
+        type: "aws",
         value: {
             accessKeyId: "",
             secretAccessKey: "",
@@ -79,7 +82,7 @@ export const githubProviderMock: PluginModel = {
     description: "Versioning",
     instruction: "Pas d'instruction",
     credential: {
-        type: "githubCredential",
+        type: "github",
         value: {
             accessToken: "",
             owner: "",
@@ -90,6 +93,6 @@ export const githubProviderMock: PluginModel = {
 }
 
 export const providersMock = [
-    { ...AWSProviderMock },
-    { ...githubProviderMock }
+    AWSProviderMock,
+    githubProviderMock
 ]
