@@ -1,12 +1,13 @@
 import { AxiosInstance } from 'axios'
 import { PluginAdapter, PluginModel, SetupPluginRequest } from '@metrikube/core'
+import { MetricType, PluginResult } from '@metrikube/common'
 
 export class PluginAdapterImpl implements PluginAdapter {
     constructor(private readonly http: AxiosInstance) { }
 
-    async setupPlugin({pluginId, metricType, credential}: SetupPluginRequest): Promise<any> {
-        const response = await this.http.post("/plugins", {pluginId, metricType, credential, ressourceId: "test"})
-        console.log(response)
+    async setupPlugin<T extends MetricType>({ pluginId, metricType, credential }: SetupPluginRequest): Promise<PluginResult<T>> {
+        const { data } = await this.http.post("/plugins", { pluginId, metricType, credential, ressourceId: "test" })
+        return data
     }
 
     async getPlugins(): Promise<PluginModel[]> {

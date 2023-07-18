@@ -1,4 +1,4 @@
-import { PluginContext } from '../../../contexts/plugin.context'
+import { SetupPluginContext } from '../../../contexts/SetupPlugin.context'
 import OutlinedCard from '../../molecules/OutlinedCard'
 import ApiCredentialForm from './credentials/ApiCredential.form'
 import AwsCredentialForm from './credentials/AwsCredential.form'
@@ -10,7 +10,7 @@ import React, { useContext } from 'react'
 import ReactMarkdown from 'react-markdown'
 
 const ProviderFormStep2 = () => {
-  const { selectedProvider, selectedMetric, setSelectedMetric } = useContext(PluginContext)
+  const { selectedProvider, selectedMetric, setSelectedMetric, setAwsCredential } = useContext(SetupPluginContext)
   const credentialType = selectedProvider?.credential?.type || ''
 
   return (

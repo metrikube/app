@@ -1,10 +1,10 @@
 import { Test } from '@nestjs/testing';
 
-import { MetricThresholdOperator } from '../../../domain/models/alert.model';
 import { AlertEntity } from '../../../infrastructure/database/entities/alert.entity';
 import { AlertInMemoryRepositoryImpl } from '../../../infrastructure/database/in-memory/alert-in-memory.repository';
 import { CreateAlertRequestDto } from '../../../presenter/alert/dtos/create-alert.dto';
 import { AlertUseCase } from './alert.use-case';
+import { MetricThresholdOperator } from '@metrikube/common';
 
 describe('AlertUseCase', () => {
   let useCase: AlertUseCase;

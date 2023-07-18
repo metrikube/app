@@ -1,12 +1,17 @@
-import { axiosInstance } from '../../../config/axios'
-import { PluginContext } from '../../../contexts/plugin.context'
+import { useAdapter } from '../../../config/axios'
+import { SetupPluginContext } from '../../../contexts/SetupPlugin.context'
 import ProviderFormStepper from '../ProviderFormStepper'
 import ProviderFormStep1 from '../forms/ProviderFormStep1.form'
 import ProviderFormStep2 from '../forms/ProviderFormStep2.form'
 import ProviderFormStep3 from '../forms/ProviderFormStep3.form'
 import styled from '@emotion/styled'
-import { SetupPluginUsecase, GetPluginsUsecase, SetupPluginRequest } from '@metrikube/core'
-import { PluginAdapterImpl } from '@metrikube/infrastructure'
+import {
+  SetupPluginUsecase,
+  GetPluginsUsecase,
+  SetupPluginRequest,
+  CreateAlertUsecase,
+  CreateAlertRequest
+} from '@metrikube/core'
 import { ArrowBack, ArrowForward, Close, Done } from '@mui/icons-material'
 import LoadingButton from '@mui/lab/LoadingButton'
 import {
@@ -27,8 +32,14 @@ interface Props {
 }
 
 const ProviderModal = ({ open, setOpenModal }: Props) => {
-  const pluginAdapter = new PluginAdapterImpl(axiosInstance)
-  const steps: string[] = ['Choose your provider', 'Fill your credential', 'Finish 🎉']
+  const { pluginAdapter, alertAdapter } = useAdapter()
+
+  const steps: string[] = [
+    'Choose your provider',
+    'Fill your credential',
+    'Configure your notification',
+    'Finish 🎉'
+  ]
 
   const {
     selectedProvider,
@@ -37,9 +48,13 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
     awsCredential,
     apiHealthCheckCredential,
     dbCredential,
+    pluginToMetricId,
+    metricAlerts,
     setSelectedProvider,
-    setSelectedMetric
-  } = useContext(PluginContext)
+    setSelectedMetric,
+    setPluginToMetricId,
+    setMetricFields
+  } = useContext(SetupPluginContext)
 
   const [selectedProviderCategory, setSelectedProviderCategory] = useState('')
   const [isProviderChose, setIsProviderChose] = useState<boolean>(selectedProvider !== null)
@@ -59,8 +74,33 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
     ({ pluginId, metricType, credential }: SetupPluginRequest) =>
       new SetupPluginUsecase(pluginAdapter).execute(pluginId, metricType, credential),
     {
+      // how to type that ??
       onSuccess: (data) => {
-        console.log(data)
+        setPluginToMetricId(data.id)
+        setMetricFields(data.data)
+        if (selectedMetric?.isNotifiable) {
+          setActiveStep(activeStep + 2)
+        }
+        setActiveStep(activeStep + 1)
+      },
+      onError: () => {
+        alert('there was an error')
+      }
+    }
+  )
+
+  const { mutate: createAlert } = useMutation(
+    ({ pluginToMetricId, alerts }: CreateAlertRequest) => {
+      if (!selectedProvider || !selectedMetric) {
+        throw Error("You can't make an alert without plugin or metric")
+      }
+      return new CreateAlertUsecase(alertAdapter).execute({
+        pluginToMetricId,
+        alerts
+      })
+    },
+    {
+      onSuccess: () => {
         setActiveStep(activeStep + 1)
       },
       onError: () => {
@@ -123,6 +163,13 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
     }
   }
 
+  const handleMetricAlertAdd = () => {
+    createAlert({
+      pluginToMetricId,
+      alerts: metricAlerts
+    })
+  }
+
   const handleReset = () => {
     setActiveStep(0)
     setSelectedProviderCategory('')
@@ -179,7 +226,7 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
         {activeStep === 1 && <ProviderFormStep2 />}
         {activeStep === 2 && <ProviderFormStep3 />}
       </DialogContent>
-
+      {/* TODO: We need to move all actions buttons in his own component, because logic is too complex */}
       <StyledDialogActions isFirstStep={isFirstStep}>
         {!isFirstStep && (
           <Button
@@ -200,6 +247,16 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
             loadingIndicator="Loading…"
             variant="outlined">
             Tester et continuer
+          </LoadingButton>
+        )}
+        {activeStep === 2 && (
+          <LoadingButton
+            onClick={handleMetricAlertAdd}
+            size="small"
+            loading={isLoading}
+            loadingIndicator="Ajout en cours…"
+            variant="outlined">
+            Ajouter et continuer
           </LoadingButton>
         )}
         {isLastStep(steps, activeStep) ? (

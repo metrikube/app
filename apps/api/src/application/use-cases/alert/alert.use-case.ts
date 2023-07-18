@@ -3,10 +3,11 @@ import { Inject, Injectable, Logger } from '@nestjs/common';
 import { NotificationInterface } from '../../../domain/interfaces/adapters/notification.interface';
 import { AlertRepository } from '../../../domain/interfaces/repository/alert.repository';
 import { AlertUseCaseInterface } from '../../../domain/interfaces/use-cases/alert.use-case.interface';
-import { Alert, MetricThresholdOperator } from '../../../domain/models/alert.model';
+import { Alert } from '../../../domain/models/alert.model';
 import { AlertEntity } from '../../../infrastructure/database/entities/alert.entity';
 import { PluginToMetricEntity } from '../../../infrastructure/database/entities/plugin_to_metric.entity';
 import { CreateAlertRequestDto, CreateAlertResponseDto } from '../../../presenter/alert/dtos/create-alert.dto';
+import { MetricThresholdOperator } from '@metrikube/common';
 
 // prettier-ignore
 @Injectable()
@@ -14,7 +15,7 @@ export class AlertUseCase implements AlertUseCaseInterface {
   constructor(
     @Inject('ALERT_REPOSITORY') private readonly alertRepository: AlertRepository,
     @Inject('MAILER') private readonly mailer: NotificationInterface
-  ) {}
+  ) { }
 
   async createAlert(pluginToMetricId: PluginToMetricEntity['id'], alerts: CreateAlertRequestDto[]): Promise<CreateAlertResponseDto> {
     const createdAlert = await this.alertRepository.createAlerts(alerts.map(alert => ({
