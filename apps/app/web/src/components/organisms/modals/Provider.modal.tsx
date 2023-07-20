@@ -1,5 +1,6 @@
 import { useAdapter } from '../../../config/axios'
 import { SetupPluginContext } from '../../../contexts/SetupPlugin.context'
+import ProviderFormActionButtons from '../ProviderFormActionButtons'
 import ProviderFormStepper from '../ProviderFormStepper'
 import ProviderFormStep1 from '../forms/ProviderFormStep1.form'
 import ProviderFormStep2 from '../forms/ProviderFormStep2.form'
@@ -12,17 +13,8 @@ import {
   CreateAlertUsecase,
   CreateAlertRequest
 } from '@metrikube/core'
-import { ArrowBack, ArrowForward, Close, Done } from '@mui/icons-material'
-import LoadingButton from '@mui/lab/LoadingButton'
-import {
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  IconButton,
-  Tooltip
-} from '@mui/material'
+import { Close } from '@mui/icons-material'
+import { Dialog, DialogContent, DialogTitle, IconButton } from '@mui/material'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import React, { Dispatch, SetStateAction, useContext, useEffect, useState, useMemo } from 'react'
 
@@ -64,13 +56,14 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
     setIsProviderChose(selectedProvider !== null)
   }, [selectedProvider])
 
+  // sortir dans une classe statique
   const { data: plugins } = useQuery({
     queryKey: ['getPlugins'],
     queryFn: () => new GetPluginsUsecase(pluginAdapter).execute(),
     initialData: () => []
   })
 
-  const { mutate, isLoading, status } = useMutation(
+  const { mutate: setupPlugin, isLoading: isSetupPluginLoading } = useMutation(
     ({ pluginId, metricType, credential }: SetupPluginRequest) =>
       new SetupPluginUsecase(pluginAdapter).execute(pluginId, metricType, credential),
     {
@@ -89,7 +82,7 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
     }
   )
 
-  const { mutate: createAlert } = useMutation(
+  const { mutate: createAlert, isLoading: isCreateAlertLoading } = useMutation(
     ({ pluginToMetricId, alerts }: CreateAlertRequest) => {
       if (!selectedProvider || !selectedMetric) {
         throw Error("You can't make an alert without plugin or metric")
@@ -109,14 +102,6 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
     }
   )
 
-  const handleNext = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep + 1)
-  }
-
-  const handleBack = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep - 1)
-  }
-
   const handleFilterChange = (categoryValue: string) => {
     if (categoryValue === selectedProviderCategory) {
       setSelectedProviderCategory('')
@@ -131,28 +116,28 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
     }
     switch (selectedProvider?.type) {
       case 'aws':
-        mutate({
+        setupPlugin({
           pluginId: selectedProvider.id,
           metricType: selectedMetric.type,
           credential: awsCredential
         })
         break
       case 'github':
-        mutate({
+        setupPlugin({
           pluginId: selectedProvider.id,
           metricType: selectedMetric.type,
           credential: githubCredential
         })
         break
       case 'api_endpoint':
-        mutate({
+        setupPlugin({
           pluginId: selectedProvider.id,
           metricType: selectedMetric.type,
           credential: apiHealthCheckCredential
         })
         break
       case 'sql_database':
-        mutate({
+        setupPlugin({
           pluginId: selectedProvider.id,
           metricType: selectedMetric.type,
           credential: dbCredential
@@ -183,26 +168,6 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
     handleReset()
   }
 
-  const isFirstStep: boolean = activeStep === 0
-
-  const isLastStep = (steps: string[], activeStep: number): boolean =>
-    steps.length - 1 === activeStep
-
-  const setBtnColor = (btnStatus: string): 'success' | 'error' | 'primary' => {
-    switch (btnStatus) {
-      case 'success':
-        return 'success'
-      case 'error':
-        return 'error'
-      default:
-        return 'primary'
-    }
-  }
-
-  const shouldDisableTestConnectionBtn = (): boolean => {
-    return !selectedProvider || !selectedMetric
-  }
-
   return (
     <Dialog open={open} maxWidth="md" fullWidth={true} onClose={handleModalClose}>
       <DialogTitle>
@@ -226,64 +191,19 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
         )}
         {activeStep === 1 && <ProviderFormStep2 />}
         {activeStep === 2 && <ProviderFormStep3 />}
+        {activeStep === 3 && <p>Félicitations</p>}
       </DialogContent>
-      {/* TODO: We need to move all actions buttons in his own component, because logic is too complex */}
-      <StyledDialogActions isFirstStep={isFirstStep}>
-        {!isFirstStep && (
-          <Button
-            variant="outlined"
-            disableRipple
-            startIcon={<ArrowBack />}
-            onClick={() => handleBack()}>
-            Back
-          </Button>
-        )}
-        {activeStep === 1 && (
-          <LoadingButton
-            onClick={handleConnectionTest}
-            disabled={shouldDisableTestConnectionBtn()}
-            size="small"
-            loading={isLoading}
-            color={setBtnColor(status)}
-            loadingIndicator="Loading…"
-            variant="outlined">
-            Tester et continuer
-          </LoadingButton>
-        )}
-        {activeStep === 2 && (
-          <LoadingButton
-            onClick={handleMetricAlertAdd}
-            size="small"
-            loading={isLoading}
-            loadingIndicator="Ajout en cours…"
-            variant="outlined">
-            Ajouter et continuer
-          </LoadingButton>
-        )}
-        {isLastStep(steps, activeStep) ? (
-          <Button
-            onClick={() => handleModalClose()}
-            variant="contained"
-            disableRipple
-            disabled={!isProviderChose}
-            endIcon={<Done />}>
-            Finish
-          </Button>
-        ) : (
-          <Tooltip disableHoverListener={isProviderChose} title="You have to choose a provider">
-            <span>
-              <Button
-                onClick={() => handleNext()}
-                variant="contained"
-                disableRipple
-                disabled={!isProviderChose}
-                endIcon={<ArrowForward />}>
-                Next
-              </Button>
-            </span>
-          </Tooltip>
-        )}
-      </StyledDialogActions>
+      <ProviderFormActionButtons
+        activeStep={activeStep}
+        steps={steps}
+        isSetupPluginLoading={isSetupPluginLoading}
+        isCreateAlertLoading={isCreateAlertLoading}
+        isProviderChose={isProviderChose}
+        setActiveStep={setActiveStep}
+        handleConnectionTest={handleConnectionTest}
+        handleMetricAlertAdd={handleMetricAlertAdd}
+        handleModalClose={handleModalClose}
+      />
     </Dialog>
   )
 }
@@ -291,13 +211,6 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
 const DialogHeader = styled.div`
   display: flex;
   justify-content: space-between;
-`
-
-const StyledDialogActions = styled(DialogActions) <{ isFirstStep: boolean }>`
-  display: flex;
-  justify-content: ${({ isFirstStep }) => (isFirstStep ? 'flex-end' : 'space-between')};
-  padding: 0 24px 24px 24px;
-  margin-top: 24px;
 `
 
 export default ProviderModal
