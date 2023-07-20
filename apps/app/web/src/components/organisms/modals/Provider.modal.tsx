@@ -144,14 +144,14 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
           credential: githubCredential
         })
         break
-      case 'api':
+      case 'api_endpoint':
         mutate({
           pluginId: selectedProvider.id,
           metricType: selectedMetric.type,
           credential: apiHealthCheckCredential
         })
         break
-      case 'db':
+      case 'sql_database':
         mutate({
           pluginId: selectedProvider.id,
           metricType: selectedMetric.type,
@@ -159,6 +159,7 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
         })
         break
       default:
+        throw Error("You can't make a test connection without plugin or metric")
         break
     }
   }
