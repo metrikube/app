@@ -144,6 +144,7 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
           credential: githubCredential
         })
         break
+      case 'api_endpoint':
       case 'api':
         mutate({
           pluginId: selectedProvider.id,
@@ -151,6 +152,7 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
           credential: apiHealthCheckCredential
         })
         break
+      case 'sql_database':
       case 'db':
         mutate({
           pluginId: selectedProvider.id,
