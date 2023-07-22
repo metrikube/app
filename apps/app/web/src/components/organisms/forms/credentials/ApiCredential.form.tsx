@@ -1,22 +1,13 @@
 import { TextField } from '@mui/material'
 import { SetupPluginContext } from 'apps/app/web/src/contexts/SetupPlugin.context'
-import React, { useContext } from 'react'
-import { useForm } from 'react-hook-form'
+import React, { useContext, useEffect } from 'react'
+import { useForm, useFormContext } from 'react-hook-form'
 
 const ApiCredentialForm = () => {
-  const { setApiHealthCheckCredential } = useContext(SetupPluginContext)
-
   const {
     register,
-    getValues,
     formState: { errors }
-  } = useForm({
-    mode: 'onBlur',
-    reValidateMode: 'onChange',
-    defaultValues: {
-      apiEndpoint: ''
-    }
-  })
+  } = useFormContext()
 
   return (
     <>
@@ -26,17 +17,11 @@ const ApiCredentialForm = () => {
         label="API Endpoint"
         variant="outlined"
         size="small"
-        error={Boolean(errors.apiEndpoint)}
-        helperText={errors.apiEndpoint?.message}
+        error={Boolean(errors.api_endpoint?.apiEndpoint)}
+        helperText={errors.api_endpoint?.apiEndpoint?.message}
         placeholder="Example: https://jsonplaceholder.typicode.com/users"
-        {...register('apiEndpoint', {
-          required: 'This field is required.',
-          onChange: () => {
-            setApiHealthCheckCredential((prevState) => ({
-              ...prevState,
-              apiEndpoint: getValues().apiEndpoint
-            }))
-          }
+        {...register('api_endpoint.apiEndpoint', {
+          required: 'This field is required.'
         })}
       />
     </>

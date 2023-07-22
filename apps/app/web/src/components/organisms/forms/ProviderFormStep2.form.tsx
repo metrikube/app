@@ -2,15 +2,21 @@ import { SetupPluginContext } from '../../../contexts/SetupPlugin.context'
 import OutlinedCard from '../../molecules/OutlinedCard'
 import ApiCredentialForm from './credentials/ApiCredential.form'
 import AwsCredentialForm from './credentials/AwsCredential.form'
-import DbCredentialForm from './credentials/DbCredential.form'
 import GithubCredentialForm from './credentials/GithubCredential.form'
+import SqlCredential from './credentials/SqlCredential.form'
 import styled from '@emotion/styled'
 import { Autocomplete, TextField } from '@mui/material'
 import React, { useContext } from 'react'
+import { useFormContext } from 'react-hook-form'
 import ReactMarkdown from 'react-markdown'
 
 const ProviderFormStep2 = () => {
-  const { selectedProvider, selectedMetric, setSelectedMetric, setAwsCredential } = useContext(SetupPluginContext)
+  const { selectedProvider, selectedMetric, setSelectedMetric } = useContext(SetupPluginContext)
+  const {
+    register,
+    formState: { errors }
+  } = useFormContext()
+
   const credentialType = selectedProvider?.credential?.type || ''
 
   return (
@@ -26,13 +32,14 @@ const ProviderFormStep2 = () => {
             {credentialType === 'github' && <GithubCredentialForm />}
             {credentialType === 'aws' && <AwsCredentialForm />}
             {credentialType === 'apiEndpoint' && <ApiCredentialForm />}
-            {credentialType === 'dbConnection' && <DbCredentialForm />}
+            {credentialType === 'dbConnection' && <SqlCredential />}
           </>
         )}
       </OutlinedCard>
       <OutlinedCard title="Metrics">
         <Autocomplete
           id="metrics"
+          size="small"
           options={selectedProvider?.metrics || []}
           value={selectedMetric}
           getOptionLabel={(option) => option.name}
@@ -40,30 +47,25 @@ const ProviderFormStep2 = () => {
           renderInput={(params) => (
             <TextField
               {...params}
+              type="url"
               variant="outlined"
               label="Metrics"
+              error={Boolean(errors.metric)}
+              helperText={errors.metric?.message}
               placeholder="Select a metric"
+              {...register('metric', {
+                required: 'test'
+              })}
             />
           )}
         />
-        <TextField
-          onChange={(e) =>
-            setAwsCredential((prevState) => ({
-              ...prevState,
-              secretAccessKey: e.target.value
-            }))
-          }
-          required
-          label="Resource ID"
-          variant="outlined"
-          size="small"
-        />
+        <TextField required label="Resource ID" variant="outlined" size="small" />
       </OutlinedCard>
     </Step2Container>
   )
 }
 
-const Step2Container = styled.div`
+const Step2Container = styled.form`
   margin-top: 1rem;
 `
 

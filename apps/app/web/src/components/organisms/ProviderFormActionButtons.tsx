@@ -11,7 +11,6 @@ interface Props {
   isCreateAlertLoading: boolean
   isProviderChose: boolean
   setActiveStep: Dispatch<SetStateAction<number>>
-  handleConnectionTest: () => void
   handleMetricAlertAdd: () => void
   handleModalClose: () => void
 }
@@ -23,7 +22,6 @@ const ProviderFormActionButtons = ({
   isCreateAlertLoading,
   isProviderChose,
   setActiveStep,
-  handleConnectionTest,
   handleMetricAlertAdd,
   handleModalClose
 }: Props) => {
@@ -57,8 +55,8 @@ const ProviderFormActionButtons = ({
       )}
       {activeStep === 1 && (
         <LoadingButton
-          onClick={handleConnectionTest}
-          disabled={shouldDisableTestConnectionBtn()}
+          type="submit"
+          // disabled={shouldDisableTestConnectionBtn()}
           size="small"
           loading={isSetupPluginLoading}
           loadingIndicator="Loading…"
@@ -104,7 +102,7 @@ const ProviderFormActionButtons = ({
   )
 }
 
-const StyledDialogActions = styled(DialogActions) <{ isFirstStep: boolean }>`
+const StyledDialogActions = styled(DialogActions)<{ isFirstStep: boolean }>`
   display: flex;
   justify-content: ${({ isFirstStep }) => (isFirstStep ? 'flex-end' : 'space-between')};
   padding: 0 24px 24px 24px;

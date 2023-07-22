@@ -6,40 +6,39 @@ import ProviderFormStep1 from '../forms/ProviderFormStep1.form'
 import ProviderFormStep2 from '../forms/ProviderFormStep2.form'
 import ProviderFormStep3 from '../forms/ProviderFormStep3.form'
 import styled from '@emotion/styled'
+import { GenericCredentialType } from '@metrikube/common'
 import {
   SetupPluginUsecase,
   GetPluginsUsecase,
   SetupPluginRequest,
   CreateAlertUsecase,
-  CreateAlertRequest
+  CreateAlertRequest,
+  SetupPluginStepEnum
 } from '@metrikube/core'
 import { Close } from '@mui/icons-material'
 import { Dialog, DialogContent, DialogTitle, IconButton } from '@mui/material'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import React, { Dispatch, SetStateAction, useContext, useEffect, useState, useMemo } from 'react'
+import { useForm, FormProvider } from 'react-hook-form'
 
 interface Props {
   open: boolean
   setOpenModal: Dispatch<SetStateAction<boolean>>
 }
 
+const steps: string[] = [
+  'Choose your provider',
+  'Fill your credential',
+  'Configure your notification',
+  'Finish 🎉'
+]
+
 const ProviderModal = ({ open, setOpenModal }: Props) => {
   const { pluginAdapter, alertAdapter } = useAdapter()
-
-  const steps: string[] = [
-    'Choose your provider',
-    'Fill your credential',
-    'Configure your notification',
-    'Finish 🎉'
-  ]
 
   const {
     selectedProvider,
     selectedMetric,
-    githubCredential,
-    awsCredential,
-    apiHealthCheckCredential,
-    dbCredential,
     pluginToMetricId,
     metricAlerts,
     setSelectedProvider,
@@ -47,6 +46,39 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
     setPluginToMetricId,
     setMetricFields
   } = useContext(SetupPluginContext)
+
+  const methods = useForm({
+    mode: 'all',
+    defaultValues: {
+      api_endpoint: {
+        apiEndpoint: ''
+      },
+      aws: {
+        accessKeyId: '',
+        secretAccessKey: '',
+        region: ''
+      },
+      github: {
+        accessToken: '',
+        owner: '',
+        repo: ''
+      },
+      sql_database: {
+        dbHost: '',
+        dbName: '',
+        dbPort: 0,
+        dbUsername: '',
+        dbPassword: ''
+      },
+      metric: {
+        id: '',
+        name: '',
+        isNotifiable: false,
+        refreshInterval: 30,
+        type: ''
+      }
+    }
+  })
 
   const [selectedProviderCategory, setSelectedProviderCategory] = useState('')
   const [isProviderChose, setIsProviderChose] = useState<boolean>(selectedProvider !== null)
@@ -72,9 +104,9 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
         setPluginToMetricId(data.id)
         setMetricFields(data.data)
         if (selectedMetric?.isNotifiable) {
-          setActiveStep(activeStep + 2)
+          setActiveStep(SetupPluginStepEnum.FINISH)
         }
-        setActiveStep(activeStep + 1)
+        setActiveStep(SetupPluginStepEnum.ALERT_CONFIG)
       },
       onError: () => {
         alert('there was an error')
@@ -102,6 +134,20 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
     }
   )
 
+  // Typescript !
+  const onSubmit = (data: unknown) => {
+    switch (activeStep) {
+      case SetupPluginStepEnum.FILL_CREDENTIAL:
+        handleConnectionTest(selectedProvider?.type || '', data[selectedProvider?.type])
+        break
+      case SetupPluginStepEnum.ALERT_CONFIG:
+        // createAlert()
+        break
+      default:
+        break
+    }
+  }
+
   const handleFilterChange = (categoryValue: string) => {
     if (categoryValue === selectedProviderCategory) {
       setSelectedProviderCategory('')
@@ -110,42 +156,41 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
     }
   }
 
-  const handleConnectionTest = () => {
+  const handleConnectionTest = (pluginType: string, credential: GenericCredentialType) => {
     if (!selectedProvider || !selectedMetric) {
       throw Error("You can't make a test connection without plugin or metric")
     }
-    switch (selectedProvider?.type) {
+    switch (pluginType) {
       case 'aws':
         setupPlugin({
           pluginId: selectedProvider.id,
           metricType: selectedMetric.type,
-          credential: awsCredential
+          credential
         })
         break
       case 'github':
         setupPlugin({
           pluginId: selectedProvider.id,
           metricType: selectedMetric.type,
-          credential: githubCredential
+          credential
         })
         break
       case 'api_endpoint':
         setupPlugin({
           pluginId: selectedProvider.id,
           metricType: selectedMetric.type,
-          credential: apiHealthCheckCredential
+          credential
         })
         break
       case 'sql_database':
         setupPlugin({
           pluginId: selectedProvider.id,
           metricType: selectedMetric.type,
-          credential: dbCredential
+          credential
         })
         break
       default:
         throw Error("You can't make a test connection without plugin or metric")
-        break
     }
   }
 
@@ -181,29 +226,32 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
         </DialogHeader>
         <ProviderFormStepper activeStep={activeStep} steps={steps} />
       </DialogTitle>
-      <DialogContent>
-        {activeStep === 0 && (
-          <ProviderFormStep1
-            providerCategory={selectedProviderCategory}
-            allPlugins={plugins}
-            handleProviderCategory={handleFilterChange}
+      <FormProvider {...methods}>
+        <form onSubmit={methods.handleSubmit(onSubmit)}>
+          <DialogContent>
+            {activeStep === 0 && (
+              <ProviderFormStep1
+                providerCategory={selectedProviderCategory}
+                allPlugins={plugins}
+                handleProviderCategory={handleFilterChange}
+              />
+            )}
+            {activeStep === 1 && <ProviderFormStep2 />}
+            {activeStep === 2 && <ProviderFormStep3 />}
+            {activeStep === 3 && <p>Félicitations</p>}
+          </DialogContent>
+          <ProviderFormActionButtons
+            activeStep={activeStep}
+            steps={steps}
+            isSetupPluginLoading={isSetupPluginLoading}
+            isCreateAlertLoading={isCreateAlertLoading}
+            isProviderChose={isProviderChose}
+            setActiveStep={setActiveStep}
+            handleMetricAlertAdd={handleMetricAlertAdd}
+            handleModalClose={handleModalClose}
           />
-        )}
-        {activeStep === 1 && <ProviderFormStep2 />}
-        {activeStep === 2 && <ProviderFormStep3 />}
-        {activeStep === 3 && <p>Félicitations</p>}
-      </DialogContent>
-      <ProviderFormActionButtons
-        activeStep={activeStep}
-        steps={steps}
-        isSetupPluginLoading={isSetupPluginLoading}
-        isCreateAlertLoading={isCreateAlertLoading}
-        isProviderChose={isProviderChose}
-        setActiveStep={setActiveStep}
-        handleConnectionTest={handleConnectionTest}
-        handleMetricAlertAdd={handleMetricAlertAdd}
-        handleModalClose={handleModalClose}
-      />
+        </form>
+      </FormProvider>
     </Dialog>
   )
 }
