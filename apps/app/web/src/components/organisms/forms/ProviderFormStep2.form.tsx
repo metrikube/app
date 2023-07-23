@@ -47,11 +47,10 @@ const ProviderFormStep2 = () => {
           renderInput={(params) => (
             <TextField
               {...params}
-              type="url"
               variant="outlined"
               label="Metrics"
               error={Boolean(errors.metric)}
-              helperText={errors.metric?.message}
+              helperText={errors.metric?.message as string}
               placeholder="Select a metric"
               {...register('metric', {
                 required: 'test'
@@ -59,13 +58,13 @@ const ProviderFormStep2 = () => {
             />
           )}
         />
-        <TextField required label="Resource ID" variant="outlined" size="small" />
+        <TextField label="Resource ID" variant="outlined" size="small" />
       </OutlinedCard>
     </Step2Container>
   )
 }
 
-const Step2Container = styled.form`
+const Step2Container = styled.div`
   margin-top: 1rem;
 `
 

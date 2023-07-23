@@ -6,14 +6,24 @@ import ProviderFormStep1 from '../forms/ProviderFormStep1.form'
 import ProviderFormStep2 from '../forms/ProviderFormStep2.form'
 import ProviderFormStep3 from '../forms/ProviderFormStep3.form'
 import styled from '@emotion/styled'
-import { GenericCredentialType } from '@metrikube/common'
+import {
+  ApiEndpointCredentialType,
+  AwsCredentialType,
+  DbConnectionCredentialType,
+  GenericCredentialType,
+  GithubCredentialType
+} from '@metrikube/common'
 import {
   SetupPluginUsecase,
   GetPluginsUsecase,
   SetupPluginRequest,
   CreateAlertUsecase,
   CreateAlertRequest,
-  SetupPluginStepEnum
+  SetupPluginStepEnum,
+  AlertRequest,
+  MetricModel,
+  AlertForm,
+  PluginModel
 } from '@metrikube/core'
 import { Close } from '@mui/icons-material'
 import { Dialog, DialogContent, DialogTitle, IconButton } from '@mui/material'
@@ -24,6 +34,15 @@ import { useForm, FormProvider } from 'react-hook-form'
 interface Props {
   open: boolean
   setOpenModal: Dispatch<SetStateAction<boolean>>
+}
+
+type SetupPluginFormValues = {
+  api_endpoint: ApiEndpointCredentialType
+  aws: AwsCredentialType
+  github: GithubCredentialType
+  sql_database: DbConnectionCredentialType
+  metric: MetricModel
+  metricAlerts: AlertForm[]
 }
 
 const steps: string[] = [
@@ -40,14 +59,13 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
     selectedProvider,
     selectedMetric,
     pluginToMetricId,
-    metricAlerts,
     setSelectedProvider,
     setSelectedMetric,
     setPluginToMetricId,
     setMetricFields
   } = useContext(SetupPluginContext)
 
-  const methods = useForm({
+  const methods = useForm<SetupPluginFormValues>({
     mode: 'all',
     defaultValues: {
       api_endpoint: {
@@ -75,8 +93,18 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
         name: '',
         isNotifiable: false,
         refreshInterval: 30,
-        type: ''
-      }
+        type: undefined
+      },
+      metricAlerts: [
+        {
+          label: '',
+          condition: {
+            field: '',
+            operator: 'gt',
+            threshold: ''
+          }
+        }
+      ]
     }
   })
 
@@ -134,14 +162,26 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
     }
   )
 
-  // Typescript !
-  const onSubmit = (data: unknown) => {
+  const onSubmit = (data: SetupPluginFormValues) => {
+    if (!selectedProvider || !selectedMetric) {
+      throw Error("You can't make a test connection without plugin or metric")
+    }
     switch (activeStep) {
       case SetupPluginStepEnum.FILL_CREDENTIAL:
-        handleConnectionTest(selectedProvider?.type || '', data[selectedProvider?.type])
+        // eslint-disable-next-line no-case-declarations
+        const credential: GenericCredentialType = data[selectedProvider.type]
+        handleConnectionTest(selectedProvider, selectedMetric, credential)
         break
       case SetupPluginStepEnum.ALERT_CONFIG:
-        // createAlert()
+        // eslint-disable-next-line no-case-declarations
+        const alerts: AlertRequest[] = data.metricAlerts.map((metricAlert: AlertForm) => ({
+          ...metricAlert,
+          metricId: selectedMetric?.id
+        }))
+        createAlert({
+          pluginToMetricId,
+          alerts
+        })
         break
       default:
         break
@@ -156,36 +196,37 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
     }
   }
 
-  const handleConnectionTest = (pluginType: string, credential: GenericCredentialType) => {
-    if (!selectedProvider || !selectedMetric) {
-      throw Error("You can't make a test connection without plugin or metric")
-    }
-    switch (pluginType) {
+  const handleConnectionTest = (
+    plugin: PluginModel,
+    metric: MetricModel,
+    credential: GenericCredentialType
+  ) => {
+    switch (plugin.type) {
       case 'aws':
         setupPlugin({
-          pluginId: selectedProvider.id,
-          metricType: selectedMetric.type,
+          pluginId: plugin.id,
+          metricType: metric.type,
           credential
         })
         break
       case 'github':
         setupPlugin({
-          pluginId: selectedProvider.id,
-          metricType: selectedMetric.type,
+          pluginId: plugin.id,
+          metricType: metric.type,
           credential
         })
         break
       case 'api_endpoint':
         setupPlugin({
-          pluginId: selectedProvider.id,
-          metricType: selectedMetric.type,
+          pluginId: plugin.id,
+          metricType: metric.type,
           credential
         })
         break
       case 'sql_database':
         setupPlugin({
-          pluginId: selectedProvider.id,
-          metricType: selectedMetric.type,
+          pluginId: plugin.id,
+          metricType: metric.type,
           credential
         })
         break
@@ -194,23 +235,12 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
     }
   }
 
-  const handleMetricAlertAdd = () => {
-    createAlert({
-      pluginToMetricId,
-      alerts: metricAlerts
-    })
-  }
-
-  const handleReset = () => {
-    setActiveStep(0)
+  const handleModalClose = () => {
+    setOpenModal(false)
     setSelectedProviderCategory('')
     setSelectedProvider(null)
     setSelectedMetric(null)
-  }
-
-  const handleModalClose = () => {
-    setOpenModal(false)
-    handleReset()
+    setActiveStep(0)
   }
 
   return (
@@ -247,7 +277,6 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
             isCreateAlertLoading={isCreateAlertLoading}
             isProviderChose={isProviderChose}
             setActiveStep={setActiveStep}
-            handleMetricAlertAdd={handleMetricAlertAdd}
             handleModalClose={handleModalClose}
           />
         </form>

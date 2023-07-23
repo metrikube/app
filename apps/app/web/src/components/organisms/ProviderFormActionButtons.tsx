@@ -1,8 +1,8 @@
-import { SetupPluginContext } from '../../contexts/SetupPlugin.context'
+import { SetupPluginStepEnum } from '@metrikube/core'
 import { ArrowBack, Done, ArrowForward } from '@mui/icons-material'
 import LoadingButton from '@mui/lab/LoadingButton'
 import { Button, DialogActions, Tooltip, styled } from '@mui/material'
-import React, { Dispatch, SetStateAction, useContext } from 'react'
+import React, { Dispatch, SetStateAction } from 'react'
 
 interface Props {
   activeStep: number
@@ -11,7 +11,6 @@ interface Props {
   isCreateAlertLoading: boolean
   isProviderChose: boolean
   setActiveStep: Dispatch<SetStateAction<number>>
-  handleMetricAlertAdd: () => void
   handleModalClose: () => void
 }
 
@@ -22,11 +21,9 @@ const ProviderFormActionButtons = ({
   isCreateAlertLoading,
   isProviderChose,
   setActiveStep,
-  handleMetricAlertAdd,
   handleModalClose
 }: Props) => {
-  const { selectedProvider, selectedMetric } = useContext(SetupPluginContext)
-  const isFirstStep: boolean = activeStep === 0
+  const isFirstStep: boolean = activeStep === SetupPluginStepEnum.CHOOSE_PLUGIN
   const isLastStep = (steps: string[], activeStep: number): boolean =>
     steps.length - 1 === activeStep
 
@@ -38,13 +35,9 @@ const ProviderFormActionButtons = ({
     setActiveStep((prevActiveStep) => prevActiveStep - 1)
   }
 
-  const shouldDisableTestConnectionBtn = (): boolean => {
-    return !selectedProvider || !selectedMetric
-  }
-
   return (
     <StyledDialogActions isFirstStep={isFirstStep}>
-      {!isFirstStep && (
+      {(!isFirstStep && !isLastStep(steps, activeStep)) && (
         <Button
           variant="outlined"
           disableRipple
@@ -56,7 +49,6 @@ const ProviderFormActionButtons = ({
       {activeStep === 1 && (
         <LoadingButton
           type="submit"
-          // disabled={shouldDisableTestConnectionBtn()}
           size="small"
           loading={isSetupPluginLoading}
           loadingIndicator="Loading…"
@@ -66,7 +58,7 @@ const ProviderFormActionButtons = ({
       )}
       {activeStep === 2 && (
         <LoadingButton
-          onClick={handleMetricAlertAdd}
+          type="submit"
           size="small"
           loading={isCreateAlertLoading}
           loadingIndicator="Ajout en cours…"
@@ -91,6 +83,7 @@ const ProviderFormActionButtons = ({
       {isLastStep(steps, activeStep) && (
         <Button
           onClick={() => handleModalClose()}
+          color="success"
           variant="contained"
           disableRipple
           disabled={!isProviderChose}
@@ -102,7 +95,7 @@ const ProviderFormActionButtons = ({
   )
 }
 
-const StyledDialogActions = styled(DialogActions)<{ isFirstStep: boolean }>`
+const StyledDialogActions = styled(DialogActions) <{ isFirstStep: boolean }>`
   display: flex;
   justify-content: ${({ isFirstStep }) => (isFirstStep ? 'flex-end' : 'space-between')};
   padding: 0 24px 24px 24px;

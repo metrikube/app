@@ -15,6 +15,7 @@ const ApiCredentialForm = () => {
         fullWidth
         id="api-endpoint"
         label="API Endpoint"
+        type="url"
         variant="outlined"
         size="small"
         error={Boolean(errors.api_endpoint?.apiEndpoint)}
