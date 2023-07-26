@@ -1,41 +1,23 @@
 import { SetupPluginContext } from '../../../contexts/SetupPlugin.context'
 import OutlinedCard from '../../molecules/OutlinedCard'
-import { AlertForm, AlertRequest, OPERATORS } from '@metrikube/core'
+import { OPERATORS } from '@metrikube/core'
 import { TextField, Select, MenuItem, InputLabel, FormControl, Button } from '@mui/material'
-import React, { useContext, useEffect } from 'react'
-import { useFieldArray, useForm } from 'react-hook-form'
+import React, { useContext } from 'react'
+import { useFieldArray, useFormContext } from 'react-hook-form'
 
 const ProviderFormStep3 = () => {
-  const { metricFields, setMetricAlerts, selectedMetric } = useContext(SetupPluginContext)
-  const { register, control, watch } = useForm<{ metricAlerts: AlertForm[] }>({
-    defaultValues: {
-      metricAlerts: [
-        {
-          label: '',
-          condition: {
-            field: '',
-            operator: 'gt',
-            threshold: ''
-          }
-        }
-      ]
-    }
-  })
+  const { metricFields } = useContext(SetupPluginContext)
+  const {
+    register,
+    control,
+    formState: { errors }
+  } = useFormContext()
+
   const { fields, append, remove } = useFieldArray({
     control,
     name: 'metricAlerts'
   })
 
-  useEffect(() => {
-    const subscription = watch(({ metricAlerts }, { name, type }) => {
-      const alerts: AlertRequest[] = metricAlerts?.map((metricAlert) => ({
-        ...metricAlert,
-        metricId: selectedMetric && selectedMetric.id
-      }))
-      setMetricAlerts([...alerts])
-    })
-    return () => subscription.unsubscribe()
-  }, [watch])
   return (
     <>
       {fields.map((item, index) => (
@@ -44,9 +26,11 @@ const ProviderFormStep3 = () => {
             <TextField
               id="alert-label"
               label="titre d'alerte"
+              // error={Boolean(errors.metricAlerts[index] || 0)}
+              // helperText={errors.metricAlerts[index].label.message as string}
               variant="outlined"
               size="small"
-              {...register(`metricAlerts.${index}.label`, { required: true })}
+              {...register(`metricAlerts.${index}.label`, { required: 'Required' })}
             />
           </div>
           <FormControl fullWidth>
@@ -57,7 +41,9 @@ const ProviderFormStep3 = () => {
               placeholder="Select a field"
               variant="outlined"
               size="small"
-              {...register(`metricAlerts.${index}.condition.field`, { required: true })}>
+              // error={Boolean(errors.metricAlerts[index])}
+              // helperText={errors.metricAlerts[index].condition.field.message as string}
+              {...register(`metricAlerts.${index}.condition.field`, { required: 'Required' })}>
               {Object.keys(metricFields).map((metricField, index) => (
                 <MenuItem key={index} value={metricField}>
                   {metricField}
@@ -74,7 +60,9 @@ const ProviderFormStep3 = () => {
               placeholder="Select an operator"
               variant="outlined"
               size="small"
-              {...register(`metricAlerts.${index}.condition.operator`, { required: true })}>
+              // error={Boolean(errors.metricAlerts[index])}
+              // helperText={errors.metricAlerts[index].condition.operator.message as string}
+              {...register(`metricAlerts.${index}.condition.operator`, { required: 'Required' })}>
               {OPERATORS.map((operator, index) => (
                 <MenuItem key={index} value={operator.value}>
                   {operator.label}
@@ -88,7 +76,9 @@ const ProviderFormStep3 = () => {
             label="Seuil"
             variant="outlined"
             size="small"
-            {...register(`metricAlerts.${index}.condition.threshold`, { required: true })}
+            // error={Boolean(errors.metricAlerts[index])}
+            // helperText={errors.metricAlerts[index].condition.threshold.message as string}
+            {...register(`metricAlerts.${index}.condition.threshold`, { required: 'Required' })}
           />
           <Button onClick={() => remove(index)} size="small" color="error" variant="outlined">
             Supprimer
