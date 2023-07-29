@@ -1,5 +1,5 @@
 import AwsLogo from '../../../assets/img/aws.png'
-import { PluginContext } from '../../../contexts/plugin.context'
+import { SetupPluginContext } from '../../../contexts/SetupPlugin.context'
 import ProviderCard from '../../molecules/ProviderCard'
 import styled from '@emotion/styled'
 import {
@@ -17,7 +17,7 @@ interface Props {
 }
 
 const ProviderFormStep1 = ({ providerCategory, allPlugins, handleProviderCategory }: Props) => {
-  const { selectedProvider, setSelectedProvider } = useContext(PluginContext)
+  const { selectedProvider, setSelectedProvider } = useContext(SetupPluginContext)
   const filterPlugins = new FilterPluginsByCategoryUsecase()
 
   return (

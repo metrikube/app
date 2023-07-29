@@ -3,7 +3,6 @@ import { DataSource, FindManyOptions, FindOptionsWhere } from 'typeorm';
 import { InjectDataSource } from '@nestjs/typeorm';
 
 import { PluginToMetricRepository } from '../../../domain/interfaces/repository/plugin-to-metric.repository';
-import { PluginEntity } from '../entities/plugin.entity';
 import { PluginToMetricEntity } from '../entities/plugin_to_metric.entity';
 import { BaseRepository } from './base.repository';
 

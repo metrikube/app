@@ -1,25 +1,18 @@
-import { AxiosInstance } from 'axios'
-import { PluginAdapter, PluginModel } from '@metrikube/core'
-import { MetricType, GenericCredentialType } from '@metrikube/common'
+import { AxiosInstance } from 'axios';
+
+import { MetricType, PluginResult } from '@metrikube/common';
+import { PluginAdapter, PluginModel, SetupPluginRequest } from '@metrikube/core';
 
 export class PluginAdapterImpl implements PluginAdapter {
-    constructor(private readonly http: AxiosInstance) { }
+  constructor(private readonly http: AxiosInstance) {}
 
-    async setupPlugin(pluginId: string, metricType: MetricType, credential: GenericCredentialType): Promise<any> {
-        console.log("plugin id", pluginId)
-        console.log("metricType", metricType)
-        console.log("credential", credential)
+  async setupPlugin<T extends MetricType>({ pluginId, metricType, credential }: SetupPluginRequest): Promise<PluginResult<T>> {
+    const { data } = await this.http.post('/plugins', { pluginId, metricType, credential, ressourceId: 'test' });
+    return data;
+  }
 
-        try {
-            
-    
-        } catch (error) {
-            
-        }
-    }
-
-    async getPlugins(): Promise<PluginModel[]> {
-        const { data } = await this.http.get("/plugins")
-        return data.plugins
-    }
+  async getPlugins(): Promise<PluginModel[]> {
+    const { data } = await this.http.get('/plugins');
+    return data.plugins;
+  }
 }

@@ -1,5 +1,5 @@
-import { GenericCredentialType, MetricType } from "@metrikube/common";
+import { GenericCredentialType, MetricType, PluginResult } from '@metrikube/common';
 
 export interface SetupPlugin {
-  execute: (pluginId: string, metricType: MetricType, credential: GenericCredentialType) => Promise<unknown>
+  execute: (pluginId: string, metricType: MetricType, credential: GenericCredentialType) => Promise<PluginResult<typeof metricType>>;
 }

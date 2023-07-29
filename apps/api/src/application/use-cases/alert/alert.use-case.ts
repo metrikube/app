@@ -1,10 +1,12 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 
+import { MetricThresholdOperator } from '@metrikube/common';
+
 import { NotificationInterface } from '../../../domain/interfaces/adapters/notification.interface';
 import { AlertRepository } from '../../../domain/interfaces/repository/alert.repository';
 import { PluginToMetricRepository } from '../../../domain/interfaces/repository/plugin-to-metric.repository';
 import { AlertUseCaseInterface } from '../../../domain/interfaces/use-cases/alert.use-case.interface';
-import { Alert, MetricThresholdOperator } from '../../../domain/models/alert.model';
+import { Alert } from '../../../domain/models/alert.model';
 import { AlertEntity } from '../../../infrastructure/database/entities/alert.entity';
 import { PluginToMetricEntity } from '../../../infrastructure/database/entities/plugin_to_metric.entity';
 import { DiTokens } from '../../../infrastructure/di/tokens';
@@ -23,13 +25,12 @@ export class AlertUseCase implements AlertUseCaseInterface {
 
   async createAlertOnActivePlugin(pluginToMetricId: PluginToMetricEntity['id'], alerts: CreateAlertRequestDto[]): Promise<CreateAlertResponseDto> {
     const pluginToMetric = await this.pluginToMetricRepository.getPluginToMetricById(pluginToMetricId);
-
     const createdAlert = await this.alertRepository.createAlerts(alerts.map(alert => ({
       ...alert,
       metricId: pluginToMetric.metricId,
       pluginToMetricId,
       triggered: false
-    })) as Alert[]);
+    })) as Partial<Alert[]>);
 
     // todo : dispatch event to scheduler queue
     return new CreateAlertResponseDto(createdAlert);

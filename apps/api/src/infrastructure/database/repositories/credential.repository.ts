@@ -1,5 +1,4 @@
 import { DataSource } from 'typeorm';
-import { T } from 'vitest/dist/types-dea83b3d';
 
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';

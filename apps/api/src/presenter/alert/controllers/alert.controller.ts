@@ -5,12 +5,10 @@ import { AlertUseCaseInterface } from '../../../domain/interfaces/use-cases/aler
 import { DiTokens } from '../../../infrastructure/di/tokens';
 import { CreateAlertRequestDto, CreateAlertResponseDto } from '../dtos/create-alert.dto';
 
-// prettier-ignore
 @ApiTags('alerts')
 @Controller('alerts')
 export class AlertController {
-  constructor(@Inject(DiTokens.AlertUseCaseToken) private readonly alertUseCase: AlertUseCaseInterface) {
-  }
+  constructor(@Inject(DiTokens.AlertUseCaseToken) private readonly alertUseCase: AlertUseCaseInterface) {}
 
   @Post('/:pluginToMetricId')
   @HttpCode(HttpStatus.CREATED)

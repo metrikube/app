@@ -2,8 +2,7 @@ import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 
 import { ApiMonitoringService } from '@metrikube/api-monitoring';
 import { AWSService } from '@metrikube/aws-plugin';
-import { Plugin, PluginConnectionInterface } from '@metrikube/common';
-import { ApiEndpointCredentialType, CredentialType, GenericCredentialType, MetricType, PluginResult } from '@metrikube/common';
+import { ApiEndpointCredentialType, CredentialType, GenericCredentialType, MetricType, Plugin, PluginConnectionInterface, PluginResult } from '@metrikube/common';
 import { GithubService } from '@metrikube/github-plugin';
 
 import { AlertRepository } from '../../../domain/interfaces/repository/alert.repository';

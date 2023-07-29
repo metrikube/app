@@ -3,7 +3,8 @@ import { IsDefined, IsEnum, IsNotEmpty, IsNotEmptyObject, IsString, IsUUID, Vali
 
 import { ApiProperty } from '@nestjs/swagger';
 
-import { MetricThresholdOperatorEnum } from '../../../domain/models/alert.model';
+import { MetricThresholdOperatorEnum } from '@metrikube/common';
+
 import { AlertEntity } from '../../../infrastructure/database/entities/alert.entity';
 
 class AlertConditionRequestDto {

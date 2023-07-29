@@ -1,6 +1,7 @@
 import { Test } from '@nestjs/testing';
 
-import { MetricThresholdOperator } from '../../../domain/models/alert.model';
+import { MetricThresholdOperator } from '@metrikube/common';
+
 import { AlertEntity } from '../../../infrastructure/database/entities/alert.entity';
 import { AlertInMemoryRepositoryImpl } from '../../../infrastructure/database/in-memory/alert-in-memory.repository';
 import { CreateAlertRequestDto } from '../../../presenter/alert/dtos/create-alert.dto';

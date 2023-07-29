@@ -1,6 +1,6 @@
 import PluginEmptyStateImg from '../assets/img/undraws/undraw_online_stats.svg'
 import ProviderModal from '../components/organisms/modals/Provider.modal'
-import { PluginProvider } from '../contexts/plugin.context'
+import { SetupPluginProvider } from '../contexts/SetupPlugin.context'
 import DefaultLayout from '../layouts/DefaultLayout'
 import { EmptyStateLayout } from '../layouts/EmptyStateLayout'
 import styled from '@emotion/styled'
@@ -9,7 +9,7 @@ import { Button } from '@mui/material'
 import React, { useState } from 'react'
 
 const Dashboard = () => {
-  const [openedModal, setOpenModal] = useState(true)
+  const [openedModal, setOpenModal] = useState(false)
   const openProviderModalHandler = () => {
     setOpenModal(true)
   }
@@ -38,9 +38,9 @@ const Dashboard = () => {
         buttonLabel="Add a new provider"
         imageAsset={PluginEmptyStateImg}
       />
-      <PluginProvider>
+      <SetupPluginProvider>
         <ProviderModal open={openedModal} setOpenModal={setOpenModal} />
-      </PluginProvider>
+      </SetupPluginProvider>
     </DefaultLayout>
   )
 }
