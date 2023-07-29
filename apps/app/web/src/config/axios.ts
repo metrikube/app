@@ -1,3 +1,4 @@
+import { PluginAdapterImpl, AlertAdapterImpl } from '@metrikube/infrastructure'
 import axios from 'axios'
 
 const axiosInstance = axios.create({
@@ -6,3 +7,12 @@ const axiosInstance = axios.create({
 })
 
 export { axiosInstance }
+
+export const useAdapter = () => {
+  const pluginAdapter = new PluginAdapterImpl(axiosInstance)
+  const alertAdapter = new AlertAdapterImpl(axiosInstance)
+  return {
+    pluginAdapter,
+    alertAdapter
+  }
+}

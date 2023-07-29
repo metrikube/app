@@ -1,51 +1,54 @@
+import PluginEmptyStateImg from '../assets/img/undraws/undraw_online_stats.svg'
+import ProviderModal from '../components/organisms/modals/Provider.modal'
+import { SetupPluginProvider } from '../contexts/SetupPlugin.context'
 import DefaultLayout from '../layouts/DefaultLayout'
+import { EmptyStateLayout } from '../layouts/EmptyStateLayout'
 import styled from '@emotion/styled'
-import { AddCircleOutline } from '@mui/icons-material'
+import { AddCircleOutline, AddchartOutlined } from '@mui/icons-material'
 import { Button } from '@mui/material'
-import React from 'react'
-
-// import ProviderModal from '../components/organisms/Provider.modal';
+import React, { useState } from 'react'
 
 const Dashboard = () => {
+  const [openedModal, setOpenModal] = useState(false)
   const openProviderModalHandler = () => {
-    console.log('openProviderModalHandler')
+    setOpenModal(true)
   }
 
   return (
     <DefaultLayout>
-      <Header>
+      <StyledHeader>
         <h3>NOM DU PROJET</h3>
         <div>
           <Button
             onClick={openProviderModalHandler}
-            size="small"
-            variant="outlined"
+            size="medium"
+            variant="contained"
             startIcon={<AddCircleOutline />}>
             Add a new provider
           </Button>
-          <Button sx={{ ml: 1 }} size="small" variant="outlined" startIcon={<AddCircleOutline />}>
+          <Button sx={{ ml: 1 }} size="medium" variant="contained" startIcon={<AddchartOutlined />}>
             Add a new widget
           </Button>
         </div>
-      </Header>
-      <Body>There is no plugin installed</Body>
-      {/* <ProviderModal /> */}
+      </StyledHeader>
+      <EmptyStateLayout
+        title="Get started by adding a provider"
+        description="The providers are the heart of Metrikube, they allow you to visualize your metrics according to the different plugins."
+        onActionButtonClick={openProviderModalHandler}
+        buttonLabel="Add a new provider"
+        imageAsset={PluginEmptyStateImg}
+      />
+      <SetupPluginProvider>
+        <ProviderModal open={openedModal} setOpenModal={setOpenModal} />
+      </SetupPluginProvider>
     </DefaultLayout>
   )
 }
 
-const Header = styled.header`
+const StyledHeader = styled.header`
   display: flex;
   align-items: center;
   justify-content: space-between;
-`
-
-const Body = styled.body`
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
 `
 
 export default Dashboard

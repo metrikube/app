@@ -18,15 +18,18 @@ export class MetricRepositoryImpl extends BaseRepository<MetricEntity> implement
     return this.find(criterias);
   }
 
-  findById(optionsOrConditions: FindOneOptions<MetricEntity> | FindOptionsWhere<MetricEntity>): Promise<MetricEntity> {
-    return this.findOne(optionsOrConditions);
+  findById(criterias: FindOneOptions<MetricEntity> | FindOptionsWhere<MetricEntity>): Promise<MetricEntity> {
+    return this.findOne(criterias);
   }
 
   findMetricByPluginId(pluginId: string): Promise<MetricEntity[]> {
-    return this.find({ where: { pluginId } });
+    return this.find({ where: { plugin: { id: pluginId } } });
   }
 
-  findByPluginIdAndMetricType(pluginId: string, metricType: string): Promise<MetricEntity> {
-    return this.findOne({ where: { plugin: { id: pluginId }, type: metricType } });
+  findMetricByType(pluginId: string, metricType: string): Promise<MetricEntity> {
+    return this.findOne({
+      where: { type: metricType, plugin: { id: pluginId } },
+      relations: { pluginToMetrics: true }
+    });
   }
 }

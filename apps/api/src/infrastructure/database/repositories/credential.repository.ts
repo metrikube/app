@@ -1,4 +1,5 @@
 import { DataSource } from 'typeorm';
+import { T } from 'vitest/dist/types-dea83b3d';
 
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
@@ -16,7 +17,7 @@ export class CredentialRepositoryImpl extends BaseRepository<CredentialEntity> i
 
   createCredential(credential: Credential): Promise<CredentialEntity> {
     const encodedValue = Buffer.from(JSON.stringify(credential.value)).toString('base64');
-    return this.save({ value: encodedValue, ...credential });
+    return this.save({ ...credential, value: encodedValue });
   }
 
   getCredentials(): Promise<CredentialEntity[]> {

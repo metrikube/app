@@ -1,6 +1,6 @@
 {
   "name": "metrikube",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "license": "MIT",
   "engines": {
     "node": "18.16.0"
@@ -32,6 +32,7 @@
     "@emotion/styled": "^11.11.0",
     "@fastify/static": "^6.10.1",
     "@mui/icons-material": "^5.11.16",
+    "@mui/lab": "^5.0.0-alpha.135",
     "@mui/material": "^5.13.5",
     "@nestjs/common": "9.4.2",
     "@nestjs/config": "^2.3.2",
@@ -49,10 +50,13 @@
     "class-validator": "^0.14.0",
     "dotenv": "^16.0.3",
     "fastify": "^4.7.0",
-    "mysql2": "^3.3.2",
+    "formik": "^2.4.2",
+    "mysql2": "^3.5.1",
     "nodemailer": "^6.9.3",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "react-hook-form": "^7.45.1",
+    "react-markdown": "^8.0.7",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^5.0.1",
     "rxjs": "^7.8.1",

@@ -1,4 +1,4 @@
-import Sidebar from '../components/organisms/Sidebar'
+import Sidebar from '../components/organisms/SideBar'
 import styled from '@emotion/styled'
 import { Grid } from '@mui/material'
 import React from 'react'

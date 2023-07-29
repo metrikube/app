@@ -5,7 +5,7 @@ dist
 tmp
 /out-tsc
 /data/db-data
-/data/db
+/data/db.db
 /data/mariadb.cnf
 # dependencies
 node_modules
@@ -39,3 +39,4 @@ testem.log
 # System Files
 .DS_Store
 Thumbs.db
+.vscode

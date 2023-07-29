@@ -1,58 +1,53 @@
-import { fromIni } from '@aws-sdk/credential-providers'
-import { AwsCredentialIdentityProvider } from '@aws-sdk/types'
+import { ApiAWSCostExplorerResult, ApiAWSSingleResourceInstanceResult, GenericCredentialType, PluginConnectionInterface } from '@metrikube/common';
+import { AWSServiceType, AwsCredentialType } from '@metrikube/common';
 
-import { Injectable } from '@nestjs/common'
+import { Injectable } from '@nestjs/common';
 
-import { AWSServiceType } from '../../../../common/types/aws'
-import { CostExplorerService } from './cost-explorer.service'
-import { EC2Service } from './ec2.service'
+import { CostExplorerService } from './cost-explorer.service';
+import { EC2Service } from './ec2.service';
 
 @Injectable()
-export class AWSService {
-  private readonly credentials: AwsCredentialIdentityProvider
-  private readonly costExplorerService: CostExplorerService
-
-  constructor() {
-    this.credentials = fromIni({ profile: 'personal-account' })
-    this.costExplorerService = new CostExplorerService(this.credentials)
+export class AWSService implements PluginConnectionInterface {
+  getCostExplorerService(credentials: AwsCredentialType): CostExplorerService {
+    return new CostExplorerService(credentials);
   }
 
-  getCostExplorerService(): CostExplorerService {
-    return new CostExplorerService(this.credentials)
-  }
-  getEc2Service(region?: string): EC2Service {
-    return new EC2Service(this.credentials, region)
+  getEc2Service(credentials: AwsCredentialType): EC2Service {
+    return new EC2Service(credentials);
   }
 
   async getServicesInformations(
-    services: AWSServiceType[],
-    region = 'us-east-1'
+    credentials: AwsCredentialType,
+    services: AWSServiceType[]
   ): Promise<
     | {
-        costExplorer?: any
-        ec2?: any
+        costExplorer?: ApiAWSCostExplorerResult[];
+        ec2?: ApiAWSSingleResourceInstanceResult[];
       }
     | undefined
   > {
     if (!services) {
-      return
+      return;
     }
-    let infos = {}
+    let infos = {};
     if (services.includes('co')) {
-      const costs = await this.costExplorerService.getServicesCosts()
+      const costs = await this.getCostExplorerService(credentials).getServicesCosts();
       infos = {
         ...infos,
         costExplorer: costs
-      }
+      };
     }
     if (services.includes('ec2')) {
-      const ec2Infos = await this.getEc2Service(region).getInstancesInformations()
+      const ec2Infos = await this.getEc2Service(credentials).getInstancesInformations();
       infos = {
         ...infos,
         ec2: ec2Infos
-      }
+      };
     }
 
-    return infos
+    return infos;
+  }
+  testConnection(credential: GenericCredentialType): Promise<{ ok: boolean; message: string | null }> {
+    throw new Error('Method not implemented.');
   }
 }
