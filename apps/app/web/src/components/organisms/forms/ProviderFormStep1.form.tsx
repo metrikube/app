@@ -8,7 +8,7 @@ import {
   providerCategoriesMock
 } from '@metrikube/core'
 import { Chip } from '@mui/material'
-import React, { useContext } from 'react'
+import React, { useContext, useMemo } from 'react'
 
 interface Props {
   providerCategory: string
@@ -19,6 +19,11 @@ interface Props {
 const ProviderFormStep1 = ({ providerCategory, allPlugins, handleProviderCategory }: Props) => {
   const { selectedProvider, setSelectedProvider } = useContext(SetupPluginContext)
   const filterPlugins = new FilterPluginsByCategoryUsecase()
+
+  const filteredPlugins = useMemo<PluginModel[]>(
+    () => filterPlugins.execute(allPlugins, providerCategory),
+    [allPlugins, providerCategory]
+  )
 
   return (
     <FormContainer>
@@ -36,7 +41,7 @@ const ProviderFormStep1 = ({ providerCategory, allPlugins, handleProviderCategor
         ))}
       </ChipContainer>
       <ProvidersContainer>
-        {filterPlugins.execute(allPlugins, providerCategory).map((provider) => (
+        {filteredPlugins.map((provider) => (
           <ProviderCard
             key={provider.id}
             logo={AwsLogo}

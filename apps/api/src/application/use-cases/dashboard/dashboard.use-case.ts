@@ -12,6 +12,7 @@ import { Credential } from '../../../domain/models/credential.model';
 import { CredentialEntity } from '../../../infrastructure/database/entities/credential.entity';
 import { PluginEntity } from '../../../infrastructure/database/entities/plugin.entity';
 import { DiTokens } from '../../../infrastructure/di/tokens';
+import { RefreshDashboardResponseDto } from '../../../presenter/dashboard/dtos/refresh-dashboard-response.dto';
 
 export class DashboardUseCase implements DashboardUseCaseInterface {
   private readonly logger = new Logger(this.constructor.name);
@@ -24,7 +25,7 @@ export class DashboardUseCase implements DashboardUseCaseInterface {
     @Inject(DiTokens.GithubServiceToken) private readonly githubService: GithubService
   ) {}
 
-  async refreshDashboard(): Promise<any> {
+  async refreshDashboard(): Promise<RefreshDashboardResponseDto> {
     this.logger.log('refreshDashboard');
 
     const credentials = await this.credentialRepository.getCredentials();
@@ -55,7 +56,7 @@ export class DashboardUseCase implements DashboardUseCaseInterface {
       metricsData[metricCredential.metricType] = await pluginResolver[metricCredential.metricType](metricCredential.value);
     }
 
-    return metricsData;
+    return new RefreshDashboardResponseDto(metricsData);
   }
 
   private mapToPluginCredential(plugin: PluginEntity, credentialEntity: CredentialEntity): Credential {

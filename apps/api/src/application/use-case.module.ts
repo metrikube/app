@@ -8,10 +8,11 @@ import { GithubPluginModule, GithubService } from '@metrikube/github-plugin';
 import { AlertRepositoryImpl } from '../infrastructure/database/repositories/alert.repository';
 import { CredentialRepositoryImpl } from '../infrastructure/database/repositories/credential.repository';
 import { MetricRepositoryImpl } from '../infrastructure/database/repositories/metric.repository';
+import { PluginToMetricRepositoryImpl } from '../infrastructure/database/repositories/plugin-to-metric.repository';
 import { PluginRepositoryImpl } from '../infrastructure/database/repositories/plugin.repository';
-import { PluginToMetricRepositoryImpl } from '../infrastructure/database/repositories/plugin_to_metric.repository';
 import { DiTokens } from '../infrastructure/di/tokens';
 import { InfrastructureModule } from '../infrastructure/infrastructure.module';
+import { SchedulerService } from '../infrastructure/scheduler/scheduler.service';
 import { NotificationService } from '../infrastructure/services/notification/notification.service';
 import { AlertUseCase } from './use-cases/alert/alert.use-case';
 import { CredentialUseCase } from './use-cases/credential/credential.use-case';
@@ -37,20 +38,22 @@ import { PluginUseCase } from './use-cases/plugin/plugin.use-case';
     { provide: DiTokens.AWSServiceToken, useClass: AWSService },
     { provide: DiTokens.GithubServiceToken, useClass: GithubService },
 
-    { provide: DiTokens.Mailer, useClass: NotificationService }
+    { provide: DiTokens.Mailer, useClass: NotificationService },
+    { provide: DiTokens.Scheduler, useClass: SchedulerService }
   ],
   exports: [
+    DiTokens.AWSServiceToken,
     DiTokens.AlertRepositoryToken,
     DiTokens.AlertUseCaseToken,
     DiTokens.ApiMonitoringToken,
-    DiTokens.AWSServiceToken,
     DiTokens.CredentialRepositoryToken,
     DiTokens.DbAnalyticsPluginServiceToken,
-    DiTokens.Mailer,
-    DiTokens.PluginRepositoryToken,
-    DiTokens.MetricRepositoryToken,
     DiTokens.GithubServiceToken,
-    DiTokens.PluginToMetricRepositoryToken
+    DiTokens.Mailer,
+    DiTokens.MetricRepositoryToken,
+    DiTokens.PluginRepositoryToken,
+    DiTokens.PluginToMetricRepositoryToken,
+    DiTokens.Scheduler
     // DiTokens.DashboardUseCaseToken
   ]
 })

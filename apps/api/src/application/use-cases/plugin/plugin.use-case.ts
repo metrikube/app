@@ -10,6 +10,7 @@ import { CredentialRepository } from '../../../domain/interfaces/repository/cred
 import { MetricRepository } from '../../../domain/interfaces/repository/metric.repository';
 import { PluginToMetricRepository } from '../../../domain/interfaces/repository/plugin-to-metric.repository';
 import { PluginRepository } from '../../../domain/interfaces/repository/plugin.repository';
+import { SchedulerInterface } from '../../../domain/interfaces/scheduler/scheduler.interface';
 import { AlertUseCaseInterface } from '../../../domain/interfaces/use-cases/alert.use-case.interface';
 import { PluginUseCaseInterface } from '../../../domain/interfaces/use-cases/plugin.use-case.interface';
 import { CredentialEntity } from '../../../infrastructure/database/entities/credential.entity';
@@ -23,15 +24,16 @@ import { RegisterPluginRequestDto, RegisterPluginResponseDto } from '../../../pr
 @Injectable()
 export class PluginUseCase implements PluginUseCaseInterface {
   constructor(
-    @Inject(DiTokens.PluginRepositoryToken) private readonly pluginRepository: PluginRepository,
-    @Inject(DiTokens.CredentialRepositoryToken) private readonly credentialRepository: CredentialRepository,
-    @Inject(DiTokens.AlertUseCaseToken) private readonly alertUseCase: AlertUseCaseInterface,
-    @Inject(DiTokens.AlertRepositoryToken) private readonly alertRepository: AlertRepository,
-    @Inject(DiTokens.MetricRepositoryToken) private readonly metricRepository: MetricRepository,
-    @Inject(DiTokens.PluginToMetricRepositoryToken) private readonly pluginToMetricRepository: PluginToMetricRepository,
     @Inject(DiTokens.AWSServiceToken) private readonly AWSService: AWSService,
+    @Inject(DiTokens.AlertRepositoryToken) private readonly alertRepository: AlertRepository,
+    @Inject(DiTokens.AlertUseCaseToken) private readonly alertUseCase: AlertUseCaseInterface,
+    @Inject(DiTokens.ApiMonitoringToken) private readonly apiMonitoringService: ApiMonitoringService,
+    @Inject(DiTokens.CredentialRepositoryToken) private readonly credentialRepository: CredentialRepository,
     @Inject(DiTokens.GithubServiceToken) private readonly githubService: GithubService,
-    @Inject(DiTokens.ApiMonitoringToken) private readonly apiMonitoringService: ApiMonitoringService
+    @Inject(DiTokens.MetricRepositoryToken) private readonly metricRepository: MetricRepository,
+    @Inject(DiTokens.PluginRepositoryToken) private readonly pluginRepository: PluginRepository,
+    @Inject(DiTokens.PluginToMetricRepositoryToken) private readonly pluginToMetricRepository: PluginToMetricRepository,
+    @Inject(DiTokens.Scheduler) private readonly scheduler: SchedulerInterface
   ) {
   }
 
@@ -41,6 +43,11 @@ export class PluginUseCase implements PluginUseCaseInterface {
       this.metricRepository.getMetrics(),
       this.credentialRepository.getCredentials()
     ]);
+
+    // await this.scheduler.scheduleAlert('test', 10, () => {
+    //   console.log('test');
+    //   return Promise.resolve();
+    // });
 
     return new PluginResponseDto(plugins, metrics, credentials);
   }

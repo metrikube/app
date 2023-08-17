@@ -7,6 +7,7 @@ export class DiTokens {
   static readonly AlertUseCaseToken = 'ALERT_USE_CASE' as const;
   static readonly DashboardUseCaseToken = 'DASHBOARD_USE_CASE' as const;
   static readonly MetricUseCaseToken = 'METRIC_USE_CASE' as const;
+
   /**
    * Repositories
    */
@@ -28,4 +29,5 @@ export class DiTokens {
    * Infrastructure services
    */
   static readonly Mailer = 'MAILER' as const;
+  static readonly Scheduler = 'SCHEDULER' as const;
 }

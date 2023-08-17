@@ -7,5 +7,5 @@ export interface PluginToMetricRepository {
 
   createPluginToMetric(param: { metricId: string; pluginId: string; isActivated: boolean; resourceId?: string }): Promise<PluginToMetricEntity>;
 
-  getPluginToMetricById(pluginToMetricId: string): Promise<PluginToMetricEntity>;
+  findPluginToMetricById(id: string): Promise<PluginToMetricEntity | undefined>;
 }

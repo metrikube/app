@@ -1,7 +1,7 @@
 import { join } from 'path';
 import { DataSource } from 'typeorm';
 
-import { MiddlewareConsumer, Module, NestModule, OnApplicationBootstrap, RequestMethod } from '@nestjs/common';
+import { Logger, MiddlewareConsumer, Module, NestModule, OnApplicationBootstrap, RequestMethod } from '@nestjs/common';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { InjectDataSource } from '@nestjs/typeorm';
 

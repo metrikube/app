@@ -1,3 +1,4 @@
+import { Promise } from 'cypress/types/cy-bluebird';
 import { DataSource, FindManyOptions, FindOptionsWhere } from 'typeorm';
 
 import { InjectDataSource } from '@nestjs/typeorm';
@@ -11,19 +12,22 @@ export class PluginToMetricRepositoryImpl extends BaseRepository<PluginToMetricE
     super(connection, PluginToMetricEntity);
   }
 
-  createPluginToMetric(payload: { metricId: string; pluginId: string; isActivated: boolean; resourceId?: string }): Promise<PluginToMetricEntity> {
+  createPluginToMetric(payload: { metricId: string; pluginId: string; isActivated: boolean; resourceId?: string }) {
     return this.save(payload);
   }
 
   getActiveMetrics(criterias: FindManyOptions<PluginToMetricEntity> | FindOptionsWhere<PluginToMetricEntity>): Promise<PluginToMetricEntity[]> {
+    // @ts-ignore
     return this.find(criterias);
   }
 
-  getPluginToMetricById(pluginToMetricId: string): Promise<PluginToMetricEntity> {
+  findPluginToMetricById(id: string): Promise<PluginToMetricEntity | undefined> {
     return this.findOne({
-      where: {
-        id: pluginToMetricId
+      where: { id },
+      relations: {
+        plugin: true,
+        metric: true
       }
-    });
+    }) as Promise<PluginToMetricEntity>;
   }
 }

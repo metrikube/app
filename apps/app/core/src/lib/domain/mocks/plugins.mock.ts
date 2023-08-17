@@ -19,6 +19,7 @@ export const providerCategoriesMock = [
     value: 'api'
   }
 ];
+
 // METRICS
 export const awsSingleInstance: MetricModel = {
   id: 'aws-1',
@@ -36,7 +37,7 @@ export const awsBucketInstance: MetricModel = {
   refreshInterval: 30,
   isNotifiable: true
 };
-export const githubLastPr: MetricModel = {
+export const githubLastPrs: MetricModel = {
   id: 'github-metric-1',
   type: 'github-last-prs',
   name: 'Last pull requests',
@@ -45,12 +46,9 @@ export const githubLastPr: MetricModel = {
   isNotifiable: true
 };
 
-export const AWSMetricsMock: MetricModel[] = [
-  awsSingleInstance
-  // awsBucketInstance
-];
+export const AWSMetricsMock: MetricModel[] = [awsSingleInstance, awsBucketInstance];
 
-export const GithubMetricsMock: MetricModel[] = [githubLastPr];
+export const GithubMetricsMock: MetricModel[] = [githubLastPrs];
 
 // PLUGINS
 export const AWSProviderMock: PluginModel = {

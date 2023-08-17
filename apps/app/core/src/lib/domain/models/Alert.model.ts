@@ -1,10 +1,10 @@
 import { MetricThresholdOperator } from '@metrikube/common';
 
 export type AlertModel = {
-  id: string;
-  label: string;
-  metricId: string;
-  condition: {
+  readonly id: string;
+  readonly label: string;
+  readonly metricId?: string;
+  readonly condition: {
     field: string;
     operator: MetricThresholdOperator;
     threshold: string | number;
