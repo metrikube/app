@@ -1,7 +1,7 @@
-import { MetricsAdapter } from "@metrikube/core";
+import { MetricsAdapter } from '@metrikube/core';
 
 export class MetricsAdapterImpl implements MetricsAdapter {
-    async getMetrics() {
-        return []
-    };
+  async getMetrics() {
+    return [];
+  }
 }

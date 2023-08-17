@@ -1,2 +1,2 @@
-export * from "./provider.constants"
-export * from "./alert.constants"
+export * from './provider.constants';
+export * from './alert.constants';

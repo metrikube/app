@@ -1,1 +1,1 @@
-export * from "./SetupPluginStep.enum"
+export * from './SetupPluginStep.enum';

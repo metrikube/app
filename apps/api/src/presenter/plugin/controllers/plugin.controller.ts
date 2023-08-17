@@ -1,10 +1,11 @@
-import { ApiMonitoringService } from '@metrikube/api-monitoring';
-import { AWSServiceType, AwsCredentialType, MetricType, PluginResult } from '@metrikube/common';
-
 import { Body, Controller, Get, HttpCode, HttpStatus, Inject, Param, Post } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
+import { ApiMonitoringService } from '@metrikube/api-monitoring';
+import { AWSServiceType, AwsCredentialType, MetricType, PluginResult } from '@metrikube/common';
+
 import { PluginUseCaseInterface } from '../../../domain/interfaces/use-cases/plugin.use-case.interface';
+import { DiTokens } from '../../../infrastructure/di/tokens';
 import { PluginResponseDto } from '../dtos/plugins.dto';
 import { RegisterPluginRequestDto } from '../dtos/register-plugin.dto';
 
@@ -13,8 +14,8 @@ import { RegisterPluginRequestDto } from '../dtos/register-plugin.dto';
 @Controller('plugins')
 export class PluginController {
   constructor(
-    @Inject('API_MONITORING') private readonly apiMonitoring: ApiMonitoringService,
-    @Inject('PLUGIN_USE_CASE') private readonly pluginUseCase: PluginUseCaseInterface
+    @Inject(DiTokens.ApiMonitoringToken) private readonly apiMonitoring: ApiMonitoringService,
+    @Inject(DiTokens.PluginUseCaseToken) private readonly pluginUseCase: PluginUseCaseInterface
   ) {
   }
 
@@ -35,7 +36,10 @@ export class PluginController {
   @Get('/:id/:metricType')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Get plugin data' })
-  async getPluginData(@Param('id') pluginId: string, @Param('metricType') metricType: string): Promise<PluginResult<MetricType>> {
+  async getPluginData(
+    @Param('id') pluginId: string,
+    @Param('metricType') metricType: string
+  ): Promise<PluginResult<MetricType>> {
     return this.pluginUseCase.refreshPluginMetric(pluginId, metricType);
   }
 

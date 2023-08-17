@@ -1,9 +1,7 @@
-import { readFileSync } from 'fs';
 import { join } from 'path';
 import { DataSource } from 'typeorm';
 
 import { Logger, MiddlewareConsumer, Module, NestModule, OnApplicationBootstrap, RequestMethod } from '@nestjs/common';
-import { ScheduleModule } from '@nestjs/schedule';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { InjectDataSource } from '@nestjs/typeorm';
 

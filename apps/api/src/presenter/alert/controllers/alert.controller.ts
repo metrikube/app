@@ -2,14 +2,13 @@ import { Body, Controller, Delete, HttpCode, HttpStatus, Inject, Param, ParseArr
 import { ApiBody, ApiTags } from '@nestjs/swagger';
 
 import { AlertUseCaseInterface } from '../../../domain/interfaces/use-cases/alert.use-case.interface';
+import { DiTokens } from '../../../infrastructure/di/tokens';
 import { CreateAlertRequestDto, CreateAlertResponseDto } from '../dtos/create-alert.dto';
 
-// prettier-ignore
 @ApiTags('alerts')
 @Controller('alerts')
 export class AlertController {
-  constructor(@Inject('ALERT_USE_CASE') private readonly alertUseCase: AlertUseCaseInterface) {
-  }
+  constructor(@Inject(DiTokens.AlertUseCaseToken) private readonly alertUseCase: AlertUseCaseInterface) {}
 
   @Post('/:pluginToMetricId')
   @HttpCode(HttpStatus.CREATED)
@@ -18,7 +17,7 @@ export class AlertController {
     @Param('pluginToMetricId', new ParseUUIDPipe()) pluginToMetricId: string,
     @Body(new ParseArrayPipe({ items: CreateAlertRequestDto })) body: CreateAlertRequestDto[]
   ): Promise<CreateAlertResponseDto> {
-    return this.alertUseCase.createAlert(pluginToMetricId, body);
+    return this.alertUseCase.createAlertOnActivePlugin(pluginToMetricId, body);
   }
 
   @Delete('/:alertId')

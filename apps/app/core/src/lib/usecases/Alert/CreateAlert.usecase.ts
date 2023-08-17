@@ -1,10 +1,9 @@
-import { AlertAdapter, CreateAlert, CreateAlertRequest } from "@metrikube/core";
+import { AlertAdapter, CreateAlert, CreateAlertRequest } from '@metrikube/core';
 
 export class CreateAlertUsecase implements CreateAlert {
+  constructor(private readonly alertAdapter: AlertAdapter) {}
 
-    constructor(private readonly alertAdapter: AlertAdapter) { }
-
-    async execute(payload: CreateAlertRequest): Promise<void> {
-        await this.alertAdapter.createAlert(payload)
-    }
+  async execute(payload: CreateAlertRequest): Promise<void> {
+    await this.alertAdapter.createAlert(payload);
+  }
 }

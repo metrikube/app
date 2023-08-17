@@ -1,2 +1,2 @@
-export * from "./Plugin"
-export * from "./Alert"
+export * from './Plugin';
+export * from './Alert';

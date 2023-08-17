@@ -1,9 +1,10 @@
-import { Column, CreateDateColumn, Entity, Generated, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn, RelationId } from 'typeorm';
+import { Column, CreateDateColumn, Entity, Generated, ManyToOne, PrimaryGeneratedColumn, RelationId } from 'typeorm';
 
 import { ApiProperty } from '@nestjs/swagger';
 
-import { PluginToMetricEntity } from './plugin_to_metric.entity';
 import { MetricThresholdOperator } from '@metrikube/common';
+
+import { PluginToMetricEntity } from './plugin_to_metric.entity';
 
 @Entity('alert')
 export class AlertEntity {
@@ -38,6 +39,7 @@ export class AlertEntity {
   @ManyToOne(() => PluginToMetricEntity, (pluginToMetric: PluginToMetricEntity) => pluginToMetric.metric)
   pluginToMetric: PluginToMetricEntity;
 
+  @Column({ type: 'uuid', nullable: false })
   @RelationId((alert: AlertEntity) => alert.pluginToMetric)
   pluginToMetricId: PluginToMetricEntity['id'];
 

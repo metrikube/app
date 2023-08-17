@@ -1,7 +1,5 @@
-import { GenericCredentialType } from '@metrikube/common';
-import { AfterInsert, BeforeInsert, Column, Entity, Generated, JoinColumn, ManyToOne, PrimaryGeneratedColumn, RelationId } from 'typeorm';
+import { Column, Entity, Generated, ManyToOne, PrimaryGeneratedColumn, RelationId } from 'typeorm';
 
-import { Logger } from '@nestjs/common';
 import { ApiProperty } from '@nestjs/swagger';
 
 import { PluginEntity } from './plugin.entity';
@@ -42,6 +40,7 @@ export class CredentialEntity {
   plugin: PluginEntity;
 
   @RelationId((credential: CredentialEntity) => credential.plugin)
+  @Column({ type: 'uuid', nullable: false })
   pluginId: PluginEntity['id'];
 
   // @BeforeInsert()

@@ -1,1 +1,1 @@
-export * from './Option.object'
+export * from './Option.object';

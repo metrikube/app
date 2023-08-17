@@ -1,1 +1,1 @@
-export * from "./CreateAlert.usecase"
+export * from './CreateAlert.usecase';

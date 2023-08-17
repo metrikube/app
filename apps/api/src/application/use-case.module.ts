@@ -1,49 +1,60 @@
+import { Module } from '@nestjs/common';
+
 import { ApiMonitoringModule, ApiMonitoringService } from '@metrikube/api-monitoring';
 import { AWSService, AwsPluginModule } from '@metrikube/aws-plugin';
 import { DbAnalyticsPluginModule, DbAnalyticsPluginService } from '@metrikube/db-analytics-plugin';
 import { GithubPluginModule, GithubService } from '@metrikube/github-plugin';
 
-import { Module } from '@nestjs/common';
-
 import { AlertRepositoryImpl } from '../infrastructure/database/repositories/alert.repository';
 import { CredentialRepositoryImpl } from '../infrastructure/database/repositories/credential.repository';
 import { MetricRepositoryImpl } from '../infrastructure/database/repositories/metric.repository';
+import { PluginToMetricRepositoryImpl } from '../infrastructure/database/repositories/plugin-to-metric.repository';
 import { PluginRepositoryImpl } from '../infrastructure/database/repositories/plugin.repository';
-import { PluginToMetricRepositoryImpl } from '../infrastructure/database/repositories/plugin_to_metric.repository';
+import { DiTokens } from '../infrastructure/di/tokens';
 import { InfrastructureModule } from '../infrastructure/infrastructure.module';
 import { SchedulerService } from '../infrastructure/scheduler/scheduler.service';
 import { NotificationService } from '../infrastructure/services/notification/notification.service';
 import { AlertUseCase } from './use-cases/alert/alert.use-case';
+import { CredentialUseCase } from './use-cases/credential/credential.use-case';
+import { DashboardUseCase } from './use-cases/dashboard/dashboard.use-case';
+import { PluginUseCase } from './use-cases/plugin/plugin.use-case';
 
 @Module({
   imports: [InfrastructureModule, AwsPluginModule, ApiMonitoringModule, DbAnalyticsPluginModule, GithubPluginModule],
   providers: [
-    { provide: 'ALERT_REPOSITORY', useClass: AlertRepositoryImpl },
-    { provide: 'ALERT_USE_CASE', useClass: AlertUseCase },
-    { provide: 'API_MONITORING', useClass: ApiMonitoringService },
-    { provide: 'AWS_PLUGIN', useClass: AWSService },
-    { provide: 'CREDENTIAL_REPOSITORY', useClass: CredentialRepositoryImpl },
-    { provide: 'DB_ANALYTICS_PLUGIN', useClass: DbAnalyticsPluginService },
-    { provide: 'MAILER', useClass: NotificationService },
-    { provide: 'PLUGIN_REPOSITORY', useClass: PluginRepositoryImpl },
-    { provide: 'METRIC_REPOSITORY', useClass: MetricRepositoryImpl },
-    { provide: 'GITHUB_PLUGIN', useClass: GithubService },
-    { provide: 'PLUGIN_TO_METRIC_REPOSITORY', useClass: PluginToMetricRepositoryImpl },
-    { provide: 'SCHEDULER', useClass: SchedulerService }
+    { provide: DiTokens.AlertUseCaseToken, useClass: AlertUseCase },
+    { provide: DiTokens.PluginUseCaseToken, useClass: PluginUseCase },
+    { provide: DiTokens.DashboardUseCaseToken, useClass: DashboardUseCase },
+    { provide: DiTokens.CredentialUseCaseToken, useClass: CredentialUseCase },
+
+    { provide: DiTokens.AlertRepositoryToken, useClass: AlertRepositoryImpl },
+    { provide: DiTokens.CredentialRepositoryToken, useClass: CredentialRepositoryImpl },
+    { provide: DiTokens.PluginRepositoryToken, useClass: PluginRepositoryImpl },
+    { provide: DiTokens.MetricRepositoryToken, useClass: MetricRepositoryImpl },
+    { provide: DiTokens.PluginToMetricRepositoryToken, useClass: PluginToMetricRepositoryImpl },
+
+    { provide: DiTokens.DbAnalyticsPluginServiceToken, useClass: DbAnalyticsPluginService },
+    { provide: DiTokens.ApiMonitoringToken, useClass: ApiMonitoringService },
+    { provide: DiTokens.AWSServiceToken, useClass: AWSService },
+    { provide: DiTokens.GithubServiceToken, useClass: GithubService },
+
+    { provide: DiTokens.Mailer, useClass: NotificationService },
+    { provide: DiTokens.Scheduler, useClass: SchedulerService }
   ],
   exports: [
-    'ALERT_REPOSITORY',
-    'ALERT_USE_CASE',
-    'API_MONITORING',
-    'AWS_PLUGIN',
-    'CREDENTIAL_REPOSITORY',
-    'DB_ANALYTICS_PLUGIN',
-    'MAILER',
-    'SCHEDULER',
-    'PLUGIN_REPOSITORY',
-    'METRIC_REPOSITORY',
-    'PLUGIN_TO_METRIC_REPOSITORY',
-    'GITHUB_PLUGIN'
+    DiTokens.AWSServiceToken,
+    DiTokens.AlertRepositoryToken,
+    DiTokens.AlertUseCaseToken,
+    DiTokens.ApiMonitoringToken,
+    DiTokens.CredentialRepositoryToken,
+    DiTokens.DbAnalyticsPluginServiceToken,
+    DiTokens.GithubServiceToken,
+    DiTokens.Mailer,
+    DiTokens.MetricRepositoryToken,
+    DiTokens.PluginRepositoryToken,
+    DiTokens.PluginToMetricRepositoryToken,
+    DiTokens.Scheduler
+    // DiTokens.DashboardUseCaseToken
   ]
 })
 export class UseCaseModule {}

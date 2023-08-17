@@ -4,6 +4,7 @@ import { GithubService } from '@metrikube/github-plugin';
 
 import { CredentialEntity } from '../../../infrastructure/database/entities/credential.entity';
 import { PluginEntity } from '../../../infrastructure/database/entities/plugin.entity';
+import { RefreshDashboardResponseDto } from '../../../presenter/dashboard/dtos/refresh-dashboard-response.dto';
 import { PluginResponseDto } from '../../../presenter/plugin/dtos/plugins.dto';
 import { RegisterPluginRequestDto, RegisterPluginResponseDto } from '../../../presenter/plugin/dtos/register-plugin.dto';
 

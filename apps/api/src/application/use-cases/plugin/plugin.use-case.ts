@@ -1,10 +1,9 @@
+import { BadRequestException, Inject, Injectable } from '@nestjs/common';
+
 import { ApiMonitoringService } from '@metrikube/api-monitoring';
 import { AWSService } from '@metrikube/aws-plugin';
-import { Plugin, PluginConnectionInterface } from '@metrikube/common';
-import { ApiEndpointCredentialType, ApiHealthCheckResult, CredentialType, GenericCredentialType, MetricType, PluginResult } from '@metrikube/common';
+import { ApiEndpointCredentialType, CredentialType, GenericCredentialType, MetricType, Plugin, PluginConnectionInterface, PluginResult } from '@metrikube/common';
 import { GithubService } from '@metrikube/github-plugin';
-
-import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 
 import { AlertRepository } from '../../../domain/interfaces/repository/alert.repository';
 import { CredentialRepository } from '../../../domain/interfaces/repository/credential.repository';
@@ -17,6 +16,7 @@ import { PluginUseCaseInterface } from '../../../domain/interfaces/use-cases/plu
 import { CredentialEntity } from '../../../infrastructure/database/entities/credential.entity';
 import { MetricEntity } from '../../../infrastructure/database/entities/metric.entity';
 import { PluginEntity } from '../../../infrastructure/database/entities/plugin.entity';
+import { DiTokens } from '../../../infrastructure/di/tokens';
 import { PluginResponseDto } from '../../../presenter/plugin/dtos/plugins.dto';
 import { RegisterPluginRequestDto, RegisterPluginResponseDto } from '../../../presenter/plugin/dtos/register-plugin.dto';
 
@@ -24,16 +24,16 @@ import { RegisterPluginRequestDto, RegisterPluginResponseDto } from '../../../pr
 @Injectable()
 export class PluginUseCase implements PluginUseCaseInterface {
   constructor(
-    @Inject('PLUGIN_REPOSITORY') private readonly pluginRepository: PluginRepository,
-    @Inject('CREDENTIAL_REPOSITORY') private readonly credentialRepository: CredentialRepository,
-    @Inject('AWS_PLUGIN') private readonly AWSService: AWSService,
-    @Inject('GITHUB_PLUGIN') private readonly githubService: GithubService,
-    @Inject('ALERT_USE_CASE') private readonly alertUseCase: AlertUseCaseInterface,
-    @Inject('ALERT_REPOSITORY') private readonly alertRepository: AlertRepository,
-    @Inject('METRIC_REPOSITORY') private readonly metricRepository: MetricRepository,
-    @Inject('PLUGIN_TO_METRIC_REPOSITORY') private readonly pluginToMetricRepository: PluginToMetricRepository,
-    @Inject('API_MONITORING') private readonly apiMonitoringService: ApiMonitoringService,
-    @Inject('SCHEDULER') private readonly scheduler: SchedulerInterface,
+    @Inject(DiTokens.AWSServiceToken) private readonly AWSService: AWSService,
+    @Inject(DiTokens.AlertRepositoryToken) private readonly alertRepository: AlertRepository,
+    @Inject(DiTokens.AlertUseCaseToken) private readonly alertUseCase: AlertUseCaseInterface,
+    @Inject(DiTokens.ApiMonitoringToken) private readonly apiMonitoringService: ApiMonitoringService,
+    @Inject(DiTokens.CredentialRepositoryToken) private readonly credentialRepository: CredentialRepository,
+    @Inject(DiTokens.GithubServiceToken) private readonly githubService: GithubService,
+    @Inject(DiTokens.MetricRepositoryToken) private readonly metricRepository: MetricRepository,
+    @Inject(DiTokens.PluginRepositoryToken) private readonly pluginRepository: PluginRepository,
+    @Inject(DiTokens.PluginToMetricRepositoryToken) private readonly pluginToMetricRepository: PluginToMetricRepository,
+    @Inject(DiTokens.Scheduler) private readonly scheduler: SchedulerInterface
   ) {
   }
 
@@ -44,10 +44,10 @@ export class PluginUseCase implements PluginUseCaseInterface {
       this.credentialRepository.getCredentials()
     ]);
 
-    await this.scheduler.scheduleAlert('test', 10, () => {
-      console.log('test');
-      return Promise.resolve();
-    });
+    // await this.scheduler.scheduleAlert('test', 10, () => {
+    //   console.log('test');
+    //   return Promise.resolve();
+    // });
 
     return new PluginResponseDto(plugins, metrics, credentials);
   }

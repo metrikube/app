@@ -1,4 +1,5 @@
-import { MetricType } from '@metrikube/common';
+import type { MetricType } from '@metrikube/common';
+
 import { Credential } from '../../apps/api/src/domain/models/credential.model';
 
 export type Plugin = {

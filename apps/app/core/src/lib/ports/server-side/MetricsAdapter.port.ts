@@ -1,3 +1,3 @@
 export interface MetricsAdapter {
-    getMetrics: () => Promise<unknown>
+  getMetrics: () => Promise<unknown>;
 }

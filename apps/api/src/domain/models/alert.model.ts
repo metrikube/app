@@ -1,6 +1,5 @@
 import { Metric, MetricThresholdOperator } from '@metrikube/common';
 
-
 export type Alert = {
   readonly id: string;
   readonly label: string;

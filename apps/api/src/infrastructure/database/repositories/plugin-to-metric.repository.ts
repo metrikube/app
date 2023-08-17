@@ -1,5 +1,5 @@
 import { Promise } from 'cypress/types/cy-bluebird';
-import { DataSource } from 'typeorm';
+import { DataSource, FindManyOptions, FindOptionsWhere } from 'typeorm';
 
 import { InjectDataSource } from '@nestjs/typeorm';
 
@@ -16,8 +16,9 @@ export class PluginToMetricRepositoryImpl extends BaseRepository<PluginToMetricE
     return this.save(payload);
   }
 
-  getActiveMetrics(): Promise<PluginToMetricEntity> {
-    throw new Error('Method not implemented.');
+  getActiveMetrics(criterias: FindManyOptions<PluginToMetricEntity> | FindOptionsWhere<PluginToMetricEntity>): Promise<PluginToMetricEntity[]> {
+    // @ts-ignore
+    return this.find(criterias);
   }
 
   findPluginToMetricById(id: string): Promise<PluginToMetricEntity | undefined> {

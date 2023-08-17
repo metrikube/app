@@ -1,32 +1,36 @@
+import { Module } from '@nestjs/common';
+
 import { ApiMonitoringService } from '@metrikube/api-monitoring';
 import { AWSService } from '@metrikube/aws-plugin';
 import { DbAnalyticsPluginService } from '@metrikube/db-analytics-plugin';
 import { GithubService } from '@metrikube/github-plugin';
 
-import { Module } from '@nestjs/common';
-
 import { UseCaseModule } from '../application/use-case.module';
 import { AlertUseCase } from '../application/use-cases/alert/alert.use-case';
 import { CredentialUseCase } from '../application/use-cases/credential/credential.use-case';
+import { DashboardUseCase } from '../application/use-cases/dashboard/dashboard.use-case';
 import { PluginUseCase } from '../application/use-cases/plugin/plugin.use-case';
 import { CredentialRepositoryImpl } from '../infrastructure/database/repositories/credential.repository';
+import { DiTokens } from '../infrastructure/di/tokens';
 import { AlertController } from './alert/controllers/alert.controller';
 import { AppController } from './app.controller';
 import { GithubController } from './controllers/github.controller';
+import { DashboardController } from './dashboard/controllers/dashboard.controller';
 import { PluginController } from './plugin/controllers/plugin.controller';
 
 @Module({
   imports: [UseCaseModule],
-  controllers: [AppController, PluginController, AlertController, GithubController],
+  controllers: [AppController, PluginController, AlertController, GithubController, DashboardController],
   providers: [
-    { provide: 'CREDENTIAL_USE_CASE', useClass: CredentialUseCase },
-    { provide: 'ALERT_USE_CASE', useClass: AlertUseCase },
-    { provide: 'PLUGIN_USE_CASE', useClass: PluginUseCase },
-    { provide: 'API_MONITORING', useClass: ApiMonitoringService },
-    { provide: 'GITHUB_PLUGIN', useClass: GithubService },
-    { provide: 'AWS_PLUGIN', useClass: AWSService },
-    { provide: 'CREDENTIAL_REPOSITORY', useClass: CredentialRepositoryImpl },
-    { provide: 'DB_ANALYTICS_PLUGIN', useClass: DbAnalyticsPluginService }
+    { provide: DiTokens.CredentialUseCaseToken, useClass: CredentialUseCase },
+    { provide: DiTokens.AlertUseCaseToken, useClass: AlertUseCase },
+    { provide: DiTokens.PluginUseCaseToken, useClass: PluginUseCase },
+    { provide: DiTokens.ApiMonitoringToken, useClass: ApiMonitoringService },
+    { provide: DiTokens.CredentialRepositoryToken, useClass: CredentialRepositoryImpl },
+    { provide: DiTokens.GithubServiceToken, useClass: GithubService },
+    { provide: DiTokens.AWSServiceToken, useClass: AWSService },
+    { provide: DiTokens.DbAnalyticsPluginServiceToken, useClass: DbAnalyticsPluginService },
+    { provide: DiTokens.DashboardUseCaseToken, useClass: DashboardUseCase }
   ]
 })
 export class ControllersModule {}

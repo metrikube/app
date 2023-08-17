@@ -1,8 +1,9 @@
-import { Plugin } from '@metrikube/common';
 import { DataSource, FindManyOptions, FindOptionsWhere } from 'typeorm';
 
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
+
+import { Plugin } from '@metrikube/common';
 
 import { PluginRepository } from '../../../domain/interfaces/repository/plugin.repository';
 import { PluginEntity } from '../entities/plugin.entity';

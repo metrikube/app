@@ -1,7 +1,7 @@
-import { Plugin } from "@metrikube/common"
-import { MetricModel } from "./Metric.model"
+import { Plugin } from '@metrikube/common';
 
-export type PluginModel = Omit<Plugin, "createdAt" | "metrics"> & {
-  metrics: MetricModel[]
-}
+import { MetricModel } from './Metric.model';
 
+export type PluginModel = Omit<Plugin, 'createdAt' | 'metrics'> & {
+  metrics: MetricModel[];
+};

@@ -1,10 +1,11 @@
 import { Test } from '@nestjs/testing';
 
+import { MetricThresholdOperator } from '@metrikube/common';
+
 import { AlertEntity } from '../../../infrastructure/database/entities/alert.entity';
 import { AlertInMemoryRepositoryImpl } from '../../../infrastructure/database/in-memory/alert-in-memory.repository';
 import { CreateAlertRequestDto } from '../../../presenter/alert/dtos/create-alert.dto';
 import { AlertUseCase } from './alert.use-case';
-import { MetricThresholdOperator } from '@metrikube/common';
 
 describe('AlertUseCase', () => {
   let useCase: AlertUseCase;
@@ -43,8 +44,8 @@ describe('AlertUseCase', () => {
     } as CreateAlertRequestDto;
     const metricId = 'metric-id';
 
-    const createdAlert = await useCase.createAlert(metricId, alert);
-    expect(createdAlert.pluginToMetricId).toEqual('metric-id');
+    const createdAlert = await useCase.createAlertOnActivePlugin(metricId, [alert]);
+    expect(createdAlert.alerts.length).toEqual(1);
   });
 
   it('should check condition threshold', () => {
@@ -78,7 +79,7 @@ describe('AlertUseCase', () => {
 
     const metricId = 'metric-id';
 
-    await useCase.createAlert(metricId, alert);
+    await useCase.createAlertOnActivePlugin(metricId, [alert]);
 
     const spy = jest.spyOn(useCase, 'checkConditionThreshold');
     await useCase.checkContiditionAndNotify(metricData, Object.assign(new AlertEntity(), alert));
