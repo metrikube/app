@@ -11,6 +11,7 @@ import { MetricRepositoryImpl } from '../infrastructure/database/repositories/me
 import { PluginRepositoryImpl } from '../infrastructure/database/repositories/plugin.repository';
 import { PluginToMetricRepositoryImpl } from '../infrastructure/database/repositories/plugin_to_metric.repository';
 import { InfrastructureModule } from '../infrastructure/infrastructure.module';
+import { SchedulerService } from '../infrastructure/scheduler/scheduler.service';
 import { NotificationService } from '../infrastructure/services/notification/notification.service';
 import { AlertUseCase } from './use-cases/alert/alert.use-case';
 
@@ -27,7 +28,8 @@ import { AlertUseCase } from './use-cases/alert/alert.use-case';
     { provide: 'PLUGIN_REPOSITORY', useClass: PluginRepositoryImpl },
     { provide: 'METRIC_REPOSITORY', useClass: MetricRepositoryImpl },
     { provide: 'GITHUB_PLUGIN', useClass: GithubService },
-    { provide: 'PLUGIN_TO_METRIC_REPOSITORY', useClass: PluginToMetricRepositoryImpl }
+    { provide: 'PLUGIN_TO_METRIC_REPOSITORY', useClass: PluginToMetricRepositoryImpl },
+    { provide: 'SCHEDULER', useClass: SchedulerService }
   ],
   exports: [
     'ALERT_REPOSITORY',
@@ -37,6 +39,7 @@ import { AlertUseCase } from './use-cases/alert/alert.use-case';
     'CREDENTIAL_REPOSITORY',
     'DB_ANALYTICS_PLUGIN',
     'MAILER',
+    'SCHEDULER',
     'PLUGIN_REPOSITORY',
     'METRIC_REPOSITORY',
     'PLUGIN_TO_METRIC_REPOSITORY',
