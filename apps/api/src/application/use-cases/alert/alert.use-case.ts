@@ -1,31 +1,62 @@
+import { MetricThresholdOperator } from '@metrikube/common';
+
 import { Inject, Injectable, Logger } from '@nestjs/common';
 
 import { NotificationInterface } from '../../../domain/interfaces/adapters/notification.interface';
 import { AlertRepository } from '../../../domain/interfaces/repository/alert.repository';
+import { PluginToMetricRepository } from '../../../domain/interfaces/repository/plugin-to-metric.repository';
+import { SchedulerInterface } from '../../../domain/interfaces/scheduler/scheduler.interface';
 import { AlertUseCaseInterface } from '../../../domain/interfaces/use-cases/alert.use-case.interface';
 import { Alert } from '../../../domain/models/alert.model';
 import { AlertEntity } from '../../../infrastructure/database/entities/alert.entity';
 import { PluginToMetricEntity } from '../../../infrastructure/database/entities/plugin_to_metric.entity';
 import { CreateAlertRequestDto, CreateAlertResponseDto } from '../../../presenter/alert/dtos/create-alert.dto';
-import { MetricThresholdOperator } from '@metrikube/common';
 
 // prettier-ignore
 @Injectable()
 export class AlertUseCase implements AlertUseCaseInterface {
+  logger: Logger = new Logger(this.constructor.name);
   constructor(
     @Inject('ALERT_REPOSITORY') private readonly alertRepository: AlertRepository,
-    @Inject('MAILER') private readonly mailer: NotificationInterface
+    @Inject('MAILER') private readonly mailer: NotificationInterface,
+    @Inject('PLUGIN_TO_METRIC_REPOSITORY') private readonly pluginToMetricRepository: PluginToMetricRepository,
+    @Inject('SCHEDULER') private readonly scheduler: SchedulerInterface
   ) { }
 
   async createAlert(pluginToMetricId: PluginToMetricEntity['id'], alerts: CreateAlertRequestDto[]): Promise<CreateAlertResponseDto> {
-    const createdAlert = await this.alertRepository.createAlerts(alerts.map(alert => ({
+    const createdAlerts = await this.alertRepository.createAlerts(alerts.map(alert => ({
       ...alert,
       pluginToMetricId,
       triggered: false
     })) as Alert[]);
 
+    // const activatedMetric = await this.pluginToMetricRepository.findPluginToMetricById(pluginToMetricId);
+    //
+    // await this.scheduler.scheduleAlert(
+    //   `Create new scheduled job for [${activatedMetric.plugin.name}:${activatedMetric.metric.name}]`,
+    //   createdAlerts[0].id,
+    //   activatedMetric.metric.refreshInterval,
+    //   this.jobRunner.apply(this, [createdAlerts[0].id])
+    // );
+
     // todo : dispatch event to scheduler queue
-    return new CreateAlertResponseDto(createdAlert);
+    return new CreateAlertResponseDto(createdAlerts);
+  }
+
+
+  async jobRunner(id: string): Promise<void> {
+    this.logger.warn('Hello');
+    const alerts = await this.alertRepository.getAlerts({id: id});
+    /**
+     *  TODO :
+     *    1 - get all alerts
+     *    2 - get all metrics
+     *    3 - request metrics api
+     *    4 - check condition
+     *    5 - notify
+     */
+    await this.checkContiditionAndNotify({ field: 'value', operator: 'gt', threshold: 10 }, alerts[0]);
+    return Promise.resolve();
   }
 
   deleteAlert(alertId: string) {

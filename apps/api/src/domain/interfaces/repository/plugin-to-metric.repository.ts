@@ -4,4 +4,6 @@ export interface PluginToMetricRepository {
   getActiveMetrics(): Promise<PluginToMetricEntity>;
 
   createPluginToMetric(param: { metricId: string; pluginId: string; isActivated: boolean; resourceId?: string }): Promise<PluginToMetricEntity>;
+
+  findPluginToMetricById(id: string): Promise<PluginToMetricEntity | undefined>;
 }

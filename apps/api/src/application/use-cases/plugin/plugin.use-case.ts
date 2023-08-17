@@ -11,6 +11,7 @@ import { CredentialRepository } from '../../../domain/interfaces/repository/cred
 import { MetricRepository } from '../../../domain/interfaces/repository/metric.repository';
 import { PluginToMetricRepository } from '../../../domain/interfaces/repository/plugin-to-metric.repository';
 import { PluginRepository } from '../../../domain/interfaces/repository/plugin.repository';
+import { SchedulerInterface } from '../../../domain/interfaces/scheduler/scheduler.interface';
 import { AlertUseCaseInterface } from '../../../domain/interfaces/use-cases/alert.use-case.interface';
 import { PluginUseCaseInterface } from '../../../domain/interfaces/use-cases/plugin.use-case.interface';
 import { CredentialEntity } from '../../../infrastructure/database/entities/credential.entity';
@@ -31,7 +32,8 @@ export class PluginUseCase implements PluginUseCaseInterface {
     @Inject('ALERT_REPOSITORY') private readonly alertRepository: AlertRepository,
     @Inject('METRIC_REPOSITORY') private readonly metricRepository: MetricRepository,
     @Inject('PLUGIN_TO_METRIC_REPOSITORY') private readonly pluginToMetricRepository: PluginToMetricRepository,
-    @Inject('API_MONITORING') private readonly apiMonitoringService: ApiMonitoringService
+    @Inject('API_MONITORING') private readonly apiMonitoringService: ApiMonitoringService,
+    @Inject('SCHEDULER') private readonly scheduler: SchedulerInterface,
   ) {
   }
 
@@ -41,6 +43,11 @@ export class PluginUseCase implements PluginUseCaseInterface {
       this.metricRepository.getMetrics(),
       this.credentialRepository.getCredentials()
     ]);
+
+    await this.scheduler.scheduleAlert('test', 10, () => {
+      console.log('test');
+      return Promise.resolve();
+    });
 
     return new PluginResponseDto(plugins, metrics, credentials);
   }
