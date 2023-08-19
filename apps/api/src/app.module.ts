@@ -11,14 +11,7 @@ import { HttpLoggerMiddleware } from './infrastructure/middlewares/http-logger.m
 import { ControllersModule } from './presenter/controllers.module';
 
 @Module({
-  imports: [
-    ControllersModule,
-    InfrastructureModule,
-    UseCaseModule,
-    ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..', 'app/web')
-    })
-  ],
+  imports: [ControllersModule, InfrastructureModule, UseCaseModule, ServeStaticModule.forRoot({ rootPath: join(__dirname, '..', 'app/web') })],
   controllers: [],
   providers: []
 })
@@ -29,24 +22,5 @@ export class AppModule implements NestModule, OnApplicationBootstrap {
     consumer.apply(HttpLoggerMiddleware).forRoutes({ path: '*', method: RequestMethod.ALL });
   }
 
-  async onApplicationBootstrap(): Promise<void> {
-    //   await this.connection.dropDatabase();
-    //   Logger.verbose('💾 Drop Database...', AppModule.name);
-    //   await this.connection.synchronize();
-    //   Logger.verbose('💾 Create Database...', AppModule.name);
-    //
-    //   Logger.verbose('💾 Seeding Database...', AppModule.name);
-    //   const file = readFileSync(join(__dirname, '..', '../../data/seed.sql'), 'utf8');
-    //   const [queries] = file.split(';');
-    //   for (const query of queries) {
-    //     try {
-    //       const parsedQuery = query.replaceAll('\n', ' ').replaceAll('\t', ' ').replaceAll('\r', ' ').trim();
-    //       await this.connection.query(parsedQuery);
-    //     } catch (err) {
-    //       console.log('err : ', query, err.message);
-    //       Logger.error('💾 Seeding DB FAILED', AppModule.name);
-    //     }
-    //   }
-    // }
-  }
+  async onApplicationBootstrap(): Promise<void> {}
 }

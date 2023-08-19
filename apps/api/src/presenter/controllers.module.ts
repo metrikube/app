@@ -13,14 +13,12 @@ import { PluginUseCase } from '../application/use-cases/plugin/plugin.use-case';
 import { CredentialRepositoryImpl } from '../infrastructure/database/repositories/credential.repository';
 import { DiTokens } from '../infrastructure/di/tokens';
 import { AlertController } from './alert/controllers/alert.controller';
-import { AppController } from './app.controller';
-import { GithubController } from './controllers/github.controller';
 import { DashboardController } from './dashboard/controllers/dashboard.controller';
 import { PluginController } from './plugin/controllers/plugin.controller';
 
 @Module({
   imports: [UseCaseModule],
-  controllers: [AppController, PluginController, AlertController, GithubController, DashboardController],
+  controllers: [PluginController, AlertController, DashboardController],
   providers: [
     { provide: DiTokens.CredentialUseCaseToken, useClass: CredentialUseCase },
     { provide: DiTokens.AlertUseCaseToken, useClass: AlertUseCase },
