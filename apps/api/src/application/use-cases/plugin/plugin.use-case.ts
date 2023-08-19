@@ -75,11 +75,11 @@ export class PluginUseCase implements PluginUseCaseInterface {
     if (!credentials) throw new BadRequestException('No credentials found for this plugin');
 
     const parsedCredentials = JSON.parse(Buffer.from(credentials.value, 'base64').toString('utf-8')) as GenericCredentialType;
-    const getMetricTypeDataSample: (credentials: GenericCredentialType) => Promise<PluginResult<MetricType>> = this.getMethodToCallByMetricType(metricType);
+    const getMetricTypeDataSample: (credentials: GenericCredentialType) => Promise<PluginResult<MetricType>> = this.getMetricMethodByMetricType(metricType);
     return getMetricTypeDataSample(parsedCredentials);
   }
 
-  private getMethodToCallByMetricType(metricType: MetricType): (credentials: GenericCredentialType) => Promise<PluginResult<typeof metricType>> {
+  getMetricMethodByMetricType(metricType: MetricType): (credentials: GenericCredentialType) => Promise<PluginResult<typeof metricType>> {
     switch (metricType) {
       case 'api-endpoint-health-check':
         return this.apiMonitoringService.apiHealthCheck;
