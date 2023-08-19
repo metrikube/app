@@ -45,6 +45,7 @@ import { PluginUseCase } from './use-cases/plugin/plugin.use-case';
     DiTokens.AWSServiceToken,
     DiTokens.AlertRepositoryToken,
     DiTokens.AlertUseCaseToken,
+    DiTokens.PluginUseCaseToken,
     DiTokens.DashboardUseCaseToken,
     DiTokens.ApiMonitoringToken,
     DiTokens.CredentialRepositoryToken,

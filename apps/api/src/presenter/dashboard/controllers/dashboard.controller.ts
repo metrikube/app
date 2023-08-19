@@ -13,7 +13,7 @@ export class DashboardController {
   @Get('/')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Refresh dashbaord dat' })
-  fetchDashboardMetricData(): Promise<RefreshDashboardResponseDto> {
+  fetchDashboardMetricData(): Promise<RefreshDashboardResponseDto[]> {
     return this.dashboardUseCase.refreshDashboard();
   }
 }

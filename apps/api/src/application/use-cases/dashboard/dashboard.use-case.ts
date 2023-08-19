@@ -25,20 +25,16 @@ export class DashboardUseCase implements DashboardUseCaseInterface {
     @Inject(DiTokens.GithubServiceToken) private readonly githubService: GithubService
   ) {}
 
-  async refreshDashboard(): Promise<RefreshDashboardResponseDto> {
-    this.logger.log('refreshDashboard');
+  async refreshDashboard(): Promise<RefreshDashboardResponseDto[]> {
+    this.logger.log('refreshing dashboard...');
 
     const credentials = await this.credentialRepository.getCredentials();
-
-    const configuredMetrics = await this.pluginToMetricRepository.getActiveMetrics({
-      relations: {
-        plugin: true,
-        metric: true
-      }
+    const activatedMetrics = await this.pluginToMetricRepository.getActiveMetrics({
+      relations: { plugin: true, metric: true }
     });
 
-    const metricCredentials = configuredMetrics.map((configuredMetric) => ({
-      metricType: configuredMetric.metric.type,
+    const activatedMetricsWithCredentials = activatedMetrics.map((configuredMetric) => ({
+      ...configuredMetric,
       ...this.mapToPluginCredential(
         configuredMetric.plugin,
         credentials.find((credential) => credential.pluginId === configuredMetric.plugin.id)
@@ -50,13 +46,20 @@ export class DashboardUseCase implements DashboardUseCaseInterface {
       'github-last-issues': this.githubService.getRepoIssues
     };
 
-    const metricsData: Record<string, PluginResult<MetricType>> = {};
+    const metricResultMap = {};
 
-    for (const metricCredential of metricCredentials) {
-      metricsData[metricCredential.metricType] = await pluginResolver[metricCredential.metricType](metricCredential.value);
+    for (const metricCredential of activatedMetricsWithCredentials) {
+      const metricResult = await pluginResolver[metricCredential.metric.type](metricCredential.value);
+      metricResultMap[metricCredential.id] = new RefreshDashboardResponseDto(
+        metricCredential.id,
+        metricCredential.plugin as PluginEntity,
+        metricCredential.metric,
+        metricCredential.resourceId,
+        metricResult
+      );
     }
 
-    return new RefreshDashboardResponseDto(metricsData);
+    return Object.values(metricResultMap);
   }
 
   private mapToPluginCredential(plugin: PluginEntity, credentialEntity: CredentialEntity): Credential {
