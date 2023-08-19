@@ -2,7 +2,7 @@ import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 
 import { ApiMonitoringService } from '@metrikube/api-monitoring';
 import { AWSService } from '@metrikube/aws-plugin';
-import { ApiEndpointCredentialType, CredentialType, GenericCredentialType, MetricType, Plugin, PluginConnectionInterface, PluginResult } from '@metrikube/common';
+import { CredentialType, GenericCredentialType, MetricType, Plugin, PluginConnectionInterface, PluginResult } from '@metrikube/common';
 import { GithubService } from '@metrikube/github-plugin';
 
 import { AlertRepository } from '../../../domain/interfaces/repository/alert.repository';
@@ -11,7 +11,6 @@ import { MetricRepository } from '../../../domain/interfaces/repository/metric.r
 import { PluginToMetricRepository } from '../../../domain/interfaces/repository/plugin-to-metric.repository';
 import { PluginRepository } from '../../../domain/interfaces/repository/plugin.repository';
 import { SchedulerInterface } from '../../../domain/interfaces/scheduler/scheduler.interface';
-import { AlertUseCaseInterface } from '../../../domain/interfaces/use-cases/alert.use-case.interface';
 import { PluginUseCaseInterface } from '../../../domain/interfaces/use-cases/plugin.use-case.interface';
 import { CredentialEntity } from '../../../infrastructure/database/entities/credential.entity';
 import { MetricEntity } from '../../../infrastructure/database/entities/metric.entity';
@@ -26,7 +25,6 @@ export class PluginUseCase implements PluginUseCaseInterface {
   constructor(
     @Inject(DiTokens.AWSServiceToken) private readonly AWSService: AWSService,
     @Inject(DiTokens.AlertRepositoryToken) private readonly alertRepository: AlertRepository,
-    @Inject(DiTokens.AlertUseCaseToken) private readonly alertUseCase: AlertUseCaseInterface,
     @Inject(DiTokens.ApiMonitoringToken) private readonly apiMonitoringService: ApiMonitoringService,
     @Inject(DiTokens.CredentialRepositoryToken) private readonly credentialRepository: CredentialRepository,
     @Inject(DiTokens.GithubServiceToken) private readonly githubService: GithubService,
@@ -43,11 +41,6 @@ export class PluginUseCase implements PluginUseCaseInterface {
       this.metricRepository.getMetrics(),
       this.credentialRepository.getCredentials()
     ]);
-
-    // await this.scheduler.scheduleAlert('test', 10, () => {
-    //   console.log('test');
-    //   return Promise.resolve();
-    // });
 
     return new PluginResponseDto(plugins, metrics, credentials);
   }
@@ -72,19 +65,48 @@ export class PluginUseCase implements PluginUseCaseInterface {
     return new RegisterPluginResponseDto(pluginToMetric, pluginDataSample);
   }
 
+  /**
+   * TODO : sécurisé si jamais l'utlisateurs supprime envoi un pluginId qui n'a pas de metricType associé
+   * @param pluginId
+   * @param metricType
+   */
   async refreshPluginMetric(pluginId: string, metricType: MetricType): Promise<PluginResult<MetricType>> {
     const credentials = await this.credentialRepository.findCrendentialByPluginId(pluginId);
     if (!credentials) throw new BadRequestException('No credentials found for this plugin');
 
+    const parsedCredentials = JSON.parse(Buffer.from(credentials.value, 'base64').toString('utf-8')) as GenericCredentialType;
+    const getMetricTypeDataSample: (credentials: GenericCredentialType) => Promise<PluginResult<MetricType>> = this.getMethodToCallByMetricType(metricType);
+    return getMetricTypeDataSample(parsedCredentials);
+  }
+
+  private getMethodToCallByMetricType(metricType: MetricType): (credentials: GenericCredentialType) => Promise<PluginResult<typeof metricType>> {
     switch (metricType) {
-      case 'api-endpoint-health-check': {
-        return this.apiMonitoringService.apiHealthCheck({
-          apiEndpoint: (JSON.parse(Buffer.from(credentials.value, 'base64').toString('utf-8')) as ApiEndpointCredentialType).apiEndpoint
-        });
-      }
+      case 'api-endpoint-health-check':
+        return this.apiMonitoringService.apiHealthCheck;
+      case 'github-last-issues':
+        return this.githubService.getRepoIssues;
+      case 'aws-bucket-single-instance':
+        throw 'Not implemented';
+      case 'aws-bucket-multiple-instances':
+        throw 'Not implemented';
+      case 'aws-ec2-multiple-instances-usage':
+        throw 'Not implemented';
+      case 'aws-ec2-single-instance-usage':
+        throw 'Not implemented';
+      case 'github-last-prs':
+        throw 'Not implemented';
+      case 'database-queries':
+        throw 'Not implemented';
+      case 'database-size':
+        throw 'Not implemented';
+      case 'database-slow-queries':
+        throw 'Not implemented';
+      case 'database-connections':
+        throw 'Not implemented';
       default:
-        return {};
+        throw new BadRequestException('Invalid metric type');
     }
+
   }
 
   getPluginCredentials(pluginId: string): Promise<CredentialEntity> {
@@ -93,14 +115,6 @@ export class PluginUseCase implements PluginUseCaseInterface {
 
   async create(plugin: Plugin): Promise<PluginEntity> {
     return this.pluginRepository.createPlugin(plugin);
-  }
-
-  getAWSPlugin() {
-    return this.AWSService;
-  }
-
-  getGithubPlugin() {
-    return this.githubService;
   }
 
   private async testPluginConnection(

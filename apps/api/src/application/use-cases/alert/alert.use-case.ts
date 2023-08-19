@@ -1,12 +1,15 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 
-import { MetricThresholdOperator } from '@metrikube/common';
+import { ApiMonitoringService } from '@metrikube/api-monitoring';
+import { MetricThresholdOperator, MetricType, PluginResult } from '@metrikube/common';
 
 import { NotificationInterface } from '../../../domain/interfaces/adapters/notification.interface';
 import { AlertRepository } from '../../../domain/interfaces/repository/alert.repository';
+import { CredentialRepository } from '../../../domain/interfaces/repository/credential.repository';
 import { PluginToMetricRepository } from '../../../domain/interfaces/repository/plugin-to-metric.repository';
 import { SchedulerInterface } from '../../../domain/interfaces/scheduler/scheduler.interface';
 import { AlertUseCaseInterface } from '../../../domain/interfaces/use-cases/alert.use-case.interface';
+import { PluginUseCaseInterface } from '../../../domain/interfaces/use-cases/plugin.use-case.interface';
 import { Alert } from '../../../domain/models/alert.model';
 import { AlertEntity } from '../../../infrastructure/database/entities/alert.entity';
 import { PluginToMetricEntity } from '../../../infrastructure/database/entities/plugin_to_metric.entity';
@@ -22,7 +25,10 @@ export class AlertUseCase implements AlertUseCaseInterface {
     @Inject(DiTokens.AlertRepositoryToken) private readonly alertRepository: AlertRepository,
     @Inject(DiTokens.PluginToMetricRepositoryToken) private readonly pluginToMetricRepository: PluginToMetricRepository,
     @Inject(DiTokens.Mailer) private readonly mailer: NotificationInterface,
-    @Inject(DiTokens.Scheduler) private readonly scheduler: SchedulerInterface
+    @Inject(DiTokens.CredentialRepositoryToken) private readonly credentialRepository: CredentialRepository,
+    @Inject(DiTokens.Scheduler) private readonly scheduler: SchedulerInterface,
+    @Inject(DiTokens.PluginUseCaseToken) private readonly pluginUseCase: PluginUseCaseInterface,
+    @Inject(DiTokens.ApiMonitoringToken) private readonly apiMonitoringService: ApiMonitoringService,
   ) {
   }
 
@@ -35,33 +41,17 @@ export class AlertUseCase implements AlertUseCaseInterface {
       triggered: false
     })) as Alert[]);
 
-    // const activatedMetric = await this.pluginToMetricRepository.findPluginToMetricById(pluginToMetricId);
-    //
-    // await this.scheduler.scheduleAlert(
-    //   `Create new scheduled job for [${activatedMetric.plugin.name}:${activatedMetric.metric.name}]`,
-    //   createdAlerts[0].id,
-    //   activatedMetric.metric.refreshInterval,
-    //   this.jobRunner.apply(this, [createdAlerts[0].id])
-    // );
+    const activatedMetric = await this.pluginToMetricRepository.findPluginToMetricById(pluginToMetricId);
+    await Promise.all(createdAlerts.map(this.registerAlerJob.bind(this)(activatedMetric)));
 
-    // todo : dispatch event to scheduler queue
     return new CreateAlertResponseDto(createdAlerts);
   }
 
-
   async jobRunner(id: string): Promise<void> {
-    this.logger.warn('Hello');
-    const alerts = await this.alertRepository.getAlerts({id: id});
-    /**
-     *  TODO :
-     *    1 - get all alerts
-     *    2 - get all metrics
-     *    3 - request metrics api
-     *    4 - check condition
-     *    5 - notify
-     */
-    await this.checkContiditionAndNotify({ field: 'value', operator: 'gt', threshold: 10 }, alerts[0]);
-    return Promise.resolve();
+    const alert: AlertEntity = await this.alertRepository.findAlertById(id);
+    const metric: PluginToMetricEntity = await this.pluginToMetricRepository.findPluginToMetricById(alert.pluginToMetricId);
+    const metricData: PluginResult<MetricType> = await this.pluginUseCase.refreshPluginMetric(metric.pluginId, metric.metric.type as MetricType);
+    return this.checkContiditionAndNotify(metricData, alert);
   }
 
   deleteAlert(alertId: string) {
@@ -100,5 +90,15 @@ export class AlertUseCase implements AlertUseCaseInterface {
     };
 
     return operation[operator](value);
+  }
+
+  private registerAlerJob(activatedMetric: PluginToMetricEntity): (alert: AlertEntity) => Promise<void> {
+    return (alert: AlertEntity): Promise<void> => {
+      return this.scheduler.scheduleAlert(
+        `Create new scheduled job for [${activatedMetric.plugin.name}:${activatedMetric.metric.name}]`,
+        activatedMetric.metric.refreshInterval,
+        this.jobRunner.bind(this, alert.id)
+      );
+    };
   }
 }

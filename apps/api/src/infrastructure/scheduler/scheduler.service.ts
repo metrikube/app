@@ -11,10 +11,10 @@ export class SchedulerService implements SchedulerInterface {
 
   constructor(private schedulerRegistry: SchedulerRegistry) {}
 
-  async scheduleAlert(name: string, alertId: string, seconds: number, callback: (id: string) => Promise<void>): Promise<void> {
+  async scheduleAlert(name: string, seconds: number, callback: () => Promise<void>): Promise<void> {
     const job = new CronJob(`${seconds} * * * * *`, async () => {
       this.logger.warn(`job ${name} running...`);
-      await callback(alertId);
+      await callback();
       this.logger.warn(`job ${name} finished!`);
     });
 
