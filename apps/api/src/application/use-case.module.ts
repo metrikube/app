@@ -12,8 +12,8 @@ import { PluginToMetricRepositoryImpl } from '../infrastructure/database/reposit
 import { PluginRepositoryImpl } from '../infrastructure/database/repositories/plugin.repository';
 import { DiTokens } from '../infrastructure/di/tokens';
 import { InfrastructureModule } from '../infrastructure/infrastructure.module';
-import { SchedulerService } from '../infrastructure/scheduler/scheduler.service';
 import { NotificationService } from '../infrastructure/services/notification/notification.service';
+import { SchedulerService } from '../infrastructure/services/scheduler/scheduler.service';
 import { AlertUseCase } from './use-cases/alert/alert.use-case';
 import { CredentialUseCase } from './use-cases/credential/credential.use-case';
 import { DashboardUseCase } from './use-cases/dashboard/dashboard.use-case';

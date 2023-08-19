@@ -3,7 +3,7 @@ import { CronJob } from 'cron';
 import { Injectable, Logger } from '@nestjs/common';
 import { SchedulerRegistry } from '@nestjs/schedule';
 
-import { SchedulerInterface } from '../../domain/interfaces/scheduler/scheduler.interface';
+import { SchedulerInterface } from '../../../domain/interfaces/scheduler/scheduler.interface';
 
 @Injectable()
 export class SchedulerService implements SchedulerInterface {
@@ -11,7 +11,7 @@ export class SchedulerService implements SchedulerInterface {
 
   constructor(private schedulerRegistry: SchedulerRegistry) {}
 
-  async scheduleAlert(name: string, seconds: number, callback: () => Promise<void>): Promise<void> {
+  async scheduleAlert(name: string, seconds: string, callback: () => Promise<void>): Promise<void> {
     const job = new CronJob(`${seconds} * * * * *`, async () => {
       this.logger.warn(`job ${name} running...`);
       await callback();
