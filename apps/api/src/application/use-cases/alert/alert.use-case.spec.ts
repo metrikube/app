@@ -4,6 +4,9 @@ import { MetricThresholdOperator } from '@metrikube/common';
 
 import { AlertEntity } from '../../../infrastructure/database/entities/alert.entity';
 import { AlertInMemoryRepositoryImpl } from '../../../infrastructure/database/in-memory/alert-in-memory.repository';
+import { CredentialInMemoryRepositoryImpl } from '../../../infrastructure/database/in-memory/credential-in-memory.repository';
+import { PluginToMetricInMemoryRepositoryImpl } from '../../../infrastructure/database/in-memory/plugin-to-metric-in-memory.repository';
+import { DiTokens } from '../../../infrastructure/di/tokens';
 import { CreateAlertRequestDto } from '../../../presenter/alert/dtos/create-alert.dto';
 import { AlertUseCase } from './alert.use-case';
 
@@ -14,14 +17,13 @@ describe('AlertUseCase', () => {
     const module = await Test.createTestingModule({
       providers: [
         AlertUseCase,
-        {
-          provide: 'ALERT_REPOSITORY',
-          useClass: AlertInMemoryRepositoryImpl
-        },
-        {
-          provide: 'MAILER',
-          useValue: { sendMail: jest.fn() }
-        }
+        { provide: DiTokens.AlertRepositoryToken, useClass: AlertInMemoryRepositoryImpl },
+        { provide: DiTokens.PluginToMetricRepositoryToken, useClass: PluginToMetricInMemoryRepositoryImpl },
+        { provide: DiTokens.CredentialRepositoryToken, useClass: CredentialInMemoryRepositoryImpl },
+        { provide: DiTokens.Mailer, useValue: { sendMail: jest.fn() } },
+        { provide: DiTokens.Scheduler, useValue: { scheduleAlert: jest.fn() } },
+        { provide: DiTokens.PluginUseCaseToken, useValue: {} },
+        { provide: DiTokens.ApiMonitoringToken, useValue: {} }
       ]
     }).compile();
 
@@ -42,9 +44,8 @@ describe('AlertUseCase', () => {
         threshold: 'threshold'
       }
     } as CreateAlertRequestDto;
-    const metricId = 'metric-id';
 
-    const createdAlert = await useCase.createAlertOnActivePlugin(metricId, [alert]);
+    const createdAlert = await useCase.createAlertOnActivePlugin('1', [alert]);
     expect(createdAlert.alerts.length).toEqual(1);
   });
 
@@ -77,9 +78,7 @@ describe('AlertUseCase', () => {
       }
     } as CreateAlertRequestDto;
 
-    const metricId = 'metric-id';
-
-    await useCase.createAlertOnActivePlugin(metricId, [alert]);
+    await useCase.createAlertOnActivePlugin('1', [alert]);
 
     const spy = jest.spyOn(useCase, 'checkConditionThreshold');
     await useCase.checkContiditionAndNotify(metricData, Object.assign(new AlertEntity(), alert));
