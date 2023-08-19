@@ -18,8 +18,8 @@ export class AlertRepositoryImpl extends BaseRepository<AlertEntity> implements 
     return this.find(criterias);
   }
 
-  findOne(optionsOrConditions: FindOneOptions<AlertEntity> | FindOptionsWhere<AlertEntity>): Promise<AlertEntity | undefined> {
-    return super.findOne(optionsOrConditions);
+  findAlertById(id: string): Promise<AlertEntity> {
+    return this.findOne({ id });
   }
 
   createAlerts(payload: Partial<Alert[]>): Promise<AlertEntity[]> {

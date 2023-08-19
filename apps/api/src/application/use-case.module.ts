@@ -45,6 +45,7 @@ import { PluginUseCase } from './use-cases/plugin/plugin.use-case';
     DiTokens.AWSServiceToken,
     DiTokens.AlertRepositoryToken,
     DiTokens.AlertUseCaseToken,
+    DiTokens.DashboardUseCaseToken,
     DiTokens.ApiMonitoringToken,
     DiTokens.CredentialRepositoryToken,
     DiTokens.DbAnalyticsPluginServiceToken,
@@ -54,7 +55,6 @@ import { PluginUseCase } from './use-cases/plugin/plugin.use-case';
     DiTokens.PluginRepositoryToken,
     DiTokens.PluginToMetricRepositoryToken,
     DiTokens.Scheduler
-    // DiTokens.DashboardUseCaseToken
   ]
 })
 export class UseCaseModule {}
