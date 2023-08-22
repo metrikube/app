@@ -51,6 +51,12 @@ export class RefreshDashboardResponseDto {
   @ApiProperty()
   id: string;
 
+  @ApiProperty()
+  name: string;
+
+  @ApiProperty()
+  description: string;
+
   @ApiProperty({ type: DashboardPluginDto })
   plugin: DashboardPluginDto;
 
@@ -63,8 +69,10 @@ export class RefreshDashboardResponseDto {
   @ApiProperty()
   data: PluginResult<MetricType>;
 
-  constructor(id: string, plugin: PluginEntity, metric: MetricEntity, resourceId: string, data: PluginResult<MetricType>) {
+  constructor(id: string, name: string, description: string, plugin: PluginEntity, metric: MetricEntity, resourceId: string, data: PluginResult<MetricType>) {
     this.id = id;
+    this.name = name;
+    this.description = description;
     this.plugin = new DashboardPluginDto(plugin);
     this.metric = new DashboardMetricDto(metric);
     this.resourceId = resourceId;
