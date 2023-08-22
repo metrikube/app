@@ -9,6 +9,12 @@ export class PluginToMetricEntity {
   @PrimaryColumn({ type: 'uuid', nullable: false })
   id: string;
 
+  @Column({ type: 'varchar', nullable: false })
+  name: string;
+
+  @Column({ type: 'varchar', nullable: true })
+  description: string;
+
   @ManyToOne(() => PluginEntity, (plugin: PluginEntity) => plugin.pluginToMetrics)
   @JoinColumn()
   plugin: PluginEntity;
