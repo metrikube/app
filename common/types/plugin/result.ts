@@ -1,6 +1,7 @@
 import { GenericCredentialType } from '../credential';
 import { MetricType } from '../metric';
 
+type Timestamp = number;
 // @ts-ignore
 export type PluginResult<T extends MetricType> = ApiResult[T];
 
@@ -10,12 +11,31 @@ export type ApiResult = {
   'aws-bucket-multiple-instances': ApiAWSSingleResourceInstanceResult[];
   'aws-ec2-single-instance-usage': ApiAWSSingleResourceInstanceResult;
   'aws-ec2-multiple-instances-usage': ApiAWSSingleResourceInstanceResult[];
-  'github-last-prs': ApiGithubPullRequests | ApiGithubError;
-  'github-last-issues': ApiGithubIssues | ApiGithubError;
-  'database-queries': unknown;
-  'database-size': unknown;
-  'database-slow-queries': unknown;
+  'github-last-prs': ApiGithubPullRequestsOrIssues;
+  'github-last-issues': ApiGithubPullRequestsOrIssues;
+  'database-queries': ApiDatabaseLastAverageQueriesByHour[];
+  'database-size': ApiDatabaseSize;
+  'database-slow-queries': ApiDatabaseSlowQueries[];
 };
+
+export interface ApiDatabaseSlowQueries {
+  query: string;
+  executionTime: number;
+  date: Timestamp;
+}
+
+export interface ApiDatabaseLastAverageQueriesByHour {
+  numberOfQueries: number;
+  query: string;
+  date: Timestamp;
+}
+
+export interface ApiDatabaseSize {
+  size: number;
+  numberOfTables: number;
+  numberOfTotalRows: number;
+  databaseName: string;
+}
 
 export interface ApiAWSSingleResourceInstanceResult {
   id: string;
@@ -40,7 +60,7 @@ export interface ApiGithubIssues {
   url: string;
 }
 
-export type ApiGithubPullRequests = ApiGithubIssues;
+export type ApiGithubPullRequestsOrIssues = ApiGithubIssues | ApiGithubError;
 
 export interface ApiHealthCheckResult {
   status: number;

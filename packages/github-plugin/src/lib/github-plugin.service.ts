@@ -2,7 +2,7 @@ import axios, { AxiosError } from 'axios';
 
 import { Injectable } from '@nestjs/common';
 
-import { ApiGithubError, ApiGithubIssues, ApiGithubPullRequests, GithubCredentialType, Issues, PluginConnectionInterface, PullRequests } from '@metrikube/common';
+import { ApiGithubError, ApiGithubIssues, ApiGithubPullRequestsOrIssues, GithubCredentialType, Issues, PluginConnectionInterface, PullRequests } from '@metrikube/common';
 
 interface GithubErrorData {
   message: string;
@@ -34,7 +34,7 @@ export class GithubService implements PluginConnectionInterface {
     }
   }
 
-  async getRepoPRs({ accessToken, repo, owner }: GithubCredentialType): Promise<ApiGithubPullRequests[] | ApiGithubError> {
+  async getRepoPRs({ accessToken, repo, owner }: GithubCredentialType): Promise<ApiGithubPullRequestsOrIssues[] | ApiGithubError> {
     try {
       const { data: prs } = await this.axiosInstance.get<PullRequests>(`/repos/${owner}/${repo}/pulls?per_page=${this.limit}`, {
         headers: {
