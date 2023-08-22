@@ -36,6 +36,15 @@ export class AlertEntity {
   })
   triggered: boolean;
 
+  @Column({ default: true, type: 'boolean' })
+  @ApiProperty({
+    name: 'isActive',
+    type: Boolean,
+    description: 'is alert active',
+    example: true
+  })
+  isActive: boolean;
+
   @ManyToOne(() => PluginToMetricEntity, (pluginToMetric: PluginToMetricEntity) => pluginToMetric.metric)
   pluginToMetric: PluginToMetricEntity;
 
