@@ -19,7 +19,7 @@ export class AlertRepositoryImpl extends BaseRepository<AlertEntity> implements 
   }
 
   findAlertById(id: string): Promise<AlertEntity> {
-    return this.findOne({ where: { id } });
+    return this.findOne({ where: { id, isActive: true } });
   }
 
   createAlerts(payload: Partial<Alert[]>): Promise<AlertEntity[]> {
