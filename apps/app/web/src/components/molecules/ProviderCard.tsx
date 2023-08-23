@@ -1,4 +1,4 @@
-import styled, { CSSObject } from '@emotion/styled'
+import styled from '@emotion/styled'
 import { ButtonBase, Paper } from '@mui/material'
 import React from 'react'
 
