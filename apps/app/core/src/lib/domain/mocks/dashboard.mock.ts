@@ -1,32 +1,48 @@
-import { MetricModel, PluginModel } from "@metrikube/core"
+import { AWSProviderMock, ActiveMetricModel, githubProviderMock } from "@metrikube/core"
 import { awsBucketInstance, awsSingleInstance, githubLastIssues, githubLastPrs } from "./metrics.mock"
 
-type ActiveMetric = {
-    metric: MetricModel
-    data: unknown
-}
 
-export const lastPullRequestMock: ActiveMetric = {
+export const lastPullRequestMock: ActiveMetricModel = {
+    plugin: githubProviderMock,
     metric: githubLastPrs,
-    data: {}
+    data: {
+        status: 200,
+
+    }
 }
 
-export const lastIssuesMock: ActiveMetric = {
+export const lastIssuesMock: ActiveMetricModel = {
+    plugin: githubProviderMock,
     metric: githubLastIssues,
-    data: {}
+    data: [{
+        id: "test",
+
+    }]
 }
 
-export const singleInstanceEC2Mock: ActiveMetric = {
+export const singleInstanceEC2Mock: ActiveMetricModel = {
+    plugin: AWSProviderMock,
     metric: awsSingleInstance,
-    data: {}
+    data: {
+        id: "ec2-20",
+        name: "Instance EC2",
+        status: false,
+        cost: 1320.43
+    }
 }
 
-export const singleBucketS3Mock: ActiveMetric = {
+export const singleBucketS3Mock: ActiveMetricModel = {
+    plugin: AWSProviderMock,
     metric: awsBucketInstance,
-    data: {}
+    data: {
+        id: "audi-S3",
+        name: "Bucket S3",
+        status: true,
+        cost: 14.0453
+    }
 }
 
-export const activeMetricsMock: ActiveMetric[] = [
+export const activeMetricsMock: ActiveMetricModel[] = [
     lastPullRequestMock,
     lastIssuesMock,
     singleBucketS3Mock,

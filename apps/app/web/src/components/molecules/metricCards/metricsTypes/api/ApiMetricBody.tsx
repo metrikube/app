@@ -1,12 +1,7 @@
+import { ApiHealthCheckResult } from '@metrikube/common'
 import React from 'react'
 
-interface Props {
-  status: number
-  value: string | number
-  unit: string
-}
-
-const ApiMetricBody = ({ status, value, unit }: Props) => {
+const ApiMetricBody = ({ status, value, unit }: ApiHealthCheckResult) => {
   return (
     <div>
       <p>Status : {status}</p>

@@ -1,4 +1,5 @@
+import { ActiveMetricModel } from "../../domain";
+
 export interface DashboardMetricsAdapter {
-    getActiveMetrics: () => unknown
-  }
-  
+  getActiveMetrics: () => Promise<ActiveMetricModel[]>
+}

@@ -2,10 +2,12 @@ import styled from '@emotion/styled'
 import MoreVertIcon from '@mui/icons-material/MoreVert'
 import NotificationsActiveOutlinedIcon from '@mui/icons-material/NotificationsActiveOutlined'
 import NotificationsOffOutlinedIcon from '@mui/icons-material/NotificationsOffOutlined'
-import { Card, CardHeader, IconButton, CardContent, Menu, MenuItem } from '@mui/material'
+import { Card, CardHeader, IconButton, CardContent, Menu, MenuItem, Avatar } from '@mui/material'
 import React, { PropsWithChildren } from 'react'
 
 interface Props {
+  pluginName: string
+  pluginCode: string
   metricId: string
   title: string
   isNotificationActivated: boolean
@@ -13,6 +15,8 @@ interface Props {
 
 const BaseMetricCard = ({
   metricId,
+  pluginName,
+  pluginCode,
   title,
   isNotificationActivated,
   children
@@ -32,12 +36,14 @@ const BaseMetricCard = ({
     console.log(newNotificationStatus)
   }
 
+  const imageUrl = new URL(`/src/assets/img/${pluginCode}.png`, import.meta.url).href
+
   return (
     <Card>
       <CardHeader
         title={title}
         subheader="September 14, 2016"
-        avatar={'logo'}
+        avatar={<Logo alt={pluginName} src={imageUrl} />}
         action={
           <IconsActionContainer>
             {isNotificationActivated ? (
@@ -86,5 +92,7 @@ const DeleteMenuItem = styled(MenuItem)`
   color: red;
   text-transform: uppercase;
 `
-
+const Logo = styled.img`
+  width: 2rem;
+`
 export default BaseMetricCard

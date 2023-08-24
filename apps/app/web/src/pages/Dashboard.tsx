@@ -9,8 +9,7 @@ import { SetupPluginProvider } from '../contexts/SetupPlugin.context'
 import DefaultLayout from '../layouts/DefaultLayout'
 import { EmptyStateLayout } from '../layouts/EmptyStateLayout'
 import styled from '@emotion/styled'
-import { Metric } from '@metrikube/common'
-import { GetActiveMetricsUsecase } from '@metrikube/core'
+import { ActiveMetricModel, GetActiveMetricsUsecase, activeMetricsMock } from '@metrikube/core'
 import { AddCircleOutline, AddchartOutlined } from '@mui/icons-material'
 import { Button, Grid } from '@mui/material'
 import { useQuery } from '@tanstack/react-query'
@@ -23,22 +22,28 @@ const Dashboard = () => {
     setOpenModal(true)
   }
 
-  const { data: activeMetrics } = useQuery({
+  const { data: activeMetrics } = useQuery<ActiveMetricModel[]>({
     queryKey: ['getActiveMetrics'],
     queryFn: () => new GetActiveMetricsUsecase(dashboardMetricsAdapter).execute(),
     initialData: () => []
   })
 
-  const MetricsContent = (metric: Metric, data: unknown) => {
+  const MetricsContent = ({ metric, data }: ActiveMetricModel) => {
     switch (metric.type) {
       case 'api-endpoint-health-check':
         return <ApiMetricBody status={data.status} unit={data.unit} value={data.value} />
       case 'aws-bucket-single-instance':
-        return <SingleInstanceEC2 />
+        return <SingleInstanceEC2 name={data.name} status={data.status} cost={data.cost} />
+      case 'aws-ec2-single-instance-usage':
+        return <SingleInstanceEC2 name={data.name} status={data.status} cost={data.cost} />
       case 'github-last-prs':
         return <LastPullRequest />
+      case 'github-last-issues':
+        return <p>test</p>
     }
   }
+
+  const metricsTemp: ActiveMetricModel[] = [...activeMetrics, ...activeMetricsMock]
 
   return (
     <DefaultLayout>
@@ -58,16 +63,20 @@ const Dashboard = () => {
         </div>
       </StyledHeader>
 
-      {activeMetrics.length ? (
-        <Grid container>
-          {activeMetrics.map((metric) => (
-            <BaseMetricCard
-              metricId={metric.metric.id}
-              title={`${metric.plugin.name} - ${metric.metric.name}`}
-              isNotificationActivated={metric.metric.isNotifiable}
-              key={metric.metric.id}>
-              {MetricsContent(metric.metric, metric.data)}
-            </BaseMetricCard>
+      {metricsTemp.length ? (
+        <Grid container spacing={3}>
+          {metricsTemp.map((activeMetric) => (
+            <Grid item key={activeMetric.metric.id}>
+              <BaseMetricCard
+                pluginName={activeMetric.plugin!.name}
+                pluginCode={activeMetric.plugin!.type}
+                metricId={activeMetric.metric.id}
+                title={activeMetric.metric.name}
+                isNotificationActivated={activeMetric.metric.isNotifiable}
+                key={activeMetric.metric.id}>
+                {MetricsContent(activeMetric)}
+              </BaseMetricCard>
+            </Grid>
           ))}
         </Grid>
       ) : (
@@ -91,6 +100,7 @@ const StyledHeader = styled.header`
   display: flex;
   align-items: center;
   justify-content: space-between;
+  margin-bottom: 2rem;
 `
 
 export default Dashboard
