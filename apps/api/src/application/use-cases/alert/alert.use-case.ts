@@ -53,10 +53,6 @@ export class AlertUseCase implements AlertUseCaseInterface {
     return this.checkContiditionAndNotify(metricData, alert);
   }
 
-  deleteAlert(alertId: string) {
-    return this.alertRepository.deleteAlert(alertId);
-  }
-
   async checkContiditionAndNotify(metricData: unknown, alert: AlertEntity): Promise<void> {
     const { field, operator, threshold } = alert.condition;
     const isConditionMet = this.checkConditionThreshold(metricData[field], operator, threshold);
@@ -74,6 +70,15 @@ export class AlertUseCase implements AlertUseCaseInterface {
       return this.alertRepository.updateAlert(alert.id, { triggered: true });
     }
   }
+
+  getPluginToMetricAlerts(pluginToMetricId: PluginToMetricEntity['id']): Promise<AlertEntity[]> {
+    return this.alertRepository.getAlerts({ pluginToMetricId });
+  }
+
+  deleteAlert(alertId: string) {
+    return this.alertRepository.deleteAlert(alertId);
+  }
+
 
   checkConditionThreshold(value: string | number, operator: MetricThresholdOperator, threshold: string | number): boolean {
     const operators: MetricThresholdOperator[] = ['gt', 'lt', 'eq', 'gte', 'lte', 'neq'];
