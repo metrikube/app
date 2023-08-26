@@ -8,3 +8,4 @@ export type AwsCredentialType = { accessKeyId: string; secretAccessKey: string; 
 export type CredentialType = 'apiKey' | 'userPassword' | 'dbConnection' | 'apiEndpoint' | 'github' | 'aws';
 
 export type GenericCredentialType = ApiKeyCredentialType | UserPasswordCredentialType | DbConnectionCredentialType | ApiEndpointCredentialType | GithubCredentialType | AwsCredentialType;
+
