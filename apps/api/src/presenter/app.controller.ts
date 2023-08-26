@@ -1,8 +1,6 @@
 import { Body, Controller, Get, HttpCode, HttpStatus, Inject, Post } from '@nestjs/common';
 import { ApiOperation } from '@nestjs/swagger';
-
 import { Plugin } from '@metrikube/common';
-
 import { CredentialUseCaseInterface } from '../domain/interfaces/use-cases/credential.use-case.interface';
 import { PluginUseCaseInterface } from '../domain/interfaces/use-cases/plugin.use-case.interface';
 import { Credential } from '../domain/models/credential.model';
@@ -36,8 +34,18 @@ export class AppController {
     return this.credentialUseCase.insertCredentialForPlugin(payload['pluginId'], payload);
   }
 
-  @Get('db-plugin/get-data')
-  dbGetData(pluginId: Plugin['id']): any {
-    return this.credentialUseCase.getDataDb(pluginId);
+  @Get('db-plugin/nb-queries')
+  dbGetNbQueries(pluginId: Plugin['id']): any {
+    return this.credentialUseCase.getNbQueries(pluginId);
+  }
+
+  @Get('db-plugin/db-size')
+  dbGetDbSize(pluginId: Plugin['id']): any {
+    return this.credentialUseCase.getDbSize(pluginId);
+  }
+
+  @Get('db-plugin/db-slow-query')
+  dbGetSlowQuery(pluginId: Plugin['id']): any {
+    return this.credentialUseCase.getSlowQuery(pluginId);
   }
 }
