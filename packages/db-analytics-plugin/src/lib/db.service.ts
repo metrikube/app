@@ -1,9 +1,5 @@
-import { ApiEndpointCredentialType, DbConnectionCredentialType, PluginConnectionInterface, DbConnectionType, ApiDatabaseLastAverageQueriesByHour, ApiDatabaseSlowQueries } from '@metrikube/common';
-
+import { DbConnectionCredentialType, DbConnectionType, ApiDatabaseLastAverageQueriesByHour, ApiDatabaseSlowQueries } from '@metrikube/common';
 import * as mysql from 'mysql2';
-import { HttpStatus, Injectable, Logger } from '@nestjs/common';
-import axios, { AxiosResponse } from 'axios';
-import type { AxiosError } from 'axios';
 
 
 export class DbService  {

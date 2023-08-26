@@ -1,13 +1,11 @@
-import { ApiEndpointCredentialType, DbConnectionCredentialType, PluginConnectionInterface, DbConnectionType, ApiDatabaseSize, ApiDatabaseSlowQueries, ApiDatabaseLastAverageQueriesByHour } from '@metrikube/common';
+import { ApiEndpointCredentialType, DbConnectionCredentialType, PluginConnectionInterface, ApiDatabaseSize, ApiDatabaseSlowQueries, ApiDatabaseLastAverageQueriesByHour } from '@metrikube/common';
 import { DbService } from './db.service'
-import * as mysql from 'mysql2';
 import { HttpStatus, Injectable, Logger } from '@nestjs/common';
-import axios, { AxiosResponse } from 'axios';
+import axios from 'axios';
 import type { AxiosError } from 'axios';
 
 @Injectable()
 export class DbAnalyticsPluginService implements PluginConnectionInterface {
-  constructor() {}
 
   public async getNbQueries(credentialData: DbConnectionCredentialType): Promise<ApiDatabaseLastAverageQueriesByHour> {
     try {
