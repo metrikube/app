@@ -12,10 +12,11 @@ import { DashboardUseCase } from '../application/use-cases/dashboard/dashboard.u
 import { PluginUseCase } from '../application/use-cases/plugin/plugin.use-case';
 import { CredentialRepositoryImpl } from '../infrastructure/database/repositories/credential.repository';
 import { DiTokens } from '../infrastructure/di/tokens';
-import { AlertController } from './alert/controllers/alert.controller';
-import { DashboardController } from './dashboard/controllers/dashboard.controller';
-import { PluginController } from './plugin/controllers/plugin.controller';
+
 import { DbAnalyticsController } from './controllers/db-analytics.controller';
+import { AlertController } from './alert/controller/alert.controller';
+import { DashboardController } from './dashboard/controller/dashboard.controller';
+import { PluginController } from './plugin/controller/plugin.controller';
 
 @Module({
   imports: [UseCaseModule],

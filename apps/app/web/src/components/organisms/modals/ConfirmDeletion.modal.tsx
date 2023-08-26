@@ -7,14 +7,15 @@ interface Props {
   setOpenModal: Dispatch<SetStateAction<boolean>>
 }
 
-const MetricAlertsModal = ({ open, setOpenModal }: Props) => {
+const ConfirmDeletionModal = ({ open, setOpenModal }: Props) => {
   const { selectedActiveMetric } = useContext(DashboardContext)
+
   return (
     <Dialog open={open} onClose={() => setOpenModal(false)}>
-      <DialogTitle>Alertes {selectedActiveMetric?.metric.name}</DialogTitle>
+      <DialogTitle>Supprimer : {selectedActiveMetric?.metric.name}</DialogTitle>
       <DialogContent></DialogContent>
     </Dialog>
   )
 }
 
-export default MetricAlertsModal
+export default ConfirmDeletionModal

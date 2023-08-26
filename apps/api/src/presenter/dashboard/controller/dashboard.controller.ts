@@ -1,4 +1,4 @@
-import { Controller, Get, HttpCode, HttpStatus, Inject } from '@nestjs/common';
+import { Controller, Delete, Get, HttpCode, HttpStatus, Inject, Param, ParseUUIDPipe, Post } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { DashboardUseCaseInterface } from '../../../domain/interfaces/use-cases/dashboard.use-case.interface';
@@ -15,5 +15,12 @@ export class DashboardController {
   @ApiOperation({ summary: 'Refresh dashbaord dat' })
   fetchDashboardMetricData(): Promise<RefreshDashboardResponseDto[]> {
     return this.dashboardUseCase.refreshDashboard();
+  }
+
+  @Delete('disable/:pluginToMetricId')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Disable dashbaord widget' })
+  disableDashboard(@Param('pluginToMetricId', new ParseUUIDPipe()) pluginToMetricId: string): Promise<void> {
+    return this.dashboardUseCase.disableDashboardMetric(pluginToMetricId);
   }
 }

@@ -26,7 +26,13 @@ export class PluginToMetricInMemoryRepositoryImpl implements PluginToMetricRepos
     return Promise.resolve(this.pluginToMetrics.find((pluginToMetric) => pluginToMetric.id === id));
   }
 
-  getActiveMetrics(criterias: FindManyOptions<PluginToMetricEntity> | FindOptionsWhere<PluginToMetricEntity>): Promise<PluginToMetricEntity[]> {
+  getActiveMetricsWithRelations(): Promise<PluginToMetricEntity[]> {
     return Promise.resolve(this.pluginToMetrics);
+  }
+
+  disablePluginToMetric(pluginToMetricId: string): Promise<PluginToMetricEntity> {
+    const p = this.pluginToMetrics.find((pluginToMetric) => pluginToMetric.id === pluginToMetricId);
+    p.isActive = false;
+    return Promise.resolve(p);
   }
 }

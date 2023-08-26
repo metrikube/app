@@ -3,8 +3,11 @@ import BaseMetricCard from '../components/molecules/metricCards/BaseMetricCard'
 import ApiMetricBody from '../components/molecules/metricCards/metricsTypes/api/ApiMetricBody'
 import SingleInstanceEC2 from '../components/molecules/metricCards/metricsTypes/aws/SingleInstanceEC2'
 import LastPullRequest from '../components/molecules/metricCards/metricsTypes/github/LastPullRequest'
+import ConfirmDeletionModal from '../components/organisms/modals/ConfirmDeletion.modal'
+import MetricAlertsModal from '../components/organisms/modals/MetricAlerts.modal'
 import ProviderModal from '../components/organisms/modals/Provider.modal'
 import { useAdapter } from '../config/axios'
+import { DashboardProvider } from '../contexts/Dashboard.context'
 import { SetupPluginProvider } from '../contexts/SetupPlugin.context'
 import DefaultLayout from '../layouts/DefaultLayout'
 import { EmptyStateLayout } from '../layouts/EmptyStateLayout'
@@ -16,18 +19,21 @@ import { useQuery } from '@tanstack/react-query'
 import React, { useState } from 'react'
 
 const Dashboard = () => {
-  const [openedModal, setOpenModal] = useState(false)
   const { dashboardMetricsAdapter } = useAdapter()
-  const openProviderModalHandler = () => {
-    setOpenModal(true)
-  }
-
   const { data: activeMetrics } = useQuery<ActiveMetricModel[]>({
     queryKey: ['getActiveMetrics'],
     queryFn: () => new GetActiveMetricsUsecase(dashboardMetricsAdapter).execute(),
     initialData: () => []
   })
 
+  const [openedModal, setOpenModal] = useState(false)
+  const [isMetricAlertsModalOpened, setIsMetricAlertsModalOpened] = useState(false)
+  const [isMetricDeletionModalOpened, setIsMetricDeletionModalOpened] = useState(false)
+
+
+  const openProviderModalHandler = () => {
+    setOpenModal(true)
+  }
   const MetricsContent = ({ metric, data }: ActiveMetricModel) => {
     switch (metric.type) {
       case 'api-endpoint-health-check':
@@ -47,51 +53,63 @@ const Dashboard = () => {
 
   return (
     <DefaultLayout>
-      <StyledHeader>
-        <h3>NOM DU PROJET</h3>
-        <div>
-          <Button
-            onClick={openProviderModalHandler}
-            size="medium"
-            variant="contained"
-            startIcon={<AddCircleOutline />}>
-            Add a new provider
-          </Button>
-          <Button sx={{ ml: 1 }} size="medium" variant="contained" startIcon={<AddchartOutlined />}>
-            Add a new widget
-          </Button>
-        </div>
-      </StyledHeader>
+      <DashboardProvider>
+        <>
+          <StyledHeader>
+            <h3>NOM DU PROJET</h3>
+            <div>
+              <Button
+                onClick={openProviderModalHandler}
+                size="medium"
+                variant="contained"
+                startIcon={<AddCircleOutline />}>
+                Add a new provider
+              </Button>
+              <Button sx={{ ml: 1 }} size="medium" variant="contained" startIcon={<AddchartOutlined />}>
+                Add a new widget
+              </Button>
+            </div>
+          </StyledHeader>
 
-      {metricsTemp.length ? (
-        <Grid container spacing={3}>
-          {metricsTemp.map((activeMetric) => (
-            <Grid item key={activeMetric.metric.id}>
-              <BaseMetricCard
-                pluginName={activeMetric.plugin!.name}
-                pluginCode={activeMetric.plugin!.type}
-                metricId={activeMetric.metric.id}
-                title={activeMetric.metric.name}
-                isNotificationActivated={activeMetric.metric.isNotifiable}
-                key={activeMetric.metric.id}>
-                {MetricsContent(activeMetric)}
-              </BaseMetricCard>
+          {metricsTemp.length ? (
+            <Grid container spacing={3}>
+              {metricsTemp.map((activeMetric) => (
+                <Grid item key={activeMetric.metric.id}>
+                  <BaseMetricCard
+                    activeMetric={activeMetric}
+                    setIsMetricAlertsModalOpened={setIsMetricAlertsModalOpened}
+                    setIsMetricDeletionModalOpened={setIsMetricDeletionModalOpened}
+                    key={activeMetric.metric.id}>
+                    {MetricsContent(activeMetric)}
+                  </BaseMetricCard>
+                </Grid>
+              ))}
             </Grid>
-          ))}
-        </Grid>
-      ) : (
-        <EmptyStateLayout
-          title="Get started by adding a provider"
-          description="The providers are the heart of Metrikube, they allow you to visualize your metrics according to the different plugins."
-          onActionButtonClick={openProviderModalHandler}
-          buttonLabel="Add a new provider"
-          imageAsset={PluginEmptyStateImg}
-        />
-      )}
+          ) : (
+            <EmptyStateLayout
+              title="Get started by adding a provider"
+              description="The providers are the heart of Metrikube, they allow you to visualize your metrics according to the different plugins."
+              onActionButtonClick={openProviderModalHandler}
+              buttonLabel="Add a new provider"
+              imageAsset={PluginEmptyStateImg}
+            />
+          )}
 
-      <SetupPluginProvider>
-        <ProviderModal open={openedModal} setOpenModal={setOpenModal} />
-      </SetupPluginProvider>
+          <SetupPluginProvider>
+            <ProviderModal open={openedModal} setOpenModal={setOpenModal} />
+          </SetupPluginProvider>
+
+          <MetricAlertsModal
+            open={isMetricAlertsModalOpened}
+            setOpenModal={setIsMetricAlertsModalOpened}
+          />
+
+          <ConfirmDeletionModal
+            open={isMetricDeletionModalOpened}
+            setOpenModal={setIsMetricDeletionModalOpened}
+          />
+        </>
+      </DashboardProvider>
     </DefaultLayout>
   )
 }
