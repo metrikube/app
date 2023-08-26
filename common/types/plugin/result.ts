@@ -1,7 +1,7 @@
 import { GenericCredentialType } from '../credential';
 import { MetricType } from '../metric';
 
-type Timestamp = number;
+type Timestamp = string;
 // @ts-ignore
 export type PluginResult<T extends MetricType> = ApiResult[T];
 
@@ -24,9 +24,13 @@ export interface ApiDatabaseSlowQueries {
   date: Timestamp;
 }
 
+export interface NbRequestsByHour {
+  hour: string;
+  nbRequests: number;
+}
+
 export interface ApiDatabaseLastAverageQueriesByHour {
-  numberOfQueries: number;
-  query: string;
+  queries: NbRequestsByHour[];
   date: Timestamp;
 }
 

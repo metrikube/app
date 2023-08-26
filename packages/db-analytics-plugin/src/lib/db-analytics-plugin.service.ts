@@ -1,4 +1,4 @@
-import { ApiEndpointCredentialType, DbConnectionCredentialType, PluginConnectionInterface, DbConnectionType } from '@metrikube/common';
+import { ApiEndpointCredentialType, DbConnectionCredentialType, PluginConnectionInterface, DbConnectionType, ApiDatabaseSize, ApiDatabaseSlowQueries, ApiDatabaseLastAverageQueriesByHour } from '@metrikube/common';
 import { DbService } from './db.service'
 import * as mysql from 'mysql2';
 import { HttpStatus, Injectable, Logger } from '@nestjs/common';
@@ -9,37 +9,45 @@ import type { AxiosError } from 'axios';
 export class DbAnalyticsPluginService implements PluginConnectionInterface {
   constructor() {}
 
-  public async getNbQueries(credentialData: DbConnectionCredentialType): Promise<any> {
+  public async getNbQueries(credentialData: DbConnectionCredentialType): Promise<ApiDatabaseLastAverageQueriesByHour> {
     try {
       const dbService = await new DbService(credentialData);
-      const results = await dbService.getNbQueriesPerSec();
-      return { nbQueriesPerHour: results * 3600};
+      return dbService.getNbQueriesPerSec();
       } catch (error) {
       console.error('Error generated during query execution: ', error);
       throw error;
     }
   }
 
-  public async getDbSize(credentialData: DbConnectionCredentialType): Promise<any> {
+  public async getDbSize(credentialData: DbConnectionCredentialType): Promise<ApiDatabaseSize> {
     try {
       const dbService = await new DbService(credentialData);
       const dbSizeMb = await dbService.getDbSizeMb();
       const nbRows = await dbService.getNbRows();
-
-      return {dbSizeMb: dbSizeMb, nbRows: nbRows};
+      const nbTables = await dbService.getNbTables();
+      return {
+          size: dbSizeMb,
+          numberOfTables: nbTables,
+          numberOfTotalRows: nbRows,
+          databaseName: credentialData.dbName
+      };
     } catch (error) {
       console.error('Error executing getDbSizeMb: ', error);
       throw error;
     }
   }
 
-  public async getSlowQuery(credentialData: DbConnectionCredentialType): Promise<any> {
+  public async getSlowQuery(credentialData: DbConnectionCredentialType): Promise<ApiDatabaseSlowQueries> {
     try {
       const dbService = await new DbService(credentialData);
       const slowQuery = await dbService.getSlowQuery();
+      const currentDate = new Date();
+
       return {
-        slowQuery: slowQuery.avg_execution_time_seconds,
-        queryTime: slowQuery.query_text};
+        executionTime: slowQuery.executionTime,
+        query: slowQuery.query,
+        date: currentDate.toISOString()
+      };
     } catch (error) {
       console.error('Error executing getDbSizeMb: ', error);
       throw error;
