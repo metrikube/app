@@ -12,6 +12,7 @@
     "build:api": "rimraf dist && npm run cache:clear && nx build api",
     "cache:clear": "nx clear-cache",
     "format": "lint-staged",
+    "init:db": "npm run typeorm:migration:run",
     "lint": "nx lint",
     "prepare": "husky install",
     "start": "node dist/apps/api/main.js",
@@ -19,7 +20,14 @@
     "start:api": "NODE_ENV=local && npm run cache:clear && nx serve api --skip-nx-cache",
     "start:client": "nx run web:serve --skip-nx-cache",
     "test": "nx test",
-    "test:all": "nx run-many --target=test"
+    "test:all": "nx run-many --target=test",
+    "typeorm": "ts-node --project apps/api/tsconfig.app.json ./node_modules/typeorm/cli",
+    "typeorm:migration:generate": "npm run typeorm migration:generate ./data/migrations/$npm_config_name -- -d ./data/typeorm.config.ts",
+    "typeorm:migration:create": "npm run typeorm migration:create ./data/migrations/$npm_config_name",
+    "typeorm:migration:revert": "npm run typeorm migration:revert -- -d data/typeorm.config.ts",
+    "typeorm:migration:run": "npm run typeorm migration:run -- -d data/typeorm.config.ts",
+    "typeorm:migration:show": "npm run typeorm migration:show -- -d data/typeorm.config.ts",
+    "typeorm:schema:sync": "npm run typeorm schema:sync -- -d data/typeorm.config.ts"
   },
   "private": true,
   "dependencies": {
@@ -64,7 +72,7 @@
     "rxjs": "^7.8.1",
     "sqlite3": "^5.1.6",
     "tslib": "^2.5.2",
-    "typeorm": "^0.3.16"
+    "typeorm": "^0.3.17"
   },
   "devDependencies": {
     "@nestjs/cli": "^9.5.0",
