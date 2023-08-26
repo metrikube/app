@@ -37,10 +37,12 @@ export class DashboardUseCase implements DashboardUseCaseInterface {
     return this.resolveMetrics(activatedMetricsWithCredentials);
   }
 
+  async disableDashboardMetric(pluginToMetricId: string): Promise<void> {
+    await this.pluginToMetricRepository.disablePluginToMetric(pluginToMetricId);
+  }
+
   private async getActiveMetricsWithCredentials(credentials: CredentialEntity[]): Promise<ActivatedMetric[]> {
-    const activatedMetrics: PluginToMetricEntity[] = await this.pluginToMetricRepository.getActiveMetrics({
-      relations: { plugin: true, metric: true }
-    });
+    const activatedMetrics: PluginToMetricEntity[] = await this.pluginToMetricRepository.getActiveMetricsWithRelations();
 
     return activatedMetrics.map((configuredMetric) => ({
       ...configuredMetric,

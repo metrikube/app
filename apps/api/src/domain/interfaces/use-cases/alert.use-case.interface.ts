@@ -4,6 +4,8 @@ import { CreateAlertRequestDto, CreateAlertResponseDto } from '../../../presente
 import { Alert } from '../../models/alert.model';
 
 export interface AlertUseCaseInterface {
+  getPluginToMetricAlerts(pluginToMetricId: PluginToMetricEntity['id']): Promise<AlertEntity[]>;
+
   createAlertOnActivePlugin(pluginToMetricId: PluginToMetricEntity['id'], alert: CreateAlertRequestDto[]): Promise<CreateAlertResponseDto>;
 
   deleteAlert(alertId: string): void;

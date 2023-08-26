@@ -1,7 +1,8 @@
-import { Body, Controller, Delete, HttpCode, HttpStatus, Inject, Param, ParseArrayPipe, ParseUUIDPipe, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Inject, Param, ParseArrayPipe, ParseUUIDPipe, Post } from '@nestjs/common';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
 
 import { AlertUseCaseInterface } from '../../../domain/interfaces/use-cases/alert.use-case.interface';
+import { AlertEntity } from '../../../infrastructure/database/entities/alert.entity';
 import { DiTokens } from '../../../infrastructure/di/tokens';
 import { CreateAlertRequestDto, CreateAlertResponseDto } from '../dtos/create-alert.dto';
 
@@ -9,6 +10,12 @@ import { CreateAlertRequestDto, CreateAlertResponseDto } from '../dtos/create-al
 @Controller('alerts')
 export class AlertController {
   constructor(@Inject(DiTokens.AlertUseCaseToken) private readonly alertUseCase: AlertUseCaseInterface) {}
+
+  @Get('/:pluginToMetricId')
+  @HttpCode(HttpStatus.OK)
+  async getAlerts(@Param('pluginToMetricId', new ParseUUIDPipe()) pluginToMetricId: string): Promise<AlertEntity[]> {
+    return this.alertUseCase.getPluginToMetricAlerts(pluginToMetricId);
+  }
 
   @Post('/:pluginToMetricId')
   @HttpCode(HttpStatus.CREATED)
