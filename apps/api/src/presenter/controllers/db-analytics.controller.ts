@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Inject, Query, Post } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { CredentialUseCaseInterface } from '../../domain/interfaces/use-cases/credential.use-case.interface';
-import { Plugin } from '@metrikube/common';
+import { Plugin, ApiDatabaseLastAverageQueriesByHour, ApiDatabaseSlowQueries, ApiDatabaseSize } from '@metrikube/common';
 import { GithubService } from '@metrikube/github-plugin';
 import { CredentialEntity } from '../../infrastructure/database/entities/credential.entity';
 import { Credential } from '../../domain/models/credential.model';
@@ -19,17 +19,17 @@ export class DbAnalyticsController {
   }
 
   @Get('nb-queries')
-  dbGetNbQueries(pluginId: Plugin['id']): any {
+  dbGetNbQueries(pluginId: Plugin['id']): Promise<ApiDatabaseLastAverageQueriesByHour> {
     return this.credentialUseCase.getNbQueries(pluginId);
   }
 
   @Get('db-size')
-  dbGetDbSize(pluginId: Plugin['id']): any {
+  dbGetDbSize(pluginId: Plugin['id']): Promise<ApiDatabaseSize> {
     return this.credentialUseCase.getDbSize(pluginId);
   }
 
   @Get('db-slow-query')
-  dbGetSlowQuery(pluginId: Plugin['id']): any {
+  dbGetSlowQuery(pluginId: Plugin['id']): Promise<ApiDatabaseSlowQueries> {
     return this.credentialUseCase.getSlowQuery(pluginId);
   }
 }
