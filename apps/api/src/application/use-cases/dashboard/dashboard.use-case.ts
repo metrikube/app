@@ -11,8 +11,11 @@ import { PluginUseCaseInterface } from '../../../domain/interfaces/use-cases/plu
 import { Credential } from '../../../domain/models/credential.model';
 import { CredentialEntity } from '../../../infrastructure/database/entities/credential.entity';
 import { PluginEntity } from '../../../infrastructure/database/entities/plugin.entity';
+import { PluginToMetricEntity } from '../../../infrastructure/database/entities/plugin_to_metric.entity';
 import { DiTokens } from '../../../infrastructure/di/tokens';
 import { RefreshDashboardResponseDto } from '../../../presenter/dashboard/dtos/refresh-dashboard-response.dto';
+
+type ActivatedMetric = PluginToMetricEntity & Credential;
 
 export class DashboardUseCase implements DashboardUseCaseInterface {
   private readonly logger = new Logger(this.constructor.name);
@@ -29,29 +32,34 @@ export class DashboardUseCase implements DashboardUseCaseInterface {
     this.logger.log('refreshing dashboard...');
 
     const credentials = await this.credentialRepository.getCredentials();
-    const activatedMetrics = await this.pluginToMetricRepository.getActiveMetrics({
+    const activatedMetricsWithCredentials = await this.getActiveMetricsWithCredentials(credentials);
+
+    return this.resolveMetrics(activatedMetricsWithCredentials);
+  }
+
+  private async getActiveMetricsWithCredentials(credentials: CredentialEntity[]): Promise<ActivatedMetric[]> {
+    const activatedMetrics: PluginToMetricEntity[] = await this.pluginToMetricRepository.getActiveMetrics({
       relations: { plugin: true, metric: true }
     });
 
-    const activatedMetricsWithCredentials = activatedMetrics.map((configuredMetric) => ({
+    return activatedMetrics.map((configuredMetric) => ({
       ...configuredMetric,
       ...this.mapToPluginCredential(
         configuredMetric.plugin,
         credentials.find((credential) => credential.pluginId === configuredMetric.plugin.id)
       )
-    }));
+    })) as ActivatedMetric[];
+  }
 
-    const pluginResolver: Partial<Record<MetricType, (c: GenericCredentialType) => Promise<PluginResult<MetricType>>>> = {
-      'api-endpoint-health-check': this.apiMonitoringService.apiHealthCheck,
-      'github-last-issues': this.githubService.getRepoIssues
-    };
-
-    const metricResultMap = {};
+  private async resolveMetrics(activatedMetricsWithCredentials: ActivatedMetric[]): Promise<RefreshDashboardResponseDto[]> {
+    const metricResultMap: Record<string, RefreshDashboardResponseDto> = {};
 
     for (const metricCredential of activatedMetricsWithCredentials) {
-      const metricResult = await pluginResolver[metricCredential.metric.type](metricCredential.value);
+      const metricResult = this.pluginUseCase.getMetricMethodByMetricType(metricCredential.metric.type as MetricType)(metricCredential.value as GenericCredentialType);
       metricResultMap[metricCredential.id] = new RefreshDashboardResponseDto(
         metricCredential.id,
+        metricCredential.name,
+        metricCredential.description,
         metricCredential.plugin as PluginEntity,
         metricCredential.metric,
         metricCredential.resourceId,

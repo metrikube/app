@@ -6,6 +6,8 @@ import axios, { AxiosResponse } from 'axios';
 import type { AxiosError } from 'axios';
 
 
+// Add type pour ne pas return de Any (en aucun cas)
+
 export class DbService  {
   private readonly credentials: DbConnectionType;
   constructor(credentials: DbConnectionCredentialType) {
@@ -46,7 +48,6 @@ export class DbService  {
     const connection = await this.connection();
     try {
       const results = await this.executeQuery(connection, query);
-      console.log(results);
       return results[0].nbQueriesPerSec;
       } catch (error) {
       console.error('Error generated during query execution: ', error);
@@ -110,7 +111,6 @@ export class DbService  {
     try {
       const results = await this.executeQuery(connection, query);
       return results[0];
-      console.log(results[0])
     } catch (error) {
       console.error('Error executing getDbSizeMb: ', error);
       throw error;

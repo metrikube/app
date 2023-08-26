@@ -33,15 +33,14 @@ export class AlertUseCase implements AlertUseCaseInterface {
   }
 
   async createAlertOnActivePlugin(pluginToMetricId: PluginToMetricEntity['id'], alerts: CreateAlertRequestDto[]): Promise<CreateAlertResponseDto> {
-    const pluginToMetric = await this.pluginToMetricRepository.findPluginToMetricById(pluginToMetricId);
+    const activatedMetric = await this.pluginToMetricRepository.findPluginToMetricById(pluginToMetricId);
     const createdAlerts = await this.alertRepository.createAlerts(alerts.map(alert => ({
       ...alert,
-      metricId: pluginToMetric.metricId,
+      metricId: activatedMetric.metricId,
       pluginToMetricId,
       triggered: false
     })) as Alert[]);
 
-    const activatedMetric = await this.pluginToMetricRepository.findPluginToMetricById(pluginToMetricId);
     await Promise.all(createdAlerts.map(this.registerAlerJob.bind(this)(activatedMetric)));
 
     return new CreateAlertResponseDto(createdAlerts);

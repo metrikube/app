@@ -1,7 +1,7 @@
 import { Controller, Get, Inject, Query } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
-import { ApiGithubError, ApiGithubIssues, ApiGithubPullRequests } from '@metrikube/common';
+import { ApiGithubError, ApiGithubIssues, ApiGithubPullRequestsOrIssues } from '@metrikube/common';
 import { GithubService } from '@metrikube/github-plugin';
 
 import { DiTokens } from '../../infrastructure/di/tokens';
@@ -19,7 +19,7 @@ export class GithubController {
 
   @Get('/prs')
   @ApiOperation({ summary: 'Get pull requests from a Github repository' })
-  getPRs(@Query('repoOwner') owner: string, @Query('repoName') repo: string, @Query('token') accessToken: string): Promise<ApiGithubPullRequests[] | ApiGithubError> {
+  getPRs(@Query('repoOwner') owner: string, @Query('repoName') repo: string, @Query('token') accessToken: string): Promise<ApiGithubPullRequestsOrIssues[] | ApiGithubError> {
     return this.githubService.getRepoPRs({ repo, owner, accessToken });
   }
 }

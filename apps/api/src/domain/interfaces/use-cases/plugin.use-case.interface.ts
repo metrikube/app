@@ -1,4 +1,4 @@
-import { MetricType, Plugin, PluginResult } from '@metrikube/common';
+import { GenericCredentialType, MetricType, Plugin, PluginResult } from '@metrikube/common';
 
 import { CredentialEntity } from '../../../infrastructure/database/entities/credential.entity';
 import { PluginEntity } from '../../../infrastructure/database/entities/plugin.entity';
@@ -9,6 +9,8 @@ export interface PluginUseCaseInterface {
   create(plugin: Plugin): Promise<PluginEntity>;
 
   getPluginCredentials(pluginId: string): Promise<CredentialEntity>;
+
+  getMetricMethodByMetricType(metricType: MetricType): (credentials: GenericCredentialType) => Promise<PluginResult<typeof metricType>>;
 
   listPlugins(): Promise<PluginResponseDto>;
 
