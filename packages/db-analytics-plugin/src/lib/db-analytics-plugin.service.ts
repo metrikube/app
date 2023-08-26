@@ -1,94 +1,67 @@
-import { DbConnectionCredentialType } from '@metrikube/common';
+import { ApiEndpointCredentialType, DbConnectionCredentialType, PluginConnectionInterface, DbConnectionType } from '@metrikube/common';
+import { DbService } from './db.service'
 import * as mysql from 'mysql2';
-
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable, Logger } from '@nestjs/common';
+import axios, { AxiosResponse } from 'axios';
+import type { AxiosError } from 'axios';
 
 @Injectable()
-export class DbAnalyticsPluginService {
-  async getDataDb(credentialData: DbConnectionCredentialType): Promise<any> {
-    const dbConfig = {
-      host: credentialData.dbHost,
-      user: credentialData.dbUsername,
-      password: credentialData.dbPassword,
-      database: credentialData.dbName,
-      port: credentialData.dbPort
-    };
+export class DbAnalyticsPluginService implements PluginConnectionInterface {
+  constructor() {}
 
-    const connection = mysql.createConnection(dbConfig);
-
-    return new Promise((resolve, reject) => {
-      connection.connect(async (error) => {
-        if (error) {
-          console.error('Error generated during database connection', error);
-          reject(error);
-        } else {
-          try {
-            const nbQueriesPerSecQuery = `
-              SELECT ROUND(s1.variable_value / s2.variable_value, 4) AS nbQueriesPerSec
-              FROM performance_schema.global_status s1, performance_schema.global_status s2
-              WHERE s1.variable_name = 'queries' AND s2.variable_name = 'uptime'
-            `;
-
-            const tablesDataQuery = `
-              SELECT TABLE_NAME as tableName,
-              UPDATE_TIME as lastUpdateTime,
-              TABLE_ROWS as nbRows
-              FROM information_schema.tables
-              WHERE table_schema = '${credentialData.dbName}'
-              and table_name <> '_dba_query_stats'
-            `;
-
-            const avgResponseTime = `
-              SELECT ROUND(AVG(AVG_TIMER_WAIT)/ 100000000000,4) AS avgResponseTime
-              FROM performance_schema.events_statements_summary_by_digest
-              WHERE SCHEMA_NAME = '${credentialData.dbName}'
-            `;
-
-            const dbSizeMb = `
-            SELECT FORMAT(SUM(data_length + index_length) / (1024 * 1024), 4)
-            AS dbSizeMb
-            FROM information_schema.tables
-            WHERE table_schema = '${credentialData.dbName}'
-            GROUP BY table_schema
-            `;
-
-            const [nbQueriesPerSecResult, tablesDataResult, avgResponseTimeResult, dbSizeMbResult] = await Promise.all([
-              this.executeQuery(connection, nbQueriesPerSecQuery),
-              this.executeQuery(connection, tablesDataQuery),
-              this.executeQuery(connection, avgResponseTime),
-              this.executeQuery(connection, dbSizeMb)
-            ]);
-
-            const data = {
-              nbQueriesPerSec: nbQueriesPerSecResult[0].nbQueriesPerSec,
-              nbQueriesPerHour: nbQueriesPerSecResult[0].nbQueriesPerSec * 3600,
-              nbQueriesPerDay: nbQueriesPerSecResult[0].nbQueriesPerSec * 86400,
-              tablesData: tablesDataResult,
-              avgResponseTime: avgResponseTimeResult[0].avgResponseTime,
-              dbSizeMb: dbSizeMbResult[0].dbSizeMb
-            };
-
-            resolve(data);
-          } catch (err) {
-            console.error('Error generated during query execution: ', err);
-            reject(err);
-          }
-
-          connection.end();
-        }
-      });
-    });
+  public async getNbQueries(credentialData: DbConnectionCredentialType): Promise<any> {
+    try {
+      const dbService = await new DbService(credentialData);
+      const results = await dbService.getNbQueriesPerSec();
+      return { nbQueriesPerHour: results * 3600};
+      } catch (error) {
+      console.error('Error generated during query execution: ', error);
+      throw error;
+    }
   }
 
-  private executeQuery(connection: mysql.Connection, query: string): Promise<any> {
-    return new Promise((resolve, reject) => {
-      connection.query(query, (err, results) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(results);
-        }
-      });
-    });
+  public async getDbSize(credentialData: DbConnectionCredentialType): Promise<any> {
+    try {
+      const dbService = await new DbService(credentialData);
+      const dbSizeMb = await dbService.getDbSizeMb();
+      const nbRows = await dbService.getNbRows();
+
+      return {dbSizeMb: dbSizeMb, nbRows: nbRows};
+    } catch (error) {
+      console.error('Error executing getDbSizeMb: ', error);
+      throw error;
+    }
+  }
+
+  public async getSlowQuery(credentialData: DbConnectionCredentialType): Promise<any> {
+    try {
+      const dbService = await new DbService(credentialData);
+      const slowQuery = await dbService.getSlowQuery();
+      return {
+        slowQuery: slowQuery.avg_execution_time_seconds,
+        queryTime: slowQuery.query_text};
+    } catch (error) {
+      console.error('Error executing getDbSizeMb: ', error);
+      throw error;
+    }
+  }
+
+  async testConnection(credential: ApiEndpointCredentialType): Promise<{ ok: boolean; message: string | null }> {
+    Logger.log(`🏓 Pinging "${credential.apiEndpoint}"`, DbAnalyticsPluginService.name);
+    try {
+      await axios.get(credential.apiEndpoint);
+      return {
+        ok: true,
+        message: null
+      };
+    } catch (error) {
+      Logger.log(`🏓 Pinging "${credential.apiEndpoint}" failed, status: ${(error as AxiosError)?.status}`, DbAnalyticsPluginService.name);
+      return {
+        ok: [HttpStatus.NOT_FOUND, HttpStatus.UNAUTHORIZED, HttpStatus.INTERNAL_SERVER_ERROR].includes((error as AxiosError)?.status as HttpStatus),
+        message: (error as AxiosError)?.message || null
+      };
+    }
   }
 }
+
+
