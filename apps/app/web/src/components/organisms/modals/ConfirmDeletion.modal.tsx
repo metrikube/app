@@ -1,4 +1,5 @@
 import { DashboardContext } from '../../../contexts/Dashboard.context'
+import { deleteMetricMutation } from '../../../services/dashboard.service'
 import { Dialog, DialogContent, DialogTitle, DialogActions, TextField, Button } from '@mui/material'
 import React, { Dispatch, SetStateAction, useContext, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
@@ -8,24 +9,39 @@ interface Props {
   setOpenModal: Dispatch<SetStateAction<boolean>>
 }
 
-type ConfirmDeletionForm = {
+interface ConfirmDeletionForm {
   confirmDeletion: string
 }
 
 const ConfirmDeletionModal = ({ open, setOpenModal }: Props) => {
   const { selectedActiveMetric } = useContext(DashboardContext)
-  const {
-    register,
-    getValues,
-    formState: { errors }
-  } = useForm<ConfirmDeletionForm>()
+  const { register, watch, reset } = useForm<ConfirmDeletionForm>()
+
+  const confirmDeletionValue = watch('confirmDeletion')
+  const [shouldDisableDeletionButton, setShouldDisableDeletionButton] = useState(true)
 
   useEffect(() => {
-    console.log(getValues().confirmDeletion)
-  }, [getValues().confirmDeletion])
+    if (confirmDeletionValue && confirmDeletionValue === 'SUPPRIMER') {
+      setShouldDisableDeletionButton(false)
+    } else {
+      setShouldDisableDeletionButton(true)
+    }
+  }, [confirmDeletionValue, setShouldDisableDeletionButton])
+
+  const { mutate: deleteMetric } = deleteMetricMutation()
+
+  const handlerModalClose = () => {
+    setOpenModal(false)
+    reset()
+  }
+
+  const handleMetricDelete = (activeMetricId: string) => {
+    deleteMetric(activeMetricId)
+    handlerModalClose()
+  }
 
   return (
-    <Dialog open={open} onClose={() => setOpenModal(false)}>
+    <Dialog open={open} onClose={handlerModalClose}>
       <DialogTitle>Supprimer : {selectedActiveMetric?.metric.name}</DialogTitle>
       <DialogContent>
         <form>
@@ -41,8 +57,12 @@ const ConfirmDeletionModal = ({ open, setOpenModal }: Props) => {
         </form>
       </DialogContent>
       <DialogActions>
-        <Button onClick={() => setOpenModal(false)}>Cancel</Button>
-        <Button disabled={false} variant="outlined" color="error">
+        <Button onClick={handlerModalClose}>Cancel</Button>
+        <Button
+          onClick={() => handleMetricDelete(selectedActiveMetric.id)}
+          disabled={shouldDisableDeletionButton}
+          variant="outlined"
+          color="error">
           SUPPRIMER
         </Button>
       </DialogActions>
