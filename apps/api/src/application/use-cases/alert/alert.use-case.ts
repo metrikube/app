@@ -15,6 +15,7 @@ import { AlertEntity } from '../../../infrastructure/database/entities/alert.ent
 import { PluginToMetricEntity } from '../../../infrastructure/database/entities/plugin_to_metric.entity';
 import { DiTokens } from '../../../infrastructure/di/tokens';
 import { CreateAlertRequestDto, CreateAlertResponseDto } from '../../../presenter/alert/dtos/create-alert.dto';
+import { UpdateAlertDto } from '../../../presenter/alert/dtos/update-alert.dto';
 
 // prettier-ignore
 @Injectable()
@@ -28,18 +29,19 @@ export class AlertUseCase implements AlertUseCaseInterface {
     @Inject(DiTokens.CredentialRepositoryToken) private readonly credentialRepository: CredentialRepository,
     @Inject(DiTokens.Scheduler) private readonly scheduler: SchedulerInterface,
     @Inject(DiTokens.PluginUseCaseToken) private readonly pluginUseCase: PluginUseCaseInterface,
-    @Inject(DiTokens.ApiMonitoringToken) private readonly apiMonitoringService: ApiMonitoringService,
-  ) {
-  }
+    @Inject(DiTokens.ApiMonitoringToken) private readonly apiMonitoringService: ApiMonitoringService
+  ) {}
 
   async createAlertOnActivePlugin(pluginToMetricId: PluginToMetricEntity['id'], alerts: CreateAlertRequestDto[]): Promise<CreateAlertResponseDto> {
     const activatedMetric = await this.pluginToMetricRepository.findPluginToMetricById(pluginToMetricId);
-    const createdAlerts = await this.alertRepository.createAlerts(alerts.map(alert => ({
-      ...alert,
-      metricId: activatedMetric.metricId,
-      pluginToMetricId,
-      triggered: false
-    })) as Alert[]);
+    const createdAlerts = await this.alertRepository.createAlerts(
+      alerts.map((alert) => ({
+        ...alert,
+        metricId: activatedMetric.metricId,
+        pluginToMetricId,
+        triggered: false
+      })) as Alert[]
+    );
 
     await Promise.all(createdAlerts.map(this.registerAlerJob.bind(this)(activatedMetric)));
 
@@ -59,7 +61,7 @@ export class AlertUseCase implements AlertUseCaseInterface {
 
     const isBelowThresholdAndNotified = !isConditionMet && alert.triggered;
     if (isBelowThresholdAndNotified && alert.triggered !== isBelowThresholdAndNotified) {
-      Logger.log('L\'alerte passe sous le seuil', this.constructor.name);
+      Logger.log("L'alerte passe sous le seuil", this.constructor.name);
       return this.alertRepository.updateAlert(alert.id, { triggered: false });
     }
 
@@ -75,10 +77,9 @@ export class AlertUseCase implements AlertUseCaseInterface {
     return this.alertRepository.getAlerts({ pluginToMetricId });
   }
 
-  deleteAlert(alertId: string) {
-    return this.alertRepository.deleteAlert(alertId);
+  updateAlert(alertId: string, payload: UpdateAlertDto): Promise<void> {
+    return this.alertRepository.updateAlert(alertId, payload);
   }
-
 
   checkConditionThreshold(value: string | number, operator: MetricThresholdOperator, threshold: string | number): boolean {
     const operators: MetricThresholdOperator[] = ['gt', 'lt', 'eq', 'gte', 'lte', 'neq'];
