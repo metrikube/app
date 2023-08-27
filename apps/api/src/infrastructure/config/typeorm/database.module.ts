@@ -15,12 +15,7 @@ const entities = [PluginEntity, CredentialEntity, MetricEntity, AlertEntity, Plu
       type: 'better-sqlite3',
       database: 'data/db',
       entities,
-      // synchronize: true,
-      autoLoadEntities: true,
-      migrations: ['data/migrations/*.{ts,js}'],
-      migrationsTransactionMode: 'all',
-      migrationsRun: true,
-      migrationsTableName: '_migrations'
+      autoLoadEntities: true
     })
   ],
   exports: [TypeOrmModule]
