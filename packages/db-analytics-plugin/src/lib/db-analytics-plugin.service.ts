@@ -1,8 +1,6 @@
 import { ApiEndpointCredentialType, DbConnectionCredentialType, PluginConnectionInterface, ApiDatabaseSize, ApiDatabaseSlowQueries, ApiDatabaseLastAverageQueriesByHour } from '@metrikube/common';
 import { DbService } from './db.service'
-import { HttpStatus, Injectable, Logger } from '@nestjs/common';
-import axios from 'axios';
-import type { AxiosError } from 'axios';
+import { Injectable, Logger } from '@nestjs/common';
 
 @Injectable()
 export class DbAnalyticsPluginService implements PluginConnectionInterface {
@@ -52,19 +50,21 @@ export class DbAnalyticsPluginService implements PluginConnectionInterface {
     }
   }
 
-  async testConnection(credential: ApiEndpointCredentialType): Promise<{ ok: boolean; message: string | null }> {
-    Logger.log(`🏓 Pinging "${credential.apiEndpoint}"`, DbAnalyticsPluginService.name);
+  async testConnection(credentialData: DbConnectionCredentialType): Promise<{ ok: boolean; message: string | null }> {
+    Logger.log(`🏓 Pinging database "${credentialData.dbName}"`, DbAnalyticsPluginService.name);
     try {
-      await axios.get(credential.apiEndpoint);
+      const dbService = await new DbService(credentialData);
+      const connection = await dbService.connection();
+      await connection.ping();
       return {
         ok: true,
         message: null
       };
     } catch (error) {
-      Logger.log(`🏓 Pinging "${credential.apiEndpoint}" failed, status: ${(error as AxiosError)?.status}`, DbAnalyticsPluginService.name);
+      Logger.log(`🏓 Pinging database "${credentialData.dbName}" failed, status: ${error.message}`, DbAnalyticsPluginService.name);
       return {
-        ok: [HttpStatus.NOT_FOUND, HttpStatus.UNAUTHORIZED, HttpStatus.INTERNAL_SERVER_ERROR].includes((error as AxiosError)?.status as HttpStatus),
-        message: (error as AxiosError)?.message || null
+        ok: false,
+        message: `db connection failed : ${error.message}` || null
       };
     }
   }

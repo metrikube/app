@@ -34,30 +34,29 @@ export class DbService  {
 
   public async getNbQueriesPerSec(): Promise<ApiDatabaseLastAverageQueriesByHour> {
     const query = `
-      WITH hours AS (
-          SELECT
-              DATE_FORMAT(NOW() - INTERVAL (11 - n) HOUR, '%H:00:00') AS hour
-          FROM
-              (SELECT 0 AS n UNION SELECT 1 UNION SELECT 2 UNION SELECT 3
-               UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7
-               UNION SELECT 8 UNION SELECT 9 UNION SELECT 10 UNION SELECT 11) numbers
-      )
-      SELECT
-          h.hour,
-          IFNULL(COUNT(*), 0) AS nbRequests
-      FROM
-          hours h
-      LEFT JOIN
-          performance_schema.events_statements_summary_by_digest es
-          ON DATE_FORMAT(es.FIRST_SEEN, '%H:00:00') = h.hour
-          AND es.SCHEMA_NAME NOT IN ('performance_schema', 'information_schema')
-          AND es.FIRST_SEEN >= NOW() - INTERVAL 12 HOUR
-      GROUP BY
-          h.hour
-      ORDER BY
-          h.hour;
-    `;
-
+    WITH hours AS (
+    SELECT
+        DATE_FORMAT(NOW() - INTERVAL (11 - n) HOUR, '%H:00:00') AS hour
+    FROM
+        (SELECT 0 AS n UNION SELECT 1 UNION SELECT 2 UNION SELECT 3
+         UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7
+         UNION SELECT 8 UNION SELECT 9 UNION SELECT 10 UNION SELECT 11) numbers
+    )
+    SELECT
+        h.hour,
+        IFNULL(SUM(es.COUNT_STAR), 0) AS nbRequests
+    FROM
+        hours h
+    LEFT JOIN
+        performance_schema.events_statements_summary_by_digest es
+        ON DATE_FORMAT(es.LAST_SEEN, '%H:00:00') = h.hour
+        AND es.SCHEMA_NAME NOT IN ('performance_schema', 'information_schema')
+        AND es.LAST_SEEN >= NOW() - INTERVAL 12 HOUR
+    GROUP BY
+        h.hour
+    ORDER BY
+        h.hour;
+    `
     const connection = await this.connection();
     try {
       const results = await this.executeQuery(connection, query);
