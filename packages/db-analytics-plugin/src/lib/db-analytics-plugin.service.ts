@@ -52,8 +52,8 @@ export class DbAnalyticsPluginService implements PluginConnectionInterface {
 
   async testConnection(credentialData: DbConnectionCredentialType): Promise<{ ok: boolean; message: string | null }> {
     Logger.log(`🏓 Pinging database "${credentialData.dbName}"`, DbAnalyticsPluginService.name);
-    const dbService = await new DbService(credentialData);
     try {
+      const dbService = await new DbService(credentialData);
       const connection = await dbService.connection();
       await connection.ping();
       return {
@@ -61,10 +61,10 @@ export class DbAnalyticsPluginService implements PluginConnectionInterface {
         message: null
       };
     } catch (error) {
-      Logger.log(`🏓 Pinging database "${credentialData.dbName}" failed, status: ${error}`, DbAnalyticsPluginService.name);
+      Logger.log(`🏓 Pinging database "${credentialData.dbName}" failed, status: ${error.message}`, DbAnalyticsPluginService.name);
       return {
         ok: false,
-        message: error || null
+        message: `db connection failed : ${error.message}` || null
       };
     }
   }
