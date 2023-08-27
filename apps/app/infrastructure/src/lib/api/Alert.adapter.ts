@@ -14,11 +14,11 @@ export class AlertAdapterImpl implements AlertAdapter {
     await this.http.post(`/alerts/${pluginToMetricId}`, [...alerts]);
   }
 
-  async updateNotificationAlert(alertId: string): Promise<void> {
-    await this.http.patch(`/alerts/${alertId}`)
+  async updateAlert(alertId: string, payload: Partial<AlertModel>): Promise<void> {
+    await this.http.patch(`/alerts/${alertId}`, { payload })
   }
 
-  async deleteActiveMetricAlert(alertId: string): Promise<void> {
+  async deleteAlert(alertId: string): Promise<void> {
     await this.http.delete(`/alerts/${alertId}`)
   }
 }

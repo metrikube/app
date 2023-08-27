@@ -3,7 +3,7 @@ import { AlertAdapter } from '@metrikube/core';
 export class DeleteActiveMetricAlertUsecase {
     constructor(private readonly alertAdapter: AlertAdapter) { }
 
-    async execute(activeMetricId: string): Promise<void> {
-        await this.alertAdapter.deleteActiveMetricAlert(activeMetricId);
+    async execute(alertId: string): Promise<void> {
+        await this.alertAdapter.deleteAlert(alertId);
     }
 }
