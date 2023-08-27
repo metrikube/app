@@ -6,7 +6,7 @@ export class AlertAdapterImpl implements AlertAdapter {
   constructor(private readonly http: AxiosInstance) { }
 
   async getActiveMetricAlerts(activeMetricId: string): Promise<AlertModel[]> {
-    const { data } = await this.http.get<AlertModel[]>(`/alert/${activeMetricId}`)
+    const { data } = await this.http.get<AlertModel[]>(`/alerts/${activeMetricId}`)
     return data
   }
 

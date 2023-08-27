@@ -4,6 +4,8 @@ export type AlertModel = {
   readonly id: string;
   readonly label: string;
   readonly metricId?: string;
+  readonly isActive: boolean;
+  readonly triggered?: boolean;
   readonly condition: {
     field: string;
     operator: MetricThresholdOperator;

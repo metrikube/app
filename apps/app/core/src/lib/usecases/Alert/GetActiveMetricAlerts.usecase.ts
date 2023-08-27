@@ -1,9 +1,9 @@
-import { AlertAdapter } from '@metrikube/core';
+import { AlertAdapter, AlertModel } from '@metrikube/core';
 
-export class GetActiveAlertUsecase {
+export class GetActiveMetricAlertUsecase {
     constructor(private readonly alertAdapter: AlertAdapter) { }
 
-    async execute(activeMetricId: string): Promise<void> {
-        await this.alertAdapter.getActiveMetricAlerts(activeMetricId);
+    async execute(activeMetricId: string): Promise<AlertModel[]> {
+        return this.alertAdapter.getActiveMetricAlerts(activeMetricId);
     }
 }
