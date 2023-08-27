@@ -6,6 +6,5 @@ export default new DataSource({
   entities: ['apps/**/entities/*.entity.ts'],
   migrationsTableName: '_migrations',
   migrations: ['data/migrations/*.ts'],
-  migrationsTransactionMode: 'all',
-  migrationsRun: true
+  migrationsTransactionMode: 'all'
 });

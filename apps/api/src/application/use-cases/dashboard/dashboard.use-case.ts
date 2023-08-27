@@ -57,7 +57,7 @@ export class DashboardUseCase implements DashboardUseCaseInterface {
     const metricResultMap: Record<string, RefreshDashboardResponseDto> = {};
 
     for (const metricCredential of activatedMetricsWithCredentials) {
-      const metricResult = this.pluginUseCase.getMetricMethodByMetricType(metricCredential.metric.type as MetricType)(metricCredential.value as GenericCredentialType);
+      const metricResult = await this.pluginUseCase.getMetricMethodByMetricType(metricCredential.metric.type as MetricType)(metricCredential.value as GenericCredentialType);
       metricResultMap[metricCredential.id] = new RefreshDashboardResponseDto(
         metricCredential.id,
         metricCredential.name,
