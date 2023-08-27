@@ -1,4 +1,4 @@
-import { AlertRequest } from '@metrikube/core';
+import { AlertModel, AlertRequest } from '@metrikube/core';
 
 export type CreateAlertRequest = {
   pluginToMetricId: string;
@@ -7,4 +7,6 @@ export type CreateAlertRequest = {
 
 export interface AlertAdapter {
   createAlert: (payload: CreateAlertRequest) => Promise<void>;
+  getActiveMetricAlerts: (activeMetricId: string) => Promise<AlertModel[]>
+  deleteActiveMetricAlert: (alertId: string) => Promise<void>
 }

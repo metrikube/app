@@ -10,4 +10,8 @@ export class DashboardMetricsImpl implements DashboardMetricsAdapter {
 
     return data;
   }
+
+  async deleteActiveMetric(activeMetricId: string): Promise<void> {
+    await this.http.delete(`/dashboard/disable/${activeMetricId}`)
+  }
 }
