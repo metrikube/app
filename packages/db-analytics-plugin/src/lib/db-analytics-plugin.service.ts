@@ -1,8 +1,6 @@
 import { ApiEndpointCredentialType, DbConnectionCredentialType, PluginConnectionInterface, ApiDatabaseSize, ApiDatabaseSlowQueries, ApiDatabaseLastAverageQueriesByHour } from '@metrikube/common';
 import { DbService } from './db.service'
-import { HttpStatus, Injectable, Logger } from '@nestjs/common';
-import axios from 'axios';
-import type { AxiosError } from 'axios';
+import { Injectable, Logger } from '@nestjs/common';
 
 @Injectable()
 export class DbAnalyticsPluginService implements PluginConnectionInterface {
