@@ -1,11 +1,18 @@
 import { useAdapter } from '../config/axios'
-import { AlertModel, DeleteActiveMetricUsecase, GetActiveMetricAlertUsecase } from '@metrikube/core'
+import {
+  AlertModel,
+  DeleteActiveMetricAlertUsecase,
+  DeleteActiveMetricUsecase,
+  GetActiveMetricAlertUsecase,
+  ToggleAlertNotification,
+  ToggleAlertNotificationUsecase
+} from '@metrikube/core'
 import { useMutation, useQuery } from '@tanstack/react-query'
 
 const { dashboardMetricsAdapter, alertAdapter } = useAdapter()
 
-export const getActiveMetricAlertQuery = (activeMetricId: string) =>
-  useQuery<AlertModel[]>({
+export const getActiveMetricAlertsQuery = (activeMetricId: string) =>
+  useQuery({
     queryKey: ['getActiveMetricAlert'],
     queryFn: async (): Promise<AlertModel[]> =>
       new GetActiveMetricAlertUsecase(alertAdapter).execute(activeMetricId),
@@ -19,3 +26,22 @@ export const deleteMetricMutation = () =>
       await new DeleteActiveMetricUsecase(dashboardMetricsAdapter).execute(activeMetricId)
     }
   })
+
+// Alert
+export const toggleAlertMutation = () => {
+  return useMutation({
+    mutationKey: ['toggleAlertNotification'],
+    mutationFn: async ({ alertId, isActive }: ToggleAlertNotification) => {
+      await new ToggleAlertNotificationUsecase(alertAdapter).execute(alertId, isActive)
+    }
+  })
+}
+
+export const deleteAlertMutation = () => {
+  return useMutation({
+    mutationKey: ['deleteAlert'],
+    mutationFn: async (alertId: string) => {
+      await new DeleteActiveMetricAlertUsecase(alertAdapter).execute(alertId)
+    }
+  })
+}

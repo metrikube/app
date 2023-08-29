@@ -15,7 +15,7 @@ export class AlertAdapterImpl implements AlertAdapter {
   }
 
   async updateAlert(alertId: string, payload: Partial<AlertModel>): Promise<void> {
-    await this.http.patch(`/alerts/${alertId}`, { payload })
+    await this.http.patch(`/alerts/${alertId}`, payload)
   }
 
   async deleteAlert(alertId: string): Promise<void> {

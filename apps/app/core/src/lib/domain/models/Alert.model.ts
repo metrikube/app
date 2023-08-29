@@ -14,3 +14,8 @@ export type AlertModel = {
 };
 export type AlertRequest = Omit<AlertModel, 'id'>;
 export type AlertForm = Omit<AlertModel, 'id' | 'metricId'>;
+
+export type ToggleAlertNotification = {
+  alertId: string
+  isActive: boolean
+}
