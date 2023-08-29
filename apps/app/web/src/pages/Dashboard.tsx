@@ -30,7 +30,6 @@ const Dashboard = () => {
   const [isMetricAlertsModalOpened, setIsMetricAlertsModalOpened] = useState(false)
   const [isMetricDeletionModalOpened, setIsMetricDeletionModalOpened] = useState(false)
 
-
   const openProviderModalHandler = () => {
     setOpenModal(true)
   }
