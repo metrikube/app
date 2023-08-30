@@ -1,7 +1,6 @@
 import { TextField } from '@mui/material'
-import { SetupPluginContext } from 'apps/app/web/src/contexts/SetupPlugin.context'
-import React, { useContext, useEffect } from 'react'
-import { useForm, useFormContext } from 'react-hook-form'
+import React from 'react'
+import { useFormContext } from 'react-hook-form'
 
 const ApiCredentialForm = () => {
   const {
@@ -11,6 +10,16 @@ const ApiCredentialForm = () => {
 
   return (
     <>
+      <TextField
+        id="api-endpoint-name"
+        label="Nom"
+        type="text"
+        variant="outlined"
+        size="small"
+        {...register('api_endpoint.name', {
+          required: 'This field is required.'
+        })}
+      />
       <TextField
         fullWidth
         id="api-endpoint"

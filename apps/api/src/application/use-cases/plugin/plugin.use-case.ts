@@ -45,7 +45,7 @@ export class PluginUseCase implements PluginUseCaseInterface {
     return new PluginResponseDto(plugins, metrics, credentials);
   }
 
-  async registerPlugin({ pluginId, metricType, credential, resourceId }: RegisterPluginRequestDto): Promise<RegisterPluginResponseDto> {
+  async registerPlugin({ pluginId, metricType, credential, resourceId, name }: RegisterPluginRequestDto): Promise<RegisterPluginResponseDto> {
     const [plugin, metric]: [PluginEntity, MetricEntity] = await Promise.all([
       this.pluginRepository.findOneById(pluginId),
       this.metricRepository.findMetricByType(pluginId, metricType)
@@ -55,9 +55,9 @@ export class PluginUseCase implements PluginUseCaseInterface {
     await this.testPluginConnection(plugin, credential);
 
     // TODO : wrap into a transaction
-    const [pluginCredential, pluginToMetric] = await Promise.all([
+    const [_, pluginToMetric] = await Promise.all([
       this.credentialRepository.createCredential({ value: credential, plugin, type: plugin.credentialType as CredentialType }),
-      this.pluginToMetricRepository.createPluginToMetric({ pluginId, metricId: metric.id, resourceId, isActivated: true })
+      this.pluginToMetricRepository.createPluginToMetric({ pluginId, metricId: metric.id, resourceId, name, isActivated: true })
     ]);
 
     const pluginDataSample = await this.refreshPluginMetric(pluginId, metricType);

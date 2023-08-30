@@ -27,7 +27,7 @@ interface Props {
 
 const MetricAlertsModal = ({ open, setOpenModal }: Props) => {
   const { selectedActiveMetric } = useContext(DashboardContext)
-  const { data: alerts } = getActiveMetricAlertsQuery('3bb59e4c-271a-4b2a-b932-3c6578d9f52e')
+  const { data: alerts } = getActiveMetricAlertsQuery(selectedActiveMetric.id)
 
   const { mutate: toggleNotification } = toggleAlertMutation()
   const { mutate: deleteAlert } = deleteAlertMutation()
