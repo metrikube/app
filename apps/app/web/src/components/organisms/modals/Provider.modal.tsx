@@ -69,6 +69,7 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
     mode: 'all',
     defaultValues: {
       api_endpoint: {
+        name: '',
         apiEndpoint: ''
       },
       aws: {
