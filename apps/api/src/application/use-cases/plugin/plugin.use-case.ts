@@ -3,6 +3,7 @@ import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { ApiMonitoringService } from '@metrikube/api-monitoring';
 import { AWSService } from '@metrikube/aws-plugin';
 import { CredentialType, GenericCredentialType, MetricType, Plugin, PluginConnectionInterface, PluginResult } from '@metrikube/common';
+import { DbAnalyticsPluginService } from '@metrikube/db-analytics-plugin';
 import { GithubService } from '@metrikube/github-plugin';
 
 import { AlertRepository } from '../../../domain/interfaces/repository/alert.repository';
@@ -31,7 +32,8 @@ export class PluginUseCase implements PluginUseCaseInterface {
     @Inject(DiTokens.MetricRepositoryToken) private readonly metricRepository: MetricRepository,
     @Inject(DiTokens.PluginRepositoryToken) private readonly pluginRepository: PluginRepository,
     @Inject(DiTokens.PluginToMetricRepositoryToken) private readonly pluginToMetricRepository: PluginToMetricRepository,
-    @Inject(DiTokens.Scheduler) private readonly scheduler: SchedulerInterface
+    @Inject(DiTokens.Scheduler) private readonly scheduler: SchedulerInterface,
+    @Inject(DiTokens.DbAnalyticsPluginServiceToken) private readonly databaseService: DbAnalyticsPluginService
   ) {
   }
 
@@ -96,11 +98,11 @@ export class PluginUseCase implements PluginUseCaseInterface {
       case 'github-last-prs':
         throw 'Not implemented';
       case 'database-queries':
-        throw 'Not implemented';
+        return this.databaseService.getNbQueries
       case 'database-size':
-        throw 'Not implemented';
+        return this.databaseService.getDbSize
       case 'database-slow-queries':
-        throw 'Not implemented';
+        return this.databaseService.getSlowQuery
       case 'database-connections':
         throw 'Not implemented';
       default:
@@ -122,12 +124,10 @@ export class PluginUseCase implements PluginUseCaseInterface {
     credential: GenericCredentialType
   ): Promise<void> {
     const pluginConnection: Record<Plugin['type'], PluginConnectionInterface> = {
-      api: this.apiMonitoringService,
       api_endpoint: this.apiMonitoringService,
       github: this.githubService,
       aws: this.AWSService,
-      sql_database: this.apiMonitoringService,
-      database: this.apiMonitoringService
+      sql_database: this.databaseService
     };
     const pluginTestConnection: { ok: boolean; message: string | null } = await pluginConnection[plugin.type].testConnection(credential);
     if (!pluginTestConnection.ok) throw new BadRequestException(pluginTestConnection.message || 'Plugin connection failed');
