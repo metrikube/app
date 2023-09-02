@@ -22,7 +22,10 @@ export class SeedDefaultDatabase1693085834707 implements MigrationInterface {
       apiHealthCheck: randomUUID(),
       awsEc2SingleInstanceUsage: randomUUID(),
       awsEc2MultipleInstancesUsage: randomUUID(),
-      githubLastIssues: randomUUID()
+      githubLastIssues: randomUUID(),
+      sqlDatabaseQueries: randomUUID(),
+      sqlDatabaseSlowQueries: randomUUID(),
+      sqlDatabaseSize: randomUUID()
     };
 
     const pluginToMetricIds = {
@@ -97,6 +100,27 @@ export class SeedDefaultDatabase1693085834707 implements MigrationInterface {
         type: 'github-last-issues',
         name: 'Github last ussues',
         pluginId: pluginIds.github,
+        isNotifiable: false
+      },
+      {
+        id: metricIds.sqlDatabaseQueries,
+        type: 'database-queries',
+        name: 'SQL Database Usage',
+        pluginId: pluginIds.sql,
+        isNotifiable: false
+      },
+      {
+        id: metricIds.sqlDatabaseSlowQueries,
+        type: 'database-slow-queries',
+        name: 'SQL Database Slow Queries',
+        pluginId: pluginIds.sql,
+        isNotifiable: false
+      },
+      {
+        id: metricIds.sqlDatabaseSize,
+        type: 'database-size',
+        name: 'SQL Database Size',
+        pluginId: pluginIds.sql,
         isNotifiable: false
       }
     ];
