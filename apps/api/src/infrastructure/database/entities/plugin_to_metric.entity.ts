@@ -1,5 +1,6 @@
 import { Column, Entity, Generated, JoinColumn, ManyToOne, PrimaryColumn, RelationId } from 'typeorm';
 
+import { CredentialEntity } from './credential.entity';
 import { MetricEntity } from './metric.entity';
 import { PluginEntity } from './plugin.entity';
 
@@ -16,15 +17,23 @@ export class PluginToMetricEntity {
   description: string;
 
   @ManyToOne(() => PluginEntity, (plugin: PluginEntity) => plugin.pluginToMetrics)
-  @JoinColumn()
+  @JoinColumn({ foreignKeyConstraintName: 'fk_plugin_id' })
   plugin: PluginEntity;
 
   @RelationId((pluginMetric: PluginToMetricEntity) => pluginMetric.plugin)
   @Column({ type: 'uuid', nullable: false })
   pluginId: string;
 
+  @RelationId((pluginMetric: PluginToMetricEntity) => pluginMetric.credential)
+  @Column({ type: 'uuid', nullable: false })
+  credentialId: string;
+
+  @JoinColumn({ foreignKeyConstraintName: 'fk_credential_id' })
+  @ManyToOne(() => CredentialEntity, (credential: CredentialEntity) => credential.pluginToMetrics)
+  credential: CredentialEntity;
+
   @ManyToOne(() => MetricEntity, (metric: MetricEntity) => metric.pluginToMetrics)
-  @JoinColumn()
+  @JoinColumn({ foreignKeyConstraintName: 'fk_metric_id' })
   metric: MetricEntity;
 
   @Column({ type: 'uuid', nullable: false })

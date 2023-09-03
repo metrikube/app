@@ -1,6 +1,5 @@
-import { randomUUID } from 'node:crypto';
-import { MigrationInterface, ObjectLiteral, QueryRunner } from 'typeorm';
-import { EntityTarget } from 'typeorm/common/EntityTarget';
+import { randomUUID } from 'crypto';
+import { EntityTarget, MigrationInterface, ObjectLiteral, QueryRunner } from 'typeorm';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
 import { AlertEntity } from '../../apps/api/src/infrastructure/database/entities/alert.entity';
@@ -9,7 +8,7 @@ import { MetricEntity } from '../../apps/api/src/infrastructure/database/entitie
 import { PluginEntity } from '../../apps/api/src/infrastructure/database/entities/plugin.entity';
 import { PluginToMetricEntity } from '../../apps/api/src/infrastructure/database/entities/plugin_to_metric.entity';
 
-export class SeedDefaultDatabase1693085834707 implements MigrationInterface {
+export class SeedDefaultDatabase1693679995600 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     const pluginIds = {
       aws: randomUUID(),
@@ -26,6 +25,11 @@ export class SeedDefaultDatabase1693085834707 implements MigrationInterface {
       sqlDatabaseQueries: randomUUID(),
       sqlDatabaseSlowQueries: randomUUID(),
       sqlDatabaseSize: randomUUID()
+    };
+
+    const credentialIds = {
+      apiHealthCheck: randomUUID(),
+      github: randomUUID()
     };
 
     const pluginToMetricIds = {
@@ -126,13 +130,13 @@ export class SeedDefaultDatabase1693085834707 implements MigrationInterface {
     ];
     const credentials = [
       {
-        id: randomUUID(),
+        id: credentialIds.apiHealthCheck,
         pluginId: pluginIds.apiHealthCheck,
         type: 'apiEndpoint',
         value: 'eyJhcGlFbmRwb2ludCI6ICJodHRwczovL2pzb25wbGFjZWhvbGRlci50eXBpY29kZS5jb20vdXNlcnMifQo='
       },
       {
-        id: randomUUID(),
+        id: credentialIds.github,
         pluginId: pluginIds.github,
         type: 'github',
         value:
@@ -144,6 +148,7 @@ export class SeedDefaultDatabase1693085834707 implements MigrationInterface {
         id: pluginToMetricIds.pingApi,
         pluginId: pluginIds.apiHealthCheck,
         metricId: metricIds.apiHealthCheck,
+        credentialId: credentialIds.apiHealthCheck,
         isActive: true,
         resourceId: '',
         name: "Ping l'api jsonplaceholder",
