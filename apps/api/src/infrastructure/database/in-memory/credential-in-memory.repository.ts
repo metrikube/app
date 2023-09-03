@@ -9,6 +9,10 @@ export class CredentialInMemoryRepositoryImpl implements CredentialRepository {
 
   constructor() {}
 
+  findCredentialByIdAndPluginId(id: string, pluginId: string): Promise<CredentialEntity> {
+    return Promise.resolve(this.credentials.find((credential) => credential.id === id && credential.pluginId === pluginId));
+  }
+
   createCredential(credential: Credential): Promise<CredentialEntity> {
     const credentialToInsert = {
       id: '1',

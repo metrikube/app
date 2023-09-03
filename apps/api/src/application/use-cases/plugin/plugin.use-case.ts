@@ -16,6 +16,7 @@ import { PluginUseCaseInterface } from '../../../domain/interfaces/use-cases/plu
 import { CredentialEntity } from '../../../infrastructure/database/entities/credential.entity';
 import { MetricEntity } from '../../../infrastructure/database/entities/metric.entity';
 import { PluginEntity } from '../../../infrastructure/database/entities/plugin.entity';
+import { PluginToMetricEntity } from '../../../infrastructure/database/entities/plugin_to_metric.entity';
 import { DiTokens } from '../../../infrastructure/di/tokens';
 import { PluginResponseDto } from '../../../presenter/plugin/dtos/plugins.dto';
 import { RegisterPluginRequestDto, RegisterPluginResponseDto } from '../../../presenter/plugin/dtos/register-plugin.dto';
@@ -56,25 +57,39 @@ export class PluginUseCase implements PluginUseCaseInterface {
 
     await this.testPluginConnection(plugin, credential);
 
+    const pluginCredential = await this.credentialRepository.createCredential({
+      value: credential,
+      plugin,
+      type: plugin.credentialType as CredentialType
+    })
     // TODO : wrap into a transaction
-    const [_, pluginToMetric] = await Promise.all([
-      this.credentialRepository.createCredential({ value: credential, plugin, type: plugin.credentialType as CredentialType }),
-      this.pluginToMetricRepository.createPluginToMetric({ pluginId, metricId: metric.id, resourceId, name, isActivated: true })
-    ]);
+    /**
+     * Ajouter le credential id au niveau du widget pour pouvoir le récupérer et pouvoir ajouter plusieurs même widget mais sur des plugins différents
+     */
+    const pluginToMetric = await this.pluginToMetricRepository.createPluginToMetric({
+      pluginId,
+      name,
+      credentialId: pluginCredential.id,
+      metricId: metric.id,
+      resourceId,
+      isActive: true
+    });
 
-    const pluginDataSample = await this.refreshPluginMetric(pluginId, metricType);
+    const pluginDataSample = await this.refreshPluginMetric(pluginId, pluginToMetric.id);
 
     return new RegisterPluginResponseDto(pluginToMetric, pluginDataSample);
   }
 
   /**
-   * TODO : sécurisé si jamais l'utlisateurs supprime envoi un pluginId qui n'a pas de metricType associé
+   * TODO : sécurisé si jamais l'utlisateurs supprime un plugin et envoi un pluginId qui n'a pas de metricType associé
    * @param pluginId
-   * @param metricType
+   * @param pluginToMetricId
    */
-  async refreshPluginMetric(pluginId: string, metricType: MetricType): Promise<PluginResult<MetricType>> {
-    const credentials = await this.credentialRepository.findCrendentialByPluginId(pluginId);
+  async refreshPluginMetric(pluginId: PluginEntity['id'], pluginToMetricId: PluginToMetricEntity['id']): Promise<PluginResult<MetricType>> {
+    const pluginToMetric = await this.pluginToMetricRepository.findPluginToMetricById(pluginToMetricId);
+    const credentials = await this.credentialRepository.findCredentialByIdAndPluginId(pluginToMetric.credentialId, pluginId);
     if (!credentials) throw new BadRequestException('No credentials found for this plugin');
+    const metricType = pluginToMetric.metric.type as MetricType;
 
     const parsedCredentials = JSON.parse(Buffer.from(credentials.value, 'base64').toString('utf-8')) as GenericCredentialType;
     const getMetricTypeDataSample: (credentials: GenericCredentialType) => Promise<PluginResult<MetricType>> = this.getMetricMethodByMetricType(metricType);
