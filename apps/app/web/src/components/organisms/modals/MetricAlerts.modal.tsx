@@ -1,9 +1,9 @@
-import { DashboardContext } from '../../../contexts/Dashboard.context'
 import {
   deleteAlertMutation,
   getActiveMetricAlertsQuery,
   toggleAlertMutation
 } from '../../../services/dashboard.service'
+import { ActiveMetricModel } from '@metrikube/core'
 import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined'
 import NotificationsActiveOutlinedIcon from '@mui/icons-material/NotificationsActiveOutlined'
 import NotificationsOffOutlinedIcon from '@mui/icons-material/NotificationsOffOutlined'
@@ -18,26 +18,23 @@ import {
   TableBody,
   IconButton
 } from '@mui/material'
-import React, { Dispatch, SetStateAction, useContext } from 'react'
+import React, { Dispatch, SetStateAction } from 'react'
 
 interface Props {
   open: boolean
   setOpenModal: Dispatch<SetStateAction<boolean>>
+  metric: ActiveMetricModel
 }
 
-const MetricAlertsModal = ({ open, setOpenModal }: Props) => {
-  const { selectedActiveMetric } = useContext(DashboardContext)
-
-  if (!selectedActiveMetric) return null
-
-  const { data: alerts } = getActiveMetricAlertsQuery(selectedActiveMetric.id)
+const MetricAlertsModal = ({ open, setOpenModal, metric }: Props) => {
+  const { data: alerts } = getActiveMetricAlertsQuery(metric.id)
 
   const { mutate: toggleNotification } = toggleAlertMutation()
   const { mutate: deleteAlert } = deleteAlertMutation()
 
   return (
     <Dialog open={open} onClose={() => setOpenModal(false)}>
-      <DialogTitle>Alertes {selectedActiveMetric?.metric.name}</DialogTitle>
+      <DialogTitle>Alertes {metric?.metric.name}</DialogTitle>
       <DialogContent>
         <Table>
           <TableHead>
