@@ -24,6 +24,7 @@ export class SeedDefaultDatabase1693679995600 implements MigrationInterface {
       awsS3SingleBucketUsage: randomUUID(),
       awsS3MultipleBucketsUsage: randomUUID(),
       githubLastIssues: randomUUID(),
+      githubLastPRs: randomUUID(),
       sqlDatabaseQueries: randomUUID(),
       sqlDatabaseSlowQueries: randomUUID(),
       sqlDatabaseSize: randomUUID()
@@ -119,6 +120,13 @@ export class SeedDefaultDatabase1693679995600 implements MigrationInterface {
         id: metricIds.githubLastIssues,
         type: 'github-last-issues',
         name: 'Github last ussues',
+        pluginId: pluginIds.github,
+        isNotifiable: false
+      },
+      {
+        id: metricIds.githubLastPRs,
+        type: 'github-last-prs',
+        name: 'Github last PRs',
         pluginId: pluginIds.github,
         isNotifiable: false
       },

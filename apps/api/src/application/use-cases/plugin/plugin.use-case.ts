@@ -111,7 +111,7 @@ export class PluginUseCase implements PluginUseCaseInterface {
       case 'aws-ec2-single-instance-usage':
         return this.AWSService.getEc2Instance;
       case 'github-last-prs':
-        throw 'Not implemented';
+        return this.githubService.getRepoPRs;
       case 'database-queries':
         return this.databaseService.getNbQueries
       case 'database-size':
