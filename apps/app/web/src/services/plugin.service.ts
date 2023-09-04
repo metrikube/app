@@ -1,14 +1,20 @@
 import { useAdapter } from '../config/axios'
-import { CreateAlertRequest, CreateAlertUsecase, GetPluginsUsecase, SetupPluginRequest, SetupPluginUsecase } from '@metrikube/core'
+import {
+  CreateAlertRequest,
+  CreateAlertUsecase,
+  GetPluginsUsecase,
+  SetupPluginRequest,
+  SetupPluginUsecase
+} from '@metrikube/core'
 import { useMutation, useQuery } from '@tanstack/react-query'
 
 const { pluginAdapter, alertAdapter } = useAdapter()
-export const getPluginsQuery = (isEnabled: boolean) => {
+export const getPluginsQuery = () => {
   return useQuery({
     queryKey: ['getPlugins'],
     queryFn: () => new GetPluginsUsecase(pluginAdapter).execute(),
-    enabled: isEnabled,
-    initialData: () => []
+    initialData: () => [],
+    refetchOnWindowFocus: false
   })
 }
 

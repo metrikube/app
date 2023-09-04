@@ -17,7 +17,8 @@ export const getActiveMetricQuery = () => {
   return useQuery<ActiveMetricModel[]>({
     queryKey: ['getActiveMetrics'],
     queryFn: () => new GetActiveMetricsUsecase(dashboardMetricsAdapter).execute(),
-    initialData: () => []
+    initialData: () => [],
+    refetchOnWindowFocus: false
   })
 }
 
