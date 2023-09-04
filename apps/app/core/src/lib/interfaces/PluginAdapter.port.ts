@@ -1,6 +1,6 @@
-import { GenericCredentialType, MetricType, PluginResult } from '@metrikube/common';
+import type { GenericCredentialType, MetricType, PluginResult } from '@metrikube/common';
 
-import { PluginModel } from '../../domain';
+import type { PluginModel } from '@metrikube/core';
 
 export type SetupPluginRequest = {
   pluginId: string;

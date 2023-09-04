@@ -1,5 +1,4 @@
 /* eslint-disable prettier/prettier */
-import { useAdapter } from '../../../config/axios'
 import { SetupPluginContext } from '../../../contexts/SetupPlugin.context'
 import ProviderFormActionButtons from '../ProviderFormActionButtons'
 import ProviderFormStepper from '../ProviderFormStepper'
@@ -23,11 +22,10 @@ import {
 } from '@metrikube/core'
 import { Close } from '@mui/icons-material'
 import { Dialog, DialogContent, DialogTitle, IconButton } from '@mui/material'
-import React, { Dispatch, SetStateAction, useContext, useEffect, useState, useMemo } from 'react'
+import React, { Dispatch, SetStateAction, useContext, useEffect, useState } from 'react'
 import { useForm, FormProvider } from 'react-hook-form'
 import { createPluginAlertMutation, getPluginsQuery, setupPluginMutation } from '../../../services/plugin.service'
 import { useQueryClient } from '@tanstack/react-query'
-
 
 interface Props {
   open: boolean
