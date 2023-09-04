@@ -1,5 +1,5 @@
 import styled from '@emotion/styled'
-import CircularProgress from '@mui/material/CircularProgress'
+import { CircularProgress } from '@mui/material'
 import React from 'react'
 
 const Loader = () => (

@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { useAdapter } from '../../../config/axios'
 import { SetupPluginContext } from '../../../contexts/SetupPlugin.context'
 import ProviderFormActionButtons from '../ProviderFormActionButtons'
@@ -15,7 +16,6 @@ import {
 } from '@metrikube/common'
 import {
   SetupPluginUsecase,
-  GetPluginsUsecase,
   SetupPluginRequest,
   CreateAlertUsecase,
   CreateAlertRequest,
@@ -27,9 +27,10 @@ import {
 } from '@metrikube/core'
 import { Close } from '@mui/icons-material'
 import { Dialog, DialogContent, DialogTitle, IconButton } from '@mui/material'
-import { useMutation, useQuery } from '@tanstack/react-query'
+import { useMutation } from '@tanstack/react-query'
 import React, { Dispatch, SetStateAction, useContext, useEffect, useState, useMemo } from 'react'
 import { useForm, FormProvider } from 'react-hook-form'
+import { getPluginsQuery } from '../../../services/setupPlugin.service'
 
 interface Props {
   open: boolean
@@ -41,6 +42,7 @@ type SetupPluginFormValues = {
   aws: AwsCredentialType
   github: GithubCredentialType
   sql_database: DbConnectionCredentialType
+  name: string
   metric: MetricModel
   metricAlerts: AlertForm[]
 }
@@ -69,7 +71,6 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
     mode: 'all',
     defaultValues: {
       api_endpoint: {
-        name: '',
         apiEndpoint: ''
       },
       aws: {
@@ -89,6 +90,7 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
         dbUsername: '',
         dbPassword: ''
       },
+      name: '',
       metric: {
         id: '',
         name: '',
@@ -112,21 +114,15 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
   const [selectedProviderCategory, setSelectedProviderCategory] = useState('')
   const [isProviderChose, setIsProviderChose] = useState<boolean>(selectedProvider !== null)
   const [activeStep, setActiveStep] = useState(0)
+  const { data: plugins } = getPluginsQuery(open)
 
   useEffect(() => {
     setIsProviderChose(selectedProvider !== null)
   }, [selectedProvider])
 
-  // sortir dans une classe statique
-  const { data: plugins } = useQuery({
-    queryKey: ['getPlugins'],
-    queryFn: () => new GetPluginsUsecase(pluginAdapter).execute(),
-    initialData: () => []
-  })
-
   const { mutate: setupPlugin, isLoading: isSetupPluginLoading } = useMutation(
-    ({ pluginId, metricType, credential }: SetupPluginRequest) =>
-      new SetupPluginUsecase(pluginAdapter).execute(pluginId, metricType, credential),
+    ({ pluginId, name, metricType, credential }: SetupPluginRequest) =>
+      new SetupPluginUsecase(pluginAdapter).execute(pluginId, name, metricType, credential),
     {
       // how to type that ??
       onSuccess: (data) => {
@@ -171,7 +167,7 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
       case SetupPluginStepEnum.FILL_CREDENTIAL:
         // eslint-disable-next-line no-case-declarations
         const credential: GenericCredentialType = data[selectedProvider.type]
-        handleConnectionTest(selectedProvider, selectedMetric, credential)
+        handleConnectionTest(data.name, selectedProvider, selectedMetric, credential)
         break
       case SetupPluginStepEnum.ALERT_CONFIG:
         // eslint-disable-next-line no-case-declarations
@@ -198,6 +194,7 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
   }
 
   const handleConnectionTest = (
+    name: string,
     plugin: PluginModel,
     metric: MetricModel,
     credential: GenericCredentialType
@@ -207,6 +204,7 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
         setupPlugin({
           pluginId: plugin.id,
           metricType: metric.type,
+          name,
           credential
         })
         break
@@ -214,6 +212,7 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
         setupPlugin({
           pluginId: plugin.id,
           metricType: metric.type,
+          name,
           credential
         })
         break
@@ -221,6 +220,7 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
         setupPlugin({
           pluginId: plugin.id,
           metricType: metric.type,
+          name,
           credential
         })
         break
@@ -228,6 +228,7 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
         setupPlugin({
           pluginId: plugin.id,
           metricType: metric.type,
+          name,
           credential
         })
         break

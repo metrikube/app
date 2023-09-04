@@ -4,10 +4,10 @@ import { MetricType, PluginResult } from '@metrikube/common';
 import { PluginAdapter, PluginModel, SetupPluginRequest } from '@metrikube/core';
 
 export class PluginAdapterImpl implements PluginAdapter {
-  constructor(private readonly http: AxiosInstance) {}
+  constructor(private readonly http: AxiosInstance) { }
 
-  async setupPlugin<T extends MetricType>({ pluginId, metricType, credential }: SetupPluginRequest): Promise<PluginResult<T>> {
-    const { data } = await this.http.post('/plugins', { pluginId, metricType, credential, ressourceId: 'test' });
+  async setupPlugin<T extends MetricType>({ pluginId, name, metricType, credential }: SetupPluginRequest): Promise<PluginResult<T>> {
+    const { data } = await this.http.post('/plugins', { pluginId, metricType, credential, ressourceId: 'test', name });
     return data;
   }
 
