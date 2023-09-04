@@ -37,6 +37,16 @@ const ProviderFormStep2 = () => {
         )}
       </OutlinedCard>
       <OutlinedCard title="Metrics">
+        <TextField
+          id="name"
+          label="Nom"
+          type="text"
+          variant="outlined"
+          size="small"
+          {...register('name', {
+            required: 'This field is required.'
+          })}
+        />
         <Autocomplete
           id="metrics"
           size="small"

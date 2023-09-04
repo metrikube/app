@@ -2,25 +2,19 @@ import PluginEmptyStateImg from '../assets/img/undraws/undraw_online_stats.svg'
 import ConfirmDeletionModal from '../components/organisms/modals/ConfirmDeletion.modal'
 import MetricAlertsModal from '../components/organisms/modals/MetricAlerts.modal'
 import ProviderModal from '../components/organisms/modals/Provider.modal'
-import { useAdapter } from '../config/axios'
 import { SetupPluginProvider } from '../contexts/SetupPlugin.context'
 import DefaultLayout from '../layouts/DefaultLayout'
 import { EmptyStateLayout } from '../layouts/EmptyStateLayout'
 import { MetricsLayout } from '../layouts/MetricsLayout'
+import { getActiveMetricQuery } from '../services/dashboard.service'
 import styled from '@emotion/styled'
-import { ActiveMetricModel, GetActiveMetricsUsecase, activeMetricsMock } from '@metrikube/core'
+import { ActiveMetricModel } from '@metrikube/core'
 import { AddCircleOutline, AddchartOutlined } from '@mui/icons-material'
 import { Button } from '@mui/material'
-import { useQuery } from '@tanstack/react-query'
 import React, { useState } from 'react'
 
 const Dashboard = () => {
-  const { dashboardMetricsAdapter } = useAdapter()
-  const { data: activeMetrics } = useQuery<ActiveMetricModel[]>({
-    queryKey: ['getActiveMetrics'],
-    queryFn: () => new GetActiveMetricsUsecase(dashboardMetricsAdapter).execute(),
-    initialData: () => []
-  })
+  const { data: activeMetrics } = getActiveMetricQuery()
 
   const [openedModal, setOpenModal] = useState(false)
   const [isMetricAlertsModalOpen, setIsMetricAlertsModalOpen] = useState(false)
@@ -40,8 +34,6 @@ const Dashboard = () => {
     setSelectedMetric(metric)
     setIsMetricDeletionModalOpened(true)
   }
-
-  const metricsTemp: ActiveMetricModel[] = [...activeMetrics, ...activeMetricsMock]
 
   return (
     <DefaultLayout>
@@ -66,9 +58,9 @@ const Dashboard = () => {
           </div>
         </StyledHeader>
 
-        {metricsTemp.length ? (
+        {activeMetrics.length ? (
           <MetricsLayout
-            metrics={metricsTemp}
+            metrics={activeMetrics}
             onAlertOpenRequest={handleAlertOpenRequest}
             onMetricDeletionRequest={handleMetricDeletionRequest}
           />
