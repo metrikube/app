@@ -34,7 +34,6 @@ export class AWSService implements PluginConnectionInterface {
   // S3 Section
   async getS3Bucket(credentials: AwsCredentialType): Promise<ApiAWSSingleResourceInstanceResult> {
     try {
-      console.log('credentials', credentials);
       if (!credentials.resourceId) {
         throw new Error('No resource ID provided');
       }
