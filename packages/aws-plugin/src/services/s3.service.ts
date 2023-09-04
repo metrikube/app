@@ -114,4 +114,19 @@ export class S3Service {
       throw error;
     }
   }
+
+  async pingS3(): Promise<{ status: number | undefined; message: string }> {
+    try {
+      const response = await this.client.send(new ListBucketsCommand({}));
+      return {
+        status: response.$metadata.httpStatusCode,
+        message: 'Successful ping to AWS EC2'
+      };
+    } catch (error) {
+      return {
+        status: 500,
+        message: 'Error reaching AWS S3'
+      };
+    }
+  }
 }

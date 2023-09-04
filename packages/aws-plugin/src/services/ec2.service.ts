@@ -1,4 +1,4 @@
-import { DescribeInstancesCommand, DescribeInstancesCommandInput, DescribeRegionsCommand, EC2, EC2Client, Reservation, Tag } from '@aws-sdk/client-ec2';
+import { DescribeInstancesCommand, DescribeInstancesCommandInput, EC2Client, Tag } from '@aws-sdk/client-ec2';
 
 import { ApiAWSSingleResourceInstanceResult, AwsCredentialType } from '@metrikube/common';
 
@@ -134,6 +134,22 @@ export class EC2Service {
       throw new Error('Error fetching instance infos:' + err);
     }
     return instancesInformation;
+  }
+
+  async pingEC2(): Promise<{ status: number | undefined; message: string }> {
+    try {
+      const response = await this.client.send(new DescribeInstancesCommand({}));
+
+      return {
+        status: response.$metadata.httpStatusCode,
+        message: 'Successful ping to AWS EC2'
+      };
+    } catch (error) {
+      return {
+        status: 500,
+        message: 'Error reaching AWS EC2'
+      };
+    }
   }
 
   /**
