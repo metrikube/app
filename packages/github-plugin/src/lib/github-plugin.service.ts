@@ -15,7 +15,7 @@ const limit = 5;
 export class GithubService implements PluginConnectionInterface {
   async getRepoIssues({ accessToken, repo, owner }: GithubCredentialType): Promise<ApiGithubIssues[] | ApiGithubError> {
     try {
-      const { data: issues } = await axios.get<Issues>(`https://api.github.com/repos/${owner}/${repo}/issues?per_page=${limit}`, {
+      const { data: issues } = await axios.get<Issues>(`https://api.github.com/repos/${owner}/${repo}/issues?per_page=${limit}&state=all`, {
         headers: {
           Authorization: `token ${accessToken}`
         }
@@ -32,7 +32,7 @@ export class GithubService implements PluginConnectionInterface {
 
   async getRepoPRs({ accessToken, repo, owner }: GithubCredentialType): Promise<ApiGithubPullRequestsOrIssues[] | ApiGithubError> {
     try {
-      const { data: prs } = await axios.get<PullRequests>(`https://api.github.com/repos/${owner}/${repo}/pulls?per_page=${limit}`, {
+      const { data: prs } = await axios.get<PullRequests>(`https://api.github.com/repos/${owner}/${repo}/pulls?per_page=${limit}&state=all`, {
         headers: {
           Authorization: `token ${accessToken}`
         }
