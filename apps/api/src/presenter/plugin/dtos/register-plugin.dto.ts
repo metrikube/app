@@ -1,7 +1,8 @@
-import { GenericCredentialType, MetricType, PluginResult } from '@metrikube/common';
 import { IsDefined, IsNotEmpty, IsNotEmptyObject, IsOptional, IsUUID } from 'class-validator';
 
 import { ApiProperty } from '@nestjs/swagger';
+
+import { GenericCredentialType, MetricType, PluginResult } from '@metrikube/common';
 
 import { PluginToMetricEntity } from '../../../infrastructure/database/entities/plugin_to_metric.entity';
 
@@ -22,6 +23,10 @@ export class RegisterPluginRequestDto {
   @IsUUID()
   @IsNotEmpty()
   pluginId: string;
+
+  @ApiProperty({ type: String, name: 'name', description: 'The name of the widget to register', example: 'My Backend Ping Check' })
+  @IsNotEmpty()
+  name: string;
 
   @ApiProperty({ type: String, name: 'metricType', description: 'The type of the metric to register', example: 'api-endpoint-health-check' })
   @IsNotEmpty()

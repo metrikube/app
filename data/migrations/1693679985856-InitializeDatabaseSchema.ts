@@ -1,21 +1,9 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class InitializeDatabaseSchema1693085817043 implements MigrationInterface {
-  name = 'InitializeDatabaseSchema1693085817043';
+export class InitializeDatabaseSchema1693679985856 implements MigrationInterface {
+  name = 'InitializeDatabaseSchema1693679985856';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(
-      `CREATE TABLE "plugin_to_metric"
-       (
-         "id"          varchar PRIMARY KEY NOT NULL,
-         "name"        varchar             NOT NULL,
-         "description" varchar,
-         "pluginId"    varchar             NOT NULL,
-         "metricId"    varchar             NOT NULL,
-         "resourceId"  varchar,
-         "isActive"    boolean             NOT NULL DEFAULT (1)
-       )`
-    );
     await queryRunner.query(
       `CREATE TABLE "metric"
        (
@@ -42,13 +30,24 @@ export class InitializeDatabaseSchema1693085817043 implements MigrationInterface
          "createdAt"      datetime            NOT NULL DEFAULT (datetime('now'))
        )`
     );
+    await queryRunner.query(`CREATE TABLE "credential"
+                             (
+                               "id"       varchar PRIMARY KEY NOT NULL,
+                               "type"     varchar             NOT NULL,
+                               "value"    varchar             NOT NULL,
+                               "pluginId" varchar             NOT NULL
+                             )`);
     await queryRunner.query(
-      `CREATE TABLE "credential"
+      `CREATE TABLE "plugin_to_metric"
        (
-         "id"       varchar PRIMARY KEY NOT NULL,
-         "type"     varchar             NOT NULL,
-         "value"    varchar             NOT NULL,
-         "pluginId" varchar             NOT NULL
+         "id"           varchar PRIMARY KEY NOT NULL,
+         "name"         varchar             NOT NULL,
+         "description"  varchar,
+         "pluginId"     varchar             NOT NULL,
+         "credentialId" varchar             NOT NULL,
+         "metricId"     varchar             NOT NULL,
+         "resourceId"   varchar,
+         "isActive"     boolean             NOT NULL DEFAULT (1)
        )`
     );
     await queryRunner.query(
@@ -64,30 +63,6 @@ export class InitializeDatabaseSchema1693085817043 implements MigrationInterface
        )`
     );
     await queryRunner.query(
-      `CREATE TABLE "temporary_plugin_to_metric"
-       (
-         "id"          varchar PRIMARY KEY NOT NULL,
-         "name"        varchar             NOT NULL,
-         "description" varchar,
-         "pluginId"    varchar             NOT NULL,
-         "metricId"    varchar             NOT NULL,
-         "resourceId"  varchar,
-         "isActive"    boolean             NOT NULL DEFAULT (1),
-         CONSTRAINT "FK_8b0c24120b098a39cd9d2c8483a" FOREIGN KEY ("pluginId") REFERENCES "plugin" ("id") ON DELETE NO ACTION ON UPDATE NO ACTION,
-         CONSTRAINT "FK_c0fbae6417365a6dd76554be508" FOREIGN KEY ("metricId") REFERENCES "metric" ("id") ON DELETE NO ACTION ON UPDATE NO ACTION
-       )`
-    );
-    await queryRunner.query(
-      `INSERT INTO "temporary_plugin_to_metric"("id", "name", "description", "pluginId", "metricId", "resourceId", "isActive")
-       SELECT "id", "name", "description", "pluginId", "metricId", "resourceId", "isActive"
-       FROM "plugin_to_metric"`
-    );
-    await queryRunner.query(`DROP TABLE "plugin_to_metric"`);
-    await queryRunner.query(
-      `ALTER TABLE "temporary_plugin_to_metric"
-        RENAME TO "plugin_to_metric"`
-    );
-    await queryRunner.query(
       `CREATE TABLE "temporary_metric"
        (
          "id"              varchar PRIMARY KEY NOT NULL,
@@ -97,7 +72,7 @@ export class InitializeDatabaseSchema1693085817043 implements MigrationInterface
          "refreshInterval" integer             NOT NULL DEFAULT (60),
          "isNotifiable"    boolean             NOT NULL DEFAULT (0),
          "createdAt"       datetime            NOT NULL DEFAULT (datetime('now')),
-         CONSTRAINT "FK_b7280030ae41f12f0e83fdabcdb" FOREIGN KEY ("pluginId") REFERENCES "plugin" ("id") ON DELETE NO ACTION ON UPDATE NO ACTION
+         CONSTRAINT "fk_metric_plugin_id" FOREIGN KEY ("pluginId") REFERENCES "plugin" ("id") ON DELETE NO ACTION ON UPDATE NO ACTION
        )`
     );
     await queryRunner.query(
@@ -106,10 +81,8 @@ export class InitializeDatabaseSchema1693085817043 implements MigrationInterface
        FROM "metric"`
     );
     await queryRunner.query(`DROP TABLE "metric"`);
-    await queryRunner.query(
-      `ALTER TABLE "temporary_metric"
-        RENAME TO "metric"`
-    );
+    await queryRunner.query(`ALTER TABLE "temporary_metric"
+      RENAME TO "metric"`);
     await queryRunner.query(
       `CREATE TABLE "temporary_credential"
        (
@@ -120,16 +93,43 @@ export class InitializeDatabaseSchema1693085817043 implements MigrationInterface
          CONSTRAINT "FK_acb956869280165df27c2b25dc8" FOREIGN KEY ("pluginId") REFERENCES "plugin" ("id") ON DELETE NO ACTION ON UPDATE NO ACTION
        )`
     );
-    await queryRunner.query(
-      `INSERT INTO "temporary_credential"("id", "type", "value", "pluginId")
-       SELECT "id", "type", "value", "pluginId"
-       FROM "credential"`
-    );
+    await queryRunner.query(`INSERT INTO "temporary_credential"("id", "type", "value", "pluginId")
+                             SELECT "id", "type", "value", "pluginId"
+                             FROM "credential"`);
     await queryRunner.query(`DROP TABLE "credential"`);
+    await queryRunner.query(`ALTER TABLE "temporary_credential"
+      RENAME TO "credential"`);
     await queryRunner.query(
-      `ALTER TABLE "temporary_credential"
-        RENAME TO "credential"`
+      `CREATE TABLE "temporary_plugin_to_metric"
+       (
+         "id"           varchar PRIMARY KEY NOT NULL,
+         "name"         varchar             NOT NULL,
+         "description"  varchar,
+         "pluginId"     varchar             NOT NULL,
+         "credentialId" varchar             NOT NULL,
+         "metricId"     varchar             NOT NULL,
+         "resourceId"   varchar,
+         "isActive"     boolean             NOT NULL DEFAULT (1),
+         CONSTRAINT "fk_plugin_id" FOREIGN KEY ("pluginId") REFERENCES "plugin" ("id") ON DELETE NO ACTION ON UPDATE NO ACTION,
+         CONSTRAINT "fk_credential_id" FOREIGN KEY ("credentialId") REFERENCES "credential" ("id") ON DELETE NO ACTION ON UPDATE NO ACTION,
+         CONSTRAINT "fk_metric_id" FOREIGN KEY ("metricId") REFERENCES "metric" ("id") ON DELETE NO ACTION ON UPDATE NO ACTION
+       )`
     );
+    await queryRunner.query(
+      `INSERT INTO "temporary_plugin_to_metric"("id", "name", "description", "pluginId", "credentialId", "metricId", "resourceId", "isActive")
+       SELECT "id",
+              "name",
+              "description",
+              "pluginId",
+              "credentialId",
+              "metricId",
+              "resourceId",
+              "isActive"
+       FROM "plugin_to_metric"`
+    );
+    await queryRunner.query(`DROP TABLE "plugin_to_metric"`);
+    await queryRunner.query(`ALTER TABLE "temporary_plugin_to_metric"
+      RENAME TO "plugin_to_metric"`);
     await queryRunner.query(
       `CREATE TABLE "temporary_alert"
        (
@@ -174,29 +174,49 @@ export class InitializeDatabaseSchema1693085817043 implements MigrationInterface
        FROM "temporary_alert"`
     );
     await queryRunner.query(`DROP TABLE "temporary_alert"`);
+    await queryRunner.query(`ALTER TABLE "plugin_to_metric"
+      RENAME TO "temporary_plugin_to_metric"`);
     await queryRunner.query(
-      `ALTER TABLE "credential"
-        RENAME TO "temporary_credential"`
-    );
-    await queryRunner.query(
-      `CREATE TABLE "credential"
+      `CREATE TABLE "plugin_to_metric"
        (
-         "id"       varchar PRIMARY KEY NOT NULL,
-         "type"     varchar             NOT NULL,
-         "value"    varchar             NOT NULL,
-         "pluginId" varchar             NOT NULL
+         "id"           varchar PRIMARY KEY NOT NULL,
+         "name"         varchar             NOT NULL,
+         "description"  varchar,
+         "pluginId"     varchar             NOT NULL,
+         "credentialId" varchar             NOT NULL,
+         "metricId"     varchar             NOT NULL,
+         "resourceId"   varchar,
+         "isActive"     boolean             NOT NULL DEFAULT (1)
        )`
     );
     await queryRunner.query(
-      `INSERT INTO "credential"("id", "type", "value", "pluginId")
-       SELECT "id", "type", "value", "pluginId"
-       FROM "temporary_credential"`
+      `INSERT INTO "plugin_to_metric"("id", "name", "description", "pluginId", "credentialId", "metricId", "resourceId", "isActive")
+       SELECT "id",
+              "name",
+              "description",
+              "pluginId",
+              "credentialId",
+              "metricId",
+              "resourceId",
+              "isActive"
+       FROM "temporary_plugin_to_metric"`
     );
+    await queryRunner.query(`DROP TABLE "temporary_plugin_to_metric"`);
+    await queryRunner.query(`ALTER TABLE "credential"
+      RENAME TO "temporary_credential"`);
+    await queryRunner.query(`CREATE TABLE "credential"
+                             (
+                               "id"       varchar PRIMARY KEY NOT NULL,
+                               "type"     varchar             NOT NULL,
+                               "value"    varchar             NOT NULL,
+                               "pluginId" varchar             NOT NULL
+                             )`);
+    await queryRunner.query(`INSERT INTO "credential"("id", "type", "value", "pluginId")
+                             SELECT "id", "type", "value", "pluginId"
+                             FROM "temporary_credential"`);
     await queryRunner.query(`DROP TABLE "temporary_credential"`);
-    await queryRunner.query(
-      `ALTER TABLE "metric"
-        RENAME TO "temporary_metric"`
-    );
+    await queryRunner.query(`ALTER TABLE "metric"
+      RENAME TO "temporary_metric"`);
     await queryRunner.query(
       `CREATE TABLE "metric"
        (
@@ -215,32 +235,10 @@ export class InitializeDatabaseSchema1693085817043 implements MigrationInterface
        FROM "temporary_metric"`
     );
     await queryRunner.query(`DROP TABLE "temporary_metric"`);
-    await queryRunner.query(
-      `ALTER TABLE "plugin_to_metric"
-        RENAME TO "temporary_plugin_to_metric"`
-    );
-    await queryRunner.query(
-      `CREATE TABLE "plugin_to_metric"
-       (
-         "id"          varchar PRIMARY KEY NOT NULL,
-         "name"        varchar             NOT NULL,
-         "description" varchar,
-         "pluginId"    varchar             NOT NULL,
-         "metricId"    varchar             NOT NULL,
-         "resourceId"  varchar,
-         "isActive"    boolean             NOT NULL DEFAULT (1)
-       )`
-    );
-    await queryRunner.query(
-      `INSERT INTO "plugin_to_metric"("id", "name", "description", "pluginId", "metricId", "resourceId", "isActive")
-       SELECT "id", "name", "description", "pluginId", "metricId", "resourceId", "isActive"
-       FROM "temporary_plugin_to_metric"`
-    );
-    await queryRunner.query(`DROP TABLE "temporary_plugin_to_metric"`);
     await queryRunner.query(`DROP TABLE "alert"`);
+    await queryRunner.query(`DROP TABLE "plugin_to_metric"`);
     await queryRunner.query(`DROP TABLE "credential"`);
     await queryRunner.query(`DROP TABLE "plugin"`);
     await queryRunner.query(`DROP TABLE "metric"`);
-    await queryRunner.query(`DROP TABLE "plugin_to_metric"`);
   }
 }

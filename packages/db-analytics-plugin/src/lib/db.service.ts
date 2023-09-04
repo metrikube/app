@@ -1,23 +1,21 @@
-import { DbConnectionCredentialType, DbConnectionType, ApiDatabaseLastAverageQueriesByHour, ApiDatabaseSlowQueries } from '@metrikube/common';
 import * as mysql from 'mysql2';
 
+import { ApiDatabaseLastAverageQueriesByHour, ApiDatabaseSlowQueries, DbConnectionCredentialType, DbConnectionType } from '@metrikube/common';
 
-export class DbService  {
+export class DbService {
   private readonly credentials: DbConnectionType;
   constructor(credentials: DbConnectionCredentialType) {
-    const dbConfig = {
+    this.credentials = {
       host: credentials.dbHost,
       user: credentials.dbUsername,
       password: credentials.dbPassword,
       database: credentials.dbName,
       port: credentials.dbPort
     };
-    this.credentials = dbConfig;
   }
 
-  async connection(): Promise<mysql.Connection> {
-    const connection = mysql.createConnection(this.credentials);
-    return connection;
+  connection(): mysql.Connection {
+    return mysql.createConnection(this.credentials);
   }
 
   public executeQuery(connection: mysql.Connection, query: string): Promise<any> {
@@ -56,7 +54,7 @@ export class DbService  {
         h.hour
     ORDER BY
         h.hour;
-    `
+    `;
     const connection = await this.connection();
     try {
       const results = await this.executeQuery(connection, query);
@@ -65,7 +63,7 @@ export class DbService  {
         queries: results,
         date: currentDate.toISOString()
       };
-      } catch (error) {
+    } catch (error) {
       console.error('Error generated during query execution: ', error);
       throw error;
     } finally {
@@ -92,7 +90,6 @@ export class DbService  {
   }
 
   public async getNbRows(): Promise<number> {
-
     const connection = await this.connection();
     const query = `
       SELECT SUM(TABLE_ROWS) as nbRows
@@ -110,7 +107,6 @@ export class DbService  {
   }
 
   public async getNbTables(): Promise<number> {
-
     const connection = await this.connection();
     // TODO because it's 0
     const query = `
@@ -120,35 +116,34 @@ export class DbService  {
     try {
       const results = await this.executeQuery(connection, query);
       return results[0].nbTables;
-
-
     } catch (error) {
       console.error('Error executing getDbSizeMb: ', error);
       throw error;
     }
   }
 
-  public async getSlowQuery(): Promise<ApiDatabaseSlowQueries> {
+  public async getSlowQuery(): Promise<ApiDatabaseSlowQueries[]> {
     const connection = await this.connection();
     const query = `
       SELECT
           MAX_TIMER_WAIT / 1000000000000 AS max_execution_time_seconds,
           AVG_TIMER_WAIT / 1000000000000 AS executionTime,
-          DIGEST_TEXT AS query
+          DIGEST_TEXT AS query,
+          LAST_SEEN AS date
       FROM
           performance_schema.events_statements_summary_by_digest
+      WHERE
+          SCHEMA_NAME = '${this.credentials.database}'
       ORDER BY
           max_execution_time_seconds DESC
-      LIMIT 1;
+      LIMIT 10;
     `;
 
     try {
-      const results = await this.executeQuery(connection, query);
-      return results[0];
+      return this.executeQuery(connection, query);
     } catch (error) {
       console.error('Error executing getDbSizeMb: ', error);
       throw error;
     }
   }
 }
-

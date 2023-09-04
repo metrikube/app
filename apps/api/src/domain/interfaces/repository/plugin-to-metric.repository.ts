@@ -3,7 +3,7 @@ import { PluginToMetricEntity } from '../../../infrastructure/database/entities/
 export interface PluginToMetricRepository {
   getActiveMetricsWithRelations(): Promise<PluginToMetricEntity[]>;
 
-  createPluginToMetric(param: { metricId: string; pluginId: string; isActivated: boolean; resourceId?: string }): Promise<PluginToMetricEntity>;
+  createPluginToMetric(pluginToMetric: Partial<Omit<PluginToMetricEntity, 'id'>>): Promise<PluginToMetricEntity>;
 
   findPluginToMetricById(id: string): Promise<PluginToMetricEntity | undefined>;
 

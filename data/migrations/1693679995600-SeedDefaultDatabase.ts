@@ -1,6 +1,5 @@
-import { randomUUID } from 'node:crypto';
-import { MigrationInterface, ObjectLiteral, QueryRunner } from 'typeorm';
-import { EntityTarget } from 'typeorm/common/EntityTarget';
+import { randomUUID } from 'crypto';
+import { EntityTarget, MigrationInterface, ObjectLiteral, QueryRunner } from 'typeorm';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
 import { AlertEntity } from '../../apps/api/src/infrastructure/database/entities/alert.entity';
@@ -9,7 +8,7 @@ import { MetricEntity } from '../../apps/api/src/infrastructure/database/entitie
 import { PluginEntity } from '../../apps/api/src/infrastructure/database/entities/plugin.entity';
 import { PluginToMetricEntity } from '../../apps/api/src/infrastructure/database/entities/plugin_to_metric.entity';
 
-export class SeedDefaultDatabase1693085834707 implements MigrationInterface {
+export class SeedDefaultDatabase1693679995600 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     const pluginIds = {
       aws: randomUUID(),
@@ -22,7 +21,15 @@ export class SeedDefaultDatabase1693085834707 implements MigrationInterface {
       apiHealthCheck: randomUUID(),
       awsEc2SingleInstanceUsage: randomUUID(),
       awsEc2MultipleInstancesUsage: randomUUID(),
-      githubLastIssues: randomUUID()
+      githubLastIssues: randomUUID(),
+      sqlDatabaseQueries: randomUUID(),
+      sqlDatabaseSlowQueries: randomUUID(),
+      sqlDatabaseSize: randomUUID()
+    };
+
+    const credentialIds = {
+      apiHealthCheck: randomUUID(),
+      github: randomUUID()
     };
 
     const pluginToMetricIds = {
@@ -98,17 +105,38 @@ export class SeedDefaultDatabase1693085834707 implements MigrationInterface {
         name: 'Github last ussues',
         pluginId: pluginIds.github,
         isNotifiable: false
+      },
+      {
+        id: metricIds.sqlDatabaseQueries,
+        type: 'database-queries',
+        name: 'SQL Database Usage',
+        pluginId: pluginIds.sql,
+        isNotifiable: false
+      },
+      {
+        id: metricIds.sqlDatabaseSlowQueries,
+        type: 'database-slow-queries',
+        name: 'SQL Database Slow Queries',
+        pluginId: pluginIds.sql,
+        isNotifiable: false
+      },
+      {
+        id: metricIds.sqlDatabaseSize,
+        type: 'database-size',
+        name: 'SQL Database Size',
+        pluginId: pluginIds.sql,
+        isNotifiable: false
       }
     ];
     const credentials = [
       {
-        id: randomUUID(),
+        id: credentialIds.apiHealthCheck,
         pluginId: pluginIds.apiHealthCheck,
         type: 'apiEndpoint',
         value: 'eyJhcGlFbmRwb2ludCI6ICJodHRwczovL2pzb25wbGFjZWhvbGRlci50eXBpY29kZS5jb20vdXNlcnMifQo='
       },
       {
-        id: randomUUID(),
+        id: credentialIds.github,
         pluginId: pluginIds.github,
         type: 'github',
         value:
@@ -120,6 +148,7 @@ export class SeedDefaultDatabase1693085834707 implements MigrationInterface {
         id: pluginToMetricIds.pingApi,
         pluginId: pluginIds.apiHealthCheck,
         metricId: metricIds.apiHealthCheck,
+        credentialId: credentialIds.apiHealthCheck,
         isActive: true,
         resourceId: '',
         name: "Ping l'api jsonplaceholder",

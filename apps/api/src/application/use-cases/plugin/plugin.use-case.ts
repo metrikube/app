@@ -3,6 +3,7 @@ import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { ApiMonitoringService } from '@metrikube/api-monitoring';
 import { AWSService } from '@metrikube/aws-plugin';
 import { CredentialType, GenericCredentialType, MetricType, Plugin, PluginConnectionInterface, PluginResult } from '@metrikube/common';
+import { DbAnalyticsPluginService } from '@metrikube/db-analytics-plugin';
 import { GithubService } from '@metrikube/github-plugin';
 
 import { AlertRepository } from '../../../domain/interfaces/repository/alert.repository';
@@ -15,6 +16,7 @@ import { PluginUseCaseInterface } from '../../../domain/interfaces/use-cases/plu
 import { CredentialEntity } from '../../../infrastructure/database/entities/credential.entity';
 import { MetricEntity } from '../../../infrastructure/database/entities/metric.entity';
 import { PluginEntity } from '../../../infrastructure/database/entities/plugin.entity';
+import { PluginToMetricEntity } from '../../../infrastructure/database/entities/plugin_to_metric.entity';
 import { DiTokens } from '../../../infrastructure/di/tokens';
 import { PluginResponseDto } from '../../../presenter/plugin/dtos/plugins.dto';
 import { RegisterPluginRequestDto, RegisterPluginResponseDto } from '../../../presenter/plugin/dtos/register-plugin.dto';
@@ -31,7 +33,8 @@ export class PluginUseCase implements PluginUseCaseInterface {
     @Inject(DiTokens.MetricRepositoryToken) private readonly metricRepository: MetricRepository,
     @Inject(DiTokens.PluginRepositoryToken) private readonly pluginRepository: PluginRepository,
     @Inject(DiTokens.PluginToMetricRepositoryToken) private readonly pluginToMetricRepository: PluginToMetricRepository,
-    @Inject(DiTokens.Scheduler) private readonly scheduler: SchedulerInterface
+    @Inject(DiTokens.Scheduler) private readonly scheduler: SchedulerInterface,
+    @Inject(DiTokens.DbAnalyticsPluginServiceToken) private readonly databaseService: DbAnalyticsPluginService
   ) {
   }
 
@@ -45,7 +48,7 @@ export class PluginUseCase implements PluginUseCaseInterface {
     return new PluginResponseDto(plugins, metrics, credentials);
   }
 
-  async registerPlugin({ pluginId, metricType, credential, resourceId }: RegisterPluginRequestDto): Promise<RegisterPluginResponseDto> {
+  async registerPlugin({ pluginId, metricType, credential, resourceId, name }: RegisterPluginRequestDto): Promise<RegisterPluginResponseDto> {
     const [plugin, metric]: [PluginEntity, MetricEntity] = await Promise.all([
       this.pluginRepository.findOneById(pluginId),
       this.metricRepository.findMetricByType(pluginId, metricType)
@@ -54,25 +57,39 @@ export class PluginUseCase implements PluginUseCaseInterface {
 
     await this.testPluginConnection(plugin, credential);
 
+    const pluginCredential = await this.credentialRepository.createCredential({
+      value: credential,
+      plugin,
+      type: plugin.credentialType as CredentialType
+    })
     // TODO : wrap into a transaction
-    const [pluginCredential, pluginToMetric] = await Promise.all([
-      this.credentialRepository.createCredential({ value: credential, plugin, type: plugin.credentialType as CredentialType }),
-      this.pluginToMetricRepository.createPluginToMetric({ pluginId, metricId: metric.id, resourceId, isActivated: true })
-    ]);
+    /**
+     * Ajouter le credential id au niveau du widget pour pouvoir le récupérer et pouvoir ajouter plusieurs même widget mais sur des plugins différents
+     */
+    const pluginToMetric = await this.pluginToMetricRepository.createPluginToMetric({
+      pluginId,
+      name,
+      credentialId: pluginCredential.id,
+      metricId: metric.id,
+      resourceId,
+      isActive: true
+    });
 
-    const pluginDataSample = await this.refreshPluginMetric(pluginId, metricType);
+    const pluginDataSample = await this.refreshPluginMetric(pluginId, pluginToMetric.id);
 
     return new RegisterPluginResponseDto(pluginToMetric, pluginDataSample);
   }
 
   /**
-   * TODO : sécurisé si jamais l'utlisateurs supprime envoi un pluginId qui n'a pas de metricType associé
+   * TODO : sécurisé si jamais l'utlisateurs supprime un plugin et envoi un pluginId qui n'a pas de metricType associé
    * @param pluginId
-   * @param metricType
+   * @param pluginToMetricId
    */
-  async refreshPluginMetric(pluginId: string, metricType: MetricType): Promise<PluginResult<MetricType>> {
-    const credentials = await this.credentialRepository.findCrendentialByPluginId(pluginId);
+  async refreshPluginMetric(pluginId: PluginEntity['id'], pluginToMetricId: PluginToMetricEntity['id']): Promise<PluginResult<MetricType>> {
+    const pluginToMetric = await this.pluginToMetricRepository.findPluginToMetricById(pluginToMetricId);
+    const credentials = await this.credentialRepository.findCredentialByIdAndPluginId(pluginToMetric.credentialId, pluginId);
     if (!credentials) throw new BadRequestException('No credentials found for this plugin');
+    const metricType = pluginToMetric.metric.type as MetricType;
 
     const parsedCredentials = JSON.parse(Buffer.from(credentials.value, 'base64').toString('utf-8')) as GenericCredentialType;
     const getMetricTypeDataSample: (credentials: GenericCredentialType) => Promise<PluginResult<MetricType>> = this.getMetricMethodByMetricType(metricType);
@@ -96,11 +113,11 @@ export class PluginUseCase implements PluginUseCaseInterface {
       case 'github-last-prs':
         throw 'Not implemented';
       case 'database-queries':
-        throw 'Not implemented';
+        return this.databaseService.getNbQueries
       case 'database-size':
-        throw 'Not implemented';
+        return this.databaseService.getDbSize
       case 'database-slow-queries':
-        throw 'Not implemented';
+        return this.databaseService.getSlowQuery
       case 'database-connections':
         throw 'Not implemented';
       default:
@@ -122,12 +139,10 @@ export class PluginUseCase implements PluginUseCaseInterface {
     credential: GenericCredentialType
   ): Promise<void> {
     const pluginConnection: Record<Plugin['type'], PluginConnectionInterface> = {
-      api: this.apiMonitoringService,
       api_endpoint: this.apiMonitoringService,
       github: this.githubService,
       aws: this.AWSService,
-      sql_database: this.apiMonitoringService,
-      database: this.apiMonitoringService
+      sql_database: this.databaseService
     };
     const pluginTestConnection: { ok: boolean; message: string | null } = await pluginConnection[plugin.type].testConnection(credential);
     if (!pluginTestConnection.ok) throw new BadRequestException(pluginTestConnection.message || 'Plugin connection failed');

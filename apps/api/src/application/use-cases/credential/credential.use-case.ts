@@ -1,6 +1,8 @@
-import { Inject, Injectable } from '@nestjs/common';
 import { Connection } from 'mysql2/promise';
-import { GenericCredentialType, Plugin, ApiDatabaseSize, ApiDatabaseSlowQueries, ApiDatabaseLastAverageQueriesByHour } from '@metrikube/common';
+
+import { Inject, Injectable } from '@nestjs/common';
+
+import { ApiDatabaseLastAverageQueriesByHour, ApiDatabaseSize, ApiDatabaseSlowQueries, GenericCredentialType, Plugin } from '@metrikube/common';
 import { DbAnalyticsPluginService } from '@metrikube/db-analytics-plugin';
 
 import { CredentialRepository } from '../../../domain/interfaces/repository/credential.repository';
@@ -43,7 +45,7 @@ export class CredentialUseCase implements CredentialUseCaseInterface {
     });
   }
 
-  async getSlowQuery(pluginId: Plugin['id']): Promise<ApiDatabaseSlowQueries> {
+  async getSlowQuery(pluginId: Plugin['id']): Promise<ApiDatabaseSlowQueries[]> {
     const credentials = await this.credentialRepository.findCrendentialByPluginId(pluginId);
     const credentialValue = JSON.parse(Buffer.from(credentials.value, 'base64').toString('utf-8')) as GenericCredentialType;
     return this.DbAnalyticsPluginService.getSlowQuery({

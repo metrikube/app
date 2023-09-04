@@ -51,7 +51,7 @@ export class AlertUseCase implements AlertUseCaseInterface {
   async jobRunner(id: string): Promise<void> {
     const alert: AlertEntity = await this.alertRepository.findAlertById(id);
     const metric: PluginToMetricEntity = await this.pluginToMetricRepository.findPluginToMetricById(alert.pluginToMetricId);
-    const metricData: PluginResult<MetricType> = await this.pluginUseCase.refreshPluginMetric(metric.pluginId, metric.metric.type as MetricType);
+    const metricData: PluginResult<MetricType> = await this.pluginUseCase.refreshPluginMetric(metric.pluginId, alert.pluginToMetricId);
     return this.checkContiditionAndNotify(metricData, alert);
   }
 

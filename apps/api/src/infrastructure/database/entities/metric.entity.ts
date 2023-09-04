@@ -17,7 +17,7 @@ export class MetricEntity {
   })
   id: string;
 
-  @JoinColumn()
+  @JoinColumn({ foreignKeyConstraintName: 'fk_metric_plugin_id' })
   @ManyToOne(() => PluginEntity, (plugin: PluginEntity) => plugin.id)
   @ApiProperty({ name: 'plugin', type: PluginEntity, description: 'Metric plugins' })
   plugin: PluginEntity;

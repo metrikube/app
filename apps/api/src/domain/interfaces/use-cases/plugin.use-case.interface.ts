@@ -2,6 +2,7 @@ import { GenericCredentialType, MetricType, Plugin, PluginResult } from '@metrik
 
 import { CredentialEntity } from '../../../infrastructure/database/entities/credential.entity';
 import { PluginEntity } from '../../../infrastructure/database/entities/plugin.entity';
+import { PluginToMetricEntity } from '../../../infrastructure/database/entities/plugin_to_metric.entity';
 import { PluginResponseDto } from '../../../presenter/plugin/dtos/plugins.dto';
 import { RegisterPluginRequestDto, RegisterPluginResponseDto } from '../../../presenter/plugin/dtos/register-plugin.dto';
 
@@ -14,7 +15,7 @@ export interface PluginUseCaseInterface {
 
   listPlugins(): Promise<PluginResponseDto>;
 
-  refreshPluginMetric(pluginId: string, metric: string): PluginResult<MetricType>;
+  refreshPluginMetric(pluginId: PluginEntity['id'], pluginToMetricId: PluginToMetricEntity['id']): Promise<PluginResult<MetricType>>;
 
   registerPlugin(body: RegisterPluginRequestDto): Promise<RegisterPluginResponseDto>;
 }
