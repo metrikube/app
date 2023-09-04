@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { ApiAWSSingleResourceInstanceResult, PluginConnectionInterface } from '@metrikube/common';
 import { AwsCredentialType } from '@metrikube/common';
@@ -55,10 +55,24 @@ export class AWSService implements PluginConnectionInterface {
     }
   }
 
-  async testConnection(): Promise<{ ok: boolean; message: string | null }> {
-    return {
-      ok: true,
-      message: null
-    };
+  async testConnection(credentials: AwsCredentialType): Promise<{ ok: boolean; message: string | null }> {
+    Logger.log(`🏓 Pinging AWS on region"${credentials.region}`);
+    try {
+      const ec2Service = new EC2Service(credentials);
+      const ec2Ping = await ec2Service.pingEC2();
+      const s3Service = new S3Service(credentials);
+      const s3Ping = await s3Service.pingS3();
+
+      return {
+        ok: true,
+        message: `${ec2Ping.message} and ${s3Ping.message}}`
+      };
+    } catch (error) {
+      Logger.log(`🏓 Pinging AWS on region"${credentials.region}" failed`);
+      return {
+        ok: false,
+        message: `Pinging AWS on region"${credentials.region}" failed`
+      };
+    }
   }
 }
