@@ -15,10 +15,6 @@ import {
   GithubCredentialType
 } from '@metrikube/common'
 import {
-  SetupPluginUsecase,
-  SetupPluginRequest,
-  CreateAlertUsecase,
-  CreateAlertRequest,
   SetupPluginStepEnum,
   AlertRequest,
   MetricModel,
@@ -30,6 +26,8 @@ import { Dialog, DialogContent, DialogTitle, IconButton } from '@mui/material'
 import React, { Dispatch, SetStateAction, useContext, useEffect, useState, useMemo } from 'react'
 import { useForm, FormProvider } from 'react-hook-form'
 import { createPluginAlertMutation, getPluginsQuery, setupPluginMutation } from '../../../services/plugin.service'
+import { useQueryClient } from '@tanstack/react-query'
+
 
 interface Props {
   open: boolean
@@ -112,7 +110,8 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
   const [selectedProviderCategory, setSelectedProviderCategory] = useState('')
   const [isProviderChose, setIsProviderChose] = useState<boolean>(selectedProvider !== null)
   const [activeStep, setActiveStep] = useState(0)
-  const { data: plugins } = getPluginsQuery(open)
+  const queryClient = useQueryClient()
+  const { data: plugins } = getPluginsQuery()
 
   useEffect(() => {
     setIsProviderChose(selectedProvider !== null)
@@ -125,12 +124,13 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
       setActiveStep(SetupPluginStepEnum.FINISH)
     }
     setActiveStep(SetupPluginStepEnum.ALERT_CONFIG)
+    queryClient.invalidateQueries({ queryKey: ["getActiveMetrics"] })
   })
 
   const { mutate: createAlert, isLoading: isCreateAlertLoading } = createPluginAlertMutation(() => {
     setActiveStep(activeStep + 1)
   })
-  
+
 
   const onSubmit = (data: SetupPluginFormValues) => {
     if (!selectedProvider || !selectedMetric) {
@@ -223,7 +223,7 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
       <DialogTitle>
         <DialogHeader>
           <span>
-            {activeStep === 2 ? `${selectedProvider?.name} settings` : 'Set up your provider'}
+            {activeStep === SetupPluginStepEnum.ALERT_CONFIG ? `${selectedProvider?.name} settings` : 'Set up your provider'}
           </span>
           <IconButton onClick={handleModalClose}>
             <Close />
@@ -234,16 +234,16 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
       <FormProvider {...methods}>
         <form onSubmit={methods.handleSubmit(onSubmit)}>
           <DialogContent>
-            {activeStep === 0 && (
+            {activeStep === SetupPluginStepEnum.CHOOSE_PLUGIN && (
               <ProviderFormStep1
                 providerCategory={selectedProviderCategory}
                 allPlugins={plugins}
                 handleProviderCategory={handleFilterChange}
               />
             )}
-            {activeStep === 1 && <ProviderFormStep2 />}
-            {activeStep === 2 && <ProviderFormStep3 />}
-            {activeStep === 3 && <p>Félicitations</p>}
+            {activeStep === SetupPluginStepEnum.FILL_CREDENTIAL && <ProviderFormStep2 />}
+            {activeStep === SetupPluginStepEnum.ALERT_CONFIG && <ProviderFormStep3 />}
+            {activeStep === SetupPluginStepEnum.FINISH && <p>Félicitations</p>}
           </DialogContent>
           <ProviderFormActionButtons
             activeStep={activeStep}
