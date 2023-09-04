@@ -51,8 +51,8 @@ export const MetricCard = ({
   return (
     <Grid item xs={size === 'small' ? 4 : 8}>
       <CardHeader
-        title={metric.metric.name}
-        subheader="September 14, 2016"
+        title={metric.name}
+        subheader={metric.metric.name}
         avatar={<Logo alt={metric.plugin.name} src={avatarUrl} />}
         action={
           <IconsActionContainer>
