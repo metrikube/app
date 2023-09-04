@@ -41,7 +41,7 @@ export class MetricEntity {
   })
   name: string;
 
-  @Column({ name: 'refreshInterval', type: 'integer', default: 60, nullable: false })
+  @Column({ name: 'refreshInterval', type: 'integer', default: 59, nullable: false })
   @ApiProperty({
     name: 'refreshInterval',
     type: Number,

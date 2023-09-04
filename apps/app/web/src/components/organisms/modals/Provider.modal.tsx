@@ -27,10 +27,9 @@ import {
 } from '@metrikube/core'
 import { Close } from '@mui/icons-material'
 import { Dialog, DialogContent, DialogTitle, IconButton } from '@mui/material'
-import { useMutation } from '@tanstack/react-query'
 import React, { Dispatch, SetStateAction, useContext, useEffect, useState, useMemo } from 'react'
 import { useForm, FormProvider } from 'react-hook-form'
-import { getPluginsQuery } from '../../../services/setupPlugin.service'
+import { createPluginAlertMutation, getPluginsQuery, setupPluginMutation } from '../../../services/plugin.service'
 
 interface Props {
   open: boolean
@@ -55,7 +54,6 @@ const steps: string[] = [
 ]
 
 const ProviderModal = ({ open, setOpenModal }: Props) => {
-  const { pluginAdapter, alertAdapter } = useAdapter()
 
   const {
     selectedProvider,
@@ -120,44 +118,19 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
     setIsProviderChose(selectedProvider !== null)
   }, [selectedProvider])
 
-  const { mutate: setupPlugin, isLoading: isSetupPluginLoading } = useMutation(
-    ({ pluginId, name, metricType, credential }: SetupPluginRequest) =>
-      new SetupPluginUsecase(pluginAdapter).execute(pluginId, name, metricType, credential),
-    {
-      // how to type that ??
-      onSuccess: (data) => {
-        setPluginToMetricId(data.id)
-        setMetricFields(data.data)
-        if (selectedMetric?.isNotifiable) {
-          setActiveStep(SetupPluginStepEnum.FINISH)
-        }
-        setActiveStep(SetupPluginStepEnum.ALERT_CONFIG)
-      },
-      onError: () => {
-        alert('there was an error')
-      }
+  const { mutate: setupPlugin, isLoading: isSetupPluginLoading } = setupPluginMutation((data) => {
+    setPluginToMetricId(data.id)
+    setMetricFields(data.data)
+    if (selectedMetric?.isNotifiable) {
+      setActiveStep(SetupPluginStepEnum.FINISH)
     }
-  )
+    setActiveStep(SetupPluginStepEnum.ALERT_CONFIG)
+  })
 
-  const { mutate: createAlert, isLoading: isCreateAlertLoading } = useMutation(
-    ({ pluginToMetricId, alerts }: CreateAlertRequest) => {
-      if (!selectedProvider || !selectedMetric) {
-        throw Error("You can't make an alert without plugin or metric")
-      }
-      return new CreateAlertUsecase(alertAdapter).execute({
-        pluginToMetricId,
-        alerts
-      })
-    },
-    {
-      onSuccess: () => {
-        setActiveStep(activeStep + 1)
-      },
-      onError: () => {
-        alert('there was an error')
-      }
-    }
-  )
+  const { mutate: createAlert, isLoading: isCreateAlertLoading } = createPluginAlertMutation(() => {
+    setActiveStep(activeStep + 1)
+  })
+  
 
   const onSubmit = (data: SetupPluginFormValues) => {
     if (!selectedProvider || !selectedMetric) {
