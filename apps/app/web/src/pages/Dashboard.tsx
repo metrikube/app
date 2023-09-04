@@ -6,25 +6,19 @@ import LastPullRequest from '../components/molecules/metricCards/metricsTypes/gi
 import ConfirmDeletionModal from '../components/organisms/modals/ConfirmDeletion.modal'
 import MetricAlertsModal from '../components/organisms/modals/MetricAlerts.modal'
 import ProviderModal from '../components/organisms/modals/Provider.modal'
-import { useAdapter } from '../config/axios'
 import { DashboardProvider } from '../contexts/Dashboard.context'
 import { SetupPluginProvider } from '../contexts/SetupPlugin.context'
 import DefaultLayout from '../layouts/DefaultLayout'
 import { EmptyStateLayout } from '../layouts/EmptyStateLayout'
+import { getActiveMetricQuery } from '../services/dashboard.service'
 import styled from '@emotion/styled'
-import { ActiveMetricModel, GetActiveMetricsUsecase, activeMetricsMock } from '@metrikube/core'
+import { ActiveMetricModel } from '@metrikube/core'
 import { AddCircleOutline, AddchartOutlined } from '@mui/icons-material'
 import { Button, Grid } from '@mui/material'
-import { useQuery } from '@tanstack/react-query'
 import React, { useState } from 'react'
 
 const Dashboard = () => {
-  const { dashboardMetricsAdapter } = useAdapter()
-  const { data: activeMetrics } = useQuery<ActiveMetricModel[]>({
-    queryKey: ['getActiveMetrics'],
-    queryFn: () => new GetActiveMetricsUsecase(dashboardMetricsAdapter).execute(),
-    initialData: () => []
-  })
+  const { data: activeMetrics } = getActiveMetricQuery()
 
   const [openedModal, setOpenModal] = useState(false)
   const [isMetricAlertsModalOpened, setIsMetricAlertsModalOpened] = useState(false)
@@ -48,8 +42,6 @@ const Dashboard = () => {
     }
   }
 
-  const metricsTemp: ActiveMetricModel[] = [...activeMetrics, ...activeMetricsMock]
-
   return (
     <DefaultLayout>
       <DashboardProvider>
@@ -64,15 +56,19 @@ const Dashboard = () => {
                 startIcon={<AddCircleOutline />}>
                 Add a new provider
               </Button>
-              <Button sx={{ ml: 1 }} size="medium" variant="contained" startIcon={<AddchartOutlined />}>
+              <Button
+                sx={{ ml: 1 }}
+                size="medium"
+                variant="contained"
+                startIcon={<AddchartOutlined />}>
                 Add a new widget
               </Button>
             </div>
           </StyledHeader>
 
-          {metricsTemp.length ? (
+          {activeMetrics.length ? (
             <Grid container spacing={3}>
-              {metricsTemp.map((activeMetric) => (
+              {activeMetrics.map((activeMetric) => (
                 <Grid item key={activeMetric.metric.id}>
                   <BaseMetricCard
                     activeMetric={activeMetric}
@@ -97,7 +93,7 @@ const Dashboard = () => {
           <SetupPluginProvider>
             <ProviderModal open={openedModal} setOpenModal={setOpenModal} />
           </SetupPluginProvider>
-
+            
           <MetricAlertsModal
             open={isMetricAlertsModalOpened}
             setOpenModal={setIsMetricAlertsModalOpened}

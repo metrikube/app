@@ -27,6 +27,9 @@ interface Props {
 
 const MetricAlertsModal = ({ open, setOpenModal }: Props) => {
   const { selectedActiveMetric } = useContext(DashboardContext)
+
+  if (!selectedActiveMetric) return null
+
   const { data: alerts } = getActiveMetricAlertsQuery(selectedActiveMetric.id)
 
   const { mutate: toggleNotification } = toggleAlertMutation()
