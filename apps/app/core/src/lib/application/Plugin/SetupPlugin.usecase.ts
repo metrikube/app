@@ -1,5 +1,5 @@
-import { GenericCredentialType, MetricType, PluginResult } from '@metrikube/common';
-import { PluginAdapter, SetupPlugin } from '@metrikube/core';
+import type { GenericCredentialType, MetricType, PluginResult } from '@metrikube/common';
+import { PluginAdapter } from '@metrikube/core';
 
 export class SetupPluginUsecase {
   constructor(private readonly pluginAdapter: PluginAdapter) { }

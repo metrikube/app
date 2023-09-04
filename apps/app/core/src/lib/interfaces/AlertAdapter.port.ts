@@ -1,4 +1,4 @@
-import { AlertModel, AlertRequest } from '@metrikube/core';
+import type { AlertModel, AlertRequest } from '@metrikube/core';
 
 export type CreateAlertRequest = {
   pluginToMetricId: string;
