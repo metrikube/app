@@ -42,12 +42,13 @@ export interface ApiDatabaseSize {
 }
 
 export interface ApiAWSSingleResourceInstanceResult {
-  id: string;
+  id?: string;
   name: string;
-  status: boolean;
+  status?: boolean;
   cost: number | string;
   region?: string;
   currency?: string;
+  additionnalData?: unknown;
 }
 
 export interface ApiAWSCostExplorerResult {
