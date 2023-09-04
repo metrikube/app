@@ -107,9 +107,9 @@ export class PluginUseCase implements PluginUseCaseInterface {
       case 'aws-bucket-multiple-instances':
         throw 'Not implemented';
       case 'aws-ec2-multiple-instances-usage':
-        throw 'Not implemented';
+        return this.AWSService.getEc2Instances;
       case 'aws-ec2-single-instance-usage':
-        throw 'Not implemented';
+        return this.AWSService.getEc2Instances;
       case 'github-last-prs':
         throw 'Not implemented';
       case 'database-queries':

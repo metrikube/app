@@ -1,7 +1,8 @@
 import { CostExplorerClient, GetCostAndUsageCommand, GetCostAndUsageCommandInput, Group } from '@aws-sdk/client-cost-explorer';
-import { ApiAWSCostExplorerResult, AwsCredentialType } from '@metrikube/common';
 
 import { Injectable } from '@nestjs/common';
+
+import { ApiAWSCostExplorerResult, AwsCredentialType } from '@metrikube/common';
 
 @Injectable()
 export class CostExplorerService {
@@ -102,8 +103,8 @@ export class CostExplorerService {
       };
       const command = new GetCostAndUsageCommand(params);
       const response = await this.client.send(command);
-      const currentCost = response?.ResultsByTime?.[0]?.Total?.['UnblendedCost']?.Amount;
-      const currency = response?.ResultsByTime?.[0]?.Total?.['UnblendedCost']?.Unit;
+      const currentCost = response?.ResultsByTime?.[0]?.Total?.['UnblendedCost']?.Amount || 'unable to retrieve cost';
+      const currency = response?.ResultsByTime?.[0]?.Total?.['UnblendedCost']?.Unit || 'unable to retrieve currency';
       return {
         currentCost,
         currency
