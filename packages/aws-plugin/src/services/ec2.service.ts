@@ -32,8 +32,7 @@ export class EC2Service {
         throw new Error('No instance found');
       }
       const instanceFound = res.Reservations[0].Instances[0];
-
-      const instanceCost = await new CostExplorerService(this.credentials).getInstanceCost(instanceId, {
+      const cost = await CostExplorerService.getInstance(this.credentials).getInstanceCost(instanceId, {
         startDate: new Date().toISOString().split('T')[0].slice(0, -2) + '01',
         endDate: new Date().toISOString().split('T')[0]
       });
@@ -43,8 +42,8 @@ export class EC2Service {
         name: instanceFound.Tags?.find((tag) => tag.Key === 'Name')?.Value || '',
         status: instanceFound.State?.Name === 'running',
         region: instanceFound.Placement?.AvailabilityZone?.slice(0, -1) || '',
-        cost: instanceCost.currentCost,
-        currency: instanceCost.currency
+        cost: cost.currentCost,
+        currency: cost.currency
       };
     } catch (err) {
       throw new Error('Error fetching instance infos:' + err);
@@ -114,7 +113,7 @@ export class EC2Service {
             console.log('No instance id, tags, region or state found');
             return [];
           }
-          const cost = await new CostExplorerService(this.credentials).getInstanceCost(instanceId, {
+          const cost = await CostExplorerService.getInstance(this.credentials).getInstanceCost(instanceId, {
             startDate: new Date().toISOString().split('T')[0].slice(0, -2) + '01',
             endDate: new Date().toISOString().split('T')[0]
           });

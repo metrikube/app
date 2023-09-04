@@ -6,10 +6,18 @@ import { ApiAWSCostExplorerResult, AwsCredentialType } from '@metrikube/common';
 
 @Injectable()
 export class CostExplorerService {
+  private static instance: CostExplorerService;
   private readonly client: CostExplorerClient;
 
-  constructor(credentials: AwsCredentialType) {
+  private constructor(credentials: AwsCredentialType) {
     this.client = new CostExplorerClient({ credentials: credentials, region: 'us-east-1' });
+  }
+
+  static getInstance(credentials: AwsCredentialType): CostExplorerService {
+    if (!CostExplorerService.instance) {
+      CostExplorerService.instance = new CostExplorerService(credentials);
+    }
+    return CostExplorerService.instance;
   }
 
   async getCosts(
@@ -79,6 +87,40 @@ export class CostExplorerService {
     });
   }
 
+  /**
+   * Retrieve bucket costs
+   * @param bucketName
+   * @param param1
+   * @returns
+   */
+  async getBucketCosts(bucketName: string, startDate: string, endDate: string) {
+    try {
+      const params: GetCostAndUsageCommandInput = {
+        Granularity: 'MONTHLY',
+        TimePeriod: {
+          Start: startDate,
+          End: endDate
+        },
+        Filter: {
+          Tags: {
+            Key: 'aws:s3:bucket',
+            Values: [bucketName]
+          }
+        },
+        Metrics: ['UnblendedCost']
+      };
+      const response = await this.client.send(new GetCostAndUsageCommand(params));
+      const currentCost = response?.ResultsByTime?.[0]?.Total?.['UnblendedCost']?.Amount || 'unable to retrieve cost';
+      const currency = response?.ResultsByTime?.[0]?.Total?.['UnblendedCost']?.Unit || 'unable to retrieve currency';
+      return {
+        currentCost,
+        currency
+      };
+    } catch (error) {
+      console.log('Error fetching bucket costs:', error);
+      throw error;
+    }
+  }
   /**
    * Retrieve instance costs for EC2 instances
    * @param instanceId
