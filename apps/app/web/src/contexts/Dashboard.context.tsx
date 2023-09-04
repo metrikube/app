@@ -6,7 +6,6 @@ interface DashboardContextType {
   setSelectedActiveMetric: Dispatch<SetStateAction<ActiveMetricModel>>
 }
 
-
 export const DashboardContext = createContext<DashboardContextType>({
   selectedActiveMetric: null,
   setSelectedActiveMetric: () => ({})
@@ -14,7 +13,6 @@ export const DashboardContext = createContext<DashboardContextType>({
 
 export const DashboardProvider = ({ children }: { children: JSX.Element }) => {
   const [selectedActiveMetric, setSelectedActiveMetric] = useState<ActiveMetricModel | null>(null)
-
   return (
     // eslint-disable-next-line react/react-in-jsx-scope
     <DashboardContext.Provider

@@ -44,8 +44,8 @@ const BaseMetricCard = ({
   return (
     <Card>
       <CardHeader
-        title={activeMetric.metric.name}
-        subheader="September 14, 2016"
+        title={activeMetric.name}
+        subheader={activeMetric.metric.name}
         avatar={<Logo alt={activeMetric.plugin.name} src={imageUrl} />}
         action={
           <IconsActionContainer>

@@ -4,6 +4,7 @@ import { PluginModel } from '../../domain';
 
 export type SetupPluginRequest = {
   pluginId: string;
+  name: string;
   metricType: MetricType;
   credential: GenericCredentialType;
   ressourceId?: string;
