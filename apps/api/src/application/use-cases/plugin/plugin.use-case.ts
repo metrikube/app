@@ -93,7 +93,10 @@ export class PluginUseCase implements PluginUseCaseInterface {
 
     const parsedCredentials = JSON.parse(Buffer.from(credentials.value, 'base64').toString('utf-8')) as GenericCredentialType;
     const getMetricTypeDataSample: (credentials: GenericCredentialType) => Promise<PluginResult<MetricType>> = this.getMetricMethodByMetricType(metricType);
-    return getMetricTypeDataSample(parsedCredentials);
+    return getMetricTypeDataSample({
+      ...parsedCredentials,
+      resourceId: pluginToMetric?.resourceId || null
+    });
   }
 
   getMetricMethodByMetricType(metricType: MetricType): (credentials: GenericCredentialType) => Promise<PluginResult<typeof metricType>> {

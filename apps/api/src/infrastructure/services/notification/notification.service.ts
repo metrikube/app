@@ -1,4 +1,4 @@
-import { SentMessageInfo, Transporter, createTransport } from 'nodemailer';
+import { Resend } from 'resend';
 
 import { Injectable } from '@nestjs/common';
 
@@ -6,31 +6,17 @@ import { NotificationInterface } from '../../../domain/interfaces/adapters/notif
 
 @Injectable()
 export class NotificationService implements NotificationInterface {
-  mailer: Transporter;
+  mailer: Resend;
 
   constructor() {
     this.mailer = this.createTransport();
   }
 
-  sendMail(to: string, subject: string, content: string): Promise<SentMessageInfo> {
-    return this.mailer.sendMail({
-      from: { name: 'Metrikube App', address: process.env.SMTP_USERNAME },
-      to: [to],
-      subject,
-      text: content,
-      html: content
-    });
+  async sendMail(to: string, subject: string, content: string): Promise<void> {
+    await this.mailer.emails.send({ from: 'Acme <onboarding@resend.dev>', to, subject, text: content });
   }
 
-  private createTransport(): Transporter {
-    return createTransport({
-      host: process.env.SMTP_HOST,
-      port: Number(process.env.SMTP_PORT),
-      secure: false,
-      auth: {
-        user: process.env.SMTP_USERNAME,
-        pass: process.env.SMTP_PASSWORD
-      }
-    });
+  private createTransport(): Resend {
+    return new Resend(process.env.RESEND_API_KEY);
   }
 }
