@@ -40,7 +40,7 @@ export class PluginController {
   @ApiOperation({ summary: 'Get plugin data' })
   @ApiResponse({ status: HttpStatus.OK, description: 'Get plugin data' })
   @ApiParam({ name: 'id', type: String, description: 'Plugin id' })
-  @ApiParam({ name: 'PluginToMetricId', description: 'PluginToMetric id' })
+  @ApiParam({ name: 'pluginToMetricId', description: 'PluginToMetric id' })
   async getPluginData(
     @Param('id') pluginId: string,
     @Param('pluginToMetricId') pluginToMetricId: string
