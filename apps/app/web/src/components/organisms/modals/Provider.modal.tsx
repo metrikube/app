@@ -254,7 +254,6 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
           </form>
         </FormProvider>
       </DialogContent>
-
     </Dialog>
   )
 }
