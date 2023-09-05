@@ -1,4 +1,5 @@
 import { CostExplorerClient, GetCostAndUsageCommand, GetCostAndUsageCommandInput, Group } from '@aws-sdk/client-cost-explorer';
+import { iif } from 'rxjs';
 
 import { Injectable } from '@nestjs/common';
 
@@ -110,8 +111,9 @@ export class CostExplorerService {
         Metrics: ['UnblendedCost']
       };
       const response = await this.client.send(new GetCostAndUsageCommand(params));
-      const currentCost = response?.ResultsByTime?.[0]?.Total?.['UnblendedCost']?.Amount || 'unable to retrieve cost';
+      let currentCost = response?.ResultsByTime?.[0]?.Total?.['UnblendedCost']?.Amount || '';
       const currency = response?.ResultsByTime?.[0]?.Total?.['UnblendedCost']?.Unit || 'unable to retrieve currency';
+      currentCost = isNaN(parseFloat(currentCost)) ? 'unable to retrieve cost' : parseFloat(currentCost).toFixed(2);
       return {
         currentCost,
         currency
@@ -145,8 +147,9 @@ export class CostExplorerService {
       };
       const command = new GetCostAndUsageCommand(params);
       const response = await this.client.send(command);
-      const currentCost = response?.ResultsByTime?.[0]?.Total?.['UnblendedCost']?.Amount || 'unable to retrieve cost';
+      let currentCost = response?.ResultsByTime?.[0]?.Total?.['UnblendedCost']?.Amount || '';
       const currency = response?.ResultsByTime?.[0]?.Total?.['UnblendedCost']?.Unit || 'unable to retrieve currency';
+      currentCost = isNaN(parseFloat(currentCost)) ? 'unable to retrieve cost' : parseFloat(currentCost).toFixed(2);
       return {
         currentCost,
         currency
