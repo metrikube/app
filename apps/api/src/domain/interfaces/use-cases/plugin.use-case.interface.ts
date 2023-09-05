@@ -11,6 +11,8 @@ export interface PluginUseCaseInterface {
 
   getPluginCredentials(pluginId: string): Promise<CredentialEntity>;
 
+  testPluginConnection(plugin: PluginEntity, credential: GenericCredentialType): Promise<void>;
+
   getMetricMethodByMetricType(metricType: MetricType): (credentials: GenericCredentialType) => Promise<PluginResult<typeof metricType>>;
 
   listPlugins(): Promise<PluginResponseDto>;
