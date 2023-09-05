@@ -12,10 +12,15 @@ interface Props {
 }
 
 export const MetrikubeMenu = ({ id, anchorEl, open, onClose, menuItems }: Props) => {
+  const handleItemClick = (item: MetrikubeMenuItem) => {
+    item.action()
+    onClose()
+  }
+
   return (
     <Menu id={id} anchorEl={anchorEl} open={open} onClose={onClose}>
       {menuItems.map((item) => (
-        <MenuButton onClick={item.action} key={item.key} variant={item.variant}>
+        <MenuButton onClick={() => handleItemClick(item)} key={item.key} variant={item.variant}>
           {item.icon && (
             <IconWrapper>
               <item.icon />
