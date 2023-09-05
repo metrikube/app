@@ -5,16 +5,20 @@ import React from 'react'
 
 const DefaultLayout = ({ children }: React.PropsWithChildren) => {
   return (
-    <Grid container spacing={2} columns={16}>
+    <StyledGrid container spacing={2} columns={16}>
       <Grid item xs={3}>
         <Sidebar />
       </Grid>
       <Grid item xs={13}>
         <Container>{children}</Container>
       </Grid>
-    </Grid>
+    </StyledGrid>
   )
 }
+
+const StyledGrid = styled(Grid)`
+  background-color: ${({ theme }) => theme.palette.background.default};
+`
 
 const Container = styled.div`
   display: flex;

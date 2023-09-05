@@ -4,6 +4,10 @@ import { awsSingleInstance, awsBucketInstance, githubLastPrs } from './metrics.m
 
 export const providerCategoriesMock = [
   {
+    label: 'All',
+    value: ''
+  },
+  {
     label: 'Cloud',
     value: 'cloud'
   },

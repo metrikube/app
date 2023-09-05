@@ -21,7 +21,8 @@ import {
   PluginModel
 } from '@metrikube/core'
 import { Close } from '@mui/icons-material'
-import { Dialog, DialogContent, DialogTitle, IconButton } from '@mui/material'
+import { Dialog, DialogContent, DialogTitle, IconButton, Typography, Divider, Box } from '@mui/material'
+import { useMutation } from '@tanstack/react-query'
 import React, { Dispatch, SetStateAction, useContext, useEffect, useState } from 'react'
 import { useForm, FormProvider } from 'react-hook-form'
 import { createPluginAlertMutation, getPluginsQuery, setupPluginMutation } from '../../../services/plugin.service'
@@ -157,11 +158,7 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
   }
 
   const handleFilterChange = (categoryValue: string) => {
-    if (categoryValue === selectedProviderCategory) {
-      setSelectedProviderCategory('')
-    } else {
-      setSelectedProviderCategory(categoryValue)
-    }
+    setSelectedProviderCategory(categoryValue)
   }
 
   const handleConnectionTest = (
@@ -219,41 +216,45 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
   return (
     <Dialog open={open} maxWidth="md" fullWidth={true} onClose={handleModalClose}>
       <DialogTitle>
-        <DialogHeader>
-          <span>
-            {activeStep === SetupPluginStepEnum.ALERT_CONFIG ? `${selectedProvider?.name} settings` : 'Set up your provider'}
-          </span>
+        <DialogHeader >
+          <Typography variant="h5" sx={{fontWeight: 'bold'}}>
+          {activeStep === SetupPluginStepEnum.ALERT_CONFIG ? `${selectedProvider?.name} settings` : 'Set up your provider'}
+          </Typography>
           <IconButton onClick={handleModalClose}>
             <Close />
           </IconButton>
         </DialogHeader>
-        <ProviderFormStepper activeStep={activeStep} steps={steps} />
       </DialogTitle>
-      <FormProvider {...methods}>
-        <form onSubmit={methods.handleSubmit(onSubmit)}>
-          <DialogContent>
-            {activeStep === SetupPluginStepEnum.CHOOSE_PLUGIN && (
-              <ProviderFormStep1
-                providerCategory={selectedProviderCategory}
-                allPlugins={plugins}
-                handleProviderCategory={handleFilterChange}
-              />
-            )}
-            {activeStep === SetupPluginStepEnum.FILL_CREDENTIAL && <ProviderFormStep2 />}
-            {activeStep === SetupPluginStepEnum.ALERT_CONFIG && <ProviderFormStep3 />}
-            {activeStep === SetupPluginStepEnum.FINISH && <p>Félicitations</p>}
-          </DialogContent>
-          <ProviderFormActionButtons
-            activeStep={activeStep}
-            steps={steps}
-            isSetupPluginLoading={isSetupPluginLoading}
-            isCreateAlertLoading={isCreateAlertLoading}
-            isProviderChose={isProviderChose}
-            setActiveStep={setActiveStep}
-            handleModalClose={handleModalClose}
-          />
-        </form>
-      </FormProvider>
+      <DialogContent>
+        <ProviderFormStepper activeStep={activeStep} steps={steps} />
+        <Divider sx={{ mb: '20px' }}/>
+        <FormProvider {...methods}>
+          <form onSubmit={methods.handleSubmit(onSubmit)}>
+            <Box>
+              {activeStep === SetupPluginStepEnum.CHOOSE_PLUGIN && (
+                <ProviderFormStep1
+                  providerCategory={selectedProviderCategory}
+                  allPlugins={plugins}
+                  onCategoryClick={handleFilterChange}
+                />
+              )}
+              {activeStep === SetupPluginStepEnum.FILL_CREDENTIAL && <ProviderFormStep2 />}
+              {activeStep === SetupPluginStepEnum.ALERT_CONFIG && <ProviderFormStep3 />}
+              {activeStep === SetupPluginStepEnum.FINISH && <p>Félicitations</p>}
+            </Box>
+        
+          </form>
+        </FormProvider>
+      </DialogContent>
+      <ProviderFormActionButtons
+        activeStep={activeStep}
+        steps={steps}
+        isSetupPluginLoading={isSetupPluginLoading}
+        isCreateAlertLoading={isCreateAlertLoading}
+        isProviderChose={isProviderChose}
+        setActiveStep={setActiveStep}
+        handleModalClose={handleModalClose}
+      />
     </Dialog>
   )
 }
