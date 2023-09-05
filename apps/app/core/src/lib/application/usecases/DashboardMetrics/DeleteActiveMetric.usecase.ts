@@ -1,4 +1,4 @@
-import { DashboardMetricsAdapter } from "../../ports/server-side/DashboardMetrics.port";
+import type { DashboardMetricsAdapter } from "@metrikube/core";
 
 export class DeleteActiveMetricUsecase {
     constructor(private readonly dashboardMetrics: DashboardMetricsAdapter) { }

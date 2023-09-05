@@ -56,7 +56,7 @@ const ProviderFormStep1 = ({ providerCategory, allPlugins, onCategoryClick }: Pr
   )
 }
 
-const FormContainer = styled.form`
+const FormContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 16px;

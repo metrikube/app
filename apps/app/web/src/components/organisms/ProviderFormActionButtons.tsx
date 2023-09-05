@@ -36,8 +36,9 @@ const ProviderFormActionButtons = ({
   }
 
   return (
+    //  isFirstStep={isFirstStep} produce an error
     <StyledDialogActions isFirstStep={isFirstStep}>
-      {(!isFirstStep && !isLastStep(steps, activeStep)) && (
+      {!isFirstStep && !isLastStep(steps, activeStep) && (
         <Button
           variant="outlined"
           disableRipple

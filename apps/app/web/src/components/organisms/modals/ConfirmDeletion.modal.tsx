@@ -11,6 +11,7 @@ import {
 } from '@mui/material'
 import React, { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
+import { useQueryClient } from '@tanstack/react-query'
 
 interface Props {
   open: boolean
@@ -27,6 +28,7 @@ const ConfirmDeletionModal = ({ open, setOpenModal, metric }: Props) => {
 
   const confirmDeletionValue = watch('confirmDeletion')
   const [shouldDisableDeletionButton, setShouldDisableDeletionButton] = useState(true)
+  const queryClient = useQueryClient()
 
   useEffect(() => {
     if (confirmDeletionValue && confirmDeletionValue === 'SUPPRIMER') {
@@ -36,7 +38,9 @@ const ConfirmDeletionModal = ({ open, setOpenModal, metric }: Props) => {
     }
   }, [confirmDeletionValue, setShouldDisableDeletionButton])
 
-  const { mutate: deleteMetric } = deleteMetricMutation()
+  const { mutate: deleteMetric } = deleteMetricMutation(() => {
+    queryClient.invalidateQueries({ queryKey: ['getActiveMetrics'] })
+  })
 
   const handlerModalClose = () => {
     setOpenModal(false)

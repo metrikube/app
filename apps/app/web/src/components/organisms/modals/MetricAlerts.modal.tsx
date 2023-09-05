@@ -18,6 +18,7 @@ import {
   TableBody,
   IconButton
 } from '@mui/material'
+import { useQueryClient } from '@tanstack/react-query'
 import React, { Dispatch, SetStateAction } from 'react'
 
 interface Props {
@@ -27,10 +28,15 @@ interface Props {
 }
 
 const MetricAlertsModal = ({ open, setOpenModal, metric }: Props) => {
+  const queryClient = useQueryClient()
   const { data: alerts } = getActiveMetricAlertsQuery(metric.id)
 
-  const { mutate: toggleNotification } = toggleAlertMutation()
-  const { mutate: deleteAlert } = deleteAlertMutation()
+  const { mutate: toggleNotification } = toggleAlertMutation(() => {
+    queryClient.invalidateQueries({ queryKey: ['getActiveMetricAlert'] })
+  })
+  const { mutate: deleteAlert } = deleteAlertMutation(() => {
+    queryClient.invalidateQueries({ queryKey: ['getActiveMetricAlert'] })
+  })
 
   return (
     <Dialog open={open} onClose={() => setOpenModal(false)}>

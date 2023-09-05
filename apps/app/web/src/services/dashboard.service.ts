@@ -17,7 +17,8 @@ export const getActiveMetricQuery = () => {
   return useQuery<ActiveMetricModel[]>({
     queryKey: ['getActiveMetrics'],
     queryFn: () => new GetActiveMetricsUsecase(dashboardMetricsAdapter).execute(),
-    initialData: () => []
+    initialData: () => [],
+    refetchOnWindowFocus: false
   })
 }
 
@@ -26,32 +27,36 @@ export const getActiveMetricAlertsQuery = (activeMetricId: string) =>
     queryKey: ['getActiveMetricAlert'],
     queryFn: async (): Promise<AlertModel[]> =>
       new GetActiveMetricAlertUsecase(alertAdapter).execute(activeMetricId),
-    initialData: () => []
+    initialData: () => [],
+    refetchOnWindowFocus: false
   })
 
-export const deleteMetricMutation = () =>
+export const deleteMetricMutation = (onSuccess: () => void) =>
   useMutation({
     mutationKey: ['deleteMetric'],
     mutationFn: async (activeMetricId: string) => {
       await new DeleteActiveMetricUsecase(dashboardMetricsAdapter).execute(activeMetricId)
-    }
+    },
+    onSuccess
   })
 
 // Alert
-export const toggleAlertMutation = () => {
+export const toggleAlertMutation = (onSuccess: () => void) => {
   return useMutation({
     mutationKey: ['toggleAlertNotification'],
     mutationFn: async ({ alertId, isActive }: ToggleAlertNotification) => {
       await new ToggleAlertNotificationUsecase(alertAdapter).execute(alertId, isActive)
-    }
+    },
+    onSuccess
   })
 }
 
-export const deleteAlertMutation = () => {
+export const deleteAlertMutation = (onSuccess: () => void) => {
   return useMutation({
     mutationKey: ['deleteAlert'],
     mutationFn: async (alertId: string) => {
       await new DeleteActiveMetricAlertUsecase(alertAdapter).execute(alertId)
-    }
+    },
+    onSuccess
   })
 }

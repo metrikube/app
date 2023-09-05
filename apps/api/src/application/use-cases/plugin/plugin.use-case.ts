@@ -103,15 +103,15 @@ export class PluginUseCase implements PluginUseCaseInterface {
       case 'github-last-issues':
         return this.githubService.getRepoIssues;
       case 'aws-bucket-single-instance':
-        throw 'Not implemented';
+        return this.AWSService.getS3Bucket;
       case 'aws-bucket-multiple-instances':
-        throw 'Not implemented';
+        return this.AWSService.getS3Buckets;
       case 'aws-ec2-multiple-instances-usage':
-        throw 'Not implemented';
+        return this.AWSService.getEc2Instances;
       case 'aws-ec2-single-instance-usage':
-        throw 'Not implemented';
+        return this.AWSService.getEc2Instance;
       case 'github-last-prs':
-        throw 'Not implemented';
+        return this.githubService.getRepoPRs;
       case 'database-queries':
         return this.databaseService.getNbQueries
       case 'database-size':

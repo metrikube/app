@@ -3,31 +3,11 @@ export type PullRequests = PullRequest[];
 
 interface Issue {
   id: number;
-  node_id: string;
-  url: string;
-  repository_url: string;
-  labels_url: string;
-  comments_url: string;
-  events_url: string;
+  title: string;
+  user: User;
+  state: string;
   html_url: string;
   number: number;
-  state: string;
-  title: string;
-  body: string;
-  user: User;
-  labels: Label[];
-  assignee: Assignee;
-  assignees: Assignee2[];
-  milestone: Milestone;
-  locked: boolean;
-  active_lock_reason: string;
-  comments: number;
-  pull_request: PullRequest;
-  closed_at: any;
-  created_at: string;
-  updated_at: string;
-  repository: Repository;
-  author_association: string;
 }
 
 interface PullRequest {

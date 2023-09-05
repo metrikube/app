@@ -14,12 +14,11 @@ import { Button } from '@mui/material'
 import React, { useState } from 'react'
 
 const Dashboard = () => {
-  const { data: activeMetrics } = getActiveMetricQuery()
-
   const [openedModal, setOpenModal] = useState(false)
   const [isMetricAlertsModalOpen, setIsMetricAlertsModalOpen] = useState(false)
   const [isMetricDeletionModalOpened, setIsMetricDeletionModalOpened] = useState(false)
   const [selectedMetric, setSelectedMetric] = useState<ActiveMetricModel | null>(null)
+  const { data: activeMetrics } = getActiveMetricQuery()
 
   const openProviderModalHandler = () => {
     setOpenModal(true)

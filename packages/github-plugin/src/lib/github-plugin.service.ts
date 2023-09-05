@@ -8,23 +8,19 @@ interface GithubErrorData {
   message: string;
 }
 
+const limit = 5;
+
 // prettier-ignore
 @Injectable()
 export class GithubService implements PluginConnectionInterface {
-  axiosInstance = axios.create({
-    baseURL: 'https://api.github.com'
-  });
-
-  private limit = 5;
-
   async getRepoIssues({ accessToken, repo, owner }: GithubCredentialType): Promise<ApiGithubIssues[] | ApiGithubError> {
     try {
-      const { data: issues } = await this.axiosInstance.get<Issues>(`/repos/${owner}/${repo}/issues?per_page=${this.limit}`, {
+      const { data: { items: issues } } = await axios.get<{items: Issues}>(`https://api.github.com/search/issues?q=is:issue%20repo:${owner}/${repo}&per_page=${limit}`, {
         headers: {
           Authorization: `token ${accessToken}`
         }
       });
-      return issues.map(({ title, user: { login }, number, state, url }) => ({ title, number, url, author: login, status: state }));
+      return issues.map(({ title, user: { login }, number, state, html_url }) => ({ title, number, url: html_url, author: login, status: state }));
     } catch (error) {
       return {
         error: true,
@@ -36,12 +32,12 @@ export class GithubService implements PluginConnectionInterface {
 
   async getRepoPRs({ accessToken, repo, owner }: GithubCredentialType): Promise<ApiGithubPullRequestsOrIssues[] | ApiGithubError> {
     try {
-      const { data: prs } = await this.axiosInstance.get<PullRequests>(`/repos/${owner}/${repo}/pulls?per_page=${this.limit}`, {
+      const { data: prs } = await axios.get<PullRequests>(`https://api.github.com/repos/${owner}/${repo}/pulls?per_page=${limit}&state=all`, {
         headers: {
           Authorization: `token ${accessToken}`
         }
       });
-      return prs.map(({ title, user: { login }, number, state, url }) => ({ title, number, url, author: login, status: state }));
+      return prs.map(({ title, user: { login }, number, state, html_url }) => ({ title, number, url: html_url, author: login, status: state }));
     } catch (error) {
       return {
         error: true,
@@ -53,7 +49,7 @@ export class GithubService implements PluginConnectionInterface {
 
   async testConnection({ accessToken, repo, owner }: GithubCredentialType): Promise<{ ok: boolean; message: string | null }> {
     try {
-      await this.axiosInstance.get(`/repos/${owner}/${repo}`, {
+      await axios.get(`https://api.github.com/repos/${owner}/${repo}`, {
         headers: {
           Authorization: `token ${accessToken}`
         }
@@ -63,5 +59,6 @@ export class GithubService implements PluginConnectionInterface {
     } catch (error) {
       return { ok: false, message: (error as AxiosError<GithubErrorData>)?.response?.data.message || null };
     }
+    return { ok: true, message: null };
   }
 }

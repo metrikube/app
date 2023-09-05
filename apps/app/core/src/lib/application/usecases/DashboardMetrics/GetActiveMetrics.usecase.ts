@@ -1,5 +1,4 @@
-import { ActiveMetricModel } from "../../domain";
-import { DashboardMetricsAdapter } from "../../ports/server-side/DashboardMetrics.port";
+import type { ActiveMetricModel, DashboardMetricsAdapter } from "@metrikube/core";
 
 export class GetActiveMetricsUsecase {
   constructor(private readonly dashboardMetrics: DashboardMetricsAdapter) { }

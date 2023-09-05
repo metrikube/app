@@ -1,5 +1,4 @@
 /* eslint-disable prettier/prettier */
-import { useAdapter } from '../../../config/axios'
 import { SetupPluginContext } from '../../../contexts/SetupPlugin.context'
 import ProviderFormActionButtons from '../ProviderFormActionButtons'
 import ProviderFormStepper from '../ProviderFormStepper'
@@ -15,10 +14,6 @@ import {
   GithubCredentialType
 } from '@metrikube/common'
 import {
-  SetupPluginUsecase,
-  SetupPluginRequest,
-  CreateAlertUsecase,
-  CreateAlertRequest,
   SetupPluginStepEnum,
   AlertRequest,
   MetricModel,
@@ -28,9 +23,10 @@ import {
 import { Close } from '@mui/icons-material'
 import { Dialog, DialogContent, DialogTitle, IconButton, Typography, Divider, Box } from '@mui/material'
 import { useMutation } from '@tanstack/react-query'
-import React, { Dispatch, SetStateAction, useContext, useEffect, useState, useMemo } from 'react'
+import React, { Dispatch, SetStateAction, useContext, useEffect, useState } from 'react'
 import { useForm, FormProvider } from 'react-hook-form'
-import { getPluginsQuery } from '../../../services/setupPlugin.service'
+import { createPluginAlertMutation, getPluginsQuery, setupPluginMutation } from '../../../services/plugin.service'
+import { useQueryClient } from '@tanstack/react-query'
 
 interface Props {
   open: boolean
@@ -55,7 +51,6 @@ const steps: string[] = [
 ]
 
 const ProviderModal = ({ open, setOpenModal }: Props) => {
-  const { pluginAdapter, alertAdapter } = useAdapter()
 
   const {
     selectedProvider,
@@ -114,50 +109,27 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
   const [selectedProviderCategory, setSelectedProviderCategory] = useState('')
   const [isProviderChose, setIsProviderChose] = useState<boolean>(selectedProvider !== null)
   const [activeStep, setActiveStep] = useState(0)
-  const { data: plugins } = getPluginsQuery(open)
+  const queryClient = useQueryClient()
+  const { data: plugins } = getPluginsQuery()
 
   useEffect(() => {
     setIsProviderChose(selectedProvider !== null)
   }, [selectedProvider])
 
-  const { mutate: setupPlugin, isLoading: isSetupPluginLoading } = useMutation(
-    ({ pluginId, name, metricType, credential }: SetupPluginRequest) =>
-      new SetupPluginUsecase(pluginAdapter).execute(pluginId, name, metricType, credential),
-    {
-      // how to type that ??
-      onSuccess: (data) => {
-        setPluginToMetricId(data.id)
-        setMetricFields(data.data)
-        if (selectedMetric?.isNotifiable) {
-          setActiveStep(SetupPluginStepEnum.FINISH)
-        }
-        setActiveStep(SetupPluginStepEnum.ALERT_CONFIG)
-      },
-      onError: () => {
-        alert('there was an error')
-      }
+  const { mutate: setupPlugin, isLoading: isSetupPluginLoading } = setupPluginMutation((data) => {
+    setPluginToMetricId(data.id)
+    setMetricFields(data.data)
+    if (selectedMetric?.isNotifiable) {
+      setActiveStep(SetupPluginStepEnum.FINISH)
     }
-  )
+    setActiveStep(SetupPluginStepEnum.ALERT_CONFIG)
+    queryClient.invalidateQueries({ queryKey: ["getActiveMetrics"] })
+  })
 
-  const { mutate: createAlert, isLoading: isCreateAlertLoading } = useMutation(
-    ({ pluginToMetricId, alerts }: CreateAlertRequest) => {
-      if (!selectedProvider || !selectedMetric) {
-        throw Error("You can't make an alert without plugin or metric")
-      }
-      return new CreateAlertUsecase(alertAdapter).execute({
-        pluginToMetricId,
-        alerts
-      })
-    },
-    {
-      onSuccess: () => {
-        setActiveStep(activeStep + 1)
-      },
-      onError: () => {
-        alert('there was an error')
-      }
-    }
-  )
+  const { mutate: createAlert, isLoading: isCreateAlertLoading } = createPluginAlertMutation(() => {
+    setActiveStep(activeStep + 1)
+  })
+
 
   const onSubmit = (data: SetupPluginFormValues) => {
     if (!selectedProvider || !selectedMetric) {
@@ -246,7 +218,7 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
       <DialogTitle>
         <DialogHeader >
           <Typography variant="h5" sx={{fontWeight: 'bold'}}>
-            {activeStep === 2 ? `${selectedProvider?.name} settings` : 'Set up your provider'}
+          {activeStep === SetupPluginStepEnum.ALERT_CONFIG ? `${selectedProvider?.name} settings` : 'Set up your provider'}
           </Typography>
           <IconButton onClick={handleModalClose}>
             <Close />
@@ -259,16 +231,16 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
         <FormProvider {...methods}>
           <form onSubmit={methods.handleSubmit(onSubmit)}>
             <Box>
-              {activeStep === 0 && (
+              {activeStep === SetupPluginStepEnum.CHOOSE_PLUGIN && (
                 <ProviderFormStep1
                   providerCategory={selectedProviderCategory}
                   allPlugins={plugins}
                   onCategoryClick={handleFilterChange}
                 />
               )}
-              {activeStep === 1 && <ProviderFormStep2 />}
-              {activeStep === 2 && <ProviderFormStep3 />}
-              {activeStep === 3 && <p>Félicitations</p>}
+              {activeStep === SetupPluginStepEnum.FILL_CREDENTIAL && <ProviderFormStep2 />}
+              {activeStep === SetupPluginStepEnum.ALERT_CONFIG && <ProviderFormStep3 />}
+              {activeStep === SetupPluginStepEnum.FINISH && <p>Félicitations</p>}
             </Box>
         
           </form>

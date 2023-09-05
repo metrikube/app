@@ -1,53 +1,78 @@
-import { ApiAWSCostExplorerResult, ApiAWSSingleResourceInstanceResult, GenericCredentialType, PluginConnectionInterface } from '@metrikube/common';
-import { AWSServiceType, AwsCredentialType } from '@metrikube/common';
+import { Injectable, Logger } from '@nestjs/common';
 
-import { Injectable } from '@nestjs/common';
+import { ApiAWSSingleResourceInstanceResult, PluginConnectionInterface } from '@metrikube/common';
+import { AwsCredentialType } from '@metrikube/common';
 
-import { CostExplorerService } from './cost-explorer.service';
 import { EC2Service } from './ec2.service';
+import { S3Service } from './s3.service';
 
 @Injectable()
 export class AWSService implements PluginConnectionInterface {
-  getCostExplorerService(credentials: AwsCredentialType): CostExplorerService {
-    return new CostExplorerService(credentials);
-  }
-
-  getEc2Service(credentials: AwsCredentialType): EC2Service {
-    return new EC2Service(credentials);
-  }
-
-  async getServicesInformations(
-    credentials: AwsCredentialType,
-    services: AWSServiceType[]
-  ): Promise<
-    | {
-        costExplorer?: ApiAWSCostExplorerResult[];
-        ec2?: ApiAWSSingleResourceInstanceResult[];
+  // EC2 Section
+  async getEc2Instance(credentials: AwsCredentialType) {
+    try {
+      if (!credentials.resourceId) {
+        throw new Error('No resource ID provided');
       }
-    | undefined
-  > {
-    if (!services) {
-      return;
+      const ec2Service = new EC2Service(credentials);
+      return await ec2Service.getInstanceInformations(credentials.resourceId);
+    } catch (error) {
+      console.error('Error fetching instance infos:', error);
+      throw error;
     }
-    let infos = {};
-    if (services.includes('co')) {
-      const costs = await this.getCostExplorerService(credentials).getServicesCosts();
-      infos = {
-        ...infos,
-        costExplorer: costs
-      };
-    }
-    if (services.includes('ec2')) {
-      const ec2Infos = await this.getEc2Service(credentials).getInstancesInformations();
-      infos = {
-        ...infos,
-        ec2: ec2Infos
-      };
-    }
-
-    return infos;
   }
-  testConnection(credential: GenericCredentialType): Promise<{ ok: boolean; message: string | null }> {
-    throw new Error('Method not implemented.');
+  async getEc2Instances(credentials: AwsCredentialType) {
+    try {
+      const ec2Service = new EC2Service(credentials);
+      return ec2Service.getInstancesInformations();
+    } catch (error) {
+      console.error('Error fetching instances:', error);
+      throw error;
+    }
+  }
+
+  // S3 Section
+  async getS3Bucket(credentials: AwsCredentialType): Promise<ApiAWSSingleResourceInstanceResult> {
+    try {
+      if (!credentials.resourceId) {
+        throw new Error('No resource ID provided');
+      }
+      const s3Service = new S3Service(credentials);
+      return s3Service.getSingleBucket(credentials.resourceId);
+    } catch (error) {
+      console.error('Error fetching instances:', error);
+      throw error;
+    }
+  }
+
+  async getS3Buckets(credentials: AwsCredentialType) {
+    try {
+      const s3Service = new S3Service(credentials);
+      return s3Service.getBuckets();
+    } catch (error) {
+      console.error('Error fetching instances:', error);
+      throw error;
+    }
+  }
+
+  async testConnection(credentials: AwsCredentialType): Promise<{ ok: boolean; message: string | null }> {
+    Logger.log(`🏓 Pinging AWS on region"${credentials.region}`);
+    try {
+      const ec2Service = new EC2Service(credentials);
+      const ec2Ping = await ec2Service.pingEC2();
+      const s3Service = new S3Service(credentials);
+      const s3Ping = await s3Service.pingS3();
+
+      return {
+        ok: true,
+        message: `${ec2Ping.message} and ${s3Ping.message}}`
+      };
+    } catch (error) {
+      Logger.log(`🏓 Pinging AWS on region"${credentials.region}" failed`);
+      return {
+        ok: false,
+        message: `Pinging AWS on region"${credentials.region}" failed`
+      };
+    }
   }
 }
