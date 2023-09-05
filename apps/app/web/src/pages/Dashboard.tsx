@@ -39,7 +39,7 @@ const Dashboard = () => {
     <DefaultLayout>
       <>
         <StyledHeader>
-          <h3>NOM DU PROJET</h3>
+          <h3>Metric</h3>
           <div>
             <Button
               onClick={openProviderModalHandler}

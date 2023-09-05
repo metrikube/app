@@ -3,7 +3,7 @@ import { SvgIconComponent } from '@mui/icons-material'
 export type MetrikubeMenuItem = {
   key: string
   label: string
-  color?: string
+  variant?: 'primary' | 'danger' | 'info'
   icon?: SvgIconComponent
   action: () => void
 }

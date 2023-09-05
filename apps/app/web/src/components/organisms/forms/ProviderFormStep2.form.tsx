@@ -26,7 +26,7 @@ const ProviderFormStep2 = () => {
           <ReactMarkdown>{selectedProvider.instruction}</ReactMarkdown>
         )}
       </OutlinedCard>
-      <OutlinedCard title="Credential">
+      <OutlinedCard title="Credentials">
         {credentialType && (
           <>
             {credentialType === 'github' && <GithubCredentialForm />}
@@ -65,6 +65,7 @@ const ProviderFormStep2 = () => {
               {...register('metric', {
                 required: 'test'
               })}
+              sx={{ minWidth: '250px' }}
             />
           )}
         />

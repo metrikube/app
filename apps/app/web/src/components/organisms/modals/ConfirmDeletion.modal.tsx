@@ -1,7 +1,15 @@
-import { ActiveMetricModel } from '@metrikube/core'
 import { deleteMetricMutation } from '../../../services/dashboard.service'
-import { Dialog, DialogContent, DialogTitle, DialogActions, TextField, Button } from '@mui/material'
-import React, { Dispatch, SetStateAction, useContext, useEffect, useState } from 'react'
+import { ActiveMetricModel } from '@metrikube/core'
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogActions,
+  TextField,
+  Button,
+  Typography
+} from '@mui/material'
+import React, { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 
 interface Props {
@@ -42,14 +50,19 @@ const ConfirmDeletionModal = ({ open, setOpenModal, metric }: Props) => {
 
   return (
     <Dialog open={open} onClose={handlerModalClose}>
-      <DialogTitle>Supprimer : {metric?.metric.name}</DialogTitle>
+      <DialogTitle>
+        <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+          Supprimer : {metric?.metric.name}
+        </Typography>
+      </DialogTitle>
       <DialogContent>
         <form>
-          <p>Pour confirmer la suppression</p>
+          <Typography sx={{ mb: '15px' }}>
+            Écrivez &apos;SUPPRIMER&apos; pour confirmer la suppression
+          </Typography>
           <TextField
             fullWidth
             label="SUPPRIMER"
-            helperText="Vous devez écrire SUPPRIMER"
             variant="outlined"
             size="small"
             {...register('confirmDeletion')}

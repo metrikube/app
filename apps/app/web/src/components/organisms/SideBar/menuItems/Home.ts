@@ -3,7 +3,7 @@ import { DashboardRounded } from '@mui/icons-material'
 
 export const homeMenuItem: MenuItem = {
   id: 'home',
-  title: 'Dashboard',
+  title: 'Metric',
   url: '/home',
   icon: DashboardRounded
 }

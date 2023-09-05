@@ -26,7 +26,7 @@ import {
   PluginModel
 } from '@metrikube/core'
 import { Close } from '@mui/icons-material'
-import { Dialog, DialogContent, DialogTitle, IconButton } from '@mui/material'
+import { Dialog, DialogContent, DialogTitle, IconButton, Typography, Divider, Box } from '@mui/material'
 import { useMutation } from '@tanstack/react-query'
 import React, { Dispatch, SetStateAction, useContext, useEffect, useState, useMemo } from 'react'
 import { useForm, FormProvider } from 'react-hook-form'
@@ -186,11 +186,7 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
   }
 
   const handleFilterChange = (categoryValue: string) => {
-    if (categoryValue === selectedProviderCategory) {
-      setSelectedProviderCategory('')
-    } else {
-      setSelectedProviderCategory(categoryValue)
-    }
+    setSelectedProviderCategory(categoryValue)
   }
 
   const handleConnectionTest = (
@@ -248,41 +244,45 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
   return (
     <Dialog open={open} maxWidth="md" fullWidth={true} onClose={handleModalClose}>
       <DialogTitle>
-        <DialogHeader>
-          <span>
+        <DialogHeader >
+          <Typography variant="h5" sx={{fontWeight: 'bold'}}>
             {activeStep === 2 ? `${selectedProvider?.name} settings` : 'Set up your provider'}
-          </span>
+          </Typography>
           <IconButton onClick={handleModalClose}>
             <Close />
           </IconButton>
         </DialogHeader>
-        <ProviderFormStepper activeStep={activeStep} steps={steps} />
       </DialogTitle>
-      <FormProvider {...methods}>
-        <form onSubmit={methods.handleSubmit(onSubmit)}>
-          <DialogContent>
-            {activeStep === 0 && (
-              <ProviderFormStep1
-                providerCategory={selectedProviderCategory}
-                allPlugins={plugins}
-                handleProviderCategory={handleFilterChange}
-              />
-            )}
-            {activeStep === 1 && <ProviderFormStep2 />}
-            {activeStep === 2 && <ProviderFormStep3 />}
-            {activeStep === 3 && <p>Félicitations</p>}
-          </DialogContent>
-          <ProviderFormActionButtons
-            activeStep={activeStep}
-            steps={steps}
-            isSetupPluginLoading={isSetupPluginLoading}
-            isCreateAlertLoading={isCreateAlertLoading}
-            isProviderChose={isProviderChose}
-            setActiveStep={setActiveStep}
-            handleModalClose={handleModalClose}
-          />
-        </form>
-      </FormProvider>
+      <DialogContent>
+        <ProviderFormStepper activeStep={activeStep} steps={steps} />
+        <Divider sx={{ mb: '20px' }}/>
+        <FormProvider {...methods}>
+          <form onSubmit={methods.handleSubmit(onSubmit)}>
+            <Box>
+              {activeStep === 0 && (
+                <ProviderFormStep1
+                  providerCategory={selectedProviderCategory}
+                  allPlugins={plugins}
+                  onCategoryClick={handleFilterChange}
+                />
+              )}
+              {activeStep === 1 && <ProviderFormStep2 />}
+              {activeStep === 2 && <ProviderFormStep3 />}
+              {activeStep === 3 && <p>Félicitations</p>}
+            </Box>
+        
+          </form>
+        </FormProvider>
+      </DialogContent>
+      <ProviderFormActionButtons
+        activeStep={activeStep}
+        steps={steps}
+        isSetupPluginLoading={isSetupPluginLoading}
+        isCreateAlertLoading={isCreateAlertLoading}
+        isProviderChose={isProviderChose}
+        setActiveStep={setActiveStep}
+        handleModalClose={handleModalClose}
+      />
     </Dialog>
   )
 }

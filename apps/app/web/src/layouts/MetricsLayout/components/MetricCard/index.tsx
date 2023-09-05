@@ -35,7 +35,7 @@ export const MetricCard = ({
   const metricMenuItems: MetrikubeMenuItem[] = [
     {
       key: 'alert',
-      label: 'Alerte',
+      label: 'Alertes',
       action: onAlertButtonClick,
       icon: NotificationsIcon
     },
@@ -43,42 +43,51 @@ export const MetricCard = ({
       key: 'delete',
       label: 'Supprimer',
       action: onDeleteButtonClick,
-      icon: DeleteIcon
+      icon: DeleteIcon,
+      variant: 'danger'
     }
   ]
 
 
   return (
     <Grid item xs={size === 'small' ? 4 : 8}>
-      <CardHeader
-        title={metric.name}
-        subheader={metric.metric.name}
-        avatar={<Logo alt={metric.plugin.name} src={avatarUrl} />}
-        action={
-          <IconsActionContainer>
-            <div>
-              <IconButton onClick={handleMoreButtonClick}>
-                <MoreVertIcon />
-              </IconButton>
-              <MetrikubeMenu
-                id={`metric-menu-${metric.metric.id}`}
-                anchorEl={anchorEl}
-                open={isMetricMenuOpen}
-                onClose={() => setAnchorEl(null)}
-                menuItems={metricMenuItems}
-              />
-            </div>
-          </IconsActionContainer>
-        }
-      />
-      <CardContent>{children}</CardContent>
+      <StyledCard>
+        <CardHeader
+          title={metric.name}
+          subheader={metric.metric.name}
+          avatar={<Logo alt={metric.plugin.name} src={avatarUrl} />}
+          action={
+            <IconsActionContainer>
+              <div>
+                <IconButton onClick={handleMoreButtonClick}>
+                  <MoreVertIcon />
+                </IconButton>
+                <MetrikubeMenu
+                  id={`metric-menu-${metric.metric.id}`}
+                  anchorEl={anchorEl}
+                  open={isMetricMenuOpen}
+                  onClose={() => setAnchorEl(null)}
+                  menuItems={metricMenuItems}
+                />
+              </div>
+            </IconsActionContainer>
+          }
+        />
+        <CardContent>{children}</CardContent>
+    </StyledCard>
     </Grid>
   )
 }
 
-const DeleteButton = styled(MenuItem)`
-  color: red;
-  text-transform: uppercase;
+const StyledCard = styled(Grid)`
+  /* box-shadow: ${({ theme }) => theme.shadows[6]}; */
+  background-color: ${({ theme }) => theme.palette.background.paper};
+  border: 1px solid ${({ theme }) => theme.palette.divider};
+  border-radius: ${({ theme }) => {
+    console.log(theme)
+    return theme.shape.borderRadius * 3
+  }}px;
+
 `
 
 const IconsActionContainer = styled.div`

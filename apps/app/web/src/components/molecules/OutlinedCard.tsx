@@ -16,7 +16,7 @@ const OutlinedCard = ({ children, title, actionButtonTitle, onActionButtonClick 
         <Typography variant="h5" fontWeight="bold" gutterBottom>
           {title}
         </Typography>
-        <Box>{children}</Box>
+        <StyledBox>{children}</StyledBox>
       </CardContent>
       {Boolean(actionButtonTitle) && Boolean(onActionButtonClick) && (
         <CardActions>
@@ -31,6 +31,13 @@ const OutlinedCard = ({ children, title, actionButtonTitle, onActionButtonClick 
 
 const StyledCard = styled(Card)`
   margin-bottom: ${({ theme }) => theme.spacing(2)};
+`
+
+const StyledBox = styled(Box)`
+  display: flex;
+  row-gap: ${({ theme }) => theme.spacing(2)};
+  column-gap: ${({ theme }) => theme.spacing(2)};
+  flex-wrap: wrap;
 `
 
 export default OutlinedCard
