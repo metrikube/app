@@ -80,7 +80,6 @@ export const MetricCard = ({
 }
 
 const StyledCard = styled(Grid)`
-  /* box-shadow: ${({ theme }) => theme.shadows[6]}; */
   background-color: ${({ theme }) => theme.palette.background.paper};
   border: 1px solid ${({ theme }) => theme.palette.divider};
   border-radius: ${({ theme }) => {
