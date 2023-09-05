@@ -74,7 +74,8 @@ export class SeedDefaultDatabase1693679995600 implements MigrationInterface {
         name: 'API Health Check',
         type: 'api_endpoint',
         description: 'API Health Check Plugin',
-        instruction: '...waiting for instruction...',
+        instruction:
+          "<p><strong>Installation plugin API :</strong></p> <ol> <li>Sur votre API mettez à disposition un endpoint API accesssible en [GET] sur la route de votre choix.</li> <li>Assurez-vous que votre API soit acessible sans authentification, ou alors que vous ayez un token d'autorisation à fournir dans le les paramètres de votre requête (ex: https://monapi.com/api/v1/endpoint?token=123456789).</li> <li>Enfin, assurez-vous que votre endpoint retourne un code HTTP de réponses de succès (200 - 299)</li> </ol>",
         category: 'api',
         credentialType: 'apiEndpoint',
         iconUrl: ''
