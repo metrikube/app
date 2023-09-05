@@ -12,15 +12,14 @@ import { DashboardUseCase } from '../application/use-cases/dashboard/dashboard.u
 import { PluginUseCase } from '../application/use-cases/plugin/plugin.use-case';
 import { CredentialRepositoryImpl } from '../infrastructure/database/repositories/credential.repository';
 import { DiTokens } from '../infrastructure/di/tokens';
-
-import { DbAnalyticsController } from './controllers/db-analytics.controller';
 import { AlertController } from './alert/controller/alert.controller';
+import { DbAnalyticsController } from './controllers/db-analytics.controller';
 import { DashboardController } from './dashboard/controller/dashboard.controller';
 import { PluginController } from './plugin/controller/plugin.controller';
 
 @Module({
   imports: [UseCaseModule],
-  controllers: [PluginController, AlertController, DashboardController,  DbAnalyticsController],
+  controllers: [PluginController, AlertController, DashboardController, DbAnalyticsController],
   providers: [
     { provide: DiTokens.CredentialUseCaseToken, useClass: CredentialUseCase },
     { provide: DiTokens.AlertUseCaseToken, useClass: AlertUseCase },

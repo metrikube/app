@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { useAdapter } from '../../../config/axios'
 import { SetupPluginContext } from '../../../contexts/SetupPlugin.context'
 import ProviderFormActionButtons from '../ProviderFormActionButtons'
@@ -14,11 +15,6 @@ import {
   GithubCredentialType
 } from '@metrikube/common'
 import {
-  SetupPluginUsecase,
-  GetPluginsUsecase,
-  SetupPluginRequest,
-  CreateAlertUsecase,
-  CreateAlertRequest,
   SetupPluginStepEnum,
   AlertRequest,
   MetricModel,
@@ -27,9 +23,11 @@ import {
 } from '@metrikube/core'
 import { Close } from '@mui/icons-material'
 import { Dialog, DialogContent, DialogTitle, IconButton } from '@mui/material'
-import { useMutation, useQuery } from '@tanstack/react-query'
 import React, { Dispatch, SetStateAction, useContext, useEffect, useState, useMemo } from 'react'
 import { useForm, FormProvider } from 'react-hook-form'
+import { createPluginAlertMutation, getPluginsQuery, setupPluginMutation } from '../../../services/plugin.service'
+import { useQueryClient } from '@tanstack/react-query'
+
 
 interface Props {
   open: boolean
@@ -41,6 +39,7 @@ type SetupPluginFormValues = {
   aws: AwsCredentialType
   github: GithubCredentialType
   sql_database: DbConnectionCredentialType
+  name: string
   metric: MetricModel
   metricAlerts: AlertForm[]
 }
@@ -53,7 +52,6 @@ const steps: string[] = [
 ]
 
 const ProviderModal = ({ open, setOpenModal }: Props) => {
-  const { pluginAdapter, alertAdapter } = useAdapter()
 
   const {
     selectedProvider,
@@ -69,7 +67,6 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
     mode: 'all',
     defaultValues: {
       api_endpoint: {
-        name: '',
         apiEndpoint: ''
       },
       aws: {
@@ -89,6 +86,7 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
         dbUsername: '',
         dbPassword: ''
       },
+      name: '',
       metric: {
         id: '',
         name: '',
@@ -112,56 +110,27 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
   const [selectedProviderCategory, setSelectedProviderCategory] = useState('')
   const [isProviderChose, setIsProviderChose] = useState<boolean>(selectedProvider !== null)
   const [activeStep, setActiveStep] = useState(0)
+  const queryClient = useQueryClient()
+  const { data: plugins } = getPluginsQuery()
 
   useEffect(() => {
     setIsProviderChose(selectedProvider !== null)
   }, [selectedProvider])
 
-  // sortir dans une classe statique
-  const { data: plugins } = useQuery({
-    queryKey: ['getPlugins'],
-    queryFn: () => new GetPluginsUsecase(pluginAdapter).execute(),
-    initialData: () => []
+  const { mutate: setupPlugin, isLoading: isSetupPluginLoading } = setupPluginMutation((data) => {
+    setPluginToMetricId(data.id)
+    setMetricFields(data.data)
+    if (selectedMetric?.isNotifiable) {
+      setActiveStep(SetupPluginStepEnum.FINISH)
+    }
+    setActiveStep(SetupPluginStepEnum.ALERT_CONFIG)
+    queryClient.invalidateQueries({ queryKey: ["getActiveMetrics"] })
   })
 
-  const { mutate: setupPlugin, isLoading: isSetupPluginLoading } = useMutation(
-    ({ pluginId, metricType, credential }: SetupPluginRequest) =>
-      new SetupPluginUsecase(pluginAdapter).execute(pluginId, metricType, credential),
-    {
-      // how to type that ??
-      onSuccess: (data) => {
-        setPluginToMetricId(data.id)
-        setMetricFields(data.data)
-        if (selectedMetric?.isNotifiable) {
-          setActiveStep(SetupPluginStepEnum.FINISH)
-        }
-        setActiveStep(SetupPluginStepEnum.ALERT_CONFIG)
-      },
-      onError: () => {
-        alert('there was an error')
-      }
-    }
-  )
+  const { mutate: createAlert, isLoading: isCreateAlertLoading } = createPluginAlertMutation(() => {
+    setActiveStep(activeStep + 1)
+  })
 
-  const { mutate: createAlert, isLoading: isCreateAlertLoading } = useMutation(
-    ({ pluginToMetricId, alerts }: CreateAlertRequest) => {
-      if (!selectedProvider || !selectedMetric) {
-        throw Error("You can't make an alert without plugin or metric")
-      }
-      return new CreateAlertUsecase(alertAdapter).execute({
-        pluginToMetricId,
-        alerts
-      })
-    },
-    {
-      onSuccess: () => {
-        setActiveStep(activeStep + 1)
-      },
-      onError: () => {
-        alert('there was an error')
-      }
-    }
-  )
 
   const onSubmit = (data: SetupPluginFormValues) => {
     if (!selectedProvider || !selectedMetric) {
@@ -171,7 +140,7 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
       case SetupPluginStepEnum.FILL_CREDENTIAL:
         // eslint-disable-next-line no-case-declarations
         const credential: GenericCredentialType = data[selectedProvider.type]
-        handleConnectionTest(selectedProvider, selectedMetric, credential)
+        handleConnectionTest(data.name, selectedProvider, selectedMetric, credential)
         break
       case SetupPluginStepEnum.ALERT_CONFIG:
         // eslint-disable-next-line no-case-declarations
@@ -198,6 +167,7 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
   }
 
   const handleConnectionTest = (
+    name: string,
     plugin: PluginModel,
     metric: MetricModel,
     credential: GenericCredentialType
@@ -207,6 +177,7 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
         setupPlugin({
           pluginId: plugin.id,
           metricType: metric.type,
+          name,
           credential
         })
         break
@@ -214,6 +185,7 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
         setupPlugin({
           pluginId: plugin.id,
           metricType: metric.type,
+          name,
           credential
         })
         break
@@ -221,6 +193,7 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
         setupPlugin({
           pluginId: plugin.id,
           metricType: metric.type,
+          name,
           credential
         })
         break
@@ -228,6 +201,7 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
         setupPlugin({
           pluginId: plugin.id,
           metricType: metric.type,
+          name,
           credential
         })
         break
@@ -249,7 +223,7 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
       <DialogTitle>
         <DialogHeader>
           <span>
-            {activeStep === 2 ? `${selectedProvider?.name} settings` : 'Set up your provider'}
+            {activeStep === SetupPluginStepEnum.ALERT_CONFIG ? `${selectedProvider?.name} settings` : 'Set up your provider'}
           </span>
           <IconButton onClick={handleModalClose}>
             <Close />
@@ -260,16 +234,16 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
       <FormProvider {...methods}>
         <form onSubmit={methods.handleSubmit(onSubmit)}>
           <DialogContent>
-            {activeStep === 0 && (
+            {activeStep === SetupPluginStepEnum.CHOOSE_PLUGIN && (
               <ProviderFormStep1
                 providerCategory={selectedProviderCategory}
                 allPlugins={plugins}
                 handleProviderCategory={handleFilterChange}
               />
             )}
-            {activeStep === 1 && <ProviderFormStep2 />}
-            {activeStep === 2 && <ProviderFormStep3 />}
-            {activeStep === 3 && <p>Félicitations</p>}
+            {activeStep === SetupPluginStepEnum.FILL_CREDENTIAL && <ProviderFormStep2 />}
+            {activeStep === SetupPluginStepEnum.ALERT_CONFIG && <ProviderFormStep3 />}
+            {activeStep === SetupPluginStepEnum.FINISH && <p>Félicitations</p>}
           </DialogContent>
           <ProviderFormActionButtons
             activeStep={activeStep}

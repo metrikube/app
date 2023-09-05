@@ -1,15 +1,26 @@
 import { useAdapter } from '../config/axios'
 import {
+  ActiveMetricModel,
   AlertModel,
   DeleteActiveMetricAlertUsecase,
   DeleteActiveMetricUsecase,
   GetActiveMetricAlertUsecase,
+  GetActiveMetricsUsecase,
   ToggleAlertNotification,
   ToggleAlertNotificationUsecase
 } from '@metrikube/core'
 import { useMutation, useQuery } from '@tanstack/react-query'
 
 const { dashboardMetricsAdapter, alertAdapter } = useAdapter()
+
+export const getActiveMetricQuery = () => {
+  return useQuery<ActiveMetricModel[]>({
+    queryKey: ['getActiveMetrics'],
+    queryFn: () => new GetActiveMetricsUsecase(dashboardMetricsAdapter).execute(),
+    initialData: () => [],
+    refetchOnWindowFocus: false
+  })
+}
 
 export const getActiveMetricAlertsQuery = (activeMetricId: string) =>
   useQuery({

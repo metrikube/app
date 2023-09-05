@@ -48,7 +48,7 @@ export class DashboardUseCase implements DashboardUseCaseInterface {
       ...configuredMetric,
       ...this.mapToPluginCredential(
         configuredMetric.plugin,
-        credentials.find((credential) => credential.pluginId === configuredMetric.plugin.id)
+        credentials.find((credential) => credential.id === configuredMetric.credentialId)
       )
     })) as ActivatedMetric[];
   }

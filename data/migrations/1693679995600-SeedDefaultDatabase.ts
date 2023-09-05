@@ -21,7 +21,10 @@ export class SeedDefaultDatabase1693679995600 implements MigrationInterface {
       apiHealthCheck: randomUUID(),
       awsEc2SingleInstanceUsage: randomUUID(),
       awsEc2MultipleInstancesUsage: randomUUID(),
+      awsS3SingleBucketUsage: randomUUID(),
+      awsS3MultipleBucketsUsage: randomUUID(),
       githubLastIssues: randomUUID(),
+      githubLastPRs: randomUUID(),
       sqlDatabaseQueries: randomUUID(),
       sqlDatabaseSlowQueries: randomUUID(),
       sqlDatabaseSize: randomUUID()
@@ -95,7 +98,21 @@ export class SeedDefaultDatabase1693679995600 implements MigrationInterface {
       {
         id: metricIds.awsEc2MultipleInstancesUsage,
         type: 'aws-ec2-multiple-instances-usage',
-        name: 'AWS EC2 multiple instance cost',
+        name: 'AWS EC2 multiple instances cost',
+        pluginId: pluginIds.aws,
+        isNotifiable: false
+      },
+      {
+        id: metricIds.awsS3SingleBucketUsage,
+        type: 'aws-bucket-single-instance',
+        name: 'AWS Bucket single instance cost',
+        pluginId: pluginIds.aws,
+        isNotifiable: false
+      },
+      {
+        id: metricIds.awsS3MultipleBucketsUsage,
+        type: 'aws-bucket-multiple-instances',
+        name: 'AWS Bucket multiple instances cost',
         pluginId: pluginIds.aws,
         isNotifiable: false
       },
@@ -103,6 +120,13 @@ export class SeedDefaultDatabase1693679995600 implements MigrationInterface {
         id: metricIds.githubLastIssues,
         type: 'github-last-issues',
         name: 'Github last ussues',
+        pluginId: pluginIds.github,
+        isNotifiable: false
+      },
+      {
+        id: metricIds.githubLastPRs,
+        type: 'github-last-prs',
+        name: 'Github last PRs',
         pluginId: pluginIds.github,
         isNotifiable: false
       },
