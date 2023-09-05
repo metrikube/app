@@ -242,19 +242,18 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
               {activeStep === SetupPluginStepEnum.ALERT_CONFIG && <ProviderFormStep3 />}
               {activeStep === SetupPluginStepEnum.FINISH && <p>Félicitations</p>}
             </Box>
-        
+            <ProviderFormActionButtons
+              activeStep={activeStep}
+              steps={steps}
+              isSetupPluginLoading={isSetupPluginLoading}
+              isCreateAlertLoading={isCreateAlertLoading}
+              isProviderChose={isProviderChose}
+              setActiveStep={setActiveStep}
+              handleModalClose={handleModalClose}
+            />
           </form>
         </FormProvider>
       </DialogContent>
-      <ProviderFormActionButtons
-        activeStep={activeStep}
-        steps={steps}
-        isSetupPluginLoading={isSetupPluginLoading}
-        isCreateAlertLoading={isCreateAlertLoading}
-        isProviderChose={isProviderChose}
-        setActiveStep={setActiveStep}
-        handleModalClose={handleModalClose}
-      />
     </Dialog>
   )
 }
