@@ -217,8 +217,8 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
     <Dialog open={open} maxWidth="md" fullWidth={true} onClose={handleModalClose}>
       <DialogTitle>
         <DialogHeader >
-          <Typography variant="h5" sx={{fontWeight: 'bold'}}>
-          {activeStep === SetupPluginStepEnum.ALERT_CONFIG ? `${selectedProvider?.name} settings` : 'Set up your provider'}
+          <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
+            {activeStep === SetupPluginStepEnum.ALERT_CONFIG ? `${selectedProvider?.name} settings` : 'Set up your provider'}
           </Typography>
           <IconButton onClick={handleModalClose}>
             <Close />
@@ -227,7 +227,7 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
       </DialogTitle>
       <DialogContent>
         <ProviderFormStepper activeStep={activeStep} steps={steps} />
-        <Divider sx={{ mb: '20px' }}/>
+        <Divider sx={{ mb: '20px' }} />
         <FormProvider {...methods}>
           <form onSubmit={methods.handleSubmit(onSubmit)}>
             <Box>
@@ -242,19 +242,19 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
               {activeStep === SetupPluginStepEnum.ALERT_CONFIG && <ProviderFormStep3 />}
               {activeStep === SetupPluginStepEnum.FINISH && <p>Félicitations</p>}
             </Box>
-        
+            <ProviderFormActionButtons
+              activeStep={activeStep}
+              steps={steps}
+              isSetupPluginLoading={isSetupPluginLoading}
+              isCreateAlertLoading={isCreateAlertLoading}
+              isProviderChose={isProviderChose}
+              setActiveStep={setActiveStep}
+              handleModalClose={handleModalClose}
+            />
           </form>
         </FormProvider>
       </DialogContent>
-      <ProviderFormActionButtons
-        activeStep={activeStep}
-        steps={steps}
-        isSetupPluginLoading={isSetupPluginLoading}
-        isCreateAlertLoading={isCreateAlertLoading}
-        isProviderChose={isProviderChose}
-        setActiveStep={setActiveStep}
-        handleModalClose={handleModalClose}
-      />
+
     </Dialog>
   )
 }

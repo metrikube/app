@@ -1,9 +1,9 @@
-import ApiMetricBody from '../../components/molecules/metricCards/metricsTypes/api/ApiMetricBody'
-import SingleInstanceEC2 from '../../components/molecules/metricCards/metricsTypes/aws/SingleInstanceEC2'
-import LastPullRequest from '../../components/molecules/metricCards/metricsTypes/github/LastPullRequest'
+import LineChart from '../../components/molecules/widgets/LineChart'
+import ListResource from '../../components/molecules/widgets/ListResource'
+import SingleResource from '../../components/molecules/widgets/SingleResource'
 import { MetricCard } from './components/MetricCard'
-import { ActiveMetricModel } from '@metrikube/core'
-import { Box, Grid } from '@mui/material'
+import { ActiveMetricModel, formatAsCurrency } from '@metrikube/core'
+import { Box, Grid, TableCell, TableRow } from '@mui/material'
 import React from 'react'
 
 interface Props {
@@ -16,15 +16,92 @@ export const MetricsLayout = ({ metrics, onAlertOpenRequest, onMetricDeletionReq
   const getMetricCardContent = ({ metric, data }: ActiveMetricModel) => {
     switch (metric.type) {
       case 'api-endpoint-health-check':
-        return <ApiMetricBody status={data.status} unit={data.unit} value={data.value} />
+        return (
+          <SingleResource>
+            <>
+              <small>Status : {data.status}</small>
+              <small>
+                Time : {data.value} {data.unit}
+              </small>
+            </>
+          </SingleResource>
+        )
       case 'aws-bucket-single-instance':
-        return <SingleInstanceEC2 name={data.name} status={data.status} cost={data.cost} />
+        return (
+          <SingleResource>
+            <>
+              <small>{data.name}</small>
+              <small>Région: {data.region}</small>
+              <small>{formatAsCurrency(data.cost, data.currency)}</small>
+            </>
+          </SingleResource>
+        )
       case 'aws-ec2-single-instance-usage':
-        return <SingleInstanceEC2 name={data.name} status={data.status} cost={data.cost} />
-      case 'github-last-prs':
-        return <LastPullRequest />
+        return (
+          <SingleResource>
+            <>
+              <small>{data.name}</small>
+              <small>Région: {data.region}</small>
+              <small>{formatAsCurrency(data.cost, data.currency)}</small>
+            </>
+          </SingleResource>
+        )
+      case 'aws-bucket-multiple-instances':
+        return (
+          <ListResource
+            tableHead={['Nom du bucket', 'Coût'].map((column, index) => (
+              <TableCell key={index}>{column}</TableCell>
+            ))}
+            tableBody={data.map((instance) => (
+              <TableRow key={instance.id}>
+                <TableCell>{instance.name}</TableCell>
+                <TableCell>{formatAsCurrency(instance.cost, instance.currency)}</TableCell>
+              </TableRow>
+            ))}
+          />
+        )
       case 'github-last-issues':
-        return <p>test</p>
+        return (
+          <ListResource
+            tableHead={['Numéro', 'Titre', 'Auteur', 'status'].map((column, index) => (
+              <TableCell key={index}>{column}</TableCell>
+            ))}
+            tableBody={data.map((issue, index) => (
+              <TableRow key={index}>
+                <TableCell>
+                  <a href={issue.url} target="_blank" rel="noreferrer">
+                    {issue.number}
+                  </a>
+                </TableCell>
+                <TableCell>{issue.title}</TableCell>
+                <TableCell>{issue.author}</TableCell>
+                <TableCell>{issue.status}</TableCell>
+              </TableRow>
+            ))}
+          />
+        )
+      case 'github-last-prs':
+        return (
+          <ListResource
+            tableHead={['Numéro', 'Titre', 'Auteur', 'status'].map((column, index) => (
+              <TableCell key={index}>{column}</TableCell>
+            ))}
+            tableBody={data.map((pullRequest, index) => (
+              <TableRow key={index}>
+                <TableCell>
+                  <a href={pullRequest.url} target="_blank" rel="noreferrer">
+                    {pullRequest.number}
+                  </a>
+                </TableCell>
+                <TableCell>{pullRequest.title}</TableCell>
+                <TableCell>{pullRequest.author}</TableCell>
+                <TableCell>{pullRequest.status}</TableCell>
+              </TableRow>
+            ))}
+          />
+        )
+      case 'database-queries':
+        return <LineChart />
     }
   }
 

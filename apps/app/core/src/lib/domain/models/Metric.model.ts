@@ -14,5 +14,5 @@ export type ActiveMetricModel = {
     resourceId?: string
     plugin: Pick<PluginModel, "id" | "name" | "type" | "description">
     metric: Pick<MetricModel, "id" | "name" | "type" | "isNotifiable">
-    data: ApiHealthCheckResult | ApiAWSSingleResourceInstanceResult | ApiGithubPullRequests
+    data: ApiHealthCheckResult | ApiAWSSingleResourceInstanceResult | ApiGithubPullRequests 
 }
