@@ -15,12 +15,12 @@ const limit = 5;
 export class GithubService implements PluginConnectionInterface {
   async getRepoIssues({ accessToken, repo, owner }: GithubCredentialType): Promise<ApiGithubIssues[] | ApiGithubError> {
     try {
-      const { data: issues } = await axios.get<Issues>(`https://api.github.com/repos/${owner}/${repo}/issues?per_page=${limit}&state=all`, {
+      const { data: { items: issues } } = await axios.get<{items: Issues}>(`https://api.github.com/search/issues?q=is:issue%20repo:${owner}/${repo}&per_page=${limit}`, {
         headers: {
           Authorization: `token ${accessToken}`
         }
       });
-      return issues.map(({ title, user: { login }, number, state, url }) => ({ title, number, url, author: login, status: state }));
+      return issues.map(({ title, user: { login }, number, state, html_url }) => ({ title, number, url: html_url, author: login, status: state }));
     } catch (error) {
       return {
         error: true,
