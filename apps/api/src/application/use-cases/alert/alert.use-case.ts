@@ -100,7 +100,7 @@ export class AlertUseCase implements AlertUseCaseInterface {
   private registerAlerJob(activatedMetric: PluginToMetricEntity): (alert: AlertEntity) => Promise<void> {
     return (alert: AlertEntity): Promise<void> => {
       return this.scheduler.scheduleAlert(
-        `Create new scheduled job for [${activatedMetric.plugin.name}:${activatedMetric.metric.name}:${activatedMetric.id}]`,
+        `[${alert.id}] ${activatedMetric.plugin.name} // ${activatedMetric.metric.name}`,
         activatedMetric.metric.refreshInterval,
         this.jobRunner.bind(this, alert.id)
       );

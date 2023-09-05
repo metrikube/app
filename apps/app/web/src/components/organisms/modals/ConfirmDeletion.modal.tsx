@@ -1,4 +1,4 @@
-import { DashboardContext } from '../../../contexts/Dashboard.context'
+import { ActiveMetricModel } from '@metrikube/core'
 import { deleteMetricMutation } from '../../../services/dashboard.service'
 import { Dialog, DialogContent, DialogTitle, DialogActions, TextField, Button } from '@mui/material'
 import React, { Dispatch, SetStateAction, useContext, useEffect, useState } from 'react'
@@ -7,14 +7,14 @@ import { useForm } from 'react-hook-form'
 interface Props {
   open: boolean
   setOpenModal: Dispatch<SetStateAction<boolean>>
+  metric: ActiveMetricModel
 }
 
 interface ConfirmDeletionForm {
   confirmDeletion: string
 }
 
-const ConfirmDeletionModal = ({ open, setOpenModal }: Props) => {
-  const { selectedActiveMetric } = useContext(DashboardContext)
+const ConfirmDeletionModal = ({ open, setOpenModal, metric }: Props) => {
   const { register, watch, reset } = useForm<ConfirmDeletionForm>()
 
   const confirmDeletionValue = watch('confirmDeletion')
@@ -42,7 +42,7 @@ const ConfirmDeletionModal = ({ open, setOpenModal }: Props) => {
 
   return (
     <Dialog open={open} onClose={handlerModalClose}>
-      <DialogTitle>Supprimer : {selectedActiveMetric?.metric.name}</DialogTitle>
+      <DialogTitle>Supprimer : {metric?.metric.name}</DialogTitle>
       <DialogContent>
         <form>
           <p>Pour confirmer la suppression</p>
@@ -59,7 +59,7 @@ const ConfirmDeletionModal = ({ open, setOpenModal }: Props) => {
       <DialogActions>
         <Button onClick={handlerModalClose}>Cancel</Button>
         <Button
-          onClick={() => handleMetricDelete(selectedActiveMetric.id)}
+          onClick={() => handleMetricDelete(metric.id)}
           disabled={shouldDisableDeletionButton}
           variant="outlined"
           color="error">

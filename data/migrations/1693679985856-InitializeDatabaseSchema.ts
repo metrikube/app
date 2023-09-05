@@ -11,7 +11,7 @@ export class InitializeDatabaseSchema1693679985856 implements MigrationInterface
          "pluginId"        varchar             NOT NULL,
          "type"            varchar             NOT NULL,
          "name"            varchar             NOT NULL,
-         "refreshInterval" integer             NOT NULL DEFAULT (60),
+         "refreshInterval" integer             NOT NULL DEFAULT (59),
          "isNotifiable"    boolean             NOT NULL DEFAULT (0),
          "createdAt"       datetime            NOT NULL DEFAULT (datetime('now'))
        )`
@@ -69,7 +69,7 @@ export class InitializeDatabaseSchema1693679985856 implements MigrationInterface
          "pluginId"        varchar             NOT NULL,
          "type"            varchar             NOT NULL,
          "name"            varchar             NOT NULL,
-         "refreshInterval" integer             NOT NULL DEFAULT (60),
+         "refreshInterval" integer             NOT NULL DEFAULT (59),
          "isNotifiable"    boolean             NOT NULL DEFAULT (0),
          "createdAt"       datetime            NOT NULL DEFAULT (datetime('now')),
          CONSTRAINT "fk_metric_plugin_id" FOREIGN KEY ("pluginId") REFERENCES "plugin" ("id") ON DELETE NO ACTION ON UPDATE NO ACTION
@@ -224,7 +224,7 @@ export class InitializeDatabaseSchema1693679985856 implements MigrationInterface
          "pluginId"        varchar             NOT NULL,
          "type"            varchar             NOT NULL,
          "name"            varchar             NOT NULL,
-         "refreshInterval" integer             NOT NULL DEFAULT (60),
+         "refreshInterval" integer             NOT NULL DEFAULT (59),
          "isNotifiable"    boolean             NOT NULL DEFAULT (0),
          "createdAt"       datetime            NOT NULL DEFAULT (datetime('now'))
        )`

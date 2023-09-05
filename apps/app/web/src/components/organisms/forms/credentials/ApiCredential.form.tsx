@@ -11,16 +11,6 @@ const ApiCredentialForm = () => {
   return (
     <>
       <TextField
-        id="api-endpoint-name"
-        label="Nom"
-        type="text"
-        variant="outlined"
-        size="small"
-        {...register('api_endpoint.name', {
-          required: 'This field is required.'
-        })}
-      />
-      <TextField
         fullWidth
         id="api-endpoint"
         label="API Endpoint"
