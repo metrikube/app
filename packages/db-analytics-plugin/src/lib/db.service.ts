@@ -34,26 +34,41 @@ export class DbService {
     const query = `
     WITH hours AS (
     SELECT
-        DATE_FORMAT(NOW() - INTERVAL (11 - n) HOUR, '%H:00:00') AS hour
+        DATE_FORMAT(NOW() - INTERVAL n HOUR, '%Y-%m-%d %H:00:00') AS hour
     FROM
         (SELECT 0 AS n UNION SELECT 1 UNION SELECT 2 UNION SELECT 3
          UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7
-         UNION SELECT 8 UNION SELECT 9 UNION SELECT 10 UNION SELECT 11) numbers
-    )
-    SELECT
-        h.hour,
-        IFNULL(SUM(es.COUNT_STAR), 0) AS nbRequests
-    FROM
-        hours h
-    LEFT JOIN
-        performance_schema.events_statements_summary_by_digest es
-        ON DATE_FORMAT(es.LAST_SEEN, '%H:00:00') = h.hour
-        AND es.SCHEMA_NAME NOT IN ('performance_schema', 'information_schema')
-        AND es.LAST_SEEN >= NOW() - INTERVAL 12 HOUR
-    GROUP BY
-        h.hour
-    ORDER BY
-        h.hour;
+             UNION SELECT 8 UNION SELECT 9 UNION SELECT 10 UNION SELECT 11) numbers
+    ),
+    schema_requests AS (
+        SELECT
+            DATE_FORMAT(es.EVENT_TIME, '%Y-%m-%d %H:00:00') AS hour,
+            COUNT(*) AS nbRequests
+        FROM
+            mysql.general_log es
+        LEFT JOIN
+            information_schema.processlist p
+            ON es.THREAD_ID = p.ID
+        WHERE
+            es.EVENT_TIME >= NOW() - INTERVAL 12 HOUR
+            AND p.DB = '${this.credentials.database}'
+        GROUP BY
+            hour
+      )
+      SELECT
+          h.hour,
+          IFNULL(sr.nbRequests, 0) AS nbRequests
+      FROM
+          hours h
+      LEFT JOIN
+          schema_requests sr
+          ON h.hour = sr.hour
+      WHERE
+          h.hour >= DATE_FORMAT(NOW() - INTERVAL 12 HOUR, '%Y-%m-%d %H:00:00')
+          AND h.hour <= DATE_FORMAT(NOW(), '%Y-%m-%d %H:00:00')
+      ORDER BY
+          h.hour;
+
     `;
     const connection = await this.connection();
     try {
@@ -109,6 +124,7 @@ export class DbService {
   public async getNbTables(): Promise<number> {
     const connection = await this.connection();
     // TODO because it's 0
+    // TODO because it's 0
     const query = `
       SELECT COUNT(*) AS nbTables
       FROM information_schema.tables
@@ -147,3 +163,9 @@ export class DbService {
     }
   }
 }
+
+
+SELECT EVENT_TIME, thread_id, information_schema.processlist.db from  mysql.general_log JOIN information_schema.processlist ON mysql.general_log.thread_id = information_schema.processlist.id where information_schema.processlist.db ="metrikube-test";
+
+
+SELECT EVENT_TIME, thread_id from  mysql.general_log GRoub by thread_id;
