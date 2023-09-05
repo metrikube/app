@@ -165,7 +165,5 @@ export class DbService {
 }
 
 
-SELECT EVENT_TIME, thread_id, information_schema.processlist.db from  mysql.general_log JOIN information_schema.processlist ON mysql.general_log.thread_id = information_schema.processlist.id where information_schema.processlist.db ="metrikube-test";
 
 
-SELECT EVENT_TIME, thread_id from  mysql.general_log GRoub by thread_id;
