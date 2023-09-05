@@ -11,7 +11,8 @@ export type ActiveMetricModel = {
     id: string
     name: string
     description?: string
-    plugin: Omit<PluginModel, "instructions" | "credential" | "category">
-    metric: MetricModel
+    resourceId?: string
+    plugin: Pick<PluginModel, "id" | "name" | "type" | "description">
+    metric: Pick<MetricModel, "id" | "name" | "type" | "isNotifiable">
     data: ApiHealthCheckResult | ApiAWSSingleResourceInstanceResult | ApiGithubPullRequests
 }
