@@ -83,7 +83,6 @@ const StyledCard = styled(Grid)`
   background-color: ${({ theme }) => theme.palette.background.paper};
   border: 1px solid ${({ theme }) => theme.palette.divider};
   border-radius: ${({ theme }) => {
-    console.log(theme)
     return theme.shape.borderRadius * 3
   }}px;
 
