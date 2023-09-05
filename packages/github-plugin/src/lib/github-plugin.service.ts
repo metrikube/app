@@ -37,7 +37,7 @@ export class GithubService implements PluginConnectionInterface {
           Authorization: `token ${accessToken}`
         }
       });
-      return prs.map(({ title, user: { login }, number, state, url }) => ({ title, number, url, author: login, status: state }));
+      return prs.map(({ title, user: { login }, number, state, html_url }) => ({ title, number, url: html_url, author: login, status: state }));
     } catch (error) {
       return {
         error: true,
