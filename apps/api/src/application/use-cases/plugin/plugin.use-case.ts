@@ -134,17 +134,17 @@ export class PluginUseCase implements PluginUseCaseInterface {
     return this.pluginRepository.createPlugin(plugin);
   }
 
-  private async testPluginConnection(
+  async testPluginConnection(
     plugin: PluginEntity,
     credential: GenericCredentialType
   ): Promise<void> {
-    const pluginConnection: Record<Plugin['type'], PluginConnectionInterface> = {
+    const pluginConnector: Record<Plugin['type'], PluginConnectionInterface> = {
       api_endpoint: this.apiMonitoringService,
       github: this.githubService,
       aws: this.AWSService,
       sql_database: this.databaseService
     };
-    const pluginTestConnection: { ok: boolean; message: string | null } = await pluginConnection[plugin.type].testConnection(credential);
+    const pluginTestConnection: { ok: boolean; message: string | null } = await pluginConnector[plugin.type].testConnection(credential);
     if (!pluginTestConnection.ok) throw new BadRequestException(pluginTestConnection.message || 'Plugin connection failed');
   }
 }

@@ -5,6 +5,20 @@ export type ApiEndpointCredentialType = { apiEndpoint: string };
 export type GithubCredentialType = { accessToken: string; owner: string; repo: string };
 export type AwsCredentialType = { accessKeyId: string; secretAccessKey: string; region: string; resourceId?: string };
 
-export type CredentialType = 'apiKey' | 'userPassword' | 'dbConnection' | 'apiEndpoint' | 'github' | 'aws';
+// prettier-ignore
+export type CredentialType =
+  | 'apiKey'
+  | 'userPassword'
+  | 'dbConnection'
+  | 'apiEndpoint'
+  | 'github'
+  | 'aws';
 
-export type GenericCredentialType = ApiKeyCredentialType | UserPasswordCredentialType | DbConnectionCredentialType | ApiEndpointCredentialType | GithubCredentialType | AwsCredentialType;
+// prettier-ignore
+export type GenericCredentialType =
+  | ApiKeyCredentialType
+  | UserPasswordCredentialType
+  | DbConnectionCredentialType
+  | ApiEndpointCredentialType
+  | GithubCredentialType
+  | AwsCredentialType;
