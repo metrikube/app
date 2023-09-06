@@ -1,9 +1,14 @@
-import LineChart from '../../components/molecules/widgets/LineChart'
-import ListResource from '../../components/molecules/widgets/ListResource'
-import SingleResource from '../../components/molecules/widgets/SingleResource'
+import { ApiEndpointHealthCheck } from '../../components/MetricsTemplates/ApiEndpointHealthCheck'
+import { AwsBucketMultipleInstances } from '../../components/MetricsTemplates/AwsBucketMultipleInstances'
+import { AwsBucketSingleInstance } from '../../components/MetricsTemplates/AwsBucketSingleInstance'
+import { AwsEc2MultipleInstancesUsage } from '../../components/MetricsTemplates/AwsEc2MultipleInstancesUsage'
+import { AwsEc2SingleInstanceUsage } from '../../components/MetricsTemplates/AwsEc2SingleInstanceUsage'
+import { DataBaseQueries } from '../../components/MetricsTemplates/DataBaseQueries'
+import { GithubLastIssues } from '../../components/MetricsTemplates/GithubLastIssues'
+import { GithubLastPullRequests } from '../../components/MetricsTemplates/GithubLastPullRequests'
 import { MetricCard } from './components/MetricCard'
-import { ActiveMetricModel, formatAsCurrency } from '@metrikube/core'
-import { Box, Grid, TableCell, TableRow } from '@mui/material'
+import { ActiveMetricModel } from '@metrikube/core'
+import { Box, Grid } from '@mui/material'
 import React from 'react'
 
 interface Props {
@@ -13,96 +18,17 @@ interface Props {
 }
 
 export const MetricsLayout = ({ metrics, onAlertOpenRequest, onMetricDeletionRequest }: Props) => {
-  const getMetricCardContent = ({ metric, data }: ActiveMetricModel) => {
-    switch (metric.type) {
-      case 'api-endpoint-health-check':
-        return (
-          <SingleResource>
-            <>
-              <small>Status : {data.status}</small>
-              <small>
-                Time : {data.value} {data.unit}
-              </small>
-            </>
-          </SingleResource>
-        )
-      case 'aws-bucket-single-instance':
-        return (
-          <SingleResource>
-            <>
-              <small>{data.name}</small>
-              <small>Région: {data.region}</small>
-              <small>{formatAsCurrency(data.cost, data.currency)}</small>
-            </>
-          </SingleResource>
-        )
-      case 'aws-ec2-single-instance-usage':
-        return (
-          <SingleResource>
-            <>
-              <small>{data.name}</small>
-              <small>Région: {data.region}</small>
-              <small>{formatAsCurrency(data.cost, data.currency)}</small>
-            </>
-          </SingleResource>
-        )
-      case 'aws-bucket-multiple-instances':
-        return (
-          <ListResource
-            tableHead={['Nom du bucket', 'Coût'].map((column, index) => (
-              <TableCell key={index}>{column}</TableCell>
-            ))}
-            tableBody={data.map((instance) => (
-              <TableRow key={instance.id}>
-                <TableCell>{instance.name}</TableCell>
-                <TableCell>{formatAsCurrency(instance.cost, instance.currency)}</TableCell>
-              </TableRow>
-            ))}
-          />
-        )
-      case 'github-last-issues':
-        return (
-          <ListResource
-            tableHead={['Numéro', 'Titre', 'Auteur', 'status'].map((column, index) => (
-              <TableCell key={index}>{column}</TableCell>
-            ))}
-            tableBody={data.map((issue, index) => (
-              <TableRow key={index}>
-                <TableCell>
-                  <a href={issue.url} target="_blank" rel="noreferrer">
-                    {issue.number}
-                  </a>
-                </TableCell>
-                <TableCell>{issue.title}</TableCell>
-                <TableCell>{issue.author}</TableCell>
-                <TableCell>{issue.status}</TableCell>
-              </TableRow>
-            ))}
-          />
-        )
-      case 'github-last-prs':
-        return (
-          <ListResource
-            tableHead={['Numéro', 'Titre', 'Auteur', 'status'].map((column, index) => (
-              <TableCell key={index}>{column}</TableCell>
-            ))}
-            tableBody={data.map((pullRequest, index) => (
-              <TableRow key={index}>
-                <TableCell>
-                  <a href={pullRequest.url} target="_blank" rel="noreferrer">
-                    {pullRequest.number}
-                  </a>
-                </TableCell>
-                <TableCell>{pullRequest.title}</TableCell>
-                <TableCell>{pullRequest.author}</TableCell>
-                <TableCell>{pullRequest.status}</TableCell>
-              </TableRow>
-            ))}
-          />
-        )
-      case 'database-queries':
-        return <LineChart />
-    }
+  const metricTemplateMap: {
+    [key: string]: ({ metric }: { metric: ActiveMetricModel }) => JSX.Element
+  } = {
+    'api-endpoint-health-check': ApiEndpointHealthCheck,
+    'aws-bucket-single-instance': AwsBucketSingleInstance,
+    'aws-bucket-multiple-instances': AwsBucketMultipleInstances,
+    'aws-ec2-single-instance-usage': AwsEc2SingleInstanceUsage,
+    'aws-ec2-multiple-instances-usage': AwsEc2MultipleInstancesUsage,
+    'github-last-issues': GithubLastIssues,
+    'github-last-prs': GithubLastPullRequests,
+    'database-queries': DataBaseQueries
   }
 
   return (
@@ -115,7 +41,7 @@ export const MetricsLayout = ({ metrics, onAlertOpenRequest, onMetricDeletionReq
             size={index % 2 ? 'small' : 'large'}
             onAlertButtonClick={() => onAlertOpenRequest(metric)}
             onDeleteButtonClick={() => onMetricDeletionRequest(metric)}>
-            {getMetricCardContent(metric)}
+            {metricTemplateMap[metric.metric.type]({ metric })}
           </MetricCard>
         ))}
       </Grid>
