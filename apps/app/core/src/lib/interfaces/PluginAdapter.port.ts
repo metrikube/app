@@ -13,5 +13,5 @@ export type SetupPluginRequest = {
 export interface PluginAdapter {
   getPlugins: () => Promise<PluginModel[]>;
   setupPlugin: <T extends MetricType>(payload: SetupPluginRequest) => Promise<PluginResult<T>>;
-  validateCredentials: (payload: ValidateCredentialsRequest) => Promise<void>
+  validateCredentials: <T extends MetricType>(payload: ValidateCredentialsRequest) => Promise<PluginResult<T>>
 }

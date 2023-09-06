@@ -17,7 +17,8 @@ export class PluginAdapterImpl implements PluginAdapter {
     return data.plugins;
   }
 
-  async validateCredentials(payload: ValidateCredentialsRequest): Promise<void> {
-    this.http.post(`/credentials/validate/${payload.metricId}`, payload.credentials)
+  async validateCredentials<T extends MetricType>(payload: ValidateCredentialsRequest): Promise<PluginResult<T>> {
+    const { data } = await this.http.post(`/credentials/validate/${payload.metricId}`, payload.credentials)
+    return data
   };
 }
