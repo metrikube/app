@@ -8,6 +8,8 @@ export interface AlertRepository {
 
   findAlertById(id: string): Promise<AlertEntity>;
 
+  findByWidgetId(widgetId: string): Promise<AlertEntity[]>;
+
   createAlerts(alertOrAlerts: Partial<Alert[]>): Promise<AlertEntity[]>;
 
   updateAlert(id: string, payload: Partial<AlertEntity>): Promise<void>;

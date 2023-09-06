@@ -12,6 +12,10 @@ export class AlertInMemoryRepositoryImpl implements AlertRepository {
     return Promise.resolve(this.alerts);
   }
 
+  findByWidgetId(widgetId: string): Promise<AlertEntity[]> {
+    return Promise.resolve(this.alerts.filter((alert) => alert.pluginToMetricId === widgetId));
+  }
+
   findAlertById(id: string): Promise<AlertEntity> {
     return Promise.resolve(this.alerts.find((alert) => alert.id === id));
   }
