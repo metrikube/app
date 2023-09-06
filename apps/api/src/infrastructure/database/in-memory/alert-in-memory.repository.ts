@@ -4,7 +4,7 @@ import { AlertRepository } from '../../../domain/interfaces/repository/alert.rep
 import { AlertEntity } from '../entities/alert.entity';
 
 export class AlertInMemoryRepositoryImpl implements AlertRepository {
-  private readonly alerts: AlertEntity[] = [];
+  public alerts: AlertEntity[] = [];
 
   constructor() {}
 
@@ -27,9 +27,13 @@ export class AlertInMemoryRepositoryImpl implements AlertRepository {
   }
 
   async updateAlert(id: string, payload: Partial<AlertEntity>): Promise<void> {
-    let alert = this.alerts.find((alert) => alert.id === id);
-    alert = { ...alert, ...payload };
-    return Promise.resolve();
+    const alertIndex = this.alerts.findIndex((alert) => alert.id === id);
+    if (alertIndex !== -1) {
+      this.alerts[alertIndex] = {
+        ...this.alerts[alertIndex],
+        ...payload
+      };
+    }
   }
 
   async deleteAlert(id: string): Promise<void> {

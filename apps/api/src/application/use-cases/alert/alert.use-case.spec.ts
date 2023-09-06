@@ -1,8 +1,10 @@
 import { Test } from '@nestjs/testing';
 
-import { MetricThresholdOperator } from '@metrikube/common';
+import { MetricThresholdOperator, MetricThresholdOperatorEnum } from '@metrikube/common';
 
+import { SchedulerInterface } from '../../../domain/interfaces/scheduler/scheduler.interface';
 import { AlertEntity } from '../../../infrastructure/database/entities/alert.entity';
+import { PluginToMetricEntity } from '../../../infrastructure/database/entities/plugin_to_metric.entity';
 import { AlertInMemoryRepositoryImpl } from '../../../infrastructure/database/in-memory/alert-in-memory.repository';
 import { CredentialInMemoryRepositoryImpl } from '../../../infrastructure/database/in-memory/credential-in-memory.repository';
 import { PluginToMetricInMemoryRepositoryImpl } from '../../../infrastructure/database/in-memory/plugin-to-metric-in-memory.repository';
@@ -12,6 +14,9 @@ import { AlertUseCase } from './alert.use-case';
 
 describe('AlertUseCase', () => {
   let useCase: AlertUseCase;
+  let alertRepository: AlertInMemoryRepositoryImpl;
+  let scheduler: SchedulerInterface;
+  let pluginToMetricRepository: PluginToMetricInMemoryRepositoryImpl;
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
@@ -28,6 +33,9 @@ describe('AlertUseCase', () => {
     }).compile();
 
     useCase = module.get(AlertUseCase);
+    alertRepository = module.get(DiTokens.AlertRepositoryToken);
+    scheduler = module.get(DiTokens.Scheduler);
+    pluginToMetricRepository = module.get(DiTokens.PluginToMetricRepositoryToken);
   });
 
   it('should be defined', () => {
@@ -85,4 +93,45 @@ describe('AlertUseCase', () => {
     expect(spy).toHaveBeenCalled();
     expect(spy).toHaveBeenCalledWith(metricData.field, alert.condition.operator, alert.condition.threshold);
   });
+
+  it('should update alert when isActive is not in payload', async () => {
+    const alert: CreateAlertRequestDto = {
+      label: 'alert-name',
+      metricId: 'metric-id',
+      condition: {
+        field: 'field',
+        operator: MetricThresholdOperatorEnum.GTE,
+        threshold: 5
+      }
+    };
+    alertRepository.alerts = [Object.assign(new AlertEntity(), { id: '1', alert })];
+
+    await useCase.updateAlert('1', { label: 'new-alert-name' });
+    const updatedAlert = await alertRepository.findAlertById('1');
+
+    expect(updatedAlert.label).toEqual('new-alert-name');
+  });
+
+  it('should schedule and update alert when isActive is true', async () => {
+    const alert: CreateAlertRequestDto = {
+      label: 'alert-name',
+      metricId: 'metric-id',
+      condition: {
+        field: 'field',
+        operator: MetricThresholdOperatorEnum.GTE,
+        threshold: 5
+      }
+    };
+
+    const insertedAlert = await useCase.createAlertOnActivePlugin('1', [alert]);
+
+    await useCase.updateAlert('1', { isActive: true });
+
+    // spy on scheduler
+    const spyScheduler = jest.spyOn(scheduler, 'scheduleAlert');
+
+    expect(spyScheduler).toHaveBeenCalled();
+  });
+
+  it.todo('should unschedule and update alert when isActive is false');
 });

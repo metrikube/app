@@ -6,6 +6,7 @@ import { GithubService } from '@metrikube/github-plugin';
 
 import { CredentialRepository } from '../../../domain/interfaces/repository/credential.repository';
 import { PluginToMetricRepository } from '../../../domain/interfaces/repository/plugin-to-metric.repository';
+import { SchedulerInterface } from '../../../domain/interfaces/scheduler/scheduler.interface';
 import { DashboardUseCaseInterface } from '../../../domain/interfaces/use-cases/dashboard.use-case.interface';
 import { PluginUseCaseInterface } from '../../../domain/interfaces/use-cases/plugin.use-case.interface';
 import { Credential } from '../../../domain/models/credential.model';
@@ -24,6 +25,7 @@ export class DashboardUseCase implements DashboardUseCaseInterface {
     @Inject(DiTokens.PluginToMetricRepositoryToken) private readonly pluginToMetricRepository: PluginToMetricRepository,
     @Inject(DiTokens.CredentialRepositoryToken) private readonly credentialRepository: CredentialRepository,
     @Inject(DiTokens.PluginUseCaseToken) private readonly pluginUseCase: PluginUseCaseInterface,
+    @Inject(DiTokens.Scheduler) private readonly scheduler: SchedulerInterface,
     @Inject(DiTokens.ApiMonitoringToken) private readonly apiMonitoringService: ApiMonitoringService,
     @Inject(DiTokens.GithubServiceToken) private readonly githubService: GithubService
   ) {}
@@ -38,6 +40,8 @@ export class DashboardUseCase implements DashboardUseCaseInterface {
   }
 
   async disableDashboardMetric(pluginToMetricId: string): Promise<void> {
+    await this.scheduler.unscheduleRelatedAlerts(pluginToMetricId);
+
     await this.pluginToMetricRepository.disablePluginToMetric(pluginToMetricId);
   }
 

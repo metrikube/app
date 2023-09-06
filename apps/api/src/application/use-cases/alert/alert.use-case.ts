@@ -33,17 +33,10 @@ export class AlertUseCase implements AlertUseCaseInterface {
   ) {
   }
 
-  getPluginToMetricAlerts(pluginToMetricId: PluginToMetricEntity['id']): Promise<AlertEntity[]> {
-    return this.alertRepository.getAlerts({ pluginToMetricId });
-  }
-
-  updateAlert(alertId: string, payload: UpdateAlertDto): Promise<void> {
-    return this.alertRepository.updateAlert(alertId, payload);
-  }
-
   async deleteAlert(alertId: string): Promise<void> {
     return this.alertRepository.deleteAlert(alertId);
   }
+
 
   async createAlertOnActivePlugin(pluginToMetricId: PluginToMetricEntity['id'], alerts: CreateAlertRequestDto[]): Promise<CreateAlertResponseDto> {
     const activatedMetric = await this.pluginToMetricRepository.findPluginToMetricById(pluginToMetricId);
@@ -79,6 +72,23 @@ export class AlertUseCase implements AlertUseCaseInterface {
     }
   }
 
+  getPluginToMetricAlerts(pluginToMetricId: PluginToMetricEntity['id']): Promise<AlertEntity[]> {
+    return this.alertRepository.findByWidgetId(pluginToMetricId);
+  }
+
+  async updateAlert(alertId: string, payload: UpdateAlertDto): Promise<void> {
+    if (!('isActive' in payload)) return this.alertRepository.updateAlert(alertId, payload);
+    if (payload.isActive) {
+      const alert: AlertEntity = await this.alertRepository.findAlertById(alertId);
+      const pluginToMetric: PluginToMetricEntity = await this.pluginToMetricRepository.findPluginToMetricById(alert.pluginToMetricId);
+      await this.scheduler.scheduleAlert(alertId, pluginToMetric.metric.refreshInterval, this.jobRunner.bind(this, alertId));
+      return this.alertRepository.updateAlert(alertId, payload);
+    }
+
+    this.scheduler.unscheduleRelatedAlerts(alertId);
+    return this.alertRepository.updateAlert(alertId, payload);
+  }
+
   checkConditionThreshold(value: string | number, operator: MetricThresholdOperator, threshold: string | number): boolean {
     const operators: MetricThresholdOperator[] = ['gt', 'lt', 'eq', 'gte', 'lte', 'neq'];
     if (!operators.includes(operator)) throw new Error('Invalid operator');
@@ -97,8 +107,7 @@ export class AlertUseCase implements AlertUseCaseInterface {
 
   private registerAlerJob(activatedMetric: PluginToMetricEntity): (alert: AlertEntity) => Promise<void> {
     return (alert: AlertEntity): Promise<void> => {
-      const jobName = `[${alert.id}] ${activatedMetric.plugin.name} // ${activatedMetric.metric.name}`;
-      return this.scheduler.scheduleAlert(jobName, activatedMetric.metric.refreshInterval, this.jobRunner.bind(this, alert.id));
+      return this.scheduler.scheduleAlert(alert.id, activatedMetric.metric.refreshInterval, this.jobRunner.bind(this, alert.id));
     };
   }
 

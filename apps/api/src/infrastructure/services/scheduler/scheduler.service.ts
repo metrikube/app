@@ -11,6 +11,10 @@ export class SchedulerService implements SchedulerInterface {
 
   constructor(private schedulerRegistry: SchedulerRegistry) {}
 
+  unscheduleRelatedAlerts(alertId: string): void {
+    this.schedulerRegistry.deleteCronJob(alertId);
+  }
+
   async scheduleAlert(name: string, frequency: SecondsCronPattern | number, callback: () => Promise<void>): Promise<void> {
     const job = new CronJob(`${frequency} * * * * *`, async () => {
       this.logger.log(`job ${name} running...`);
