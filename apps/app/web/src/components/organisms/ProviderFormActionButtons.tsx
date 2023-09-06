@@ -100,6 +100,7 @@ const StyledDialogActions = styled(DialogActions) <{ isFirstStep: boolean }>`
   display: flex;
   justify-content: ${({ isFirstStep }) => (isFirstStep ? 'flex-end' : 'space-between')};
   margin-top: 12px;
+  padding: 10px 0;
 `
 
 export default ProviderFormActionButtons

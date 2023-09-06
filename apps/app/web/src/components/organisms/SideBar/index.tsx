@@ -8,10 +8,12 @@ import React from 'react'
 
 const Sidebar = () => {
   return (
-    <StylePaper elevation={6}>
+    <StylePaper variant="outlined">
       <Brand>
         <img src={MetrikubeLogo} style={{ height: '50px' }} />
-        <Typography variant="h5">MetriKube</Typography>
+        <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
+          MetriKube
+        </Typography>
       </Brand>
       <StyledMenuList>
         {menuItems.map((item) => (
@@ -25,8 +27,8 @@ const Sidebar = () => {
 const StylePaper = styled(Paper)`
   height: 100vh;
   text-align: center;
-  border-start-end-radius: 20;
-  border-end-end-radius: 20;
+  border-start-end-radius: 20px;
+  border-end-end-radius: 20px;
   padding: ${(props) => props.theme.spacing(2)};
 `
 
