@@ -85,6 +85,10 @@ const StyledListItemButton = styled(ListItemButton)`
   &:focus,
   &:active {
     background-color: ${(props) => props.theme.palette.primary.light};
-    color: ${(props) => props.theme.palette.background.default};
+    color: ${(props) => props.theme.palette.background.paper};
+
+    .MuiListItemIcon-root {
+      color: ${(props) => props.theme.palette.background.paper};
+    }
   }
 `
