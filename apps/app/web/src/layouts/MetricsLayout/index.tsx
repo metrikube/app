@@ -4,11 +4,14 @@ import { AwsBucketSingleInstance } from '../../components/MetricsTemplates/AwsBu
 import { AwsEc2MultipleInstancesUsage } from '../../components/MetricsTemplates/AwsEc2MultipleInstancesUsage'
 import { AwsEc2SingleInstanceUsage } from '../../components/MetricsTemplates/AwsEc2SingleInstanceUsage'
 import { DataBaseQueries } from '../../components/MetricsTemplates/DataBaseQueries'
+import { DataBaseSize } from '../../components/MetricsTemplates/DataBaseSize'
+import { DatabaseSlowQueries } from '../../components/MetricsTemplates/DatabaseSlowQueries'
 import { GithubLastIssues } from '../../components/MetricsTemplates/GithubLastIssues'
 import { GithubLastPullRequests } from '../../components/MetricsTemplates/GithubLastPullRequests'
 import { MetricCard } from './components/MetricCard'
-import { ActiveMetricModel } from '@metrikube/core'
-import { Box, Grid } from '@mui/material'
+import { ActiveMetricModel, formatAsCurrency } from '@metrikube/core'
+import { Box, Grid, TableCell, TableRow } from '@mui/material'
+import dayjs from 'dayjs'
 import React from 'react'
 
 interface Props {
@@ -28,7 +31,9 @@ export const MetricsLayout = ({ metrics, onAlertOpenRequest, onMetricDeletionReq
     'aws-ec2-multiple-instances-usage': AwsEc2MultipleInstancesUsage,
     'github-last-issues': GithubLastIssues,
     'github-last-prs': GithubLastPullRequests,
-    'database-queries': DataBaseQueries
+    'database-queries': DataBaseQueries,
+    'database-slow-queries': DatabaseSlowQueries,
+    'database-sizes': DataBaseSize
   }
 
   return (
@@ -38,7 +43,7 @@ export const MetricsLayout = ({ metrics, onAlertOpenRequest, onMetricDeletionReq
           <MetricCard
             metric={metric}
             key={metric.id}
-            size={index % 2 ? 'small' : 'large'}
+            size={'large'}
             onAlertButtonClick={() => onAlertOpenRequest(metric)}
             onDeleteButtonClick={() => onMetricDeletionRequest(metric)}>
             {metricTemplateMap[metric.metric.type]({ metric })}

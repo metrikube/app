@@ -1,5 +1,6 @@
-import SimpleWidget from '../molecules/WidgetsGenericTemplates/SimpleWidget'
+import LineChart from '../molecules/WidgetsGenericTemplates/LineChart'
 import { ActiveMetricModel } from '@metrikube/core'
+import dayjs from 'dayjs'
 import React from 'react'
 
 interface Props {
@@ -7,11 +8,7 @@ interface Props {
 }
 
 export const DataBaseQueries = ({ metric }: Props) => {
-  return (
-    <SimpleWidget>
-      <>
-        <small>{metric.data.name}</small>
-      </>
-    </SimpleWidget>
-  )
+  const hours = metric.data.queries.map((query) => dayjs(query.hour).format('HH:mm'))
+  const nbRequestsPerHour = metric.data.queries.map((query) => query.nbRequests)
+  return <LineChart labels={hours} data={nbRequestsPerHour} />
 }
