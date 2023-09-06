@@ -7,16 +7,16 @@ import {
   PluginModel,
   providerCategoriesMock
 } from '@metrikube/core'
-import { Chip } from '@mui/material'
+import { Chip, Typography } from '@mui/material'
 import React, { useContext, useMemo } from 'react'
 
 interface Props {
   providerCategory: string
   allPlugins: PluginModel[]
-  handleProviderCategory: (categoryValue: string) => void
+  onCategoryClick: (categoryValue: string) => void
 }
 
-const ProviderFormStep1 = ({ providerCategory, allPlugins, handleProviderCategory }: Props) => {
+const ProviderFormStep1 = ({ providerCategory, allPlugins, onCategoryClick }: Props) => {
   const { selectedProvider, setSelectedProvider } = useContext(SetupPluginContext)
   const filterPlugins = new FilterPluginsByCategoryUsecase()
 
@@ -29,6 +29,7 @@ const ProviderFormStep1 = ({ providerCategory, allPlugins, handleProviderCategor
     <FormContainer>
       <ChipContainer>
         {/* FIX It's just mock now */}
+        <Typography variant="subtitle2">Category : </Typography>
         {providerCategoriesMock.map((category) => (
           <Chip
             key={category.value}
@@ -36,7 +37,7 @@ const ProviderFormStep1 = ({ providerCategory, allPlugins, handleProviderCategor
             size="small"
             color="primary"
             variant={category.value === providerCategory ? 'filled' : 'outlined'}
-            onClick={() => handleProviderCategory(category.value)}
+            onClick={() => onCategoryClick(category.value)}
           />
         ))}
       </ChipContainer>
@@ -63,6 +64,7 @@ const FormContainer = styled.div`
 
 const ChipContainer = styled.section`
   display: flex;
+  margin-bottom: 16px;
   gap: 4px;
 `
 

@@ -1,4 +1,4 @@
-import { AlertAdapter } from '@metrikube/core';
+import type { AlertAdapter } from '@metrikube/core';
 
 export class DeleteActiveMetricAlertUsecase {
     constructor(private readonly alertAdapter: AlertAdapter) { }

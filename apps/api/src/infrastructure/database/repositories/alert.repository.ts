@@ -18,6 +18,15 @@ export class AlertRepositoryImpl extends BaseRepository<AlertEntity> implements 
     return this.find(criterias);
   }
 
+  findByWidgetId(widgetId: string): Promise<AlertEntity[]> {
+    return this.find({
+      where: {
+        pluginToMetricId: widgetId,
+        isActive: true
+      }
+    });
+  }
+
   findAlertById(id: string): Promise<AlertEntity> {
     return this.findOne({ where: { id, isActive: true } });
   }

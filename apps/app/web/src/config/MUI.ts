@@ -26,7 +26,8 @@ export const theme = createTheme({
       main: '#4CAF50'
     },
     background: {
-      default: '#fff'
+      paper: '#fff',
+      default: '#FBFBFD'
     }
   },
   components: {
@@ -44,6 +45,20 @@ export const theme = createTheme({
       styleOverrides: {
         root: {
           padding: '16px'
+        }
+      }
+    },
+    MuiDialog: {
+      styleOverrides: {
+        paper: {
+          borderRadius: '16px'
+        }
+      }
+    },
+    MuiDialogActions: {
+      styleOverrides: {
+        root: {
+          padding: '24px'
         }
       }
     }

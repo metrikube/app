@@ -8,7 +8,7 @@ interface Props {
 
 const ProviderFormStepper = ({ activeStep, steps }: Props) => {
   return (
-    <Stepper sx={{ mt: '8px' }} activeStep={activeStep}>
+    <Stepper sx={{ mt: '15px', mb: '20px' }} activeStep={activeStep}>
       {steps.map((label, index) => (
         <Step key={index}>
           <StepButton disableRipple color="inherit">

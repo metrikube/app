@@ -12,7 +12,7 @@ interface Props {
 const ProviderCard = ({ logo, label, selected, onClick }: Props) => {
   return (
     <ButtonBase onClick={onClick}>
-      <StyledPaper selected={selected} elevation={5}>
+      <StyledPaper selected={selected} elevation={5} variant="outlined">
         <Logo src={logo} />
         <ProviderLabel>{label}</ProviderLabel>
       </StyledPaper>

@@ -8,7 +8,7 @@ import { EmptyStateLayout } from '../layouts/EmptyStateLayout'
 import { MetricsLayout } from '../layouts/MetricsLayout'
 import { getActiveMetricQuery } from '../services/dashboard.service'
 import styled from '@emotion/styled'
-import { ActiveMetricModel } from '@metrikube/core'
+import { ActiveMetricModel, activeMetricsMock } from '@metrikube/core'
 import { AddCircleOutline, AddchartOutlined } from '@mui/icons-material'
 import { Button } from '@mui/material'
 import React, { useState } from 'react'
@@ -38,7 +38,7 @@ const Dashboard = () => {
     <DefaultLayout>
       <>
         <StyledHeader>
-          <h3>NOM DU PROJET</h3>
+          <h3>Metric</h3>
           <div>
             <Button
               onClick={openProviderModalHandler}

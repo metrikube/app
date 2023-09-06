@@ -1,4 +1,4 @@
-import { ActiveMetricModel } from "../../domain";
+import type { ActiveMetricModel } from "@metrikube/core";
 
 export interface DashboardMetricsAdapter {
   getActiveMetrics: () => Promise<ActiveMetricModel[]>
