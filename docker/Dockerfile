@@ -10,5 +10,5 @@ FROM node:18-alpine as release
 
 WORKDIR /app
 COPY --from=build /app .
-
+RUN npm run init:db
 CMD ["npm", "run", "start"]
