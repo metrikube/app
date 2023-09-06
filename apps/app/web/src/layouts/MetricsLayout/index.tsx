@@ -4,6 +4,7 @@ import SingleResource from '../../components/molecules/widgets/SingleResource'
 import { MetricCard } from './components/MetricCard'
 import { ActiveMetricModel, formatAsCurrency } from '@metrikube/core'
 import { Box, Grid, TableCell, TableRow } from '@mui/material'
+import dayjs from 'dayjs'
 import React from 'react'
 
 interface Props {
@@ -101,7 +102,35 @@ export const MetricsLayout = ({ metrics, onAlertOpenRequest, onMetricDeletionReq
           />
         )
       case 'database-queries':
-        return <LineChart />
+        const hours = data.queries.map((query) => dayjs(query.hour).format('HH:mm'))
+        const nbRequestsPerHour = data.queries.map((query) => query.nbRequests)
+        return <LineChart labels={hours} data={nbRequestsPerHour} />
+      case 'database-size':
+        return (
+          <SingleResource>
+            <>
+              <small>{data.databaseName}</small>
+              <small>Taille : {data.size} Mb</small>
+              <small>Nombre de table : {data.numberOfTables}</small>
+              <small>Nombre total de ligne : {data.numberOfTotalRows}</small>
+            </>
+          </SingleResource>
+        )
+      case 'database-slow-queries':
+        return (
+          <ListResource
+            tableHead={['Requête', "Temps d'éxec (en seconde)", 'Date'].map((column, index) => (
+              <TableCell key={index}>{column}</TableCell>
+            ))}
+            tableBody={data.map((slowQuery, index) => (
+              <TableRow key={index}>
+                <TableCell>{slowQuery.query}</TableCell>
+                <TableCell>{slowQuery.executionTime}</TableCell>
+                <TableCell>{slowQuery.date}</TableCell>
+              </TableRow>
+            ))}
+          />
+        )
     }
   }
 
@@ -112,7 +141,7 @@ export const MetricsLayout = ({ metrics, onAlertOpenRequest, onMetricDeletionReq
           <MetricCard
             metric={metric}
             key={metric.id}
-            size={index % 2 ? 'small' : 'large'}
+            size={'large'}
             onAlertButtonClick={() => onAlertOpenRequest(metric)}
             onDeleteButtonClick={() => onMetricDeletionRequest(metric)}>
             {getMetricCardContent(metric)}
