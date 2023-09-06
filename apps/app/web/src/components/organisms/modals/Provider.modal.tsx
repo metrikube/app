@@ -22,10 +22,9 @@ import {
 } from '@metrikube/core'
 import { Close } from '@mui/icons-material'
 import { Dialog, DialogContent, DialogTitle, IconButton, Typography, Divider, Box } from '@mui/material'
-import { useMutation } from '@tanstack/react-query'
 import React, { Dispatch, SetStateAction, useContext, useEffect, useState } from 'react'
 import { useForm, FormProvider } from 'react-hook-form'
-import { createPluginAlertMutation, getPluginsQuery, setupPluginMutation } from '../../../services/plugin.service'
+import { createPluginAlertMutation, getPluginsQuery, setupPluginMutation, validateCredentialsMutation } from '../../../services/plugin.service'
 import { useQueryClient } from '@tanstack/react-query'
 
 interface Props {
@@ -116,94 +115,83 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
     setIsProviderChose(selectedProvider !== null)
   }, [selectedProvider])
 
-  const { mutate: setupPlugin, isLoading: isSetupPluginLoading } = setupPluginMutation((data) => {
-    setPluginToMetricId(data.id)
-    setMetricFields(data.data)
-    if (selectedMetric?.isNotifiable) {
-      setActiveStep(SetupPluginStepEnum.FINISH)
-    }
+  const { mutate: validateCredentials } = validateCredentialsMutation((data) => {
     setActiveStep(SetupPluginStepEnum.ALERT_CONFIG)
+  })
+  const { mutate: createAlert, isLoading: isCreateAlertLoading } = createPluginAlertMutation()
+
+  const { mutate: setupPlugin, isLoading: isSetupPluginLoading } = setupPluginMutation((data) => {
+    //TODO Set Plugin to metric id to create alert 
     queryClient.invalidateQueries({ queryKey: ["getActiveMetrics"] })
   })
-
-  const { mutate: createAlert, isLoading: isCreateAlertLoading } = createPluginAlertMutation(() => {
-    setActiveStep(activeStep + 1)
-  })
-
-
-  const onSubmit = (data: SetupPluginFormValues) => {
-    if (!selectedProvider || !selectedMetric) {
-      throw Error("You can't make a test connection without plugin or metric")
-    }
-    switch (activeStep) {
-      case SetupPluginStepEnum.FILL_CREDENTIAL:
-        // eslint-disable-next-line no-case-declarations
-        const credential: GenericCredentialType = data[selectedProvider.type]
-        handleConnectionTest(data.name, selectedProvider, selectedMetric, credential)
-        break
-      case SetupPluginStepEnum.ALERT_CONFIG:
-        // eslint-disable-next-line no-case-declarations
-        const alerts: AlertRequest[] = data.metricAlerts.map((metricAlert: AlertForm) => ({
-          ...metricAlert,
-          metricId: selectedMetric?.id
-        }))
-        createAlert({
-          pluginToMetricId,
-          alerts
-        })
-        break
-      default:
-        break
-    }
-  }
 
   const handleFilterChange = (categoryValue: string) => {
     setSelectedProviderCategory(categoryValue)
   }
 
-  const handleConnectionTest = (
-    name: string,
-    plugin: PluginModel,
-    metric: MetricModel,
-    credential: GenericCredentialType
-  ) => {
-    switch (plugin.type) {
+  const handleConnectionTest = (pluginType: string, metricId: string, credentials: GenericCredentialType) => {
+    switch (pluginType) {
       case 'aws':
-        setupPlugin({
-          pluginId: plugin.id,
-          metricType: metric.type,
-          name,
-          credential
-        })
+        validateCredentials({ metricId, credentials })
         break
       case 'github':
-        setupPlugin({
-          pluginId: plugin.id,
-          metricType: metric.type,
-          name,
-          credential
-        })
+        validateCredentials({ metricId, credentials })
         break
       case 'api_endpoint':
-        setupPlugin({
-          pluginId: plugin.id,
-          metricType: metric.type,
-          name,
-          credential
-        })
+        validateCredentials({ metricId, credentials })
         break
       case 'sql_database':
-        setupPlugin({
-          pluginId: plugin.id,
-          metricType: metric.type,
-          name,
-          credential
-        })
+        validateCredentials({ metricId, credentials })
         break
       default:
         throw Error("You can't make a test connection without plugin or metric")
     }
   }
+
+  const handlMetricInstallation = (name: string,
+    plugin: PluginModel,
+    metric: MetricModel,
+    credential: GenericCredentialType) => {
+    return new Promise((resolve, reject) => {
+      switch (plugin.type) {
+        case 'aws':
+          setupPlugin({
+            pluginId: plugin.id,
+            metricType: metric.type,
+            name,
+            credential
+          })
+          break
+        case 'github':
+          setupPlugin({
+            pluginId: plugin.id,
+            metricType: metric.type,
+            name,
+            credential
+          })
+          break
+        case 'api_endpoint':
+          setupPlugin({
+            pluginId: plugin.id,
+            metricType: metric.type,
+            name,
+            credential
+          })
+          break
+        case 'sql_database':
+          setupPlugin({
+            pluginId: plugin.id,
+            metricType: metric.type,
+            name,
+            credential
+          })
+          break
+        default:
+          throw Error("You can't make a test connection without plugin or metric")
+      }
+    })
+  }
+  
 
   const handleModalClose = () => {
     setOpenModal(false)
@@ -213,6 +201,40 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
     setActiveStep(0)
   }
 
+  const onSubmit = (data: SetupPluginFormValues) => {
+    if (!selectedProvider || !selectedMetric) {
+      throw Error("You can't make a test connection without plugin or metric")
+    }
+    const pluginType: string = selectedProvider.type
+    const credentials = data[pluginType] as GenericCredentialType
+
+    const alerts: AlertRequest[] = data.metricAlerts.map((metricAlert: AlertForm) => ({
+      ...metricAlert,
+      metricId: selectedMetric?.id
+    }))
+    switch (activeStep) {
+      case SetupPluginStepEnum.FILL_CREDENTIAL:
+        handleConnectionTest(pluginType, selectedMetric.id, credentials)
+        // setPluginToMetricId(data.id)
+        setMetricFields({})
+        break
+      case SetupPluginStepEnum.ALERT_CONFIG:
+        if (alerts.length) {
+          createAlert({
+            pluginToMetricId,
+            alerts
+          })
+        }
+        setActiveStep(activeStep + 1)
+        break
+      case SetupPluginStepEnum.FINISH:
+        // TODO install metric et alert 
+        // handlMetricInstallation()
+        break
+      default:
+        break
+    }
+  }
   return (
     <Dialog open={open} maxWidth="md" fullWidth={true} onClose={handleModalClose}>
       <DialogTitle>

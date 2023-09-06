@@ -57,7 +57,7 @@ const ProviderFormActionButtons = ({
           Tester et continuer
         </LoadingButton>
       )}
-      {activeStep === 2 && (
+      {activeStep === SetupPluginStepEnum.ALERT_CONFIG && (
         <LoadingButton
           type="submit"
           size="small"
@@ -67,7 +67,7 @@ const ProviderFormActionButtons = ({
           Ajouter et continuer
         </LoadingButton>
       )}
-      {(activeStep === 0 || activeStep === 2) && (
+      {activeStep === SetupPluginStepEnum.CHOOSE_PLUGIN && (
         <Tooltip disableHoverListener={isProviderChose} title="You have to choose a provider">
           <span>
             <Button
