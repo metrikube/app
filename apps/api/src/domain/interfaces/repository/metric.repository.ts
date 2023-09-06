@@ -1,5 +1,6 @@
-import { MetricType } from '@metrikube/common';
 import { FindManyOptions, FindOptionsWhere } from 'typeorm';
+
+import { MetricType } from '@metrikube/common';
 
 import { MetricEntity } from '../../../infrastructure/database/entities/metric.entity';
 
@@ -19,9 +20,9 @@ export interface MetricRepository {
 
   /**
    * Find metric by id
-   * @param criterias
+   * @param id
    */
-  findById(criterias: FindOptionsWhere<MetricEntity>): Promise<MetricEntity>;
+  findById(id: string): Promise<MetricEntity>;
 
   // /**
   //  * Activate widget with plugin
