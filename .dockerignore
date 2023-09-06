@@ -2,6 +2,8 @@
 .github
 .gitignore
 .idea
+# ignore .env.local whenever it's present
+**/.env.*
 Dockerfile*
 README.md
 node_modules
