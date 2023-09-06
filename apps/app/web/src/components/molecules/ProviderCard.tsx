@@ -3,17 +3,18 @@ import { ButtonBase, Paper } from '@mui/material'
 import React from 'react'
 
 interface Props {
-  logo: string
+  type: string
   label: string
   selected: boolean
   onClick: () => void
 }
 
-const ProviderCard = ({ logo, label, selected, onClick }: Props) => {
+const ProviderCard = ({ type, label, selected, onClick }: Props) => {
+  const avatarUrl = new URL(`/src/assets/img/${type}.png`, import.meta.url).href
   return (
     <ButtonBase onClick={onClick}>
       <StyledPaper selected={selected} elevation={5} variant="outlined">
-        <Logo src={logo} />
+        <Logo src={avatarUrl} />
         <ProviderLabel>{label}</ProviderLabel>
       </StyledPaper>
     </ButtonBase>
