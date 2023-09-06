@@ -10,10 +10,11 @@ interface Props {
 }
 
 const ProviderCard = ({ logo, label, selected, onClick }: Props) => {
+  const avatarUrl = new URL(`/src/assets/img/${logo}.png`, import.meta.url).href;
   return (
     <ButtonBase onClick={onClick}>
       <StyledPaper selected={selected} elevation={5} variant="outlined">
-        <Logo src={logo} />
+        <Logo src={avatarUrl} />
         <ProviderLabel>{label}</ProviderLabel>
       </StyledPaper>
     </ButtonBase>

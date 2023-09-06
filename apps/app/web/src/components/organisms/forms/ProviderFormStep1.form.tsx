@@ -45,7 +45,7 @@ const ProviderFormStep1 = ({ providerCategory, allPlugins, onCategoryClick }: Pr
         {filteredPlugins.map((provider) => (
           <ProviderCard
             key={provider.id}
-            logo={AwsLogo}
+            logo={provider.type}
             label={provider.name}
             selected={provider.name === selectedProvider?.name}
             onClick={() => setSelectedProvider(provider)}
