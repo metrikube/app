@@ -19,5 +19,7 @@ export interface PluginUseCaseInterface {
 
   refreshPluginMetric(pluginId: PluginEntity['id'], pluginToMetricId: PluginToMetricEntity['id']): Promise<PluginResult<MetricType>>;
 
+  fetchMetricDataSampleWithCredential(metricId: string, credential: GenericCredentialType): Promise<PluginResult<MetricType>>;
+
   registerPlugin(body: RegisterPluginRequestDto): Promise<RegisterPluginResponseDto>;
 }

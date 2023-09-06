@@ -2,6 +2,8 @@ import { Column, CreateDateColumn, Entity, Generated, JoinColumn, ManyToOne, One
 
 import { ApiProperty } from '@nestjs/swagger';
 
+import { MetricType } from '@metrikube/common';
+
 import { PluginEntity } from './plugin.entity';
 import { PluginToMetricEntity } from './plugin_to_metric.entity';
 
@@ -30,7 +32,7 @@ export class MetricEntity {
 
   @Column({ name: 'type', type: 'varchar', nullable: false })
   @ApiProperty({ name: 'type', type: String, description: 'Metric type', example: 'aws_single_instance_cost' })
-  type: string;
+  type: MetricType;
 
   @Column({ name: 'name', type: 'varchar', nullable: false })
   @ApiProperty({

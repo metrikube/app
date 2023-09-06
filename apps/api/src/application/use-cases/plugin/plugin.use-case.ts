@@ -123,7 +123,12 @@ export class PluginUseCase implements PluginUseCaseInterface {
       default:
         throw new BadRequestException('Invalid metric type');
     }
+  }
 
+  async fetchMetricDataSampleWithCredential(metricId: string, credential: GenericCredentialType): Promise<PluginResult<MetricType>> {
+    const metric: MetricEntity = await this.metricRepository.findById(metricId );
+    const getMetricTypeDataSample: (credentials: GenericCredentialType) => Promise<PluginResult<MetricType>> = this.getMetricMethodByMetricType(metric.type as MetricType);
+    return getMetricTypeDataSample(credential);
   }
 
   getPluginCredentials(pluginId: string): Promise<CredentialEntity> {
