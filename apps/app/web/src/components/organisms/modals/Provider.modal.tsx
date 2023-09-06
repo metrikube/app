@@ -116,12 +116,13 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
   }, [selectedProvider])
 
   const { mutate: validateCredentials } = validateCredentialsMutation((data) => {
+    setMetricFields(data.dataSample)
     setActiveStep(SetupPluginStepEnum.ALERT_CONFIG)
   })
   const { mutate: createAlert, isLoading: isCreateAlertLoading } = createPluginAlertMutation()
 
   const { mutate: setupPlugin, isLoading: isSetupPluginLoading } = setupPluginMutation((data) => {
-    //TODO Set Plugin to metric id to create alert 
+    setPluginToMetricId(data.id)
     queryClient.invalidateQueries({ queryKey: ["getActiveMetrics"] })
   })
 
@@ -152,7 +153,7 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
     plugin: PluginModel,
     metric: MetricModel,
     credential: GenericCredentialType) => {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       switch (plugin.type) {
         case 'aws':
           setupPlugin({
@@ -189,9 +190,11 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
         default:
           throw Error("You can't make a test connection without plugin or metric")
       }
-    })
+      resolve(null)
+    });
   }
-  
+
+
 
   const handleModalClose = () => {
     setOpenModal(false)
@@ -212,24 +215,25 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
       ...metricAlert,
       metricId: selectedMetric?.id
     }))
+
     switch (activeStep) {
       case SetupPluginStepEnum.FILL_CREDENTIAL:
         handleConnectionTest(pluginType, selectedMetric.id, credentials)
-        // setPluginToMetricId(data.id)
-        setMetricFields({})
         break
       case SetupPluginStepEnum.ALERT_CONFIG:
-        if (alerts.length) {
-          createAlert({
-            pluginToMetricId,
-            alerts
+        handlMetricInstallation(data.name, selectedProvider, selectedMetric, credentials)
+          .then(() => {
+            if (alerts.length) {
+              createAlert({
+                pluginToMetricId,
+                alerts
+              })
+            }
+          }).finally(() => {
+            setActiveStep(activeStep + 1)
           })
-        }
-        setActiveStep(activeStep + 1)
         break
       case SetupPluginStepEnum.FINISH:
-        // TODO install metric et alert 
-        // handlMetricInstallation()
         break
       default:
         break
