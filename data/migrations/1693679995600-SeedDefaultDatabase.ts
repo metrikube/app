@@ -64,7 +64,18 @@ export class SeedDefaultDatabase1693679995600 implements MigrationInterface {
         name: 'Github',
         type: 'github',
         description: 'Github Plugin',
-        instruction: '...waiting for instruction...',
+        instruction: `
+        # Github Plugin
+
+        From this plugin you will be able to get the last issues and the last pull requests from a repository.
+        
+        ## Configuration
+        
+        To be able to use this plugin you will need to create an access token in your Github account. You can create it [here](https://github.com/settings/personal-access-tokens/new).  
+        We recommend using fine-grained access tokens, because as the name says, you can give the token only the permissions you need.  
+        For the last issues you will need to give the token the \`Issues\` permission read only.  
+        Same goes for the last pull requests, you will need to give the token the \`Pull requests\` permission read only.
+        `,
         category: 'versionning',
         credentialType: 'github',
         iconUrl: ''
