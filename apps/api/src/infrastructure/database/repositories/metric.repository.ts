@@ -1,8 +1,9 @@
 import { DataSource, FindManyOptions, FindOptionsWhere } from 'typeorm';
-import { FindOneOptions } from 'typeorm/find-options/FindOneOptions';
 
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
+
+import { MetricType } from '@metrikube/common';
 
 import { MetricRepository } from '../../../domain/interfaces/repository/metric.repository';
 import { MetricEntity } from '../entities/metric.entity';
@@ -18,17 +19,20 @@ export class MetricRepositoryImpl extends BaseRepository<MetricEntity> implement
     return this.find(criterias);
   }
 
-  findById(criterias: FindOneOptions<MetricEntity> | FindOptionsWhere<MetricEntity>): Promise<MetricEntity> {
-    return this.findOne(criterias);
+  findById(id: string): Promise<MetricEntity> {
+    return this.findOne({
+      where: { id },
+      relations: { plugin: true }
+    });
   }
 
   findMetricByPluginId(pluginId: string): Promise<MetricEntity[]> {
     return this.find({ where: { plugin: { id: pluginId } } });
   }
 
-  findMetricByType(pluginId: string, metricType: string): Promise<MetricEntity> {
+  findMetricByType(pluginId: string, type: MetricType): Promise<MetricEntity> {
     return this.findOne({
-      where: { type: metricType, plugin: { id: pluginId } },
+      where: { type, plugin: { id: pluginId } },
       relations: { pluginToMetrics: true }
     });
   }

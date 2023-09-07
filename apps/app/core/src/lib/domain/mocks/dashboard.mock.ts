@@ -202,7 +202,7 @@ export const listBucketS3Mock: ActiveMetricModel = {
 
 export const nbRequestsPerHour: ActiveMetricModel = {
     id: "rregergrgg",
-    name: "MariaDB - Requete par heure",
+    name: "MariaDB - Requête par heures (12 dernières heures)",
     description: undefined,
     resourceId: undefined,
     plugin: {
@@ -212,12 +212,160 @@ export const nbRequestsPerHour: ActiveMetricModel = {
         description: "Maria DB plugin"
     },
     metric: {
-        id: "5dda4d85-ec61-49f6-86a5-43e64",
-        name: "Requête par heures (12 dernières heures)",
+        id: "b26edf54-a2b2-4ff2-b747-64c761340a30",
         type: "database-queries",
+        name: "SQL Database Usage",
         isNotifiable: false
     },
-    data: {}
+    data: {
+        queries: [
+            {
+                hour: "2023-09-05 21:00:00",
+                nbRequests: 12
+            },
+            {
+                hour: "2023-09-05 22:00:00",
+                nbRequests: 33
+            },
+            {
+                hour: "2023-09-05 23:00:00",
+                nbRequests: 45
+            },
+            {
+                hour: "2023-09-06 00:00:00",
+                nbRequests: 67
+            },
+            {
+                hour: "2023-09-06 01:00:00",
+                nbRequests: 34
+            },
+            {
+                hour: "2023-09-06 02:00:00",
+                nbRequests: 50
+            },
+            {
+                hour: "2023-09-06 03:00:00",
+                nbRequests: 78
+            },
+            {
+                hour: "2023-09-06 04:00:00",
+                nbRequests: 67
+            },
+            {
+                hour: "2023-09-06 05:00:00",
+                nbRequests: 45
+            },
+            {
+                hour: "2023-09-06 06:00:00",
+                nbRequests: 426
+            },
+            {
+                hour: "2023-09-06 07:00:00",
+                nbRequests: 677
+            },
+            {
+                hour: "2023-09-06 08:00:00",
+                nbRequests: 120
+            }
+        ],
+        date: "2023-09-06T08:40:12.106Z"
+    }
+}
+
+export const dbSizeMock: ActiveMetricModel = {
+    id: "db-size213",
+    name: "MariaDB - Taille db",
+    description: undefined,
+    resourceId: undefined,
+    plugin: {
+        id: "maria-db",
+        name: "Maria DB",
+        type: "sql_database",
+        description: "Maria DB plugin"
+    },
+    metric: {
+        id: "9a18c04e-3643-4488-8d72-8e377fbf3f91",
+        type: "database-size",
+        name: "SQL Database Size",
+        isNotifiable: false
+    },
+    data: {
+        size: 0.0469, // Size en Mb
+        numberOfTables: 4,
+        numberOfTotalRows: 25,
+        databaseName: "metrikube-test"
+    }
+}
+
+export const slowQueries: ActiveMetricModel = {
+    id: "db-size213",
+    name: "Database - Requêtes lente",
+    description: undefined,
+    resourceId: undefined,
+    plugin: {
+        id: "maria-db",
+        name: "Maria DB",
+        type: "sql_database",
+        description: "Maria DB plugin"
+    },
+    metric: {
+        id: "8233cf2a-0ae1-4b8f-9197-36b564a808b5",
+        type: "database-slow-queries",
+        name: "SQL Database Slow Queries",
+        isNotifiable: false
+    },
+    data: [
+        {
+            executionTime: 1.1004,
+            query: "CREATE SYSTEM_USER ? @? IDENTIFIED BY ?",
+            date: "2023-09-05T09:01:45.231Z"
+        },
+        {
+            executionTime: 0.5636,
+            query: "SELECT `UPDATE_TIME` FROM `information_schema` . `TABLES`",
+            date: "2023-08-30T06:34:09.059Z"
+        },
+        {
+            executionTime: 0.0916,
+            query: "SELECT `MAX_TIMER_WAIT` / ? AS `max_execution_time_seconds` , `AVG_TIMER_WAIT` / ? AS `executionTime` , `DIGEST_TEXT` AS QUERY , `LAST_SEEN` AS DATE FROM `performance_schema` . `events_statements_summary_by_digest` WHERE SCHEMA_NAME = ? ORDER BY `max_execution_time_seconds` DESC LIMIT ?",
+            date: "2023-09-05T15:44:59.825Z"
+        },
+        {
+            executionTime: 0.2320,
+            query: "SHOW TABLES FROM `information_schema`",
+            date: "2023-08-30T06:31:58.077Z"
+        },
+        {
+            executionTime: 0.0569,
+            query: "SELECT `DATE_FORMAT` ( `gl` . `event_time` , ? ) AS SQL_TSI_HOUR , COUNT ( * ) AS `nbRequests` FROM `mysql` . `general_log` `gl` JOIN `performance_schema` . `events_statements_history_long` `ps` ON `gl` . `thread_id` = `ps` . `EVENT_ID` WHERE `ps` . `CURRENT_SCHEMA` = ? AND `gl` . `command_type` = ? AND `gl` . `event_time` >= NOW ( ) - INTERVAL ? SQL_TSI_HOUR GROUP BY SQL_TSI_HOUR ORDER BY SQL_TSI_HOUR",
+            date: "2023-09-05T10:44:15.407Z"
+        },
+        {
+            executionTime: 0.1222,
+            query: "SELECT * FROM `performance_schema` . `events_statements_history_long`",
+            date: "2023-09-04T11:25:14.743Z"
+        },
+        {
+            executionTime: 0.0501,
+            query: "WITH `hours` AS ( SELECT `DATE_FORMAT` ( NOW ( ) - INTERVAL `n` SQL_TSI_HOUR , ? ) AS SQL_TSI_HOUR FROM ( SELECT ? AS `n` UNION SELECT ? UNION SELECT ? UNION SELECT ? UNION SELECT ? UNION SELECT ? UNION SELECT ? UNION SELECT ? UNION SELECT ? UNION SELECT ? UNION SELECT ? UNION SELECT ? ) `numbers` ) , `schema_requests` AS ( SELECT `DATE_FORMAT` ( `es` . `EVENT_TIME` , ? ) AS SQL_TSI_HOUR , COUNT ( * ) AS `nbRequests` FROM `mysql` . `general_log` `es` LEFT JOIN `information_schema` . `processlist` `p` ON `es` . `THREAD_ID` = `p` . `ID` WHERE `es` . `EVENT_TIME` >= NOW ( ) - INTERVAL ? SQL_TSI_HOUR AND `p` . `DB` IS NOT NULL GROUP BY SQL_TSI_HOUR ) SELECT `h` . `hour` , `IFNULL` ( `sr` . `nbRequests` , ? ) AS `nbRequests` FROM `hours` `h` LEFT JOIN `schema_requests` `sr` ON `h` . `hour` = `sr` . `hour` WHERE `h` . `hour` >= `DATE_FORMAT` ( NOW ( ) - INTERVAL ? SQL_TSI_HOUR , ? ) AND `h` . `hour` <= `DATE_FORMAT` ( NOW ( ) , ? ) ORDER BY `h` . `hour`",
+            date: "2023-09-05T09:50:59.051Z"
+        },
+        {
+            executionTime: 0.1957,
+            query: "SELECT * FROM `setup_consumers` WHERE NAME LIKE ? AND `enabled` = ?",
+            date: "2023-09-04T11:17:29.083Z"
+        },
+        {
+            executionTime: 0.0498,
+            query: "WITH `hours` AS ( SELECT `DATE_FORMAT` ( NOW ( ) - INTERVAL `n` SQL_TSI_HOUR , ? ) AS SQL_TSI_HOUR FROM ( SELECT ? AS `n` UNION SELECT ? UNION SELECT ? UNION SELECT ? UNION SELECT ? UNION SELECT ? UNION SELECT ? UNION SELECT ? UNION SELECT ? UNION SELECT ? UNION SELECT ? UNION SELECT ? ) `numbers` ) SELECT `h` . `hour` , `IFNULL` ( COUNT ( `es` . `EVENT_TIME` ) , ? ) AS `nbRequests` FROM `hours` `h` LEFT JOIN `mysql` . `general_log` `es` ON `DATE_FORMAT` ( `es` . `EVENT_TIME` , ? ) = `h` . `hour` AND `es` . `EVENT_TIME` >= NOW ( ) - INTERVAL ? SQL_TSI_HOUR LEFT JOIN `information_schema` . `processlist` `p` ON `es` . `THREAD_ID` = `p` . `ID` WHERE `p` . `DB` IS NOT NULL GROUP BY `h` . `hour` ORDER BY `h` . `hour`",
+            date: "2023-09-05T08:38:36.792Z"
+        },
+        {
+            executionTime: 0.0311,
+            query: "WITH `hours` AS ( SELECT `DATE_FORMAT` ( NOW ( ) - INTERVAL `n` SQL_TSI_HOUR , ? ) AS SQL_TSI_HOUR , `DATE_FORMAT` ( NOW ( ) - INTERVAL ( `n` - ? ) SQL_TSI_HOUR , ? ) AS `next_hour` FROM ( SELECT ? AS `n` UNION SELECT ? UNION SELECT ? UNION SELECT ? UNION SELECT ? UNION SELECT ? UNION SELECT ? UNION SELECT ? UNION SELECT ? UNION SELECT ? UNION SELECT ? UNION SELECT ? ) `numbers` ) SELECT `h` . `hour` , `IFNULL` ( SUM ( `es` . `COUNT_STAR` ) , ? ) AS `nbRequests` FROM `hours` `h` LEFT JOIN `performance_schema` . `events_statements_summary_by_digest` `es` ON `es` . `QUERY_SAMPLE_SEEN` >= `h` . `hour` AND `es` . `QUERY_SAMPLE_SEEN` < `h` . `next_hour` AND `es` . `SCHEMA_NAME` NOT IN (...) AND `es` . `QUERY_SAMPLE_SEEN` >= NOW ( ) - INTERVAL ? SQL_TSI_HOUR GROUP BY `h` . `hour` ORDER BY `h` . `hour`",
+            date: "2023-08-30T06:27:37.560Z"
+        }
+    ]
 }
 
 export const activeMetricsMock: ActiveMetricModel[] = [
@@ -226,5 +374,7 @@ export const activeMetricsMock: ActiveMetricModel[] = [
     listBucketS3Mock,
     lastPullRequestMock,
     lastIssuesMock,
-    nbRequestsPerHour
+    nbRequestsPerHour,
+    dbSizeMock,
+    slowQueries
 ]

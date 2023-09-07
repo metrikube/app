@@ -36,7 +36,7 @@ jobs:
       - name: Build app
         run: |
           npm ci
-          npm run build:all
+          npm run build:all:production
 
       - name: Extract version from package.json
         run: |

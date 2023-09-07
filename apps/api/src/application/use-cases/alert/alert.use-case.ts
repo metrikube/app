@@ -30,7 +30,20 @@ export class AlertUseCase implements AlertUseCaseInterface {
     @Inject(DiTokens.Scheduler) private readonly scheduler: SchedulerInterface,
     @Inject(DiTokens.PluginUseCaseToken) private readonly pluginUseCase: PluginUseCaseInterface,
     @Inject(DiTokens.ApiMonitoringToken) private readonly apiMonitoringService: ApiMonitoringService
-  ) {}
+  ) {
+  }
+
+  getPluginToMetricAlerts(pluginToMetricId: PluginToMetricEntity['id']): Promise<AlertEntity[]> {
+    return this.alertRepository.getAlerts({ pluginToMetricId });
+  }
+
+  updateAlert(alertId: string, payload: UpdateAlertDto): Promise<void> {
+    return this.alertRepository.updateAlert(alertId, payload);
+  }
+
+  async deleteAlert(alertId: string): Promise<void> {
+    return this.alertRepository.deleteAlert(alertId);
+  }
 
   async createAlertOnActivePlugin(pluginToMetricId: PluginToMetricEntity['id'], alerts: CreateAlertRequestDto[]): Promise<CreateAlertResponseDto> {
     const activatedMetric = await this.pluginToMetricRepository.findPluginToMetricById(pluginToMetricId);
@@ -48,20 +61,13 @@ export class AlertUseCase implements AlertUseCaseInterface {
     return new CreateAlertResponseDto(createdAlerts);
   }
 
-  async jobRunner(id: string): Promise<void> {
-    const alert: AlertEntity = await this.alertRepository.findAlertById(id);
-    const metric: PluginToMetricEntity = await this.pluginToMetricRepository.findPluginToMetricById(alert.pluginToMetricId);
-    const metricData: PluginResult<MetricType> = await this.pluginUseCase.refreshPluginMetric(metric.pluginId, alert.pluginToMetricId);
-    return this.checkContiditionAndNotify(metricData, alert);
-  }
-
   async checkContiditionAndNotify(metricData: unknown, alert: AlertEntity): Promise<void> {
     const { field, operator, threshold } = alert.condition;
     const isConditionMet = this.checkConditionThreshold(metricData[field], operator, threshold);
 
     const isBelowThresholdAndNotified = !isConditionMet && alert.triggered;
     if (isBelowThresholdAndNotified && alert.triggered !== isBelowThresholdAndNotified) {
-      Logger.log("L'alerte passe sous le seuil", this.constructor.name);
+      Logger.log('L\'alerte passe sous le seuil', this.constructor.name);
       return this.alertRepository.updateAlert(alert.id, { triggered: false });
     }
 
@@ -71,14 +77,6 @@ export class AlertUseCase implements AlertUseCaseInterface {
       await this.mailer.sendMail(process.env.USER_EMAIL, '🚨 Metrikube : alerte dépassement seuil', 'Seuil limite dépassé');
       return this.alertRepository.updateAlert(alert.id, { triggered: true });
     }
-  }
-
-  getPluginToMetricAlerts(pluginToMetricId: PluginToMetricEntity['id']): Promise<AlertEntity[]> {
-    return this.alertRepository.findByWidgetId(pluginToMetricId);
-  }
-
-  updateAlert(alertId: string, payload: UpdateAlertDto): Promise<void> {
-    return this.alertRepository.updateAlert(alertId, payload);
   }
 
   checkConditionThreshold(value: string | number, operator: MetricThresholdOperator, threshold: string | number): boolean {
@@ -99,11 +97,15 @@ export class AlertUseCase implements AlertUseCaseInterface {
 
   private registerAlerJob(activatedMetric: PluginToMetricEntity): (alert: AlertEntity) => Promise<void> {
     return (alert: AlertEntity): Promise<void> => {
-      return this.scheduler.scheduleAlert(
-        `[${alert.id}] ${activatedMetric.plugin.name} // ${activatedMetric.metric.name}`,
-        activatedMetric.metric.refreshInterval,
-        this.jobRunner.bind(this, alert.id)
-      );
+      const jobName = `[${alert.id}] ${activatedMetric.plugin.name} // ${activatedMetric.metric.name}`;
+      return this.scheduler.scheduleAlert(jobName, activatedMetric.metric.refreshInterval, this.jobRunner.bind(this, alert.id));
     };
+  }
+
+  private async jobRunner(id: string): Promise<void> {
+    const alert: AlertEntity = await this.alertRepository.findAlertById(id);
+    const metric: PluginToMetricEntity = await this.pluginToMetricRepository.findPluginToMetricById(alert.pluginToMetricId);
+    const metricData: PluginResult<MetricType> = await this.pluginUseCase.refreshPluginMetric(metric.pluginId, alert.pluginToMetricId);
+    return this.checkContiditionAndNotify(metricData, alert);
   }
 }

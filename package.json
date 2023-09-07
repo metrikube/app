@@ -6,6 +6,7 @@
   "scripts": {
     "build": "rimraf dist && npm run cache:clear && nx build",
     "build:all": "rimraf dist && nx run-many --target=build",
+    "build:all:production": "npm run build:all -- --configuration=production",
     "build:api": "rimraf dist && npm run cache:clear && nx build api",
     "cache:clear": "nx clear-cache",
     "format": "lint-staged",
@@ -55,6 +56,7 @@
     "chart.js": "^4.4.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.0",
+    "dayjs": "^1.11.9",
     "dotenv": "^16.0.3",
     "fastify": "^4.7.0",
     "mysql2": "^3.5.1",
