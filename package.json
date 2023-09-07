@@ -1,11 +1,12 @@
 {
   "name": "metrikube",
-  "version": "0.5.0",
+  "version": "0.5.5",
   "license": "MIT",
   "main": "dist/apps/api/main.js",
   "scripts": {
     "build": "rimraf dist && npm run cache:clear && nx build",
     "build:all": "rimraf dist && nx run-many --target=build",
+    "build:all:production": "npm run build:all -- --configuration=production",
     "build:api": "rimraf dist && npm run cache:clear && nx build api",
     "cache:clear": "nx clear-cache",
     "format": "lint-staged",
