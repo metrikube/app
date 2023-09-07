@@ -92,16 +92,7 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
         refreshInterval: 30,
         type: undefined
       },
-      metricAlerts: [
-        {
-          label: '',
-          condition: {
-            field: '',
-            operator: 'gt',
-            threshold: ''
-          }
-        }
-      ]
+      metricAlerts: []
     }
   })
 
@@ -117,7 +108,10 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
 
   const { mutate: validateCredentials } = validateCredentialsMutation((data) => {
     setMetricFields(data.dataSample)
-    setActiveStep(SetupPluginStepEnum.ALERT_CONFIG)
+    if (data.dataSample) {
+      return setActiveStep(SetupPluginStepEnum.ALERT_CONFIG)
+    }
+    return setActiveStep(SetupPluginStepEnum.FINISH)
   })
   const { mutate: createAlert, isLoading: isCreateAlertLoading } = createPluginAlertMutation()
 
@@ -221,6 +215,8 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
         handleConnectionTest(pluginType, selectedMetric.id, credentials)
         break
       case SetupPluginStepEnum.ALERT_CONFIG:
+        break
+      case SetupPluginStepEnum.FINISH:
         handlMetricInstallation(data.name, selectedProvider, selectedMetric, credentials)
           .then(() => {
             if (alerts.length) {
@@ -232,8 +228,6 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
           }).finally(() => {
             setActiveStep(activeStep + 1)
           })
-        break
-      case SetupPluginStepEnum.FINISH:
         break
       default:
         break

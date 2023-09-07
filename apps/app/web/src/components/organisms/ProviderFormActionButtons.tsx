@@ -83,7 +83,7 @@ const ProviderFormActionButtons = ({
       )}
       {isLastStep(steps, activeStep) && (
         <Button
-          onClick={() => handleModalClose()}
+          type="submit"
           color="success"
           variant="contained"
           disableRipple
@@ -96,7 +96,7 @@ const ProviderFormActionButtons = ({
   )
 }
 
-const StyledDialogActions = styled(DialogActions) <{ isFirstStep: boolean }>`
+const StyledDialogActions = styled(DialogActions)<{ isFirstStep: boolean }>`
   display: flex;
   justify-content: ${({ isFirstStep }) => (isFirstStep ? 'flex-end' : 'space-between')};
   margin-top: 12px;
