@@ -10,7 +10,7 @@ import { MetricsLayout } from '../layouts/MetricsLayout'
 import { getActiveMetricQuery } from '../services/dashboard.service'
 import styled from '@emotion/styled'
 import { ActiveMetricModel, activeMetricsMock } from '@metrikube/core'
-import { AddCircleOutline, AddchartOutlined } from '@mui/icons-material'
+import { AddchartOutlined } from '@mui/icons-material'
 import { Button, Box } from '@mui/material'
 import React, { useState } from 'react'
 
@@ -45,13 +45,6 @@ const Dashboard = () => {
               onClick={openProviderModalHandler}
               size="medium"
               variant="contained"
-              startIcon={<AddCircleOutline />}>
-              Add a new provider
-            </Button>
-            <Button
-              sx={{ ml: 1 }}
-              size="medium"
-              variant="contained"
               startIcon={<AddchartOutlined />}>
               Add a new widget
             </Button>
@@ -73,7 +66,7 @@ const Dashboard = () => {
             title="Get started by adding a provider"
             description="The providers are the heart of Metrikube, they allow you to visualize your metrics according to the different plugins."
             onActionButtonClick={openProviderModalHandler}
-            buttonLabel="Add a new provider"
+            buttonLabel="Add a new widget"
             imageAsset={PluginEmptyStateImg}
           />
         ) : (
