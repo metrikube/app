@@ -1,4 +1,3 @@
-import { MetricTypeEnum } from '@metrikube/common'
 import { ApiEndpointHealthCheck } from '../../components/MetricsTemplates/ApiEndpointHealthCheck'
 import { AwsBucketMultipleInstances } from '../../components/MetricsTemplates/AwsBucketMultipleInstances'
 import { AwsBucketSingleInstance } from '../../components/MetricsTemplates/AwsBucketSingleInstance'
@@ -10,9 +9,9 @@ import { DatabaseSlowQueries } from '../../components/MetricsTemplates/DatabaseS
 import { GithubLastIssues } from '../../components/MetricsTemplates/GithubLastIssues'
 import { GithubLastPullRequests } from '../../components/MetricsTemplates/GithubLastPullRequests'
 import { MetricCard } from './components/MetricCard'
-import { ActiveMetricModel, formatAsCurrency } from '@metrikube/core'
-import { Box, Grid, TableCell, TableRow } from '@mui/material'
-import dayjs from 'dayjs'
+import { MetricTypeEnum } from '@metrikube/common'
+import { ActiveMetricModel, WidgetsSize } from '@metrikube/core'
+import { Box, Grid } from '@mui/material'
 import React from 'react'
 
 interface Props {
@@ -40,12 +39,12 @@ export const MetricsLayout = ({ metrics, onAlertOpenRequest, onMetricDeletionReq
   return (
     <Box sx={{ flexGrow: 1 }}>
       <Grid container spacing={2}>
-        {metrics.map((metric, index) => {
+        {metrics.map((metric) => {
           return (
             <MetricCard
               metric={metric}
               key={metric.id}
-              size={'large'}
+              size={WidgetsSize[metric.metric.type]}
               onAlertButtonClick={() => onAlertOpenRequest(metric)}
               onDeleteButtonClick={() => onMetricDeletionRequest(metric)}>
               {metricTemplateMap[metric.metric.type]({ metric })}
