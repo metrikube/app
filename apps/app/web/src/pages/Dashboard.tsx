@@ -1,4 +1,5 @@
 import PluginEmptyStateImg from '../assets/img/undraws/undraw_online_stats.svg'
+import Loader from '../components/atoms/Loader'
 import ConfirmDeletionModal from '../components/organisms/modals/ConfirmDeletion.modal'
 import MetricAlertsModal from '../components/organisms/modals/MetricAlerts.modal'
 import ProviderModal from '../components/organisms/modals/Provider.modal'
@@ -10,7 +11,7 @@ import { getActiveMetricQuery } from '../services/dashboard.service'
 import styled from '@emotion/styled'
 import { ActiveMetricModel, activeMetricsMock } from '@metrikube/core'
 import { AddCircleOutline, AddchartOutlined } from '@mui/icons-material'
-import { Button } from '@mui/material'
+import { Button, Box } from '@mui/material'
 import React, { useState } from 'react'
 
 const Dashboard = () => {
@@ -18,7 +19,7 @@ const Dashboard = () => {
   const [isMetricAlertsModalOpen, setIsMetricAlertsModalOpen] = useState(false)
   const [isMetricDeletionModalOpened, setIsMetricDeletionModalOpened] = useState(false)
   const [selectedMetric, setSelectedMetric] = useState<ActiveMetricModel | null>(null)
-  const { data: activeMetrics } = getActiveMetricQuery()
+  const { data: activeMetrics, isFetching } = getActiveMetricQuery()
 
   const openProviderModalHandler = () => {
     setOpenModal(true)
@@ -56,20 +57,30 @@ const Dashboard = () => {
             </Button>
           </div>
         </StyledHeader>
-
-        {activeMetrics.length ? (
-          <MetricsLayout
-            metrics={activeMetrics}
-            onAlertOpenRequest={handleAlertOpenRequest}
-            onMetricDeletionRequest={handleMetricDeletionRequest}
-          />
-        ) : (
+        {isFetching ? (
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              width: '100%',
+              height: '100%'
+            }}>
+            <Loader />
+          </Box>
+        ) : !activeMetrics.length ? (
           <EmptyStateLayout
             title="Get started by adding a provider"
             description="The providers are the heart of Metrikube, they allow you to visualize your metrics according to the different plugins."
             onActionButtonClick={openProviderModalHandler}
             buttonLabel="Add a new provider"
             imageAsset={PluginEmptyStateImg}
+          />
+        ) : (
+          <MetricsLayout
+            metrics={activeMetrics}
+            onAlertOpenRequest={handleAlertOpenRequest}
+            onMetricDeletionRequest={handleMetricDeletionRequest}
           />
         )}
 
