@@ -57,9 +57,9 @@ const Dashboard = () => {
           </div>
         </StyledHeader>
 
-        {activeMetrics.length ? (
+        {activeMetricsMock.length ? (
           <MetricsLayout
-            metrics={activeMetrics}
+            metrics={activeMetricsMock}
             onAlertOpenRequest={handleAlertOpenRequest}
             onMetricDeletionRequest={handleMetricDeletionRequest}
           />

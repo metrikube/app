@@ -1,3 +1,4 @@
+import { MetricTypeEnum } from '@metrikube/common'
 import { ApiEndpointHealthCheck } from '../../components/MetricsTemplates/ApiEndpointHealthCheck'
 import { AwsBucketMultipleInstances } from '../../components/MetricsTemplates/AwsBucketMultipleInstances'
 import { AwsBucketSingleInstance } from '../../components/MetricsTemplates/AwsBucketSingleInstance'
@@ -24,31 +25,33 @@ export const MetricsLayout = ({ metrics, onAlertOpenRequest, onMetricDeletionReq
   const metricTemplateMap: {
     [key: string]: ({ metric }: { metric: ActiveMetricModel }) => JSX.Element
   } = {
-    'api-endpoint-health-check': ApiEndpointHealthCheck,
-    'aws-bucket-single-instance': AwsBucketSingleInstance,
-    'aws-bucket-multiple-instances': AwsBucketMultipleInstances,
-    'aws-ec2-single-instance-usage': AwsEc2SingleInstanceUsage,
-    'aws-ec2-multiple-instances-usage': AwsEc2MultipleInstancesUsage,
-    'github-last-issues': GithubLastIssues,
-    'github-last-prs': GithubLastPullRequests,
-    'database-queries': DataBaseQueries,
-    'database-slow-queries': DatabaseSlowQueries,
-    'database-sizes': DataBaseSize
+    [MetricTypeEnum.ApiEndpointHealthCheck]: ApiEndpointHealthCheck,
+    [MetricTypeEnum.AwsBucketSingleInstance]: AwsBucketSingleInstance,
+    [MetricTypeEnum.AwsBucketMultipleInstances]: AwsBucketMultipleInstances,
+    [MetricTypeEnum.AwsEc2SingleInstanceUsage]: AwsEc2SingleInstanceUsage,
+    [MetricTypeEnum.AwsEc2MultipleInstancesUsage]: AwsEc2MultipleInstancesUsage,
+    [MetricTypeEnum.GithubLastIssues]: GithubLastIssues,
+    [MetricTypeEnum.GithubLastPrs]: GithubLastPullRequests,
+    [MetricTypeEnum.DatabaseQueries]: DataBaseQueries,
+    [MetricTypeEnum.DatabaseSlowQueries]: DatabaseSlowQueries,
+    [MetricTypeEnum.DatabaseSize]: DataBaseSize
   }
 
   return (
     <Box sx={{ flexGrow: 1 }}>
       <Grid container spacing={2}>
-        {metrics.map((metric, index) => (
-          <MetricCard
-            metric={metric}
-            key={metric.id}
-            size={'large'}
-            onAlertButtonClick={() => onAlertOpenRequest(metric)}
-            onDeleteButtonClick={() => onMetricDeletionRequest(metric)}>
-            {metricTemplateMap[metric.metric.type]({ metric })}
-          </MetricCard>
-        ))}
+        {metrics.map((metric, index) => {
+          return (
+            <MetricCard
+              metric={metric}
+              key={metric.id}
+              size={'large'}
+              onAlertButtonClick={() => onAlertOpenRequest(metric)}
+              onDeleteButtonClick={() => onMetricDeletionRequest(metric)}>
+              {metricTemplateMap[metric.metric.type]({ metric })}
+            </MetricCard>
+          )
+        })}
       </Grid>
     </Box>
   )
