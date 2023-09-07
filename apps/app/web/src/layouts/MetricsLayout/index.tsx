@@ -8,7 +8,9 @@ import { DataBaseSize } from '../../components/MetricsTemplates/DataBaseSize'
 import { DatabaseSlowQueries } from '../../components/MetricsTemplates/DatabaseSlowQueries'
 import { GithubLastIssues } from '../../components/MetricsTemplates/GithubLastIssues'
 import { GithubLastPullRequests } from '../../components/MetricsTemplates/GithubLastPullRequests'
+import MasonryGrid from '../../components/organisms/Masonry'
 import { MetricCard } from './components/MetricCard'
+import styled from '@emotion/styled'
 import { MetricTypeEnum } from '@metrikube/common'
 import { ActiveMetricModel, WidgetsSize } from '@metrikube/core'
 import { Box, Grid } from '@mui/material'
@@ -38,20 +40,30 @@ export const MetricsLayout = ({ metrics, onAlertOpenRequest, onMetricDeletionReq
 
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <Grid container spacing={2}>
+      <MasonryGrid>
         {metrics.map((metric) => {
           return (
-            <MetricCard
-              metric={metric}
-              key={metric.id}
-              size={WidgetsSize[metric.metric.type]}
-              onAlertButtonClick={() => onAlertOpenRequest(metric)}
-              onDeleteButtonClick={() => onMetricDeletionRequest(metric)}>
-              {metricTemplateMap[metric.metric.type]({ metric })}
-            </MetricCard>
+            <GridItem
+              className={`grid-item ${
+                WidgetsSize[metric.metric.type] === 'large' ? 'grid-item--large' : ''
+              }`}
+              key={metric.id}>
+              <MetricCard
+                metric={metric}
+                key={metric.id}
+                size={WidgetsSize[metric.metric.type]}
+                onAlertButtonClick={() => onAlertOpenRequest(metric)}
+                onDeleteButtonClick={() => onMetricDeletionRequest(metric)}>
+                {metricTemplateMap[metric.metric.type]({ metric })}
+              </MetricCard>
+            </GridItem>
           )
         })}
-      </Grid>
+      </MasonryGrid>
     </Box>
   )
 }
+
+const GridItem = styled.div`
+  /* background-color: red; */
+`
