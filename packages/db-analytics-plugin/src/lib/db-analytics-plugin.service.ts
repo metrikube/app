@@ -19,9 +19,11 @@ export class DbAnalyticsPluginService implements PluginConnectionInterface {
   public async getDbSize(credentialData: DbConnectionCredentialType): Promise<ApiDatabaseSize> {
     try {
       const dbService = await new DbService(credentialData);
+
       const dbSizeMb = await dbService.getDbSizeMb();
       const nbRows = await dbService.getNbRows();
       const nbTables = await dbService.getNbTables();
+
       return {
         size: dbSizeMb,
         numberOfTables: nbTables,
@@ -39,7 +41,7 @@ export class DbAnalyticsPluginService implements PluginConnectionInterface {
       const dbService = new DbService(credentialData);
       const slowQueries = await dbService.getSlowQuery();
       return slowQueries.map((slowQuery) => ({
-        executionTime: slowQuery.executionTime,
+        executionTime: parseFloat(slowQuery.executionTime),
         query: slowQuery.query,
         date: slowQuery.date
       }));
