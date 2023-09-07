@@ -45,6 +45,16 @@ export class SeedDefaultDatabase1693679995600 implements MigrationInterface {
         name: 'AWS',
         type: 'aws',
         description: 'Amazon Web Services Plugin',
+        instruction: '...waiting for instruction...' ,
+        category: 'cloud',
+        credentialType: 'aws',
+        iconUrl: ''
+      },
+      {
+        id: pluginIds.sql,
+        name: 'SQL Database',
+        type: 'sql_database',
+        description: 'SQL Database Plugin',
         instruction: `
           <h2 id="guide-installation-plugin-db">Guide installation plugin Db</h2>
           <h3 id="database-compatible">Database compatible</h3>
@@ -91,16 +101,6 @@ export class SeedDefaultDatabase1693679995600 implements MigrationInterface {
           <li>Le nombre de table dans la base </li>
           <li>Le nombre d&#39;enregistrement dans la base</li>
           </ul>`,
-        category: 'cloud',
-        credentialType: 'aws',
-        iconUrl: ''
-      },
-      {
-        id: pluginIds.sql,
-        name: 'SQL Database',
-        type: 'sql_database',
-        description: 'SQL Database Plugin',
-        instruction: '...waiting for instruction...',
         category: 'db',
         credentialType: 'dbConnection'
       },
