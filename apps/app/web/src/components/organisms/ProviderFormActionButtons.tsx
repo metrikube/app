@@ -47,7 +47,7 @@ const ProviderFormActionButtons = ({
           Retour
         </Button>
       )}
-      {activeStep === 1 && (
+      {activeStep === SetupPluginStepEnum.FILL_CREDENTIAL && (
         <LoadingButton
           type="submit"
           size="small"

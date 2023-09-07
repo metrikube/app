@@ -71,8 +71,9 @@ const ProviderFormStep2 = () => {
             />
           )}
         />
-        {/* TODO only for AWS */}
-        <TextField label="Resource ID" variant="outlined" size="small" />
+        {selectedProvider?.type === 'aws' && (
+          <TextField label="Ressource ID" variant="outlined" size="small" />
+        )}
       </OutlinedCard>
     </Step2Container>
   )
