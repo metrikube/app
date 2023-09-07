@@ -1,6 +1,5 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 
-import { ApiMonitoringService } from '@metrikube/api-monitoring';
 import { MetricThresholdOperator, MetricType, PluginResult } from '@metrikube/common';
 
 import { NotificationInterface } from '../../../domain/interfaces/adapters/notification.interface';
@@ -28,12 +27,16 @@ export class AlertUseCase implements AlertUseCaseInterface {
     @Inject(DiTokens.Mailer) private readonly mailer: NotificationInterface,
     @Inject(DiTokens.CredentialRepositoryToken) private readonly credentialRepository: CredentialRepository,
     @Inject(DiTokens.Scheduler) private readonly scheduler: SchedulerInterface,
-    @Inject(DiTokens.PluginUseCaseToken) private readonly pluginUseCase: PluginUseCaseInterface,
-    @Inject(DiTokens.ApiMonitoringToken) private readonly apiMonitoringService: ApiMonitoringService
+    @Inject(DiTokens.PluginUseCaseToken) private readonly pluginUseCase: PluginUseCaseInterface
   ) {
   }
 
   async deleteAlert(alertId: string): Promise<void> {
+    try {
+      this.scheduler.unscheduleRelatedAlerts(alertId);
+    } catch (e) {
+      this.logger.warn(e.message);
+    }
     return this.alertRepository.deleteAlert(alertId);
   }
 

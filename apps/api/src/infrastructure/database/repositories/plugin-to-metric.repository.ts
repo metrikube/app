@@ -1,4 +1,4 @@
-import { DataSource, FindManyOptions, FindOptionsWhere } from 'typeorm';
+import { DataSource } from 'typeorm';
 
 import { InjectDataSource } from '@nestjs/typeorm';
 
@@ -34,5 +34,9 @@ export class PluginToMetricRepositoryImpl extends BaseRepository<PluginToMetricE
         metric: true
       }
     }) as Promise<PluginToMetricEntity>;
+  }
+
+  async deleteWidget(id: string): Promise<void> {
+    await this.delete({ id });
   }
 }

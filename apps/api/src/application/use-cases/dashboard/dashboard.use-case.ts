@@ -40,7 +40,7 @@ export class DashboardUseCase implements DashboardUseCaseInterface {
   }
 
   async disableDashboardMetric(pluginToMetricId: string): Promise<void> {
-    await this.scheduler.unscheduleRelatedAlerts(pluginToMetricId);
+    this.scheduler.unscheduleRelatedAlerts(pluginToMetricId);
 
     await this.pluginToMetricRepository.disablePluginToMetric(pluginToMetricId);
   }

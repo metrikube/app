@@ -35,16 +35,16 @@ export class PluginController {
     return this.pluginUseCase.registerPlugin(body);
   }
 
-  @Get('/:id/:pluginToMetricId')
+  @Get('/:id/:widgetId')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Get plugin data' })
-  @ApiResponse({ status: HttpStatus.OK, description: 'Get plugin data' })
-  @ApiParam({ name: 'id', type: String, description: 'Plugin id' })
-  @ApiParam({ name: 'pluginToMetricId', description: 'PluginToMetric id' })
+  @ApiResponse({ status: HttpStatus.OK, description: 'get plugin data' })
+  @ApiParam({ name: 'id', type: String, description: 'plugin id' })
+  @ApiParam({ name: 'widgetId', description: 'widget id' })
   async getPluginData(
     @Param('id') pluginId: string,
-    @Param('pluginToMetricId') pluginToMetricId: string
+    @Param('widgetId') widgetId: string
   ): Promise<PluginResult<MetricType>> {
-    return this.pluginUseCase.refreshPluginMetric(pluginId, pluginToMetricId);
+    return this.pluginUseCase.refreshPluginMetric(pluginId, widgetId);
   }
 }

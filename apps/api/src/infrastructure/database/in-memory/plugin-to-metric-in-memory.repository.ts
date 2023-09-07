@@ -35,4 +35,9 @@ export class PluginToMetricInMemoryRepositoryImpl implements PluginToMetricRepos
     p.isActive = false;
     return Promise.resolve(p);
   }
+
+  deleteWidget(id: string): Promise<void> {
+    this.pluginToMetrics = this.pluginToMetrics.filter((pluginToMetric) => pluginToMetric.id !== id);
+    return Promise.resolve();
+  }
 }

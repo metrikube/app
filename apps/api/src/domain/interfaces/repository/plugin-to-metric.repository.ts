@@ -8,4 +8,6 @@ export interface PluginToMetricRepository {
   findPluginToMetricById(id: string): Promise<PluginToMetricEntity | undefined>;
 
   disablePluginToMetric(pluginToMetricId: string): Promise<PluginToMetricEntity>;
+
+  deleteWidget(id: string): Promise<void>;
 }

@@ -16,11 +16,4 @@ export class DashboardController {
   fetchDashboardMetricData(): Promise<RefreshDashboardResponseDto[]> {
     return this.dashboardUseCase.refreshDashboard();
   }
-
-  @Delete('disable/:pluginToMetricId')
-  @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Disable dashbaord widget' })
-  disableDashboard(@Param('pluginToMetricId', new ParseUUIDPipe()) pluginToMetricId: string): Promise<void> {
-    return this.dashboardUseCase.disableDashboardMetric(pluginToMetricId);
-  }
 }
