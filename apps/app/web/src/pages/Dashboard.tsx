@@ -46,7 +46,7 @@ const Dashboard = () => {
               size="medium"
               variant="contained"
               startIcon={<AddchartOutlined />}>
-              Add a new widget
+              Ajouter un widget
             </Button>
           </div>
         </StyledHeader>
@@ -63,10 +63,10 @@ const Dashboard = () => {
           </Box>
         ) : !activeMetrics.length ? (
           <EmptyStateLayout
-            title="Get started by adding a provider"
+            title="Commencer par ajouter un widget"
             description="The providers are the heart of Metrikube, they allow you to visualize your metrics according to the different plugins."
             onActionButtonClick={openProviderModalHandler}
-            buttonLabel="Add a new widget"
+            buttonLabel="Ajouter un widget"
             imageAsset={PluginEmptyStateImg}
           />
         ) : (

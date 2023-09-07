@@ -44,7 +44,7 @@ const ProviderFormActionButtons = ({
           disableRipple
           startIcon={<ArrowBack />}
           onClick={() => handleBack()}>
-          Back
+          Retour
         </Button>
       )}
       {activeStep === 1 && (
@@ -76,7 +76,7 @@ const ProviderFormActionButtons = ({
               disableRipple
               disabled={!isProviderChose}
               endIcon={<ArrowForward />}>
-              Next
+              Suivant
             </Button>
           </span>
         </Tooltip>
@@ -89,7 +89,7 @@ const ProviderFormActionButtons = ({
           disableRipple
           disabled={!isProviderChose}
           endIcon={<Done />}>
-          Finish
+          Terminé
         </Button>
       )}
     </StyledDialogActions>

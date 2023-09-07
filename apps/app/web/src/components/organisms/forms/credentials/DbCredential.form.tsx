@@ -28,7 +28,7 @@ const DbCredentialForm = () => {
       variant="outlined"
       size="small"
       {...register('dbHost', {
-        required: 'This field is required.',
+        required: 'Ce champs est obligatoire',
         onChange: () => {
           setDbCredential((prevState) => ({
             ...prevState,
@@ -41,7 +41,7 @@ const DbCredentialForm = () => {
       variant="outlined"
       size="small"
       {...register('dbName', {
-        required: 'This field is required.',
+        required: 'Ce champs est obligatoire',
         onChange: () => {
           setDbCredential((prevState) => ({
             ...prevState,
@@ -55,7 +55,7 @@ const DbCredentialForm = () => {
       size="small"
       inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
       {...register('dbPort', {
-        required: 'This field is required.',
+        required: 'Ce champs est obligatoire',
         onChange: () => {
           setDbCredential((prevState) => ({
             ...prevState,
@@ -68,7 +68,7 @@ const DbCredentialForm = () => {
       variant="outlined"
       size="small"
       {...register('dbUsername', {
-        required: 'This field is required.',
+        required: 'Ce champs est obligatoire',
         onChange: () => {
           setDbCredential((prevState) => ({
             ...prevState,
@@ -81,7 +81,7 @@ const DbCredentialForm = () => {
       variant="outlined"
       size="small"
       {...register('dbPassword', {
-        required: 'This field is required.',
+        required: 'Ce champs est obligatoire',
         onChange: () => {
           setDbCredential((prevState) => ({
             ...prevState,

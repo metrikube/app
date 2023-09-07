@@ -43,14 +43,13 @@ type SetupPluginFormValues = {
 }
 
 const steps: string[] = [
-  'Choose your provider',
-  'Fill your credential',
-  'Configure your notification',
-  'Finish 🎉'
+  'Choix du plugin',
+  'Renseigner vos identifiants',
+  'Configurer vos notifications',
+  'Terminé 🎉'
 ]
 
 const ProviderModal = ({ open, setOpenModal }: Props) => {
-
   const {
     selectedProvider,
     selectedMetric,
@@ -238,7 +237,7 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
       <DialogTitle>
         <DialogHeader >
           <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
-            {activeStep === SetupPluginStepEnum.ALERT_CONFIG ? `${selectedProvider?.name} settings` : 'Set up your provider'}
+            Ajouter un widget
           </Typography>
           <IconButton onClick={handleModalClose}>
             <Close />

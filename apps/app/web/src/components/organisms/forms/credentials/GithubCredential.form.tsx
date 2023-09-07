@@ -16,7 +16,7 @@ const GithubCredentialForm = () => {
         variant="outlined"
         size="small"
         {...register('github.accessToken', {
-          required: 'This field is required.'
+          required: 'Ce champs est obligatoire'
         })}
       />
       <TextField
@@ -24,7 +24,7 @@ const GithubCredentialForm = () => {
         variant="outlined"
         size="small"
         {...register('github.owner', {
-          required: 'This field is required.'
+          required: 'Ce champs est obligatoire'
         })}
       />
       <TextField
@@ -32,7 +32,7 @@ const GithubCredentialForm = () => {
         variant="outlined"
         size="small"
         {...register('github.repo', {
-          required: 'This field is required.'
+          required: 'Ce champs est obligatoire'
         })}
       />
     </>
