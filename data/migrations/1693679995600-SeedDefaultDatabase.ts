@@ -67,14 +67,14 @@ export class SeedDefaultDatabase1693679995600 implements MigrationInterface {
         instruction: `
         # Github Plugin
 
-        From this plugin you will be able to get the last issues and the last pull requests from a repository.
+        Grace a ce plugin vous pourrez récuperer les dernières issues et pull requests de vos repositories Github.
         
         ## Configuration
         
-        To be able to use this plugin you will need to create an access token in your Github account. You can create it [here](https://github.com/settings/personal-access-tokens/new).  
-        We recommend using fine-grained access tokens, because as the name says, you can give the token only the permissions you need.  
-        For the last issues you will need to give the token the \`Issues\` permission read only.  
-        Same goes for the last pull requests, you will need to give the token the \`Pull requests\` permission read only.
+        Pour pouvoir utiliser ce plugin vous devrez créer un token d'accès dans votre compte Github. Vous pouvez le créer [ici](https://github.com/settings/personal-access-tokens/new).  
+        Nous vous recommandons d'utiliser les \`fine-grained tokens\`, car comme son nom l'indique, vous pouvez donner au token seulement les permissions dont vous avez besoin.  
+        Pour récuperer les dernières issues, vous devrez donner au token la permission \`Issues\` en lecture seule.  
+        Pareil pour les dernières pull requests, vous devrez donner au token la permission \`Pull requests\` en lecture seule.  
         `,
         category: 'versionning',
         credentialType: 'github',
