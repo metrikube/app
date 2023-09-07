@@ -1,4 +1,3 @@
-import Sidebar from '../components/organisms/SideBar'
 import styled from '@emotion/styled'
 import { Grid } from '@mui/material'
 import React from 'react'
@@ -6,10 +5,7 @@ import React from 'react'
 const DefaultLayout = ({ children }: React.PropsWithChildren) => {
   return (
     <StyledGrid container spacing={2} columns={16}>
-      <Grid item xs={3}>
-        <Sidebar />
-      </Grid>
-      <Grid item xs={13}>
+      <Grid item xs={16}>
         <Container>{children}</Container>
       </Grid>
     </StyledGrid>
@@ -23,8 +19,9 @@ const StyledGrid = styled(Grid)`
 const Container = styled.div`
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  height: calc(100vh - 82px);
   padding: 1rem;
+  margin-top: 4rem;
 `
 
 export default DefaultLayout

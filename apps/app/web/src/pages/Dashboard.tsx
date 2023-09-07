@@ -11,7 +11,8 @@ import { getActiveMetricQuery } from '../services/dashboard.service'
 import styled from '@emotion/styled'
 import { ActiveMetricModel, activeMetricsMock } from '@metrikube/core'
 import { AddchartOutlined } from '@mui/icons-material'
-import { Button, Box } from '@mui/material'
+import { Button, Box, Typography } from '@mui/material'
+import MetrikubeLogo from 'apps/app/web/src/assets/img/metrikube-logo.png'
 import React, { useState } from 'react'
 
 const Dashboard = () => {
@@ -36,20 +37,25 @@ const Dashboard = () => {
   }
 
   return (
-    <DefaultLayout>
-      <>
-        <StyledHeader>
-          <h3>Metric</h3>
-          <div>
-            <Button
-              onClick={openProviderModalHandler}
-              size="medium"
-              variant="contained"
-              startIcon={<AddchartOutlined />}>
-              Add a new widget
-            </Button>
-          </div>
-        </StyledHeader>
+    <>
+      <StyledHeader>
+        <Brand>
+          <img src={MetrikubeLogo} style={{ height: '50px' }} />
+          <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
+            MetriKube
+          </Typography>
+        </Brand>
+        <div>
+          <Button
+            onClick={openProviderModalHandler}
+            size="medium"
+            variant="contained"
+            startIcon={<AddchartOutlined />}>
+            Add a new widget
+          </Button>
+        </div>
+      </StyledHeader>
+      <DefaultLayout>
         {isFetching ? (
           <Box
             sx={{
@@ -96,8 +102,8 @@ const Dashboard = () => {
             />
           </>
         )}
-      </>
-    </DefaultLayout>
+      </DefaultLayout>
+    </>
   )
 }
 
@@ -106,6 +112,19 @@ const StyledHeader = styled.header`
   align-items: center;
   justify-content: space-between;
   margin-bottom: 2rem;
+  position: fixed;
+  width: 100%;
+  padding: 1rem;
+  top: 0;
+  background-color: ${({ theme }) => theme.palette.background.default};
+  z-index: 10;
+`
+
+const Brand = styled(Box)`
+  display: flex;
+  column-gap: ${(props) => props.theme.spacing(2)};
+  align-items: center;
+  justify-content: center;
 `
 
 export default Dashboard
