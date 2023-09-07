@@ -11,11 +11,15 @@ export interface PluginUseCaseInterface {
 
   getPluginCredentials(pluginId: string): Promise<CredentialEntity>;
 
+  testPluginConnection(plugin: PluginEntity, credential: GenericCredentialType): Promise<void>;
+
   getMetricMethodByMetricType(metricType: MetricType): (credentials: GenericCredentialType) => Promise<PluginResult<typeof metricType>>;
 
   listPlugins(): Promise<PluginResponseDto>;
 
   refreshPluginMetric(pluginId: PluginEntity['id'], pluginToMetricId: PluginToMetricEntity['id']): Promise<PluginResult<MetricType>>;
+
+  fetchMetricDataSampleWithCredential(metricId: string, credential: GenericCredentialType): Promise<PluginResult<MetricType>>;
 
   registerPlugin(body: RegisterPluginRequestDto): Promise<RegisterPluginResponseDto>;
 }
