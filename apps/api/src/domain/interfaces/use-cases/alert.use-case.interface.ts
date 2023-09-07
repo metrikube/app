@@ -9,4 +9,6 @@ export interface AlertUseCaseInterface {
   createAlertOnActivePlugin(pluginToMetricId: PluginToMetricEntity['id'], alert: CreateAlertRequestDto[]): Promise<CreateAlertResponseDto>;
 
   updateAlert(alertId: string, payload: UpdateAlertDto): Promise<void>;
+
+  deleteAlert(alertId: string): Promise<void>;
 }

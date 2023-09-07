@@ -4,7 +4,9 @@ import {
   CreateAlertUsecase,
   GetPluginsUsecase,
   SetupPluginRequest,
-  SetupPluginUsecase
+  SetupPluginUsecase,
+  ValidateCredentialsRequest,
+  ValidateCredentialsUsecase
 } from '@metrikube/core'
 import { useMutation, useQuery } from '@tanstack/react-query'
 
@@ -32,7 +34,15 @@ export const setupPluginMutation = (onSuccess: (data: unknown) => void) => {
   )
 }
 
-export const createPluginAlertMutation = (onSuccess: () => void) => {
+export const validateCredentialsMutation = (onSuccess: (data: unknown) => void) => {
+  return useMutation(
+    (payload: ValidateCredentialsRequest) =>
+      new ValidateCredentialsUsecase(pluginAdapter).execute(payload),
+    { onSuccess }
+  )
+}
+
+export const createPluginAlertMutation = () => {
   return useMutation(
     ({ pluginToMetricId, alerts }: CreateAlertRequest) => {
       return new CreateAlertUsecase(alertAdapter).execute({
@@ -41,7 +51,6 @@ export const createPluginAlertMutation = (onSuccess: () => void) => {
       })
     },
     {
-      onSuccess,
       onError: () => {
         alert('there was an error')
       }

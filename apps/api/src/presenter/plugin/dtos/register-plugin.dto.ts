@@ -59,8 +59,8 @@ export class RegisterPluginResponseDto {
   })
   data: PluginResult<MetricType>;
 
-  constructor(pluginToMetric: PluginToMetricEntity, metricDataSample: PluginResult<MetricType>) {
-    this.id = pluginToMetric.id;
+  constructor(pluginToMetric: PluginToMetricEntity | null, metricDataSample: PluginResult<MetricType>) {
+    this.id = pluginToMetric?.id ?? null;
     this.data = metricDataSample;
   }
 }

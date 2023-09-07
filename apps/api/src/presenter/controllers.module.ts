@@ -14,12 +14,13 @@ import { CredentialRepositoryImpl } from '../infrastructure/database/repositorie
 import { DiTokens } from '../infrastructure/di/tokens';
 import { AlertController } from './alert/controller/alert.controller';
 import { DbAnalyticsController } from './controllers/db-analytics.controller';
+import { CredentialController } from './credential/controller/credential.controller';
 import { DashboardController } from './dashboard/controller/dashboard.controller';
 import { PluginController } from './plugin/controller/plugin.controller';
 
 @Module({
   imports: [UseCaseModule],
-  controllers: [PluginController, AlertController, DashboardController, DbAnalyticsController],
+  controllers: [PluginController, AlertController, DashboardController, DbAnalyticsController, CredentialController],
   providers: [
     { provide: DiTokens.CredentialUseCaseToken, useClass: CredentialUseCase },
     { provide: DiTokens.AlertUseCaseToken, useClass: AlertUseCase },
