@@ -36,7 +36,7 @@ const ConfirmDeletionModal = ({ open, setOpenModal, metric }: Props) => {
     } else {
       setShouldDisableDeletionButton(true)
     }
-  }, [confirmDeletionValue, setShouldDisableDeletionButton])
+  }, [confirmDeletionValue])
 
   const { mutate: deleteMetric } = deleteMetricMutation(() => {
     queryClient.invalidateQueries({ queryKey: ['getActiveMetrics'] })
