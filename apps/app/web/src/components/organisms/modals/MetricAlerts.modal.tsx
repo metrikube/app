@@ -19,7 +19,7 @@ import {
   IconButton
 } from '@mui/material'
 import { useQueryClient } from '@tanstack/react-query'
-import React, { Dispatch, SetStateAction } from 'react'
+import React, { Dispatch, SetStateAction, useEffect } from 'react'
 
 interface Props {
   open: boolean
@@ -29,7 +29,13 @@ interface Props {
 
 const MetricAlertsModal = ({ open, setOpenModal, metric }: Props) => {
   const queryClient = useQueryClient()
-  const { data: alerts } = getActiveMetricAlertsQuery(metric.id)
+  const { data: alerts, refetch, isFetched } = getActiveMetricAlertsQuery(metric.id)
+
+  useEffect(() => {
+    if (isFetched) {
+      refetch()
+    }
+  }, [metric])
 
   const { mutate: toggleNotification } = toggleAlertMutation(() => {
     queryClient.invalidateQueries({ queryKey: ['getActiveMetricAlert'] })
