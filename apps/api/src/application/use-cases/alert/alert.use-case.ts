@@ -52,7 +52,7 @@ export class AlertUseCase implements AlertUseCaseInterface {
       })) as Alert[]
     );
 
-    await Promise.all(createdAlerts.map(this.registerAlerJob.bind(this)(activatedMetric)));
+    await Promise.all(createdAlerts.map(this.registerAlertJob.bind(this)(activatedMetric)));
 
     return new CreateAlertResponseDto(createdAlerts);
   }
@@ -108,7 +108,7 @@ export class AlertUseCase implements AlertUseCaseInterface {
     return operation[operator](value);
   }
 
-  private registerAlerJob(activatedMetric: PluginToMetricEntity): (alert: AlertEntity) => Promise<void> {
+  private registerAlertJob(activatedMetric: PluginToMetricEntity): (alert: AlertEntity) => Promise<void> {
     return (alert: AlertEntity): Promise<void> => {
       return this.scheduler.scheduleAlert(alert.id, activatedMetric.metric.refreshInterval, this.jobRunner.bind(this, alert.id));
     };
