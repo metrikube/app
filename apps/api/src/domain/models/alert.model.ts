@@ -1,16 +1,22 @@
-import { Metric, MetricThresholdOperator } from '@metrikube/common';
+import { MetricThresholdOperatorEnum } from '@metrikube/common';
 
-export type Alert = {
-  readonly id: string;
-  readonly label: string;
-  readonly metric?: Metric;
-  readonly metricId?: string;
-  readonly pluginToMetricId: string;
-  readonly triggered?: boolean;
-  readonly condition: {
-    field: string; // 'value' | 'status'
-    operator: MetricThresholdOperator;
-    threshold: string | number;
-  };
-  readonly createdAt: Date;
-};
+import { Widget } from './widget.model';
+
+export class Alert {
+  public widget?: Widget;
+
+  // prettier-ignore
+  constructor(
+    public id: string,
+    public label: string,
+    public widgetId: Widget['id'],
+    public isActive: boolean,
+    public triggered: boolean,
+    public condition: {
+      field: string;
+      operator: string | MetricThresholdOperatorEnum;
+      threshold: string | number;
+    }
+  ) {
+  }
+}
