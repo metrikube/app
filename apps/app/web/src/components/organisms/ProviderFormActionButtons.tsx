@@ -44,10 +44,10 @@ const ProviderFormActionButtons = ({
           disableRipple
           startIcon={<ArrowBack />}
           onClick={() => handleBack()}>
-          Back
+          Retour
         </Button>
       )}
-      {activeStep === 1 && (
+      {activeStep === SetupPluginStepEnum.FILL_CREDENTIAL && (
         <LoadingButton
           type="submit"
           size="small"
@@ -76,7 +76,7 @@ const ProviderFormActionButtons = ({
               disableRipple
               disabled={!isProviderChose}
               endIcon={<ArrowForward />}>
-              Next
+              Suivant
             </Button>
           </span>
         </Tooltip>
@@ -89,7 +89,7 @@ const ProviderFormActionButtons = ({
           disableRipple
           disabled={!isProviderChose}
           endIcon={<Done />}>
-          Finish
+          Terminé
         </Button>
       )}
     </StyledDialogActions>

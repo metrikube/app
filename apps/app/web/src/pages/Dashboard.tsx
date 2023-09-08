@@ -37,7 +37,7 @@ const Dashboard = () => {
   }
 
   return (
-    <>
+    <DefaultLayout>
       <StyledHeader>
         <Brand>
           <img src={MetrikubeLogo} style={{ height: '50px' }} />
@@ -55,7 +55,7 @@ const Dashboard = () => {
           </Button>
         </div>
       </StyledHeader>
-      <DefaultLayout>
+    <DefaultLayout>
         {isFetching ? (
           <Box
             sx={{
@@ -69,10 +69,10 @@ const Dashboard = () => {
           </Box>
         ) : !activeMetrics.length ? (
           <EmptyStateLayout
-            title="Get started by adding a provider"
+            title="Commencer par ajouter un widget"
             description="The providers are the heart of Metrikube, they allow you to visualize your metrics according to the different plugins."
             onActionButtonClick={openProviderModalHandler}
-            buttonLabel="Add a new widget"
+            buttonLabel="Ajouter un widget"
             imageAsset={PluginEmptyStateImg}
           />
         ) : (

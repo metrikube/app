@@ -25,7 +25,6 @@ export const setupPluginMutation = (onSuccess: (data: unknown) => void) => {
     ({ pluginId, name, metricType, credential }: SetupPluginRequest) =>
       new SetupPluginUsecase(pluginAdapter).execute(pluginId, name, metricType, credential),
     {
-      // how to type that ??
       onSuccess,
       onError: () => {
         alert('there was an error')
@@ -38,7 +37,12 @@ export const validateCredentialsMutation = (onSuccess: (data: unknown) => void) 
   return useMutation(
     (payload: ValidateCredentialsRequest) =>
       new ValidateCredentialsUsecase(pluginAdapter).execute(payload),
-    { onSuccess }
+    {
+      onSuccess,
+      onError() {
+        alert('Test failed')
+      }
+    }
   )
 }
 
@@ -52,7 +56,7 @@ export const createPluginAlertMutation = () => {
     },
     {
       onError: () => {
-        alert('there was an error')
+        alert('An error was occurred')
       }
     }
   )

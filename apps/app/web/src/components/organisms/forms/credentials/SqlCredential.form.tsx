@@ -17,7 +17,7 @@ const DbCredentialForm = () => {
         error={Boolean(errors.sql_database?.dbHost)}
         helperText={errors.sql_database?.dbHost?.message}
         {...register('sql_database.dbHost', {
-          required: 'This field is required.'
+          required: 'Ce champs est obligatoire'
         })}
       />
       <TextField
@@ -27,7 +27,7 @@ const DbCredentialForm = () => {
         error={Boolean(errors.sql_database?.dbName)}
         helperText={errors.sql_database?.dbName?.message}
         {...register('sql_database.dbName', {
-          required: 'This field is required.'
+          required: 'Ce champs est obligatoire'
         })}
       />
       <TextField
@@ -38,7 +38,7 @@ const DbCredentialForm = () => {
         error={Boolean(errors.sql_database?.dbPort)}
         helperText={errors.sql_database?.dbPort?.message}
         {...register('sql_database.dbPort', {
-          required: 'This field is required.'
+          required: 'Ce champs est obligatoire'
         })}
       />
       <TextField
@@ -48,7 +48,7 @@ const DbCredentialForm = () => {
         error={Boolean(errors.sql_database?.dbUsername)}
         helperText={errors.sql_database?.dbUsername?.message}
         {...register('sql_database.dbUsername', {
-          required: 'This field is required.'
+          required: 'Ce champs est obligatoire'
         })}
       />
       <TextField
@@ -59,7 +59,7 @@ const DbCredentialForm = () => {
         error={Boolean(errors.sql_database?.dbPassword)}
         helperText={errors.sql_database?.dbPassword?.message}
         {...register('sql_database.dbPassword', {
-          required: 'This field is required.'
+          required: 'Ce champs est obligatoire'
         })}
       />
     </>

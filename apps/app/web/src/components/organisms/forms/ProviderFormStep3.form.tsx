@@ -25,7 +25,7 @@ const ProviderFormStep3 = () => {
           <div>
             <TextField
               id="alert-label"
-              label="titre d'alerte"
+              label="Titre d'alerte"
               // error={Boolean(errors.metricAlerts[index] || 0)}
               // helperText={errors.metricAlerts[index].label.message as string}
               variant="outlined"
@@ -38,7 +38,7 @@ const ProviderFormStep3 = () => {
             <Select
               labelId="field"
               id="field"
-              placeholder="Select a field"
+              placeholder="Choisissez un champs"
               variant="outlined"
               size="small"
               // error={Boolean(errors.metricAlerts[index])}
@@ -57,7 +57,7 @@ const ProviderFormStep3 = () => {
             <Select
               labelId="operator"
               id="operator"
-              placeholder="Select an operator"
+              placeholder="Sélectionnez un opérateur"
               variant="outlined"
               size="small"
               // error={Boolean(errors.metricAlerts[index])}

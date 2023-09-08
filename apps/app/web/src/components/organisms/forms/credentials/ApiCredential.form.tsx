@@ -19,9 +19,9 @@ const ApiCredentialForm = () => {
         size="small"
         error={Boolean(errors.api_endpoint?.apiEndpoint)}
         helperText={errors.api_endpoint?.apiEndpoint?.message}
-        placeholder="Example: https://jsonplaceholder.typicode.com/users"
+        placeholder="Exemple: https://jsonplaceholder.typicode.com/users"
         {...register('api_endpoint.apiEndpoint', {
-          required: 'This field is required.'
+          required: 'Ce champs est obligatoire'
         })}
       />
     </>

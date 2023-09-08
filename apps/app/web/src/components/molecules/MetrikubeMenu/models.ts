@@ -5,5 +5,6 @@ export type MetrikubeMenuItem = {
   label: string
   variant?: 'primary' | 'danger' | 'info'
   icon?: SvgIconComponent
+  show: boolean
   action: () => void
 }
