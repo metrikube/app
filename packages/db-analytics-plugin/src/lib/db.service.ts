@@ -27,7 +27,6 @@ export class DbService {
   }
 
   public executeQuery(connection: mysql.Connection, query: string): Promise<any> {
-    console.log(this.credentials);
     return new Promise((resolve, reject) => {
       connection.query(query, (err, results) => {
         if (err) {
