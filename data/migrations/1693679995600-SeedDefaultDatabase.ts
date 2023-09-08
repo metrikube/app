@@ -158,7 +158,10 @@ export class SeedDefaultDatabase1693679995600 implements MigrationInterface {
         name: 'Github',
         type: 'github',
         description: 'Github Plugin',
-        instruction: '...waiting for instruction...',
+        instruction: `<h1>Github Plugin</h1>
+        <p>Grace a ce plugin vous pourrez récuperer les dernières issues et pull requests de vos repositories Github.</p>
+        <h2>Configuration</h2>
+        <p>Pour pouvoir utiliser ce plugin vous devrez créer un token d&#39;accès dans votre compte Github. Vous pouvez le créer <a href="https://github.com/settings/personal-access-tokens/new">ici</a>.<br>Nous vous recommandons d&#39;utiliser les <cite>fine-grained tokens</cite>, car comme son nom l&#39;indique, vous pouvez donner au token seulement les permissions dont vous avez besoin.<br>Pour récuperer les dernières issues, vous devrez donner au token la permission <cite>Issues</cite> en lecture seule.<br>Pareil pour les dernières pull requests, vous devrez donner au token la permission <cite>Pull requests</cite> en lecture seule.</p>`,
         category: 'versionning',
         credentialType: 'github',
         iconUrl: ''
