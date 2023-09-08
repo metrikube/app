@@ -41,7 +41,7 @@ export class DbService {
   public async getNbQueriesPerSec(): Promise<ApiDatabaseLastAverageQueriesByHour> {
 
     const query = `
-      WITH hours AS (
+    WITH hours AS (
     SELECT
         DATE_FORMAT(NOW() - INTERVAL n HOUR, '%Y-%m-%d %H:00:00') AS hour
     FROM
@@ -61,6 +61,7 @@ export class DbService {
         WHERE
             es.EVENT_TIME >= NOW() - INTERVAL 12 HOUR
             AND p.DB = '${this.credentials.database}'
+            AND p.USER <> '${this.credentials.user}'
 
         GROUP BY
             hour
@@ -171,4 +172,3 @@ export class DbService {
     }
   }
 }
-
