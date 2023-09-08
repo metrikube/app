@@ -9,7 +9,7 @@ export class DbAnalyticsPluginService implements PluginConnectionInterface {
   public async getNbQueries(credentialData: DbConnectionCredentialType): Promise<ApiDatabaseLastAverageQueriesByHour> {
     try {
       const dbService = await new DbService(credentialData);
-      return dbService.getNbQueriesPerSec();
+      return dbService.getNbQueries();
     } catch (error) {
       console.error('Error generated during query execution: ', error);
       throw error;
@@ -19,9 +19,11 @@ export class DbAnalyticsPluginService implements PluginConnectionInterface {
   public async getDbSize(credentialData: DbConnectionCredentialType): Promise<ApiDatabaseSize> {
     try {
       const dbService = await new DbService(credentialData);
+
       const dbSizeMb = await dbService.getDbSizeMb();
       const nbRows = await dbService.getNbRows();
       const nbTables = await dbService.getNbTables();
+
       return {
         size: dbSizeMb,
         numberOfTables: nbTables,
@@ -39,7 +41,7 @@ export class DbAnalyticsPluginService implements PluginConnectionInterface {
       const dbService = new DbService(credentialData);
       const slowQueries = await dbService.getSlowQuery();
       return slowQueries.map((slowQuery) => ({
-        executionTime: slowQuery.executionTime,
+        executionTime: parseFloat(slowQuery.executionTime),
         query: slowQuery.query,
         date: slowQuery.date
       }));

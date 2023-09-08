@@ -52,7 +52,7 @@ export const MetricCard = ({
 
 
   return (
-    <Grid item xs={size === 'small' ? 4 : 8}>
+    <Grid item >
       <StyledCard>
         <CardHeader
           title={metric.name}
