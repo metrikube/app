@@ -45,7 +45,56 @@ export class SeedDefaultDatabase1693679995600 implements MigrationInterface {
         name: 'AWS',
         type: 'aws',
         description: 'Amazon Web Services Plugin',
-        instruction: '...waiting for instruction...' ,
+        instruction: `
+        <h2 id="guide-installation-plugin-aws">Guide installation plugin AWS</h2>
+        <h3 id="database-compatible">Activer Cost Explorer</h3>
+        <p>Pour utiliser l'API Cost Explorer, vous devez activer l'accès au service Cost Explorer via la console AWS en allant dans le service <strong>"Cost Explorer"</strong></p>
+        <h3 id="database-compatible">Créer un utilisateur </h3>
+        <p>Vous devez tout d'abord créer un utilisateur<a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html">IAM<a/> avec la politique suivante:</p>
+        <pre><code class="lang-json">
+          {
+            "Version": "2012-10-17",
+            "Statement": [
+                {
+                    "Effect": "Allow",
+                    "Action": [
+                        "ce:*"
+                    ],
+                    "Resource": [
+                        "*"
+                    ]
+                },
+                {
+                    "Effect": "Allow",
+                    "Action": [
+                        "ec2:DescribeInstances"
+                    ],
+                    "Resource": "*"
+                },
+                {
+                    "Effect": "Allow",
+                    "Action": [
+                        "s3:ListAllMyBuckets",
+                        "s3:GetBucketLocation"
+                    ],
+                    "Resource": "*"
+                }
+            ]
+          }
+        </code></pre>
+        <p>Remarque: Cela vous permettra d'avoir les accès pour appeler les services AWS (vous pouvez éléver ou non ces déclarations, ici nous sommes en lecture et liste).</p>
+        <h3 id="creation-des-credentials">Création des identifiants</h3>
+        <p>Une fois votre utilisateur IAM créé, il faudra <a href="https://docs.aws.amazon.com/powershell/latest/userguide/pstools-appendix-sign-up.html">récupérer vos clefs d'accès</a>.</p>
+        <p>Une fois les clefs récupérées, copiez vos deux clefs d'accès et copiez les dans la configuration du plugin</p>
+		    <p>Format de valeurs du json:</p>
+        <pre><code class="lang-json">
+          {
+              <span class="hljs-attr">"accessKeyId"</span>: <span class="hljs-string">"AKIAIOSFODNN7EXAMPLE"</span>,
+              <span class="hljs-attr">"secretAccessKey"</span>: <span class="hljs-string">"wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"</span>,
+              <span class="hljs-attr">"region"</span>: <span class="hljs-string">"eu-west-2"</span>,
+          }
+        </code></pre>
+        `,
         category: 'cloud',
         credentialType: 'aws',
         iconUrl: ''
