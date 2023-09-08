@@ -17,7 +17,7 @@ const AwsCredentialForm = () => {
         error={Boolean(errors.aws?.accessKeyId)}
         helperText={errors.aws?.accessKeyId?.message}
         {...register('aws.accessKeyId', {
-          required: 'This field is required.'
+          required: 'Ce champs est obligatoire'
         })}
       />
       <TextField
@@ -27,7 +27,7 @@ const AwsCredentialForm = () => {
         error={Boolean(errors.aws?.secretAccessKey)}
         helperText={errors.aws?.secretAccessKey?.message}
         {...register('aws.secretAccessKey', {
-          required: 'This field is required.'
+          required: 'Ce champs est obligatoire'
         })}
       />
       <TextField
@@ -37,7 +37,7 @@ const AwsCredentialForm = () => {
         error={Boolean(errors.aws?.region)}
         helperText={errors.aws?.region?.message}
         {...register('aws.region', {
-          required: 'This field is required.'
+          required: 'Ce champs est obligatoire'
         })}
       />
     </>

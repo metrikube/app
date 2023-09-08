@@ -37,14 +37,16 @@ export const MetricCard = ({
       key: 'alert',
       label: 'Alertes',
       action: onAlertButtonClick,
-      icon: NotificationsIcon
+      icon: NotificationsIcon,
+      show: metric.metric.isNotifiable
     },
     {
       key: 'delete',
       label: 'Supprimer',
       action: onDeleteButtonClick,
       icon: DeleteIcon,
-      variant: 'danger'
+      variant: 'danger',
+      show: true
     }
   ]
 
@@ -62,6 +64,7 @@ export const MetricCard = ({
                 <IconButton onClick={handleMoreButtonClick}>
                   <MoreVertIcon />
                 </IconButton>
+
                 <MetrikubeMenu
                   id={`metric-menu-${metric.metric.id}`}
                   anchorEl={anchorEl}
@@ -69,12 +72,14 @@ export const MetricCard = ({
                   onClose={() => setAnchorEl(null)}
                   menuItems={metricMenuItems}
                 />
+
+
               </div>
             </IconsActionContainer>
           }
         />
         <CardContent>{children}</CardContent>
-    </StyledCard>
+      </StyledCard>
     </Grid>
   )
 }

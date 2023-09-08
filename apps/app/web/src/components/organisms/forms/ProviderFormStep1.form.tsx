@@ -29,7 +29,7 @@ const ProviderFormStep1 = ({ providerCategory, allPlugins, onCategoryClick }: Pr
     <FormContainer>
       <ChipContainer>
         {/* FIX It's just mock now */}
-        <Typography variant="subtitle2">Category : </Typography>
+        <Typography variant="subtitle2">Catégorie : </Typography>
         {providerCategoriesMock.map((category) => (
           <Chip
             key={category.value}
