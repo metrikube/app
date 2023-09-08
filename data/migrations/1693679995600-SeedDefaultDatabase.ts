@@ -45,7 +45,56 @@ export class SeedDefaultDatabase1693679995600 implements MigrationInterface {
         name: 'AWS',
         type: 'aws',
         description: 'Amazon Web Services Plugin',
-        instruction: '...waiting for instruction...',
+        instruction: `
+        <h2 id="guide-installation-plugin-aws">Guide installation plugin AWS</h2>
+        <h3 id="database-compatible">Activer Cost Explorer</h3>
+        <p>Pour utiliser l'API Cost Explorer, vous devez activer l'accès au service Cost Explorer via la console AWS en allant dans le service <strong>"Cost Explorer"</strong></p>
+        <h3 id="database-compatible">Créer un utilisateur </h3>
+        <p>Vous devez tout d'abord créer un utilisateur<a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html">IAM<a/> avec la politique suivante:</p>
+        <pre><code class="lang-json">
+          {
+            "Version": "2012-10-17",
+            "Statement": [
+                {
+                    "Effect": "Allow",
+                    "Action": [
+                        "ce:*"
+                    ],
+                    "Resource": [
+                        "*"
+                    ]
+                },
+                {
+                    "Effect": "Allow",
+                    "Action": [
+                        "ec2:DescribeInstances"
+                    ],
+                    "Resource": "*"
+                },
+                {
+                    "Effect": "Allow",
+                    "Action": [
+                        "s3:ListAllMyBuckets",
+                        "s3:GetBucketLocation"
+                    ],
+                    "Resource": "*"
+                }
+            ]
+          }
+        </code></pre>
+        <p>Remarque: Cela vous permettra d'avoir les accès pour appeler les services AWS (vous pouvez éléver ou non ces déclarations, ici nous sommes en lecture et liste).</p>
+        <h3 id="creation-des-credentials">Création des identifiants</h3>
+        <p>Une fois votre utilisateur IAM créé, il faudra <a href="https://docs.aws.amazon.com/powershell/latest/userguide/pstools-appendix-sign-up.html">récupérer vos clefs d'accès</a>.</p>
+        <p>Une fois les clefs récupérées, copiez vos deux clefs d'accès et copiez les dans la configuration du plugin</p>
+		    <p>Format de valeurs du json:</p>
+        <pre><code class="lang-json">
+          {
+              <span class="hljs-attr">"accessKeyId"</span>: <span class="hljs-string">"AKIAIOSFODNN7EXAMPLE"</span>,
+              <span class="hljs-attr">"secretAccessKey"</span>: <span class="hljs-string">"wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"</span>,
+              <span class="hljs-attr">"region"</span>: <span class="hljs-string">"eu-west-2"</span>,
+          }
+        </code></pre>
+        `,
         category: 'cloud',
         credentialType: 'aws',
         iconUrl: ''
@@ -55,7 +104,52 @@ export class SeedDefaultDatabase1693679995600 implements MigrationInterface {
         name: 'SQL Database',
         type: 'sql_database',
         description: 'SQL Database Plugin',
-        instruction: '...waiting for instruction...',
+        instruction: `
+          <h2 id="guide-installation-plugin-db">Guide installation plugin Db</h2>
+          <h3 id="database-compatible">Database compatible</h3>
+          <ul><li>Mysql</li><li>Mariadb</li></ul>
+          <h3 id="lignes-executer-sur-votre-base-de-donn-es">Lignes à executer sur votre base de données</h3>
+          <pre><code class="lang-sql"><span class="hljs-keyword">select</span> * <span class="hljs-keyword">from</span> performance_schema.setup_consumers <span class="hljs-keyword">where</span> <span class="hljs-keyword">name</span> <span class="hljs-keyword">like</span> <span class="hljs-string">'events%statement%'</span>;
+          </code></pre>
+          <p>Si dans la colonne <code>ENABLED</code> vous avez des valeurs qui ne sont pas <code>YES</code> ou vrai. Vous devez les activer avec la commande:</p>
+          <pre><code class="lang-sql"><span class="hljs-keyword">UPDATE</span>  performance_schema.setup_consumers  <span class="hljs-keyword">SET</span> ENABLED = <span class="hljs-string">'YES'</span> <span class="hljs-keyword">WHERE</span> <span class="hljs-keyword">NAME</span>=<span class="hljs-string">'events_statements_history_long'</span> ;
+          </code></pre>
+          <p>Dans cet exemeple on active la table: <code>events_statements_history_long</code> mais il faut le faire avec vos table non activées. Ensuite il faut lancer cette commande:</p>
+          <pre><code class="lang-sql"><span class="hljs-keyword">Set</span> global <span class="hljs-comment">mysql.general_log=1</span>;
+          </code></pre>
+          <h3 id="creation-des-credentials">Creation des credentials</h3>
+          <p>Vous pouvez créer un utilisateur avec des droits d&#39;accès en lecture seule.
+          Il faut ajouter les accès pour cette table, avec cette commande:</p>
+          <pre><code class="lang-sql"><span class="hljs-keyword">GRANT</span> <span class="hljs-keyword">SELECT</span> <span class="hljs-keyword">ON</span> mysql.general_log <span class="hljs-keyword">TO</span> <span class="hljs-string">'nom-utilisateur'</span>@<span class="hljs-string">'172.17.0.1'</span>;
+          </code></pre>
+          <p>Ou </p>
+          <pre><code class="lang-sql"><span class="hljs-keyword">GRANT</span> <span class="hljs-keyword">SELECT</span> <span class="hljs-keyword">ON</span> mysql.general_log <span class="hljs-keyword">TO</span> <span class="hljs-string">'nom-utilisateur'</span>;
+          </code></pre>
+          <p>Les valeurs de connexion attendus sont sous ce format-ci:</p>
+          <p>Format de valeurs du json</p>
+          <pre><code class="lang-json">{
+              <span class="hljs-attr">"dbName"</span>: <span class="hljs-string">"str"</span>,
+              <span class="hljs-attr">"dbUser"</span>: <span class="hljs-string">"str"</span>,
+              <span class="hljs-attr">"dbPassword"</span>: <span class="hljs-string">"str"</span>,
+              <span class="hljs-attr">"dbPort"</span>: <span class="hljs-string">"str"</span>,
+              <span class="hljs-attr">"dbHost"</span>: <span class="hljs-number">3306</span>
+          }
+          </code></pre>
+          <h3 id="description-des-donn-es">Description des données</h3>
+          <p><strong>Le graphiques nombres de requêtes par heure:</strong></p>
+          <ul>
+          <li>Il contient le nombre de requêtes executés sur la base de données de ces 12 dernières heures </li>
+          </ul>
+          <p><strong>Les requetes les plus lentes:</strong></p>
+          <ul>
+          <li>Ce sont les requêtes qui ont été executés sur la base de données au moins une fois. Avec la datetime de la dernière execution, la requête sql, le temps moyen d&#39;execution et le temps maximum d&#39;execution</li>
+          </ul>
+          <p><strong>La taille de la base de donnée:</strong></p>
+          <ul>
+          <li>La taille de la bdd en mégabits </li>
+          <li>Le nombre de table dans la base </li>
+          <li>Le nombre d&#39;enregistrement dans la base</li>
+          </ul>`,
         category: 'db',
         credentialType: 'dbConnection'
       },
@@ -74,7 +168,8 @@ export class SeedDefaultDatabase1693679995600 implements MigrationInterface {
         name: 'API Health Check',
         type: 'api_endpoint',
         description: 'API Health Check Plugin',
-        instruction: '...waiting for instruction...',
+        instruction:
+          "<p><strong>Installation plugin API :</strong></p> <ol> <li>Sur votre API mettez à disposition un endpoint API accesssible en [GET] sur la route de votre choix.</li> <li>Assurez-vous que votre API soit acessible sans authentification, ou alors que vous ayez un token d'autorisation à fournir dans le les paramètres de votre requête (ex: https://monapi.com/api/v1/endpoint?token=123456789).</li> <li>Enfin, assurez-vous que votre endpoint retourne un code HTTP de réponses de succès (200 - 299)</li> </ol>",
         category: 'api',
         credentialType: 'apiEndpoint',
         iconUrl: ''
