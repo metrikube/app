@@ -55,7 +55,7 @@ const Dashboard = () => {
           </Button>
         </div>
       </StyledHeader>
-    <DefaultLayout>
+      <DefaultLayout>
         {isFetching ? (
           <Box
             sx={{
@@ -89,17 +89,21 @@ const Dashboard = () => {
 
         {selectedMetric && (
           <>
-            <MetricAlertsModal
-              open={isMetricAlertsModalOpen}
-              setOpenModal={setIsMetricAlertsModalOpen}
-              metric={selectedMetric}
-            />
+            {isMetricAlertsModalOpen && (
+              <MetricAlertsModal
+                open={isMetricAlertsModalOpen}
+                setOpenModal={setIsMetricAlertsModalOpen}
+                metric={selectedMetric}
+              />
+            )}
 
-            <ConfirmDeletionModal
-              open={isMetricDeletionModalOpened}
-              setOpenModal={setIsMetricDeletionModalOpened}
-              metric={selectedMetric}
-            />
+            {isMetricDeletionModalOpened && (
+              <ConfirmDeletionModal
+                open={isMetricDeletionModalOpened}
+                setOpenModal={setIsMetricDeletionModalOpened}
+                metric={selectedMetric}
+              />
+            )}
           </>
         )}
       </DefaultLayout>
