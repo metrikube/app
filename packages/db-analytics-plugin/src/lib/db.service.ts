@@ -38,47 +38,27 @@ export class DbService {
     });
   }
 
-  public async getNbQueriesPerSec(): Promise<ApiDatabaseLastAverageQueriesByHour> {
+  public async getNbQueries(): Promise<ApiDatabaseLastAverageQueriesByHour> {
 
     const query = `
-    WITH hours AS (
-    SELECT
-        DATE_FORMAT(NOW() - INTERVAL n HOUR, '%Y-%m-%d %H:00:00') AS hour
-    FROM
-        (SELECT 0 AS n UNION SELECT 1 UNION SELECT 2 UNION SELECT 3
-         UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7
-             UNION SELECT 8 UNION SELECT 9 UNION SELECT 10 UNION SELECT 11) numbers
-    ),
-    schema_requests AS (
-        SELECT
-            DATE_FORMAT(es.EVENT_TIME, '%Y-%m-%d %H:00:00') AS hour,
-            COUNT(*) AS nbRequests
-        FROM
-            mysql.general_log es
-        LEFT JOIN
-            information_schema.processlist p
-            ON es.THREAD_ID = p.ID
-        WHERE
-            es.EVENT_TIME >= NOW() - INTERVAL 12 HOUR
-            AND p.DB = '${this.credentials.database}'
-            AND p.USER <> '${this.credentials.user}'
-
-        GROUP BY
-            hour
-      )
-      SELECT
-          h.hour,
-          IFNULL(sr.nbRequests, 0) AS nbRequests
-      FROM
-          hours h
-      LEFT JOIN
-          schema_requests sr
-          ON h.hour = sr.hour
-      WHERE
-          h.hour >= DATE_FORMAT(NOW() - INTERVAL 12 HOUR, '%Y-%m-%d %H:00:00')
-          AND h.hour <= DATE_FORMAT(NOW(), '%Y-%m-%d %H:00:00')
-      ORDER BY
-          h.hour;`;
+    WITH hours AS (SELECT DATE_FORMAT(NOW() - INTERVAL n HOUR, '%Y-%m-%d %H:00:00') AS hour
+    FROM (SELECT 0 AS n UNION SELECT 1 UNION SELECT 2 UNION SELECT 3
+     UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7
+     UNION SELECT 8 UNION SELECT 9 UNION SELECT 10 UNION SELECT 11) numbers),
+     schema_requests AS (SELECT
+     DATE_FORMAT(es.EVENT_TIME, '%Y-%m-%d %H:00:00') AS hour,
+     COUNT(*) AS nbRequests FROM  mysql.general_log es
+     LEFT JOIN information_schema.processlist p
+     ON es.THREAD_ID = p.ID
+     WHERE es.EVENT_TIME >= NOW() - INTERVAL 12 HOUR
+     AND p.USER <> '${this.credentials.user}'
+     GROUP BY hour)
+     SELECT h.hour,
+     IFNULL(sr.nbRequests, 0) AS nbRequests  FROM hours h
+     LEFT JOIN schema_requests sr
+     ON h.hour = sr.hour
+     WHERE h.hour >= DATE_FORMAT(NOW() - INTERVAL 12 HOUR, '%Y-%m-%d %H:00:00')           AND h.hour <= DATE_FORMAT(NOW(), '%Y-%m-%d %H:00:00')
+     ORDER BY h.hour;`;
 
     const connection = await this.connection();
     try {
@@ -172,3 +152,5 @@ export class DbService {
     }
   }
 }
+
+

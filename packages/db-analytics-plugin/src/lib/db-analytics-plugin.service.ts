@@ -9,7 +9,7 @@ export class DbAnalyticsPluginService implements PluginConnectionInterface {
   public async getNbQueries(credentialData: DbConnectionCredentialType): Promise<ApiDatabaseLastAverageQueriesByHour> {
     try {
       const dbService = await new DbService(credentialData);
-      return dbService.getNbQueriesPerSec();
+      return dbService.getNbQueries();
     } catch (error) {
       console.error('Error generated during query execution: ', error);
       throw error;
