@@ -57,7 +57,6 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
     setSelectedProvider,
     setSelectedMetric,
     setPluginToMetricId,
-    setMetricFields
   } = useContext(SetupPluginContext)
 
   const methods = useForm<SetupPluginFormValues>({
@@ -78,7 +77,6 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
   }, [selectedProvider])
 
   const { mutate: validateCredentials } = validateCredentialsMutation((data) => {
-    setMetricFields(data.dataSample)
     if (data.dataSample) {
       return setActiveStep(SetupPluginStepEnum.ALERT_CONFIG)
     }

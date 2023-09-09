@@ -47,12 +47,11 @@ export const validateCredentialsMutation = (onSuccess: (data: unknown) => void) 
   )
 }
 
-export const createPluginAlertMutation = (onSuccess: (data: unknown) => void) => {
+export const createPluginAlertMutation = (onSuccess?: (data: unknown) => void) => {
   return useMutation(
-    ({ pluginToMetricId, metricId, alerts }: CreateAlertRequest) => {
+    ({ pluginToMetricId, alerts }: CreateAlertRequest) => {
       return new CreateAlertUsecase(alertAdapter).execute({
         pluginToMetricId,
-        metricId,
         alerts
       })
     },

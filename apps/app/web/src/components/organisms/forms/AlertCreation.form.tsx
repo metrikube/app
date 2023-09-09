@@ -5,10 +5,10 @@ import React from 'react'
 import { useFormContext, useFieldArray } from 'react-hook-form'
 
 type Props = {
-  metricFields: Option[]
+  alertFields: Option[]
 }
 
-const AlertCreationForm = ({ metricFields = [] }: Props) => {
+const AlertCreationForm = ({ alertFields = [] }: Props) => {
   const {
     register,
     control,
@@ -46,9 +46,9 @@ const AlertCreationForm = ({ metricFields = [] }: Props) => {
               // error={Boolean(errors.widgetAlerts[index])}
               // helperText={errors.widgetAlerts[index].condition.field.message as string}
               {...register(`widgetAlerts.${index}.condition.field`, { required: 'Required' })}>
-              {metricFields.map((metricField, index) => (
-                <MenuItem key={index} value={metricField.value}>
-                  {metricField.label}
+              {alertFields.map((alertFields, index) => (
+                <MenuItem key={index} value={alertFields.value}>
+                  {alertFields.label}
                 </MenuItem>
               ))}
             </Select>

@@ -1,3 +1,4 @@
+import { getAlertFieldsQuery } from '../../../services/dashboard.service'
 import { createPluginAlertMutation } from '../../../services/plugin.service'
 import AlertCreationForm from '../forms/AlertCreation.form'
 import { ActiveMetricModel, AlertForm, mapToAlertRequest } from '@metrikube/core'
@@ -25,6 +26,8 @@ const CreateAlertModal = ({ open, setOpenModal, widget }: Props) => {
     queryClient.invalidateQueries({ queryKey: ['getActiveMetricAlert'] })
   })
 
+  const { data: alertFields } = getAlertFieldsQuery(widget.metric.id)
+
   const handlerModalClose = () => {
     setOpenModal(false)
     methods.reset()
@@ -46,7 +49,7 @@ const CreateAlertModal = ({ open, setOpenModal, widget }: Props) => {
       <DialogContent>
         <FormProvider {...methods}>
           <form onSubmit={methods.handleSubmit(onSubmit)}>
-            <AlertCreationForm metricFields={[{ label: 'Status', value: 'status' }]} />
+            <AlertCreationForm alertFields={alertFields} />
             <Button type="submit" disabled={!methods.getValues().widgetAlerts.length}>
               Confirmer
             </Button>
