@@ -1,19 +1,19 @@
 import SimpleWidget from '../molecules/WidgetsGenericTemplates/SimpleWidget'
-import { ActiveMetricModel } from '@metrikube/core'
+import { WidgetModel } from '@metrikube/core'
 import React from 'react'
 
 interface Props {
-  metric: ActiveMetricModel
+  widget: WidgetModel
 }
 
-export const DataBaseSize = ({ metric }: Props) => {
+export const DataBaseSize = ({ widget }: Props) => {
   return (
     <SimpleWidget>
       <>
-        <small>{metric.data.databaseName}</small>
-        <small>Taille : {metric.data.size} Mb</small>
-        <small>Nombre de table : {metric.data.numberOfTables}</small>
-        <small>Nombre total de ligne : {metric.data.numberOfTotalRows}</small>
+        <small>{widget.data.databaseName}</small>
+        <small>Taille : {widget.data.size} Mb</small>
+        <small>Nombre de table : {widget.data.numberOfTables}</small>
+        <small>Nombre total de ligne : {widget.data.numberOfTotalRows}</small>
       </>
     </SimpleWidget>
   )

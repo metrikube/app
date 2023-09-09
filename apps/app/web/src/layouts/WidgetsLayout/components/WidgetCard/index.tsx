@@ -1,5 +1,5 @@
 import styled from '@emotion/styled'
-import { ActiveMetricModel } from '@metrikube/core'
+import { WidgetModel } from '@metrikube/core'
 import MoreVertIcon from '@mui/icons-material/MoreVert'
 import DeleteIcon from '@mui/icons-material/Delete';
 import NotificationsIcon from '@mui/icons-material/Notifications';
@@ -9,16 +9,16 @@ import { MetrikubeMenuItem } from 'apps/app/web/src/components/molecules/Metriku
 import React from 'react'
 
 interface Props {
-  metric: ActiveMetricModel
+  widget: WidgetModel
   size: 'small' | 'large'
   children: React.ReactNode
   onAlertButtonClick: () => void
   onDeleteButtonClick: () => void
 }
 
-export const MetricCard = ({
+export const WidgetCard = ({
   size,
-  metric,
+  widget,
   children,
   onAlertButtonClick,
   onDeleteButtonClick
@@ -26,7 +26,7 @@ export const MetricCard = ({
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
   const isMetricMenuOpen = Boolean(anchorEl)
 
-  const avatarUrl = new URL(`/src/assets/img/${metric.plugin.type}.png`, import.meta.url).href
+  const avatarUrl = new URL(`/src/assets/img/${widget.plugin.type}.png`, import.meta.url).href
 
   const handleMoreButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget)
@@ -55,9 +55,9 @@ export const MetricCard = ({
     <Grid item >
       <StyledCard>
         <CardHeader
-          title={metric.name}
-          subheader={metric.metric.name}
-          avatar={<Logo alt={metric.plugin.name} src={avatarUrl} />}
+          title={widget.name}
+          subheader={widget.metric.name}
+          avatar={<Logo alt={widget.plugin.name} src={avatarUrl} />}
           action={
             <IconsActionContainer>
               <div>
@@ -66,7 +66,7 @@ export const MetricCard = ({
                 </IconButton>
 
                 <MetrikubeMenu
-                  id={`metric-menu-${metric.metric.id}`}
+                  id={`widget-menu-${widget.metric.id}`}
                   anchorEl={anchorEl}
                   open={isMetricMenuOpen}
                   onClose={() => setAnchorEl(null)}
