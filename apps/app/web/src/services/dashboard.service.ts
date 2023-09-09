@@ -19,6 +19,7 @@ export const getActiveMetricQuery = () => {
     queryFn: () => new GetActiveMetricsUsecase(dashboardMetricsAdapter).execute(),
     initialData: () => [],
     refetchOnWindowFocus: false
+    // refetchIntervalInBackground - à creuser
   })
 }
 

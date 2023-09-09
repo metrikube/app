@@ -12,8 +12,9 @@ import styled from '@emotion/styled'
 import { ActiveMetricModel, activeMetricsMock } from '@metrikube/core'
 import { AddchartOutlined } from '@mui/icons-material'
 import { Button, Box, Typography } from '@mui/material'
-import MetrikubeLogo from 'apps/app/web/src/assets/img/metrikube-logo.png'
 import React, { useState } from 'react'
+
+const metrikubeLogo = new URL(`/src/assets/img/metrikube-logo.png`, import.meta.url).href
 
 const Dashboard = () => {
   const [openedModal, setOpenModal] = useState(false)
@@ -40,7 +41,7 @@ const Dashboard = () => {
     <DefaultLayout>
       <StyledHeader>
         <Brand>
-          <img src={MetrikubeLogo} style={{ height: '50px' }} />
+          <img src={metrikubeLogo} style={{ height: '50px' }} />
           <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
             MetriKube
           </Typography>
@@ -51,63 +52,62 @@ const Dashboard = () => {
             size="medium"
             variant="contained"
             startIcon={<AddchartOutlined />}>
-            Add a new widget
+            Ajouter un widget
           </Button>
         </div>
       </StyledHeader>
-      <DefaultLayout>
-        {isFetching ? (
-          <Box
-            sx={{
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              width: '100%',
-              height: '100%'
-            }}>
-            <Loader />
-          </Box>
-        ) : !activeMetrics.length ? (
-          <EmptyStateLayout
-            title="Commencer par ajouter un widget"
-            description="The providers are the heart of Metrikube, they allow you to visualize your metrics according to the different plugins."
-            onActionButtonClick={openProviderModalHandler}
-            buttonLabel="Ajouter un widget"
-            imageAsset={PluginEmptyStateImg}
-          />
-        ) : (
-          <MetricsLayout
-            metrics={activeMetrics}
-            onAlertOpenRequest={handleAlertOpenRequest}
-            onMetricDeletionRequest={handleMetricDeletionRequest}
-          />
-        )}
 
-        <SetupPluginProvider>
-          <ProviderModal open={openedModal} setOpenModal={setOpenModal} />
-        </SetupPluginProvider>
+      {isFetching ? (
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            width: '100%',
+            height: '100%'
+          }}>
+          <Loader />
+        </Box>
+      ) : !activeMetrics.length ? (
+        <EmptyStateLayout
+          title="Commencer par ajouter un widget"
+          description="The providers are the heart of Metrikube, they allow you to visualize your metrics according to the different plugins."
+          onActionButtonClick={openProviderModalHandler}
+          buttonLabel="Ajouter un widget"
+          imageAsset={PluginEmptyStateImg}
+        />
+      ) : (
+        <MetricsLayout
+          metrics={activeMetrics}
+          onAlertOpenRequest={handleAlertOpenRequest}
+          onMetricDeletionRequest={handleMetricDeletionRequest}
+        />
+      )}
 
-        {selectedMetric && (
-          <>
-            {isMetricAlertsModalOpen && (
-              <MetricAlertsModal
-                open={isMetricAlertsModalOpen}
-                setOpenModal={setIsMetricAlertsModalOpen}
-                metric={selectedMetric}
-              />
-            )}
+      <SetupPluginProvider>
+        <ProviderModal open={openedModal} setOpenModal={setOpenModal} />
+      </SetupPluginProvider>
 
-            {isMetricDeletionModalOpened && (
-              <ConfirmDeletionModal
-                open={isMetricDeletionModalOpened}
-                setOpenModal={setIsMetricDeletionModalOpened}
-                metric={selectedMetric}
-              />
-            )}
-          </>
-        )}
-      </DefaultLayout>
-    </>
+      {selectedMetric && (
+        <>
+          {isMetricAlertsModalOpen && (
+            <MetricAlertsModal
+              open={isMetricAlertsModalOpen}
+              setOpenModal={setIsMetricAlertsModalOpen}
+              metric={selectedMetric}
+            />
+          )}
+
+          {isMetricDeletionModalOpened && (
+            <ConfirmDeletionModal
+              open={isMetricDeletionModalOpened}
+              setOpenModal={setIsMetricDeletionModalOpened}
+              metric={selectedMetric}
+            />
+          )}
+        </>
+      )}
+    </DefaultLayout>
   )
 }
 
