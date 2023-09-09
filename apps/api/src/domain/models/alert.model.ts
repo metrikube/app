@@ -1,4 +1,4 @@
-import { MetricThresholdOperatorEnum } from '@metrikube/common';
+import { MetricThresholdOperator } from '@metrikube/common';
 
 import { Widget } from './widget.model';
 
@@ -14,7 +14,7 @@ export class Alert {
     public triggered: boolean,
     public condition: {
       field: string;
-      operator: string | MetricThresholdOperatorEnum;
+      operator: MetricThresholdOperator;
       threshold: string | number;
     }
   ) {
