@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { ApiDatabaseLastAverageQueriesByHour, ApiDatabaseSize, ApiDatabaseSlowQueries, DbConnectionCredentialType, PluginConnectionInterface } from '@metrikube/common';
+import { ApiDatabaseLastAverageQueriesByHour, ApiDatabaseSize, ApiDatabaseSlowQueries, DbConnectionCredentialType, MetricType, PluginConnectionInterface, PluginResult } from '@metrikube/common';
 
 import { DbService } from './db.service';
 
@@ -67,6 +67,22 @@ export class DbAnalyticsPluginService implements PluginConnectionInterface {
         ok: false,
         message: `db connection failed : ${(error as Error).message}` || null
       };
+    }
+  }
+
+  // prettier-ignore
+  describe(type: MetricType): (
+    | keyof PluginResult<'database-queries'>[number]['queries'][number]
+    | keyof PluginResult<'database-size'>
+    | keyof PluginResult<'database-slow-queries'>[number]
+  )[] {
+    switch (type) {
+      case 'database-queries':
+        return ['nbRequests'];
+      case 'database-slow-queries':
+        return ['executionTime'];
+      default:
+        return [];
     }
   }
 }

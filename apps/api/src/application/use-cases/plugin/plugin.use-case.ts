@@ -1,4 +1,4 @@
-import { BadRequestException, Inject, Injectable } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable, NotFoundException } from '@nestjs/common';
 
 import { ApiMonitoringService } from '@metrikube/api-monitoring';
 import { AWSService } from '@metrikube/aws-plugin';
@@ -6,6 +6,7 @@ import { CredentialType, GenericCredentialType, MetricType, Plugin, PluginConnec
 import { DbAnalyticsPluginService } from '@metrikube/db-analytics-plugin';
 import { GithubService } from '@metrikube/github-plugin';
 
+import { PluginResolverInterface } from '../../../domain/interfaces/common/plugin-resolver.interface';
 import { AlertRepository } from '../../../domain/interfaces/repository/alert.repository';
 import { CredentialRepository } from '../../../domain/interfaces/repository/credential.repository';
 import { MetricRepository } from '../../../domain/interfaces/repository/metric.repository';
@@ -24,6 +25,16 @@ import { RegisterPluginRequestDto, RegisterPluginResponseDto } from '../../../pr
 // prettier-ignore
 @Injectable()
 export class PluginUseCase implements PluginUseCaseInterface {
+  /**
+   * TODO : move into a plugin/metric dynamic resolver : getConnector(type)
+   */
+  pluginConnector: Record<Plugin['type'], PluginConnectionInterface> = {
+    api_endpoint: this.apiMonitoringService,
+    github: this.githubService,
+    aws: this.AWSService,
+    sql_database: this.databaseService
+  };
+
   constructor(
     @Inject(DiTokens.AWSServiceToken) private readonly AWSService: AWSService,
     @Inject(DiTokens.AlertRepositoryToken) private readonly alertRepository: AlertRepository,
@@ -34,7 +45,8 @@ export class PluginUseCase implements PluginUseCaseInterface {
     @Inject(DiTokens.PluginRepositoryToken) private readonly pluginRepository: PluginRepository,
     @Inject(DiTokens.PluginToMetricRepositoryToken) private readonly pluginToMetricRepository: PluginToMetricRepository,
     @Inject(DiTokens.Scheduler) private readonly scheduler: SchedulerInterface,
-    @Inject(DiTokens.DbAnalyticsPluginServiceToken) private readonly databaseService: DbAnalyticsPluginService
+    @Inject(DiTokens.DbAnalyticsPluginServiceToken) private readonly databaseService: DbAnalyticsPluginService,
+    // @Inject(DiTokens.PluginResolver) private readonly pluginResolver: PluginResolverInterface
   ) {
   }
 
@@ -80,6 +92,14 @@ export class PluginUseCase implements PluginUseCaseInterface {
     return new RegisterPluginResponseDto(pluginToMetric, pluginDataSample);
   }
 
+  async getPluginTrackableFieldsByMetricId(metricId: string): Promise<string[]> {
+    console.log('metricId : ', metricId);
+    const metric = await this.metricRepository.findById(metricId);
+    if (!metric) throw new NotFoundException('Metric not found');
+
+    return this.describeMetricTrackableFields(metric?.plugin.type, metric.type);
+  }
+
   /**
    * TODO : sécurisé si jamais l'utlisateurs supprime un plugin et envoi un pluginId qui n'a pas de metricType associé
    * @param pluginId
@@ -97,6 +117,9 @@ export class PluginUseCase implements PluginUseCaseInterface {
   }
 
   getMetricMethodByMetricType(metricType: MetricType): (credentials: GenericCredentialType) => Promise<PluginResult<typeof metricType>> {
+    /**
+     * TODO : move into a plugin/metric dynamic resolver
+     */
     switch (metricType) {
       case 'api-endpoint-health-check':
         return this.apiMonitoringService.apiHealthCheck;
@@ -143,13 +166,14 @@ export class PluginUseCase implements PluginUseCaseInterface {
     plugin: PluginEntity,
     credential: GenericCredentialType
   ): Promise<void> {
-    const pluginConnector: Record<Plugin['type'], PluginConnectionInterface> = {
-      api_endpoint: this.apiMonitoringService,
-      github: this.githubService,
-      aws: this.AWSService,
-      sql_database: this.databaseService
-    };
-    const pluginTestConnection: { ok: boolean; message: string | null } = await pluginConnector[plugin.type].testConnection(credential);
+    const pluginTestConnection: { ok: boolean; message: string | null } = await this.pluginConnector[plugin.type].testConnection(credential);
     if (!pluginTestConnection.ok) throw new BadRequestException(pluginTestConnection.message || 'Plugin connection failed');
+  }
+
+  /**
+   * TODO : move into a plugin/metric dynamic resolver
+   */
+  describeMetricTrackableFields(pluginType: string, metricType: MetricType): string[] {
+    return this.pluginConnector[pluginType].describe(metricType);
   }
 }

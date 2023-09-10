@@ -22,4 +22,6 @@ export interface PluginUseCaseInterface {
   fetchMetricDataSampleWithCredential(metricId: string, credential: GenericCredentialType): Promise<PluginResult<MetricType>>;
 
   registerPlugin(body: RegisterPluginRequestDto): Promise<RegisterPluginResponseDto>;
+
+  getPluginTrackableFieldsByMetricId(metricId: string): Promise<string[]>;
 }
