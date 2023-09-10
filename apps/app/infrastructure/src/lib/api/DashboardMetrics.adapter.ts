@@ -18,7 +18,6 @@ export class DashboardMetricsImpl implements DashboardMetricsAdapter {
 
   async getAlertFields(metricId: string): Promise<string[]> {
     const { data } = await this.http.get(`/metrics/${metricId}/describe`)
-    console.log(data)
-    return ['status', 'value']
+    return data
   }
 }

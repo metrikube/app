@@ -69,6 +69,7 @@ export const getAlertFieldsQuery = (metricId: string) => {
     queryKey: ['getAlertFields'],
     queryFn: async (): Promise<Option[]> =>
       new GetAlertFieldsUsecase(dashboardMetricsAdapter).execute(metricId),
-    initialData: () => []
+    initialData: () => [],
+    refetchOnWindowFocus: false
   })
 }
