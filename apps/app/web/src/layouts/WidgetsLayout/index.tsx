@@ -13,6 +13,7 @@ import { WidgetCard } from './components/WidgetCard'
 import { MetricTypeEnum } from '@metrikube/common'
 import { WidgetModel, WidgetsSize } from '@metrikube/core'
 import { Box } from '@mui/material'
+import Alert from '@mui/material/Alert'
 import React from 'react'
 
 interface Props {
@@ -43,8 +44,9 @@ export const WidgetsLayout = ({ widgets, onAlertOpenRequest, onMetricDeletionReq
         {widgets.map((widget) => {
           return (
             <article
-              className={`grid-item ${WidgetsSize[widget.metric.type] === 'large' ? 'grid-item--large' : ''
-                }`}
+              className={`grid-item ${
+                WidgetsSize[widget.metric.type] === 'large' ? 'grid-item--large' : ''
+              }`}
               key={widget.id}>
               <WidgetCard
                 widget={widget}
@@ -52,7 +54,13 @@ export const WidgetsLayout = ({ widgets, onAlertOpenRequest, onMetricDeletionReq
                 size={WidgetsSize[widget.metric.type]}
                 onAlertButtonClick={() => onAlertOpenRequest(widget)}
                 onDeleteButtonClick={() => onMetricDeletionRequest(widget)}>
-                {widgetTemplateMap[widget.metric.type]({ widget })}
+                {widget.data.error ? (
+                  <Alert severity="error">
+                    Une erreur est survenue lors de la récupération des données : <strong>{widget.data.message}</strong>
+                  </Alert>
+                ) : (
+                  widgetTemplateMap[widget.metric.type]({ widget })
+                )}
               </WidgetCard>
             </article>
           )

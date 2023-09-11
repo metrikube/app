@@ -21,11 +21,11 @@ const ProviderFormStep2 = () => {
 
   return (
     <Step2Container>
-      <OutlinedCard title="Instructions">
-        {selectedProvider?.instruction && (
-          <ReactMarkdown>{selectedProvider.instruction}</ReactMarkdown>
-        )}
-      </OutlinedCard>
+      {selectedProvider?.instruction && (
+        <OutlinedCard title="Instructions">
+          <div dangerouslySetInnerHTML={{ __html: selectedProvider.instruction }} />
+        </OutlinedCard>
+      )}
       <OutlinedCard title="Identifiants">
         {credentialType && (
           <>
