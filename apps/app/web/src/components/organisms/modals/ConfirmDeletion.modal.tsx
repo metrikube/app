@@ -55,8 +55,8 @@ const ConfirmDeletionModal = ({ open, setOpenModal, widget }: Props) => {
   return (
     <Dialog open={open} onClose={handlerModalClose}>
       <DialogTitle>
-        <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-          Supprimer : {widget.metric.name}
+        <Typography sx={{ fontWeight: 'bold', fontSize: '20px' }}>
+          Supprimer : {widget?.metric.name}
         </Typography>
       </DialogTitle>
       <DialogContent>

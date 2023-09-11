@@ -11,7 +11,6 @@ interface Props {
   isCreateAlertLoading: boolean
   isProviderChose: boolean
   setActiveStep: Dispatch<SetStateAction<number>>
-  handleModalClose: () => void
 }
 
 const ProviderFormActionButtons = ({
@@ -20,8 +19,7 @@ const ProviderFormActionButtons = ({
   isSetupPluginLoading,
   isCreateAlertLoading,
   isProviderChose,
-  setActiveStep,
-  handleModalClose
+  setActiveStep
 }: Props) => {
   const isFirstStep: boolean = activeStep === SetupPluginStepEnum.CHOOSE_PLUGIN
   const isLastStep = (steps: string[], activeStep: number): boolean =>
@@ -36,7 +34,6 @@ const ProviderFormActionButtons = ({
   }
 
   return (
-    //  isFirstStep={isFirstStep} produce an error
     <StyledDialogActions isFirstStep={isFirstStep}>
       {!isFirstStep && !isLastStep(steps, activeStep) && (
         <Button
@@ -96,7 +93,9 @@ const ProviderFormActionButtons = ({
   )
 }
 
-const StyledDialogActions = styled(DialogActions)<{ isFirstStep: boolean }>`
+const StyledDialogActions = styled(DialogActions, {
+  shouldForwardProp: (prop) => prop !== 'isFirstStep'
+})<{ isFirstStep: boolean }>`
   display: flex;
   justify-content: ${({ isFirstStep }) => (isFirstStep ? 'flex-end' : 'space-between')};
   margin-top: 12px;
