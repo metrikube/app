@@ -37,7 +37,7 @@ const Dashboard = () => {
   }
 
   return (
-    <DefaultLayout>
+    <>
       <StyledHeader>
         <Brand>
           <img src={MetrikubeLogo} style={{ height: '50px' }} />
@@ -55,7 +55,7 @@ const Dashboard = () => {
           </Button>
         </div>
       </StyledHeader>
-    <DefaultLayout>
+      <DefaultLayout>
         {isFetching ? (
           <Box
             sx={{
