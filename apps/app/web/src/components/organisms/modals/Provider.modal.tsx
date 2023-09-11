@@ -53,10 +53,10 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
   const {
     selectedProvider,
     selectedMetric,
-    pluginToMetricId,
+    widgetId,
     setSelectedProvider,
     setSelectedMetric,
-    setPluginToMetricId,
+    setWidgetId,
   } = useContext(SetupPluginContext)
 
   const methods = useForm<SetupPluginFormValues>({
@@ -85,7 +85,7 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
   const { mutate: createAlert, isLoading: isCreateAlertLoading } = createAlertsMutation()
 
   const { mutate: setupPlugin, isLoading: isSetupPluginLoading } = setupPluginMutation((data) => {
-    setPluginToMetricId(data.id)
+    setWidgetId(data.id)
     queryClient.invalidateQueries({ queryKey: ["getWidgets"] })
   })
 
@@ -144,7 +144,7 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
               .then(() => {
                 if (alerts.length) {
                   createAlert({
-                    pluginToMetricId,
+                    widgetId,
                     alerts
                   })
                 }
@@ -160,7 +160,7 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
           .then(() => {
             if (alerts.length) {
               createAlert({
-                pluginToMetricId,
+                widgetId,
                 alerts
               })
             }
@@ -179,7 +179,7 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
   return (
     <Dialog open={open} maxWidth="md" fullWidth={true} onClose={handleModalClose}>
       <DialogTitle>
-        <DialogHeader >
+        <DialogHeader>
           <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
             Ajouter un widget
           </Typography>

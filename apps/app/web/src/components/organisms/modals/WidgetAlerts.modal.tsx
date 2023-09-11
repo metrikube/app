@@ -26,7 +26,6 @@ import {
 import { useQueryClient } from '@tanstack/react-query'
 import React, { Dispatch, SetStateAction, useEffect, useState } from 'react'
 
-
 interface Props {
   open: boolean
   setOpenModal: Dispatch<SetStateAction<boolean>>
@@ -35,7 +34,13 @@ interface Props {
 
 const WidgetAlertsModal = ({ open, setOpenModal, widget }: Props) => {
   const queryClient = useQueryClient()
-  const { data: alerts, refetch, isFetched, isFetching } = getWidgetAlertsQuery(widget.id)
+  const {
+    data: alerts,
+    refetch,
+    isFetched,
+    isFetching,
+    isInitialLoading
+  } = getWidgetAlertsQuery(widget.id)
   const [isOpened, setIsOpened] = useState(false)
 
   useEffect(() => {
@@ -57,7 +62,6 @@ const WidgetAlertsModal = ({ open, setOpenModal, widget }: Props) => {
 
   return (
     <Dialog open={open} onClose={() => setOpenModal(false)}>
-      <DialogTitle>Alertes {widget.metric.name}</DialogTitle>
       <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between' }}>
         <span>Alertes {widget.metric.name}</span>{' '}
         <Button
@@ -69,7 +73,7 @@ const WidgetAlertsModal = ({ open, setOpenModal, widget }: Props) => {
         </Button>
       </DialogTitle>
       <DialogContent>
-        {isFetching ? (
+        {isFetching && isInitialLoading ? (
           <Loader />
         ) : alerts.length ? (
           <Table>

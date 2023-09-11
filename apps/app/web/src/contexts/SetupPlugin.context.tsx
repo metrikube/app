@@ -4,35 +4,35 @@ import React, { Dispatch, SetStateAction, createContext, useState } from 'react'
 interface SetupPluginContextType {
   selectedProvider: PluginModel | null
   selectedMetric: MetricModel | null
-  pluginToMetricId: string
+  widgetId: string
   setSelectedProvider: Dispatch<SetStateAction<PluginModel | null>>
   setSelectedMetric: Dispatch<SetStateAction<MetricModel | null>>
-  setPluginToMetricId: Dispatch<SetStateAction<string>>
+  setWidgetId: Dispatch<SetStateAction<string>>
 }
 
 export const SetupPluginContext = createContext<SetupPluginContextType>({
   selectedProvider: null,
   selectedMetric: null,
-  pluginToMetricId: '',
+  widgetId: '',
   setSelectedProvider: () => ({}),
   setSelectedMetric: () => ({}),
-  setPluginToMetricId: () => ({})
+  setWidgetId: () => ({})
 })
 
 export const SetupPluginProvider = ({ children }: { children: JSX.Element }) => {
   const [selectedProvider, setSelectedProvider] = useState<PluginModel | null>(null)
   const [selectedMetric, setSelectedMetric] = useState<MetricModel | null>(null)
-  const [pluginToMetricId, setPluginToMetricId] = useState('')
+  const [widgetId, setWidgetId] = useState('')
 
   return (
     <SetupPluginContext.Provider
       value={{
         selectedProvider,
         selectedMetric,
-        pluginToMetricId,
+        widgetId,
         setSelectedProvider,
         setSelectedMetric,
-        setPluginToMetricId
+        setWidgetId
       }}>
       {children}
     </SetupPluginContext.Provider>

@@ -71,7 +71,7 @@ const Dashboard = () => {
         ) : !widgets.length ? (
           <EmptyStateLayout
             title="Commencer par ajouter un widget"
-            description="Les widget sont le coeur de Metrikube, Ils permettent de visualiser vos métriques."
+            description="Les widgets sont le coeur de Metrikube, Ils permettent de visualiser vos métriques."
             onActionButtonClick={openProviderModalHandler}
             buttonLabel="Ajouter un widget"
             imageAsset={PluginEmptyStateImg}
