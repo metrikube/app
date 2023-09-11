@@ -1,6 +1,7 @@
 import SimpleWidget from '../molecules/WidgetsGenericTemplates/SimpleWidget'
+import styled from '@emotion/styled'
 import { WidgetModel } from '@metrikube/core'
-import { Typography } from '@mui/material'
+import { List, ListItem, ListItemText } from '@mui/material'
 import React from 'react'
 
 interface Props {
@@ -29,16 +30,32 @@ export const ApiEndpointHealthCheck = ({ widget }: Props) => {
   return (
     <SimpleWidget>
       <>
-        <span>
-          Status :{' '}
-          <Typography sx={{ color: getColorForStatus(widget.data.status), display: 'inline' }}>
-            {widget.data.status}
-          </Typography>
-        </span>
-        <span>
-          Time : {widget.data.value} {widget.data.unit}
-        </span>
+        <List dense={true}>
+          <ListItem>
+            <StyledItemText
+              primary="Statut :"
+              secondary={widget.data.status}
+              secondaryTypographyProps={{
+                sx: { color: getColorForStatus(widget.data.status), display: 'inline' }
+              }}
+            />
+          </ListItem>
+          <ListItem>
+            <StyledItemText
+              primary="Temps de réponse : "
+              secondary={`${widget.data.value} ${widget.data.unit}`}
+            />
+          </ListItem>
+        </List>
       </>
     </SimpleWidget>
   )
 }
+
+const StyledItemText = styled(ListItemText)`
+  display: flex;
+
+  .MuiListItemText-primary {
+    margin-right: 6px;
+  }
+`

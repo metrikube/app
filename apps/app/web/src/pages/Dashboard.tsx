@@ -78,7 +78,7 @@ const Dashboard = () => {
           />
         ) : (
           <WidgetsLayout
-            widgets={activeMetricsMock}
+            widgets={widgets}
             onAlertOpenRequest={handleAlertOpenRequest}
             onMetricDeletionRequest={handleMetricDeletionRequest}
           />
