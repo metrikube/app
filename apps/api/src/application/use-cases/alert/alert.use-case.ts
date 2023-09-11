@@ -75,8 +75,8 @@ export class AlertUseCase implements AlertUseCaseInterface {
     }
   }
 
-  getPluginToMetricAlerts(pluginToMetricId: Widget['id']): Promise<Alert[]> {
-    return this.alertRepository.findByWidgetId(pluginToMetricId);
+  getPluginToMetricAlerts(widgetId: Widget['id']): Promise<Alert[]> {
+    return this.alertRepository.findByWidgetId(widgetId);
   }
 
   async updateAlert(alertId: string, payload: UpdateAlertDto): Promise<void> {

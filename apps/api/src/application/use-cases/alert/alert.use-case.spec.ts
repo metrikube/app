@@ -4,7 +4,6 @@ import { MetricThresholdOperator, MetricThresholdOperatorEnum } from '@metrikube
 
 import { SchedulerInterface } from '../../../domain/interfaces/scheduler/scheduler.interface';
 import { AlertEntity } from '../../../infrastructure/database/entities/alert.entity';
-import { PluginToMetricEntity } from '../../../infrastructure/database/entities/plugin_to_metric.entity';
 import { AlertInMemoryRepositoryImpl } from '../../../infrastructure/database/in-memory/alert-in-memory.repository';
 import { CredentialInMemoryRepositoryImpl } from '../../../infrastructure/database/in-memory/credential-in-memory.repository';
 import { WidgetInMemoryRepositoryImpl } from '../../../infrastructure/database/in-memory/widget-in-memory.repository';
@@ -16,7 +15,7 @@ describe('AlertUseCase', () => {
   let useCase: AlertUseCase;
   let alertRepository: AlertInMemoryRepositoryImpl;
   let scheduler: SchedulerInterface;
-  let pluginToMetricRepository: PluginToMetricInMemoryRepositoryImpl;
+  let wigetRepository: WidgetInMemoryRepositoryImpl;
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
@@ -35,7 +34,7 @@ describe('AlertUseCase', () => {
     useCase = module.get(AlertUseCase);
     alertRepository = module.get(DiTokens.AlertRepositoryToken);
     scheduler = module.get(DiTokens.Scheduler);
-    pluginToMetricRepository = module.get(DiTokens.PluginToMetricRepositoryToken);
+    wigetRepository = module.get(DiTokens.WidgetRepositoryToken);
   });
 
   it('should create alert', async () => {
@@ -119,7 +118,7 @@ describe('AlertUseCase', () => {
       }
     };
 
-    const insertedAlert = await useCase.createAlertOnActivePlugin('1', [alert]);
+    await useCase.createAlertOnActivePlugin('1', [alert]);
 
     await useCase.updateAlert('1', { isActive: true });
 

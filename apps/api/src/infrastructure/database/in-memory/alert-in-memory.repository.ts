@@ -3,7 +3,7 @@ import { Alert } from '../../../domain/models/alert.model';
 import { UpdateAlertDto } from '../../../presenter/alert/dtos/update-alert.dto';
 
 export class AlertInMemoryRepositoryImpl implements AlertRepository {
-  private alerts: Alert[] = [];
+  public alerts: Alert[] = [];
 
   async getAlerts(): Promise<Alert[]> {
     return this.alerts;

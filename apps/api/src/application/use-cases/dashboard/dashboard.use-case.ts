@@ -38,10 +38,10 @@ export class DashboardUseCase implements DashboardUseCaseInterface {
     return this.resolveMetrics(activatedMetricsWithCredentials);
   }
 
-  async disableDashboardMetric(pluginToMetricId: string): Promise<void> {
-    this.scheduler.unscheduleRelatedAlerts(pluginToMetricId);
+  async disableDashboardMetric(widgetId: string): Promise<void> {
+    this.scheduler.unscheduleRelatedAlerts(widgetId);
 
-    await this.widgetRepository.disablewidget(pluginToMetricId);
+    await this.widgetRepository.disablewidget(widgetId);
   }
 
   private async getActiveMetricsWithCredentials(credentials: Credential[]): Promise<ActivatedMetric[]> {
