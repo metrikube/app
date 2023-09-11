@@ -1,18 +1,18 @@
 import SimpleWidget from '../molecules/WidgetsGenericTemplates/SimpleWidget'
-import { ActiveMetricModel, formatAsCurrency } from '@metrikube/core'
+import { WidgetModel, formatAsCurrency } from '@metrikube/core'
 import React from 'react'
 
 interface Props {
-  metric: ActiveMetricModel
+  widget: WidgetModel
 }
 
-export const AwsBucketSingleInstance = ({ metric }: Props) => {
+export const AwsBucketSingleInstance = ({ widget }: Props) => {
   return (
     <SimpleWidget>
       <>
-        <small>{metric.data.name}</small>
-        <small>Région: {metric.data.region}</small>
-        <small>{formatAsCurrency(metric.data.cost, metric.data.currency)}</small>
+        <small>{widget.data.name}</small>
+        <small>Région: {widget.data.region}</small>
+        <small>{formatAsCurrency(widget.data.cost, widget.data.currency)}</small>
       </>
     </SimpleWidget>
   )

@@ -6,7 +6,7 @@ import { AlertEntity } from '../../apps/api/src/infrastructure/database/entities
 import { CredentialEntity } from '../../apps/api/src/infrastructure/database/entities/credential.entity';
 import { MetricEntity } from '../../apps/api/src/infrastructure/database/entities/metric.entity';
 import { PluginEntity } from '../../apps/api/src/infrastructure/database/entities/plugin.entity';
-import { PluginToMetricEntity } from '../../apps/api/src/infrastructure/database/entities/plugin_to_metric.entity';
+import { WidgetEntity } from '../../apps/api/src/infrastructure/database/entities/widget.entity';
 
 export class SeedDefaultDatabase1693679995600 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
@@ -35,7 +35,7 @@ export class SeedDefaultDatabase1693679995600 implements MigrationInterface {
       github: randomUUID()
     };
 
-    const pluginToMetricIds = {
+    const widgetIds = {
       pingApi: randomUUID()
     };
 
@@ -273,9 +273,9 @@ export class SeedDefaultDatabase1693679995600 implements MigrationInterface {
           'eyJhY2Nlc3NUb2tlbiI6ImdpdGh1Yl9wYXRfMTFBS1RYRFBBMHhVUGUzbFRUOTFXNl9CMXJzd1hwRGJCU01NTVZUUmdESE1PTUFVTHMwSkV3NlZpaHlYVjd3MFd1V01NTEZHUjRQZDNHVnA3UCIsIm93bmVyIjoibWV0cmlrdWJlIiwicmVwbyI6ImFwcCJ9'
       }
     ];
-    const pluginToMetrics = [
+    const widgets = [
       {
-        id: pluginToMetricIds.pingApi,
+        id: widgetIds.pingApi,
         pluginId: pluginIds.apiHealthCheck,
         metricId: metricIds.apiHealthCheck,
         credentialId: credentialIds.apiHealthCheck,
@@ -288,7 +288,7 @@ export class SeedDefaultDatabase1693679995600 implements MigrationInterface {
     const alerts = [
       {
         id: '5607a60c-1dc9-455e-817a-59c3f82a176b',
-        pluginToMetricId: pluginToMetricIds.pingApi,
+        widgetId: widgetIds.pingApi,
         label: 'API Response Time > 50ms',
         triggered: false,
         isActive: true,
@@ -303,14 +303,14 @@ export class SeedDefaultDatabase1693679995600 implements MigrationInterface {
     await this.execute(queryRunner, PluginEntity, plugins);
     await this.execute(queryRunner, MetricEntity, metrics);
     await this.execute(queryRunner, CredentialEntity, credentials);
-    await this.execute(queryRunner, PluginToMetricEntity, pluginToMetrics);
+    await this.execute(queryRunner, WidgetEntity, widgets);
     await this.execute(queryRunner, AlertEntity, alerts);
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query('DELETE FROM alert WHERE id');
     await queryRunner.query('DELETE FROM credential WHERE id');
-    await queryRunner.query('DELETE FROM plugin_to_metric WHERE id');
+    await queryRunner.query('DELETE FROM widget WHERE id');
     await queryRunner.query('DELETE FROM metric WHERE id');
     await queryRunner.query('DELETE FROM plugin WHERE id');
   }

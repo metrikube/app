@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import { ApiDatabaseLastAverageQueriesByHour, ApiDatabaseSize, ApiDatabaseSlowQueries, CredentialType, GenericCredentialType, Plugin } from '@metrikube/common';
+import { ApiDatabaseLastAverageQueriesByHour, ApiDatabaseSize, ApiDatabaseSlowQueries, GenericCredentialType, Plugin } from '@metrikube/common';
 import { DbAnalyticsPluginService } from '@metrikube/db-analytics-plugin';
 
 import { CredentialRepository } from '../../../domain/interfaces/repository/credential.repository';
@@ -8,9 +8,8 @@ import { MetricRepository } from '../../../domain/interfaces/repository/metric.r
 import { CredentialUseCaseInterface } from '../../../domain/interfaces/use-cases/credential.use-case.interface';
 import { PluginUseCaseInterface } from '../../../domain/interfaces/use-cases/plugin.use-case.interface';
 import { Credential } from '../../../domain/models/credential.model';
-import { CredentialEntity } from '../../../infrastructure/database/entities/credential.entity';
 import { DiTokens } from '../../../infrastructure/di/tokens';
-import { CredentialTypesDtos, ValidateCredentialResponseDto, credentialDtos } from '../../../presenter/credential/dtos/validate-credential-response.dto';
+import { CredentialTypesDtos, ValidateCredentialResponseDto } from '../../../presenter/credential/dtos/validate-credential-response.dto';
 
 @Injectable()
 export class CredentialUseCase implements CredentialUseCaseInterface {
@@ -21,7 +20,7 @@ export class CredentialUseCase implements CredentialUseCaseInterface {
     @Inject(DiTokens.MetricRepositoryToken) private readonly metricRepository: MetricRepository
   ) {}
 
-  async insertCredentialForPlugin(pluginId: Plugin['id'], paylad: Credential): Promise<CredentialEntity> {
+  async insertCredentialForPlugin(pluginId: Plugin['id'], paylad: Credential): Promise<Credential> {
     return this.credentialRepository.createCredential({ pluginId, ...paylad });
   }
 

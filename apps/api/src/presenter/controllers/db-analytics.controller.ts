@@ -15,7 +15,7 @@ export class DbAnalyticsController {
   @Inject(DiTokens.CredentialUseCaseToken) private readonly credentialUseCase: CredentialUseCaseInterface;
 
   @Post('connection')
-  dbCreateConnection(@Body() payload: Credential): Promise<CredentialEntity> {
+  dbCreateConnection(@Body() payload: Credential): Promise<Credential> {
     return this.credentialUseCase.insertCredentialForPlugin(payload['pluginId'], payload);
   }
 

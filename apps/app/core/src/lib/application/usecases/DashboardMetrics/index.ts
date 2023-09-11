@@ -1,2 +1,2 @@
-export * from "./GetActiveMetrics.usecase"
-export * from "./DeleteActiveMetric.usecase"
+export * from "./GetWidgets.usecase"
+export * from "./DeleteWidget.usecase"

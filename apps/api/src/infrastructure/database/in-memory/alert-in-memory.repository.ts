@@ -1,42 +1,37 @@
-import { FindManyOptions, FindOptionsWhere } from 'typeorm';
-
 import { AlertRepository } from '../../../domain/interfaces/repository/alert.repository';
-import { AlertEntity } from '../entities/alert.entity';
+import { Alert } from '../../../domain/models/alert.model';
+import { UpdateAlertDto } from '../../../presenter/alert/dtos/update-alert.dto';
 
 export class AlertInMemoryRepositoryImpl implements AlertRepository {
-  private readonly alerts: AlertEntity[] = [];
+  private alerts: Alert[] = [];
 
-  constructor() {}
-
-  getAlerts(criterias: FindManyOptions<AlertEntity> | FindOptionsWhere<AlertEntity>): Promise<AlertEntity[]> {
-    return Promise.resolve(this.alerts);
+  async getAlerts(): Promise<Alert[]> {
+    return this.alerts;
   }
 
-  findByWidgetId(widgetId: string): Promise<AlertEntity[]> {
-    return Promise.resolve(this.alerts.filter((alert) => alert.pluginToMetricId === widgetId));
+  async findAlertById(id: string): Promise<Alert | undefined> {
+    return this.alerts.find((alert) => alert.id === id);
   }
 
-  findAlertById(id: string): Promise<AlertEntity> {
-    return Promise.resolve(this.alerts.find((alert) => alert.id === id));
+  async findByWidgetId(widgetId: string): Promise<Alert[]> {
+    return this.alerts.filter((alert) => alert.widgetId === widgetId);
   }
 
-  createAlerts(payload): Promise<AlertEntity[]> {
-    const alert = Object.assign(new AlertEntity(), payload);
-    this.alerts.push(alert);
-    return Promise.resolve([alert]);
+  async createAlerts(alertOrAlerts: Partial<Alert[]>): Promise<Alert[]> {
+    const newAlerts = Array.isArray(alertOrAlerts) ? alertOrAlerts : [alertOrAlerts];
+    for (const newAlert of newAlerts) {
+      this.alerts.push(newAlert as Alert);
+    }
+    return newAlerts as Alert[];
   }
 
-  async updateAlert(id: string, payload: Partial<AlertEntity>): Promise<void> {
-    let alert = this.alerts.find((alert) => alert.id === id);
-    alert = { ...alert, ...payload };
-    return Promise.resolve();
+  async updateAlert(id: string, payload: UpdateAlertDto): Promise<void> {
+    const index = this.alerts.findIndex((alert) => alert.id === id);
+    if (index !== -1) this.alerts[index] = { ...this.alerts[index], ...payload };
   }
 
-  async deleteAlert(id: string): Promise<void> {
-    this.alerts.splice(
-      this.alerts.findIndex((alert) => alert.id === id),
-      1
-    );
-    return Promise.resolve();
+  async deleteAlert(alertId: string): Promise<void> {
+    const index = this.alerts.findIndex((alert) => alert.id === alertId);
+    if (index !== -1) this.alerts.splice(index, 1);
   }
 }

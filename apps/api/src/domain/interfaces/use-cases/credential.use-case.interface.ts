@@ -5,7 +5,7 @@ import { CredentialTypesDtos, ValidateCredentialResponseDto } from '../../../pre
 import { Credential } from '../../models/credential.model';
 
 export interface CredentialUseCaseInterface {
-  insertCredentialForPlugin(pluginId: string, credential: Credential): Promise<CredentialEntity>;
+  insertCredentialForPlugin(pluginId: string, credential: Credential): Promise<Credential>;
 
   validateCredential(metricId: string, credential: CredentialTypesDtos): Promise<ValidateCredentialResponseDto>;
 

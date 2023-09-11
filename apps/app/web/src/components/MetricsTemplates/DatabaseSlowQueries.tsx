@@ -1,15 +1,15 @@
 import SqlCodeBlock from '../molecules/SqlCodeBlock'
 import ListResource from '../molecules/WidgetsGenericTemplates/TableWidget'
-import { ActiveMetricModel, formatAsCurrency } from '@metrikube/core'
+import { WidgetModel } from '@metrikube/core'
 import { TableCell, TableRow, Button, Dialog, DialogContent } from '@mui/material'
 import dayjs from 'dayjs'
 import React from 'react'
 
 interface Props {
-  metric: ActiveMetricModel
+  widget: WidgetModel
 }
 
-export const DatabaseSlowQueries = ({ metric }: Props) => {
+export const DatabaseSlowQueries = ({ widget }: Props) => {
   const [isSqlModalOpen, setIsSqlModalOpen] = React.useState(false)
   const [queryToDisplay, setQueryToDisplay] = React.useState('')
 
@@ -24,7 +24,7 @@ export const DatabaseSlowQueries = ({ metric }: Props) => {
         tableHead={['Requête', "Temps d'éxec (en seconde)", 'Date'].map((column, index) => (
           <TableCell key={index}>{column}</TableCell>
         ))}
-        tableBody={metric.data.map((slowQuery, index) => (
+        tableBody={widget.data.map((slowQuery, index) => (
           <TableRow key={index}>
             <TableCell>
               <Button

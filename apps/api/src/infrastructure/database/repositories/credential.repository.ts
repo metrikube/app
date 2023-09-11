@@ -14,33 +14,37 @@ export class CredentialRepositoryImpl extends BaseRepository<CredentialEntity> i
     super(connection, CredentialEntity);
   }
 
-  createCredential(credential: Credential): Promise<CredentialEntity> {
+  createCredential(credential: Credential & { credential }): Promise<Credential> {
     const encodedValue = Buffer.from(JSON.stringify(credential.value)).toString('base64');
     return this.save({ ...credential, value: encodedValue });
   }
 
-  getCredentials(): Promise<CredentialEntity[]> {
-    return this.find();
+  async getCredentials(): Promise<Credential[]> {
+    const credentials = await this.find();
+    return credentials.length && credentials.map(CredentialEntity.toModel);
   }
 
-  findCredentialByIdWithPlugin(id: string): Promise<CredentialEntity> {
-    return this.findOneOrFail({
+  async findCredentialByIdWithPlugin(id: string): Promise<Credential> {
+    const credentialEntity = await this.findOneOrFail({
       where: { id },
       relations: { plugin: true }
     });
+    return CredentialEntity.toModelDetailed(credentialEntity);
   }
 
-  findCredentialByIdAndPluginId(id: string, pluginId: string): Promise<CredentialEntity> {
-    return this.findOneOrFail({
+  async findCredentialByIdAndPluginId(id: string, pluginId: string): Promise<Credential> {
+    const credentialEntity = await this.findOneOrFail({
       where: { id, plugin: { id: pluginId } },
       relations: { plugin: true }
     });
+    return CredentialEntity.toModelDetailed(credentialEntity);
   }
 
-  findCrendentialByPluginId(pluginId: string): Promise<CredentialEntity> {
-    return this.findOneOrFail({
+  async findCrendentialByPluginId(pluginId: string): Promise<Credential> {
+    const credentialEntity = await this.findOneOrFail({
       where: { plugin: { id: pluginId } },
       relations: { plugin: true }
     });
+    return CredentialEntity.toModelDetailed(credentialEntity);
   }
 }

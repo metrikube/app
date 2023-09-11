@@ -1,10 +1,14 @@
-import { CredentialType, GenericCredentialType, Plugin } from '@metrikube/common';
+import { Plugin } from './plugin.model';
 
-import { PluginEntity } from '../../infrastructure/database/entities/plugin.entity';
+export class Credential {
+  public plugin?: Plugin;
 
-export type Credential = {
-  readonly type: CredentialType;
-  readonly value: GenericCredentialType | string;
-  readonly pluginId?: Plugin['id'];
-  readonly plugin?: Plugin | PluginEntity;
-};
+  // prettier-ignore
+  constructor(
+    public id: string,
+    public type: string,
+    public value: string,
+    public pluginId: Plugin['id']
+  ) {
+  }
+}
