@@ -9,7 +9,7 @@ import { EmptyStateLayout } from '../layouts/EmptyStateLayout'
 import { WidgetsLayout } from '../layouts/WidgetsLayout'
 import { getWidgetsQuery } from '../services/dashboard.service'
 import styled from '@emotion/styled'
-import { WidgetModel } from '@metrikube/core'
+import { WidgetModel, activeMetricsMock } from '@metrikube/core'
 import { AddchartOutlined } from '@mui/icons-material'
 import { Box, Button, Typography } from '@mui/material'
 import React, { useState } from 'react'
@@ -78,7 +78,7 @@ const Dashboard = () => {
           />
         ) : (
           <WidgetsLayout
-            widgets={widgets}
+            widgets={activeMetricsMock}
             onAlertOpenRequest={handleAlertOpenRequest}
             onMetricDeletionRequest={handleMetricDeletionRequest}
           />

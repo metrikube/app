@@ -22,7 +22,7 @@ export const DatabaseSlowQueries = ({ widget }: Props) => {
     <>
       <ListResource
         tableHead={['Requête', "Temps d'éxec (en seconde)", 'Date'].map((column, index) => (
-          <TableCell key={index}>{column}</TableCell>
+          <TableCell sx={{ fontWeight: 'bold' }} key={index}>{column}</TableCell>
         ))}
         tableBody={widget.data.map((slowQuery, index) => (
           <TableRow key={index}>
