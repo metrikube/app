@@ -1,6 +1,6 @@
 import ListResource from '../molecules/WidgetsGenericTemplates/TableWidget'
 import { WidgetModel } from '@metrikube/core'
-import { TableCell, TableRow } from '@mui/material'
+import { TableCell, TableRow, Chip } from '@mui/material'
 import React from 'react'
 
 interface Props {
@@ -22,7 +22,13 @@ export const GithubLastPullRequests = ({ widget }: Props) => {
           </TableCell>
           <TableCell>{issue.title}</TableCell>
           <TableCell>{issue.author}</TableCell>
-          <TableCell>{issue.status}</TableCell>
+          <TableCell>
+            <Chip
+              label={issue.status}
+              size="small"
+              color={issue.status === 'closed' ? 'primary' : 'success'}
+            />
+          </TableCell>
         </TableRow>
       ))}
     />
