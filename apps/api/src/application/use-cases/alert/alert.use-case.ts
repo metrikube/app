@@ -70,7 +70,7 @@ export class AlertUseCase implements AlertUseCaseInterface {
     if (isConditionMet && !alert.triggered) {
       Logger.warn(`La condition est remplie [${metricData[field]} ${operator} ${threshold}] 👉🏼 on doit notifier`, this.constructor.name);
       // todo : pass the user_email when running the container
-      await this.mailer.sendMail(process.env.USER_EMAIL, '🚨 Metrikube : alerte dépassement seuil', 'Seuil limite dépassé');
+      await this.mailer.sendMail(process.env.USER_EMAIL, `🚨 Metrikube: alerte ${alert.label}`, `Bonjour,<br>L'alerte ${alert.label} a été activée.<br>Le seuil défini est ${alert.condition.threshold}, mais le résultat est ${metricData[field]}.`);
       return this.alertRepository.updateAlert(alert.id, { triggered: true });
     }
   }
