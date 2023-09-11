@@ -1,16 +1,16 @@
 import SimpleWidget from '../molecules/WidgetsGenericTemplates/SimpleWidget'
-import { ActiveMetricModel, formatAsCurrency } from '@metrikube/core'
+import { WidgetModel, formatAsCurrency } from '@metrikube/core'
 import React from 'react'
 
 interface Props {
-  metric: ActiveMetricModel
+  widget: WidgetModel
 }
 
-export const AwsEc2MultipleInstancesUsage = ({ metric }: Props) => {
+export const AwsEc2MultipleInstancesUsage = ({ widget }: Props) => {
   return (
     <SimpleWidget>
       <>
-        <small>{metric.data.name}</small>
+        <small>{widget.data.name}</small>
       </>
     </SimpleWidget>
   )

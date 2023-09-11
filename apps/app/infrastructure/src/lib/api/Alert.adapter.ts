@@ -5,8 +5,8 @@ import { AlertAdapter, AlertModel, CreateAlertRequest } from '@metrikube/core';
 export class AlertAdapterImpl implements AlertAdapter {
   constructor(private readonly http: AxiosInstance) { }
 
-  async getActiveMetricAlerts(activeMetricId: string): Promise<AlertModel[]> {
-    const { data } = await this.http.get<AlertModel[]>(`/alerts/${activeMetricId}`)
+  async getWidgetAlerts(widgetId: string): Promise<AlertModel[]> {
+    const { data } = await this.http.get<AlertModel[]>(`/alerts/${widgetId}`)
     return data
   }
 

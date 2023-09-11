@@ -1,8 +1,8 @@
-import { ActiveMetricModel, githubProviderMock } from "@metrikube/core"
+import { WidgetModel, githubProviderMock } from "@metrikube/core"
 import { githubLastIssues, githubLastPrs } from "./metrics.mock"
 
 
-export const lastPullRequestMock: ActiveMetricModel = {
+export const lastPullRequestMock: WidgetModel = {
     id: "094bf35c-5d7c-4e0f-b88c-7372c318b32c",
     name: "Les 5 dernières Pull Requests",
     description: undefined,
@@ -48,7 +48,7 @@ export const lastPullRequestMock: ActiveMetricModel = {
     ]
 }
 
-export const lastIssuesMock: ActiveMetricModel = {
+export const lastIssuesMock: WidgetModel = {
     id: "094bf35c-5d7c-4e0f-b88c-7372c318b",
     name: "Les 5 dernières issues",
     description: undefined,
@@ -94,7 +94,7 @@ export const lastIssuesMock: ActiveMetricModel = {
     ]
 }
 
-export const singleInstanceEC2Mock: ActiveMetricModel = {
+export const singleInstanceEC2Mock: WidgetModel = {
     id: "bf32add2-ae8a-42b0-af8f-5a30a851a3ad",
     name: "AWS Second Bucket",
     description: undefined,
@@ -123,7 +123,7 @@ export const singleInstanceEC2Mock: ActiveMetricModel = {
     }
 }
 
-export const singleBucketS3Mock: ActiveMetricModel = {
+export const singleBucketS3Mock: WidgetModel = {
     id: "094bf35c-5d7c-4e0f-b88c-73318b32c",
     name: "S3 First Bucket",
     description: undefined,
@@ -152,7 +152,7 @@ export const singleBucketS3Mock: ActiveMetricModel = {
     }
 }
 
-export const listBucketS3Mock: ActiveMetricModel = {
+export const listBucketS3Mock: WidgetModel = {
     id: "20f96417-5333-4dc0-979d-2b4d73f4ec80",
     name: "AWS S3 List of buckets",
     description: undefined,
@@ -200,7 +200,7 @@ export const listBucketS3Mock: ActiveMetricModel = {
     ]
 }
 
-export const nbRequestsPerHour: ActiveMetricModel = {
+export const nbRequestsPerHour: WidgetModel = {
     id: "rregergrgg",
     name: "MariaDB - Requête par heures (12 dernières heures)",
     description: undefined,
@@ -272,7 +272,7 @@ export const nbRequestsPerHour: ActiveMetricModel = {
     }
 }
 
-export const dbSizeMock: ActiveMetricModel = {
+export const dbSizeMock: WidgetModel = {
     id: "db-size213",
     name: "MariaDB - Taille db",
     description: undefined,
@@ -297,7 +297,7 @@ export const dbSizeMock: ActiveMetricModel = {
     }
 }
 
-export const slowQueries: ActiveMetricModel = {
+export const slowQueries: WidgetModel = {
     id: "db-size213",
     name: "Database - Requêtes lente",
     description: undefined,
@@ -368,7 +368,7 @@ export const slowQueries: ActiveMetricModel = {
     ]
 }
 
-export const activeMetricsMock: ActiveMetricModel[] = [
+export const activeMetricsMock: WidgetModel[] = [
     singleBucketS3Mock,
     singleInstanceEC2Mock,
     listBucketS3Mock,

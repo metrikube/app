@@ -1,38 +1,39 @@
 import PluginEmptyStateImg from '../assets/img/undraws/undraw_online_stats.svg'
 import Loader from '../components/atoms/Loader'
 import ConfirmDeletionModal from '../components/organisms/modals/ConfirmDeletion.modal'
-import MetricAlertsModal from '../components/organisms/modals/MetricAlerts.modal'
 import ProviderModal from '../components/organisms/modals/Provider.modal'
+import WidgetAlertsModal from '../components/organisms/modals/WidgetAlerts.modal'
 import { SetupPluginProvider } from '../contexts/SetupPlugin.context'
 import DefaultLayout from '../layouts/DefaultLayout'
 import { EmptyStateLayout } from '../layouts/EmptyStateLayout'
-import { MetricsLayout } from '../layouts/MetricsLayout'
-import { getActiveMetricQuery } from '../services/dashboard.service'
+import { WidgetsLayout } from '../layouts/WidgetsLayout'
+import { getWidgetsQuery } from '../services/dashboard.service'
 import styled from '@emotion/styled'
-import { ActiveMetricModel, activeMetricsMock } from '@metrikube/core'
+import { WidgetModel, activeMetricsMock } from '@metrikube/core'
 import { AddchartOutlined } from '@mui/icons-material'
 import { Button, Box, Typography } from '@mui/material'
-import MetrikubeLogo from 'apps/app/web/src/assets/img/metrikube-logo.png'
 import React, { useState } from 'react'
+
+const metrikubeLogo = new URL(`/src/assets/img/metrikube-logo.png`, import.meta.url).href
 
 const Dashboard = () => {
   const [openedModal, setOpenModal] = useState(false)
-  const [isMetricAlertsModalOpen, setIsMetricAlertsModalOpen] = useState(false)
+  const [isWidgetAlertsModalOpen, setIsWidgetAlertsModalOpen] = useState(false)
   const [isMetricDeletionModalOpened, setIsMetricDeletionModalOpened] = useState(false)
-  const [selectedMetric, setSelectedMetric] = useState<ActiveMetricModel | null>(null)
-  const { data: activeMetrics, isFetching } = getActiveMetricQuery()
+  const [selectedWidget, setSelectedWidget] = useState<WidgetModel | null>(null)
+  const { data: widgets, isFetching } = getWidgetsQuery()
 
   const openProviderModalHandler = () => {
     setOpenModal(true)
   }
 
-  const handleAlertOpenRequest = (metric: ActiveMetricModel) => {
-    setSelectedMetric(metric)
-    setIsMetricAlertsModalOpen(true)
+  const handleAlertOpenRequest = (widget: WidgetModel) => {
+    setSelectedWidget(widget)
+    setIsWidgetAlertsModalOpen(true)
   }
 
-  const handleMetricDeletionRequest = (metric: ActiveMetricModel) => {
-    setSelectedMetric(metric)
+  const handleMetricDeletionRequest = (widget: WidgetModel) => {
+    setSelectedWidget(widget)
     setIsMetricDeletionModalOpened(true)
   }
 
@@ -40,7 +41,7 @@ const Dashboard = () => {
     <DefaultLayout>
       <StyledHeader>
         <Brand>
-          <img src={MetrikubeLogo} style={{ height: '50px' }} />
+          <img src={metrikubeLogo} style={{ height: '45px' }} />
           <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
             MetriKube
           </Typography>
@@ -51,11 +52,11 @@ const Dashboard = () => {
             size="medium"
             variant="contained"
             startIcon={<AddchartOutlined />}>
-            Add a new widget
+            Ajouter un widget
           </Button>
         </div>
       </StyledHeader>
-    <DefaultLayout>
+      <>
         {isFetching ? (
           <Box
             sx={{
@@ -67,7 +68,7 @@ const Dashboard = () => {
             }}>
             <Loader />
           </Box>
-        ) : !activeMetrics.length ? (
+        ) : !widgets.length ? (
           <EmptyStateLayout
             title="Commencer par ajouter un widget"
             description="The providers are the heart of Metrikube, they allow you to visualize your metrics according to the different plugins."
@@ -76,8 +77,8 @@ const Dashboard = () => {
             imageAsset={PluginEmptyStateImg}
           />
         ) : (
-          <MetricsLayout
-            metrics={activeMetrics}
+          <WidgetsLayout
+            widgets={widgets}
             onAlertOpenRequest={handleAlertOpenRequest}
             onMetricDeletionRequest={handleMetricDeletionRequest}
           />
@@ -87,23 +88,23 @@ const Dashboard = () => {
           <ProviderModal open={openedModal} setOpenModal={setOpenModal} />
         </SetupPluginProvider>
 
-        {selectedMetric && (
+        {selectedWidget && (
           <>
-            <MetricAlertsModal
-              open={isMetricAlertsModalOpen}
-              setOpenModal={setIsMetricAlertsModalOpen}
-              metric={selectedMetric}
+            <WidgetAlertsModal
+              open={isWidgetAlertsModalOpen}
+              setOpenModal={setIsWidgetAlertsModalOpen}
+              widget={selectedWidget}
             />
 
             <ConfirmDeletionModal
               open={isMetricDeletionModalOpened}
               setOpenModal={setIsMetricDeletionModalOpened}
-              metric={selectedMetric}
+              widget={selectedWidget}
             />
           </>
         )}
-      </DefaultLayout>
-    </>
+      </>
+    </DefaultLayout>
   )
 }
 

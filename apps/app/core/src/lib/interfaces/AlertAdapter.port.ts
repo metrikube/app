@@ -6,7 +6,7 @@ export type CreateAlertRequest = {
 };
 
 export interface AlertAdapter {
-  getActiveMetricAlerts: (activeMetricId: string) => Promise<AlertModel[]>
+  getWidgetAlerts: (widgetId: string) => Promise<AlertModel[]>
   createAlert: (payload: CreateAlertRequest) => Promise<void>;
   updateAlert: (alertId: string, payload: Partial<AlertModel>) => Promise<void>
   deleteAlert: (alertId: string) => Promise<void>

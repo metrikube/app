@@ -1,18 +1,18 @@
 import SimpleWidget from '../molecules/WidgetsGenericTemplates/SimpleWidget'
-import { ActiveMetricModel } from '@metrikube/core'
+import { WidgetModel } from '@metrikube/core'
 import React from 'react'
 
 interface Props {
-  metric: ActiveMetricModel
+  widget: WidgetModel
 }
 
-export const ApiEndpointHealthCheck = ({ metric }: Props) => {
+export const ApiEndpointHealthCheck = ({ widget }: Props) => {
   return (
     <SimpleWidget>
       <>
-        <small>Status : {metric.data.status}</small>
+        <small>Status : {widget.data.status}</small>
         <small>
-          Time : {metric.data.value} {metric.data.unit}
+          Time : {widget.data.value} {widget.data.unit}
         </small>
       </>
     </SimpleWidget>

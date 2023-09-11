@@ -20,7 +20,7 @@ import { PluginController } from './plugin/controller/plugin.controller';
 
 @Module({
   imports: [UseCaseModule],
-  controllers: [PluginController, AlertController, DashboardController, DbAnalyticsController, CredentialController],
+  controllers: [PluginController, AlertController, DashboardController, CredentialController],
   providers: [
     { provide: DiTokens.CredentialUseCaseToken, useClass: CredentialUseCase },
     { provide: DiTokens.AlertUseCaseToken, useClass: AlertUseCase },

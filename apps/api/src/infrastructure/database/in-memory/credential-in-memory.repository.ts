@@ -5,34 +5,34 @@ import { Credential } from '../../../domain/models/credential.model';
 import { CredentialEntity } from '../entities/credential.entity';
 
 export class CredentialInMemoryRepositoryImpl implements CredentialRepository {
-  credentials: CredentialEntity[] = [];
+  credentials: Credential[] = [];
 
   constructor() {}
 
-  findCredentialByIdAndPluginId(id: string, pluginId: string): Promise<CredentialEntity> {
+  findCredentialByIdAndPluginId(id: string, pluginId: string): Promise<Credential> {
     return Promise.resolve(this.credentials.find((credential) => credential.id === id && credential.pluginId === pluginId));
   }
 
-  createCredential(credential: Credential): Promise<CredentialEntity> {
+  createCredential(credential: any): Promise<Credential> {
     const credentialToInsert = {
       id: '1',
       pluginId: credential.pluginId,
       type: credential.type,
       value: credential.value
-    } as CredentialEntity;
+    } as Credential;
     this.credentials.push(credentialToInsert);
-    return Promise.resolve(credentialToInsert as CredentialEntity);
+    return Promise.resolve(credentialToInsert as Credential);
   }
 
-  findCredentialByIdWithPlugin(id: string): Promise<CredentialEntity> {
+  findCredentialByIdWithPlugin(id: string): Promise<Credential> {
     return Promise.resolve(this.credentials.find((credential) => credential.id === id));
   }
 
-  findCrendentialByPluginId(pluginId: string): Promise<CredentialEntity> {
+  findCrendentialByPluginId(pluginId: string): Promise<Credential> {
     return Promise.resolve(this.credentials.find((credential) => credential.pluginId === pluginId));
   }
 
-  getCredentials(criterias?: FindManyOptions<CredentialEntity> | FindOptionsWhere<CredentialEntity>): Promise<CredentialEntity[]> {
+  getCredentials(criterias?: FindManyOptions<CredentialEntity> | FindOptionsWhere<CredentialEntity>): Promise<Credential[]> {
     return Promise.resolve(this.credentials);
   }
 }
