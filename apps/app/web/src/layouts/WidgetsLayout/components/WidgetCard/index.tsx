@@ -38,7 +38,7 @@ export const WidgetCard = ({
       label: 'Alertes',
       action: onAlertButtonClick,
       icon: NotificationsIcon,
-      show: metric.metric.isNotifiable
+      show: widget.metric.isNotifiable
     },
     {
       key: 'delete',
