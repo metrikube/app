@@ -55,6 +55,7 @@ const DbCredentialForm = () => {
         label="Password"
         type="password"
         variant="outlined"
+        autoComplete="current-password"
         size="small"
         error={Boolean(errors.sql_database?.dbPassword)}
         helperText={errors.sql_database?.dbPassword?.message}

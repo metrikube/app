@@ -51,40 +51,41 @@ const MetricAlertsModal = ({ open, setOpenModal, metric }: Props) => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {alerts.length &&
-              alerts.map((alert) => (
-                <TableRow key={alert.id}>
-                  <TableCell>{alert.label}</TableCell>
-                  <TableCell align="right">
-                    {alert.isActive ? (
+            {alerts.length
+              ? alerts.map((alert) => (
+                  <TableRow key={alert.id}>
+                    <TableCell>{alert.label}</TableCell>
+                    <TableCell align="right">
+                      {alert.isActive ? (
+                        <IconButton
+                          onClick={() =>
+                            toggleNotification({ alertId: alert.id, isActive: !alert.isActive })
+                          }
+                          aria-label="alert-on">
+                          <NotificationsActiveOutlinedIcon />
+                        </IconButton>
+                      ) : (
+                        <IconButton
+                          onClick={() =>
+                            toggleNotification({ alertId: alert.id, isActive: !alert.isActive })
+                          }
+                          aria-label="alert-off">
+                          <NotificationsOffOutlinedIcon />
+                        </IconButton>
+                      )}
+                    </TableCell>
+                    <TableCell>
                       <IconButton
-                        onClick={() =>
-                          toggleNotification({ alertId: alert.id, isActive: !alert.isActive })
-                        }
-                        aria-label="alert-on">
-                        <NotificationsActiveOutlinedIcon />
+                        color="error"
+                        size="large"
+                        onClick={() => deleteAlert(alert.id)}
+                        aria-label="delete-alert">
+                        <DeleteForeverOutlinedIcon />
                       </IconButton>
-                    ) : (
-                      <IconButton
-                        onClick={() =>
-                          toggleNotification({ alertId: alert.id, isActive: !alert.isActive })
-                        }
-                        aria-label="alert-off">
-                        <NotificationsOffOutlinedIcon />
-                      </IconButton>
-                    )}
-                  </TableCell>
-                  <TableCell>
-                    <IconButton
-                      color="error"
-                      size="large"
-                      onClick={() => deleteAlert(alert.id)}
-                      aria-label="delete-alert">
-                      <DeleteForeverOutlinedIcon />
-                    </IconButton>
-                  </TableCell>
-                </TableRow>
-              ))}
+                    </TableCell>
+                  </TableRow>
+                ))
+              : null}
           </TableBody>
         </Table>
       </DialogContent>

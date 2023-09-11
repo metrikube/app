@@ -13,7 +13,7 @@ const ProviderCard = ({ type, label, selected, onClick }: Props) => {
   const avatarUrl = new URL(`/src/assets/img/${type}.png`, import.meta.url).href
   return (
     <ButtonBase onClick={onClick}>
-      <StyledPaper selected={selected} elevation={5} variant="outlined">
+      <StyledPaper selected={selected} variant="outlined">
         <Logo src={avatarUrl} />
         <ProviderLabel>{label}</ProviderLabel>
       </StyledPaper>

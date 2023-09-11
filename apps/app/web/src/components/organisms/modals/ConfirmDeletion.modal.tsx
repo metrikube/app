@@ -9,9 +9,9 @@ import {
   Button,
   Typography
 } from '@mui/material'
+import { useQueryClient } from '@tanstack/react-query'
 import React, { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { useQueryClient } from '@tanstack/react-query'
 
 interface Props {
   open: boolean
@@ -55,7 +55,7 @@ const ConfirmDeletionModal = ({ open, setOpenModal, metric }: Props) => {
   return (
     <Dialog open={open} onClose={handlerModalClose}>
       <DialogTitle>
-        <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+        <Typography sx={{ fontWeight: 'bold', fontSize: '20px' }}>
           Supprimer : {metric?.metric.name}
         </Typography>
       </DialogTitle>
