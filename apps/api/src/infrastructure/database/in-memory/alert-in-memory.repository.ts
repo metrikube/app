@@ -20,6 +20,10 @@ export class AlertInMemoryRepositoryImpl implements AlertRepository {
     return Promise.resolve(this.alerts.find((alert) => alert.id === id));
   }
 
+  findActiveAlertById(id: string): Promise<AlertEntity> {
+    return Promise.resolve(this.alerts.find((alert) => alert.id === id && alert.isActive));
+  }
+
   createAlerts(payload): Promise<AlertEntity[]> {
     const alert = Object.assign(new AlertEntity(), payload);
     this.alerts.push(alert);
