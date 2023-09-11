@@ -2,7 +2,7 @@ import { BadRequestException, Inject, Injectable, NotFoundException } from '@nes
 
 import { ApiMonitoringService } from '@metrikube/api-monitoring';
 import { AWSService } from '@metrikube/aws-plugin';
-import { CredentialType, GenericCredentialType, MetricType, Plugin, PluginConnectionInterface, PluginResult } from '@metrikube/common';
+import { CredentialType, GenericCredentialType, MetricType, PluginConnectionInterface, PluginResult } from '@metrikube/common';
 import { DbAnalyticsPluginService } from '@metrikube/db-analytics-plugin';
 import { GithubService } from '@metrikube/github-plugin';
 
@@ -10,14 +10,16 @@ import { PluginResolverInterface } from '../../../domain/interfaces/common/plugi
 import { AlertRepository } from '../../../domain/interfaces/repository/alert.repository';
 import { CredentialRepository } from '../../../domain/interfaces/repository/credential.repository';
 import { MetricRepository } from '../../../domain/interfaces/repository/metric.repository';
-import { PluginToMetricRepository } from '../../../domain/interfaces/repository/plugin-to-metric.repository';
 import { PluginRepository } from '../../../domain/interfaces/repository/plugin.repository';
+import { WidgetRepository } from '../../../domain/interfaces/repository/widget.repository';
 import { SchedulerInterface } from '../../../domain/interfaces/scheduler/scheduler.interface';
 import { PluginUseCaseInterface } from '../../../domain/interfaces/use-cases/plugin.use-case.interface';
-import { CredentialEntity } from '../../../infrastructure/database/entities/credential.entity';
+import { Credential } from '../../../domain/models/credential.model';
+import { Metric } from '../../../domain/models/metric.model';
+import { Plugin } from '../../../domain/models/plugin.model';
 import { MetricEntity } from '../../../infrastructure/database/entities/metric.entity';
 import { PluginEntity } from '../../../infrastructure/database/entities/plugin.entity';
-import { PluginToMetricEntity } from '../../../infrastructure/database/entities/plugin_to_metric.entity';
+import { WidgetEntity } from '../../../infrastructure/database/entities/widget.entity';
 import { DiTokens } from '../../../infrastructure/di/tokens';
 import { PluginResponseDto } from '../../../presenter/plugin/dtos/plugins.dto';
 import { RegisterPluginRequestDto, RegisterPluginResponseDto } from '../../../presenter/plugin/dtos/register-plugin.dto';
@@ -43,7 +45,7 @@ export class PluginUseCase implements PluginUseCaseInterface {
     @Inject(DiTokens.GithubServiceToken) private readonly githubService: GithubService,
     @Inject(DiTokens.MetricRepositoryToken) private readonly metricRepository: MetricRepository,
     @Inject(DiTokens.PluginRepositoryToken) private readonly pluginRepository: PluginRepository,
-    @Inject(DiTokens.PluginToMetricRepositoryToken) private readonly pluginToMetricRepository: PluginToMetricRepository,
+    @Inject(DiTokens.WidgetRepositoryToken) private readonly widgetRepository: WidgetRepository,
     @Inject(DiTokens.Scheduler) private readonly scheduler: SchedulerInterface,
     @Inject(DiTokens.DbAnalyticsPluginServiceToken) private readonly databaseService: DbAnalyticsPluginService,
     // @Inject(DiTokens.PluginResolver) private readonly pluginResolver: PluginResolverInterface
@@ -51,7 +53,7 @@ export class PluginUseCase implements PluginUseCaseInterface {
   }
 
   async listPlugins(): Promise<PluginResponseDto> {
-    const [plugins, metrics, credentials]: [PluginEntity[], MetricEntity[], CredentialEntity[]] = await Promise.all([
+    const [plugins, metrics, credentials]: [Plugin[], Metric[], Credential[]] = await Promise.all([
       this.pluginRepository.getPlugins(),
       this.metricRepository.getMetrics(),
       this.credentialRepository.getCredentials()
@@ -61,7 +63,7 @@ export class PluginUseCase implements PluginUseCaseInterface {
   }
 
   async registerPlugin({ pluginId, metricType, credential, resourceId, name }: RegisterPluginRequestDto): Promise<RegisterPluginResponseDto> {
-    const [plugin, metric]: [PluginEntity, MetricEntity] = await Promise.all([
+    const [plugin, metric] = await Promise.all([
       this.pluginRepository.findOneById(pluginId),
       this.metricRepository.findMetricByType(pluginId, metricType)
     ]);
@@ -70,7 +72,7 @@ export class PluginUseCase implements PluginUseCaseInterface {
     await this.testPluginConnection(plugin, credential);
 
     const pluginCredential = await this.credentialRepository.createCredential({
-      value: credential,
+      value: credential as unknown as string,
       plugin,
       type: plugin.credentialType as CredentialType
     })
@@ -78,7 +80,7 @@ export class PluginUseCase implements PluginUseCaseInterface {
     /**
      * Ajouter le credential id au niveau du widget pour pouvoir le récupérer et pouvoir ajouter plusieurs même widget mais sur des plugins différents
      */
-    const pluginToMetric = await this.pluginToMetricRepository.createPluginToMetric({
+    const widget = await this.widgetRepository.createwidget({
       pluginId,
       name,
       credentialId: pluginCredential.id,
@@ -87,9 +89,9 @@ export class PluginUseCase implements PluginUseCaseInterface {
       isActive: true
     });
 
-    const pluginDataSample = await this.refreshPluginMetric(pluginId, pluginToMetric.id);
+    const pluginDataSample = await this.refreshPluginMetric(pluginId, widget.id);
 
-    return new RegisterPluginResponseDto(pluginToMetric, pluginDataSample);
+    return new RegisterPluginResponseDto(widget, pluginDataSample);
   }
 
   async getPluginTrackableFieldsByMetricId(metricId: string): Promise<string[]> {
@@ -103,13 +105,13 @@ export class PluginUseCase implements PluginUseCaseInterface {
   /**
    * TODO : sécurisé si jamais l'utlisateurs supprime un plugin et envoi un pluginId qui n'a pas de metricType associé
    * @param pluginId
-   * @param pluginToMetricId
+   * @param widgetId
    */
-  async refreshPluginMetric(pluginId: PluginEntity['id'], pluginToMetricId: PluginToMetricEntity['id']): Promise<PluginResult<MetricType>> {
-    const pluginToMetric = await this.pluginToMetricRepository.findPluginToMetricById(pluginToMetricId);
-    const credentials = await this.credentialRepository.findCredentialByIdAndPluginId(pluginToMetric.credentialId, pluginId);
+  async refreshPluginMetric(pluginId: PluginEntity['id'], widgetId: WidgetEntity['id']): Promise<PluginResult<MetricType>> {
+    const widget = await this.widgetRepository.findwidgetById(widgetId);
+    const credentials = await this.credentialRepository.findCredentialByIdAndPluginId(widget.credentialId, pluginId);
     if (!credentials) throw new BadRequestException('No credentials found for this plugin');
-    const metricType = pluginToMetric.metric.type as MetricType;
+    const metricType = widget.metric.type as MetricType;
 
     const parsedCredentials = JSON.parse(Buffer.from(credentials.value, 'base64').toString('utf-8')) as GenericCredentialType;
     const getMetricTypeDataSample: (credentials: GenericCredentialType) => Promise<PluginResult<MetricType>> = this.getMetricMethodByMetricType(metricType);
@@ -149,21 +151,21 @@ export class PluginUseCase implements PluginUseCaseInterface {
   }
 
   async fetchMetricDataSampleWithCredential(metricId: string, credential: GenericCredentialType): Promise<PluginResult<MetricType>> {
-    const metric: MetricEntity = await this.metricRepository.findById(metricId );
+    const metric: MetricEntity = await this.metricRepository.findById(metricId);
     const getMetricTypeDataSample: (credentials: GenericCredentialType) => Promise<PluginResult<MetricType>> = this.getMetricMethodByMetricType(metric.type as MetricType);
     return getMetricTypeDataSample(credential);
   }
 
-  getPluginCredentials(pluginId: string): Promise<CredentialEntity> {
+  getPluginCredentials(pluginId: string): Promise<Credential> {
     return this.credentialRepository.findCrendentialByPluginId(pluginId);
   }
 
-  async create(plugin: Plugin): Promise<PluginEntity> {
+  async create(plugin: Plugin): Promise<Plugin> {
     return this.pluginRepository.createPlugin(plugin);
   }
 
   async testPluginConnection(
-    plugin: PluginEntity,
+    plugin: Plugin,
     credential: GenericCredentialType
   ): Promise<void> {
     const pluginTestConnection: { ok: boolean; message: string | null } = await this.pluginConnector[plugin.type].testConnection(credential);

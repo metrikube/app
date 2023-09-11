@@ -16,7 +16,7 @@ export class DiTokens {
   static readonly CredentialRepositoryToken = 'CREDENTIAL_REPOSITORY' as const;
   static readonly AlertRepositoryToken = 'ALERT_REPOSITORY' as const;
   static readonly MetricRepositoryToken = 'METRIC_REPOSITORY' as const;
-  static readonly PluginToMetricRepositoryToken = 'PLUGIN_TO_METRIC_REPOSITORY' as const;
+  static readonly WidgetRepositoryToken = 'WIDGET_METRIC_REPOSITORY' as const;
 
   /**
    * Plugins

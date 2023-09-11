@@ -9,22 +9,21 @@ import { DatabaseSlowQueries } from '../../components/MetricsTemplates/DatabaseS
 import { GithubLastIssues } from '../../components/MetricsTemplates/GithubLastIssues'
 import { GithubLastPullRequests } from '../../components/MetricsTemplates/GithubLastPullRequests'
 import MasonryGrid from '../../components/organisms/Masonry'
-import { MetricCard } from './components/MetricCard'
-import styled from '@emotion/styled'
+import { WidgetCard } from './components/WidgetCard'
 import { MetricTypeEnum } from '@metrikube/common'
-import { ActiveMetricModel, WidgetsSize } from '@metrikube/core'
-import { Box, Grid } from '@mui/material'
+import { WidgetModel, WidgetsSize } from '@metrikube/core'
+import { Box } from '@mui/material'
 import React from 'react'
 
 interface Props {
-  metrics: ActiveMetricModel[]
-  onAlertOpenRequest: (metric: ActiveMetricModel) => void
-  onMetricDeletionRequest: (metric: ActiveMetricModel) => void
+  widgets: WidgetModel[]
+  onAlertOpenRequest: (metric: WidgetModel) => void
+  onMetricDeletionRequest: (metric: WidgetModel) => void
 }
 
-export const MetricsLayout = ({ metrics, onAlertOpenRequest, onMetricDeletionRequest }: Props) => {
-  const metricTemplateMap: {
-    [key: string]: ({ metric }: { metric: ActiveMetricModel }) => JSX.Element
+export const WidgetsLayout = ({ widgets, onAlertOpenRequest, onMetricDeletionRequest }: Props) => {
+  const widgetTemplateMap: {
+    [key: string]: ({ widget }: { widget: WidgetModel }) => JSX.Element
   } = {
     [MetricTypeEnum.ApiEndpointHealthCheck]: ApiEndpointHealthCheck,
     [MetricTypeEnum.AwsBucketSingleInstance]: AwsBucketSingleInstance,
@@ -41,29 +40,24 @@ export const MetricsLayout = ({ metrics, onAlertOpenRequest, onMetricDeletionReq
   return (
     <Box sx={{ flexGrow: 1 }}>
       <MasonryGrid>
-        {metrics.map((metric) => {
+        {widgets.map((widget) => {
           return (
-            <GridItem
-              className={`grid-item ${
-                WidgetsSize[metric.metric.type] === 'large' ? 'grid-item--large' : ''
-              }`}
-              key={metric.id}>
-              <MetricCard
-                metric={metric}
-                key={metric.id}
-                size={WidgetsSize[metric.metric.type]}
-                onAlertButtonClick={() => onAlertOpenRequest(metric)}
-                onDeleteButtonClick={() => onMetricDeletionRequest(metric)}>
-                {metricTemplateMap[metric.metric.type]({ metric })}
-              </MetricCard>
-            </GridItem>
+            <article
+              className={`grid-item ${WidgetsSize[widget.metric.type] === 'large' ? 'grid-item--large' : ''
+                }`}
+              key={widget.id}>
+              <WidgetCard
+                widget={widget}
+                key={widget.id}
+                size={WidgetsSize[widget.metric.type]}
+                onAlertButtonClick={() => onAlertOpenRequest(widget)}
+                onDeleteButtonClick={() => onMetricDeletionRequest(widget)}>
+                {widgetTemplateMap[widget.metric.type]({ widget })}
+              </WidgetCard>
+            </article>
           )
         })}
       </MasonryGrid>
     </Box>
   )
 }
-
-const GridItem = styled.div`
-  /* background-color: red; */
-`

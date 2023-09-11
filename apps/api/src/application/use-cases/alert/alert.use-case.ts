@@ -1,3 +1,5 @@
+import { randomUUID } from 'node:crypto';
+
 import { Inject, Injectable, Logger } from '@nestjs/common';
 
 import { MetricThresholdOperator, MetricType, PluginResult } from '@metrikube/common';
@@ -5,13 +7,12 @@ import { MetricThresholdOperator, MetricType, PluginResult } from '@metrikube/co
 import { NotificationInterface } from '../../../domain/interfaces/adapters/notification.interface';
 import { AlertRepository } from '../../../domain/interfaces/repository/alert.repository';
 import { CredentialRepository } from '../../../domain/interfaces/repository/credential.repository';
-import { PluginToMetricRepository } from '../../../domain/interfaces/repository/plugin-to-metric.repository';
+import { WidgetRepository } from '../../../domain/interfaces/repository/widget.repository';
 import { SchedulerInterface } from '../../../domain/interfaces/scheduler/scheduler.interface';
 import { AlertUseCaseInterface } from '../../../domain/interfaces/use-cases/alert.use-case.interface';
 import { PluginUseCaseInterface } from '../../../domain/interfaces/use-cases/plugin.use-case.interface';
 import { Alert } from '../../../domain/models/alert.model';
-import { AlertEntity } from '../../../infrastructure/database/entities/alert.entity';
-import { PluginToMetricEntity } from '../../../infrastructure/database/entities/plugin_to_metric.entity';
+import { Widget } from '../../../domain/models/widget.model';
 import { DiTokens } from '../../../infrastructure/di/tokens';
 import { CreateAlertRequestDto, CreateAlertResponseDto } from '../../../presenter/alert/dtos/create-alert.dto';
 import { UpdateAlertDto } from '../../../presenter/alert/dtos/update-alert.dto';
@@ -23,12 +24,16 @@ export class AlertUseCase implements AlertUseCaseInterface {
 
   constructor(
     @Inject(DiTokens.AlertRepositoryToken) private readonly alertRepository: AlertRepository,
-    @Inject(DiTokens.PluginToMetricRepositoryToken) private readonly pluginToMetricRepository: PluginToMetricRepository,
+    @Inject(DiTokens.WidgetRepositoryToken) private readonly widgetRepository: WidgetRepository,
     @Inject(DiTokens.Mailer) private readonly mailer: NotificationInterface,
     @Inject(DiTokens.CredentialRepositoryToken) private readonly credentialRepository: CredentialRepository,
     @Inject(DiTokens.Scheduler) private readonly scheduler: SchedulerInterface,
     @Inject(DiTokens.PluginUseCaseToken) private readonly pluginUseCase: PluginUseCaseInterface
   ) {
+  }
+
+  getwidgetAlerts(widgetId: string): Promise<Alert[]> {
+    return this.alertRepository.findByWidgetId(widgetId);
   }
 
   async deleteAlert(alertId: string): Promise<void> {
@@ -40,16 +45,11 @@ export class AlertUseCase implements AlertUseCaseInterface {
     return this.alertRepository.deleteAlert(alertId);
   }
 
-
-  async createAlertOnActivePlugin(pluginToMetricId: PluginToMetricEntity['id'], alerts: CreateAlertRequestDto[]): Promise<CreateAlertResponseDto> {
-    const activatedMetric = await this.pluginToMetricRepository.findPluginToMetricById(pluginToMetricId);
+  async createAlertOnActivePlugin(widgetId: Widget['id'], alerts: CreateAlertRequestDto[]): Promise<CreateAlertResponseDto> {
+    const activatedMetric = await this.widgetRepository.findwidgetById(widgetId);
     const createdAlerts = await this.alertRepository.createAlerts(
-      alerts.map((alert) => ({
-        ...alert,
-        metricId: activatedMetric.metricId,
-        pluginToMetricId,
-        triggered: false
-      })) as Alert[]
+      alerts.map((alert) =>
+        new Alert(randomUUID(), alert.label, widgetId, true, false, alert.condition))
     );
 
     await Promise.all(createdAlerts.map(this.registerAlertJob.bind(this)(activatedMetric)));
@@ -57,7 +57,7 @@ export class AlertUseCase implements AlertUseCaseInterface {
     return new CreateAlertResponseDto(createdAlerts);
   }
 
-  async checkContiditionAndNotify(metricData: unknown, alert: AlertEntity): Promise<void> {
+  async checkContiditionAndNotify(metricData: unknown, alert: Alert): Promise<void> {
     const { field, operator, threshold } = alert.condition;
     const isConditionMet = this.checkConditionThreshold(metricData[field], operator, threshold);
 
@@ -75,16 +75,16 @@ export class AlertUseCase implements AlertUseCaseInterface {
     }
   }
 
-  getPluginToMetricAlerts(pluginToMetricId: PluginToMetricEntity['id']): Promise<AlertEntity[]> {
+  getPluginToMetricAlerts(pluginToMetricId: Widget['id']): Promise<Alert[]> {
     return this.alertRepository.findByWidgetId(pluginToMetricId);
   }
 
   async updateAlert(alertId: string, payload: UpdateAlertDto): Promise<void> {
     if (!('isActive' in payload)) return this.alertRepository.updateAlert(alertId, payload);
     if (payload.isActive) {
-      const alert: AlertEntity = await this.alertRepository.findAlertById(alertId);
-      const pluginToMetric: PluginToMetricEntity = await this.pluginToMetricRepository.findPluginToMetricById(alert.pluginToMetricId);
-      await this.scheduler.scheduleAlert(alertId, pluginToMetric.metric.refreshInterval, this.jobRunner.bind(this, alertId));
+      const alert: Alert = await this.alertRepository.findAlertById(alertId);
+      const widget: Widget = await this.widgetRepository.findwidgetById(alert.widgetId);
+      await this.scheduler.scheduleAlert(alertId, widget.metric.refreshInterval, this.jobRunner.bind(this, alertId));
       return this.alertRepository.updateAlert(alertId, payload);
     }
 
@@ -108,16 +108,16 @@ export class AlertUseCase implements AlertUseCaseInterface {
     return operation[operator](value);
   }
 
-  private registerAlertJob(activatedMetric: PluginToMetricEntity): (alert: AlertEntity) => Promise<void> {
-    return (alert: AlertEntity): Promise<void> => {
+  private registerAlertJob(activatedMetric: Widget): (alert: Alert) => Promise<void> {
+    return (alert: Alert): Promise<void> => {
       return this.scheduler.scheduleAlert(alert.id, activatedMetric.metric.refreshInterval, this.jobRunner.bind(this, alert.id));
     };
   }
 
   private async jobRunner(id: string): Promise<void> {
-    const alert: AlertEntity = await this.alertRepository.findActiveAlertById(id);
-    const metric: PluginToMetricEntity = await this.pluginToMetricRepository.findPluginToMetricById(alert.pluginToMetricId);
-    const metricData: PluginResult<MetricType> = await this.pluginUseCase.refreshPluginMetric(metric.pluginId, alert.pluginToMetricId);
+    const alert: Alert = await this.alertRepository.findAlertById(id);
+    const metric: Widget = await this.widgetRepository.findwidgetById(alert.widgetId);
+    const metricData: PluginResult<MetricType> = await this.pluginUseCase.refreshPluginMetric(metric.pluginId, alert.widgetId);
     return this.checkContiditionAndNotify(metricData, alert);
   }
 }

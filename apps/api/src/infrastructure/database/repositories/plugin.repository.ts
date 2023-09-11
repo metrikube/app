@@ -1,11 +1,10 @@
-import { DataSource, FindManyOptions, FindOptionsWhere } from 'typeorm';
+import { DataSource } from 'typeorm';
 
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 
-import { Plugin } from '@metrikube/common';
-
 import { PluginRepository } from '../../../domain/interfaces/repository/plugin.repository';
+import { Plugin } from '../../../domain/models/plugin.model';
 import { PluginEntity } from '../entities/plugin.entity';
 import { BaseRepository } from './base.repository';
 
@@ -15,15 +14,23 @@ export class PluginRepositoryImpl extends BaseRepository<PluginEntity> implement
     super(connection, PluginEntity);
   }
 
-  createPlugin(plugin: Plugin): Promise<PluginEntity> {
-    return this.save(this.create(plugin));
+  async createPlugin(pluginToInsert: Plugin): Promise<Plugin> {
+    const plugin: PluginEntity = await this.save(this.create(pluginToInsert));
+    return PluginEntity.toModel(plugin);
   }
 
-  findOneById(pluginId: string): Promise<PluginEntity> {
-    return this.findOne({ where: { id: pluginId } });
+  async findOneById(pluginId: string): Promise<Plugin> {
+    const plugin = await this.findOne({ where: { id: pluginId } });
+    return PluginEntity.toModel(plugin);
   }
 
-  getPlugins(criterias: FindManyOptions<PluginEntity> | FindOptionsWhere<PluginEntity>): Promise<PluginEntity[]> {
-    return this.find(criterias);
+  async getPlugins(): Promise<Plugin[]> {
+    const plugins = await this.find({
+      relations: {
+        metrics: true,
+        widgets: true
+      }
+    });
+    return plugins.map((p) => PluginEntity.toModelDetailed(p));
   }
 }

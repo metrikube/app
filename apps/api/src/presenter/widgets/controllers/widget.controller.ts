@@ -4,6 +4,7 @@ import { ApiBody, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AlertUseCaseInterface } from '../../../domain/interfaces/use-cases/alert.use-case.interface';
 import { PluginUseCaseInterface } from '../../../domain/interfaces/use-cases/plugin.use-case.interface';
 import { WidgetUsecaseInterface } from '../../../domain/interfaces/use-cases/widget.usecase.interface';
+import { Alert } from '../../../domain/models/alert.model';
 import { AlertEntity } from '../../../infrastructure/database/entities/alert.entity';
 import { DiTokens } from '../../../infrastructure/di/tokens';
 import { CreateAlertRequestDto, CreateAlertResponseDto } from '../../alert/dtos/create-alert.dto';
@@ -20,8 +21,8 @@ export class WidgetController {
   @Get(':widgetId/alerts')
   @ApiResponse({ type: AlertEntity, isArray: true, status: HttpStatus.OK, description: 'Get alerts for widget' })
   @ApiParam({ name: 'widgetId', type: String })
-  getWidgetAlerts(@Param('widgetId', new ParseUUIDPipe()) widgetId: string): Promise<AlertEntity[]> {
-    return this.alertUsecase.getPluginToMetricAlerts(widgetId);
+  getWidgetAlerts(@Param('widgetId', new ParseUUIDPipe()) widgetId: string): Promise<Alert[]> {
+    return this.alertUsecase.getwidgetAlerts(widgetId);
   }
 
   @Post(':widgetId/alerts')

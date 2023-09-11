@@ -2,6 +2,8 @@ import { ApiProperty } from '@nestjs/swagger';
 
 import { MetricType, PluginResult } from '@metrikube/common';
 
+import { Metric } from '../../../domain/models/metric.model';
+import { Plugin } from '../../../domain/models/plugin.model';
 import { MetricEntity } from '../../../infrastructure/database/entities/metric.entity';
 import { PluginEntity } from '../../../infrastructure/database/entities/plugin.entity';
 
@@ -18,7 +20,7 @@ class DashboardPluginDto {
   @ApiProperty()
   description: string;
 
-  constructor(plugin: PluginEntity) {
+  constructor(plugin: Plugin) {
     this.id = plugin.id;
     this.name = plugin.name;
     this.type = plugin.type;
@@ -39,7 +41,7 @@ class DashboardMetricDto {
   @ApiProperty()
   isNotifiable: boolean;
 
-  constructor(metric: MetricEntity) {
+  constructor(metric: Metric) {
     this.id = metric.id;
     this.name = metric.name;
     this.type = metric.type;
@@ -69,7 +71,7 @@ export class RefreshDashboardResponseDto {
   @ApiProperty()
   data: PluginResult<MetricType>;
 
-  constructor(id: string, name: string, description: string, plugin: PluginEntity, metric: MetricEntity, resourceId: string, data: PluginResult<MetricType>) {
+  constructor(id: string, name: string, description: string, plugin: Plugin, metric: Metric, resourceId: string, data: PluginResult<MetricType>) {
     this.id = id;
     this.name = name;
     this.description = description;

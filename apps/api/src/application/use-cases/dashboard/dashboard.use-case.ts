@@ -1,28 +1,27 @@
 import { Inject, Logger } from '@nestjs/common';
 
 import { ApiMonitoringService } from '@metrikube/api-monitoring';
-import { CredentialType, GenericCredentialType, MetricType, PluginResult } from '@metrikube/common';
+import { GenericCredentialType, MetricType } from '@metrikube/common';
 import { GithubService } from '@metrikube/github-plugin';
 
 import { CredentialRepository } from '../../../domain/interfaces/repository/credential.repository';
-import { PluginToMetricRepository } from '../../../domain/interfaces/repository/plugin-to-metric.repository';
+import { WidgetRepository } from '../../../domain/interfaces/repository/widget.repository';
 import { SchedulerInterface } from '../../../domain/interfaces/scheduler/scheduler.interface';
 import { DashboardUseCaseInterface } from '../../../domain/interfaces/use-cases/dashboard.use-case.interface';
 import { PluginUseCaseInterface } from '../../../domain/interfaces/use-cases/plugin.use-case.interface';
 import { Credential } from '../../../domain/models/credential.model';
-import { CredentialEntity } from '../../../infrastructure/database/entities/credential.entity';
-import { PluginEntity } from '../../../infrastructure/database/entities/plugin.entity';
-import { PluginToMetricEntity } from '../../../infrastructure/database/entities/plugin_to_metric.entity';
+import { Plugin } from '../../../domain/models/plugin.model';
+import { Widget } from '../../../domain/models/widget.model';
 import { DiTokens } from '../../../infrastructure/di/tokens';
 import { RefreshDashboardResponseDto } from '../../../presenter/dashboard/dtos/refresh-dashboard-response.dto';
 
-type ActivatedMetric = PluginToMetricEntity & Credential;
+type ActivatedMetric = Widget & { type: string; value: GenericCredentialType };
 
 export class DashboardUseCase implements DashboardUseCaseInterface {
   private readonly logger = new Logger(this.constructor.name);
 
   constructor(
-    @Inject(DiTokens.PluginToMetricRepositoryToken) private readonly pluginToMetricRepository: PluginToMetricRepository,
+    @Inject(DiTokens.WidgetRepositoryToken) private readonly widgetRepository: WidgetRepository,
     @Inject(DiTokens.CredentialRepositoryToken) private readonly credentialRepository: CredentialRepository,
     @Inject(DiTokens.PluginUseCaseToken) private readonly pluginUseCase: PluginUseCaseInterface,
     @Inject(DiTokens.Scheduler) private readonly scheduler: SchedulerInterface,
@@ -42,31 +41,31 @@ export class DashboardUseCase implements DashboardUseCaseInterface {
   async disableDashboardMetric(pluginToMetricId: string): Promise<void> {
     this.scheduler.unscheduleRelatedAlerts(pluginToMetricId);
 
-    await this.pluginToMetricRepository.disablePluginToMetric(pluginToMetricId);
+    await this.widgetRepository.disablewidget(pluginToMetricId);
   }
 
-  private async getActiveMetricsWithCredentials(credentials: CredentialEntity[]): Promise<ActivatedMetric[]> {
-    const activatedMetrics: PluginToMetricEntity[] = await this.pluginToMetricRepository.getActiveMetricsWithRelations();
+  private async getActiveMetricsWithCredentials(credentials: Credential[]): Promise<ActivatedMetric[]> {
+    const activatedMetrics: Widget[] = await this.widgetRepository.getActiveMetricsWithRelations();
 
-    return activatedMetrics.map((configuredMetric) => ({
-      ...configuredMetric,
+    return activatedMetrics.map((widget) => ({
+      ...widget,
       ...this.mapToPluginCredential(
-        configuredMetric.plugin,
-        credentials.find((credential) => credential.id === configuredMetric.credentialId)
+        widget.plugin,
+        credentials.find((credential) => credential.id === widget.credentialId)
       )
-    })) as ActivatedMetric[];
+    }));
   }
 
   private async resolveMetrics(activatedMetricsWithCredentials: ActivatedMetric[]): Promise<RefreshDashboardResponseDto[]> {
     const metricResultMap: Record<string, RefreshDashboardResponseDto> = {};
 
     for (const metricCredential of activatedMetricsWithCredentials) {
-      const metricResult = await this.pluginUseCase.getMetricMethodByMetricType(metricCredential.metric.type as MetricType)(metricCredential.value as GenericCredentialType);
+      const metricResult = await this.pluginUseCase.getMetricMethodByMetricType(metricCredential.metric.type as MetricType)(metricCredential.value);
       metricResultMap[metricCredential.id] = new RefreshDashboardResponseDto(
         metricCredential.id,
         metricCredential.name,
         metricCredential.description,
-        metricCredential.plugin as PluginEntity,
+        metricCredential.plugin,
         metricCredential.metric,
         metricCredential.resourceId,
         metricResult
@@ -76,9 +75,9 @@ export class DashboardUseCase implements DashboardUseCaseInterface {
     return Object.values(metricResultMap);
   }
 
-  private mapToPluginCredential(plugin: PluginEntity, credentialEntity: CredentialEntity): Credential {
+  private mapToPluginCredential(plugin: Plugin, credentialEntity: Credential): { type: string; value: GenericCredentialType } {
     return {
-      type: plugin.credentialType as CredentialType,
+      type: plugin.credentialType,
       value: credentialEntity?.value ? (JSON.parse(Buffer.from(credentialEntity.value, 'base64').toString('utf-8')) as GenericCredentialType) : null
     };
   }

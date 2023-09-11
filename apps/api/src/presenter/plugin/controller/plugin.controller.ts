@@ -38,8 +38,8 @@ export class PluginController {
   @Get('/:id/:widgetId')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Get plugin data' })
-  @ApiResponse({ status: HttpStatus.OK, description: 'get plugin data' })
-  @ApiParam({ name: 'id', type: String, description: 'plugin id' })
+  @ApiResponse({ status: HttpStatus.OK, description: 'Get plugin data' })
+  @ApiParam({ name: 'id', type: String, description: 'Plugin id' })
   @ApiParam({ name: 'widgetId', description: 'widget id' })
   async getPluginData(
     @Param('id') pluginId: string,

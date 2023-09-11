@@ -1,7 +1,7 @@
 import { getAlertFieldsQuery } from '../../../services/dashboard.service'
-import { createPluginAlertMutation } from '../../../services/plugin.service'
+import { createAlertsMutation } from '../../../services/plugin.service'
 import AlertCreationForm from '../forms/AlertCreation.form'
-import { ActiveMetricModel, AlertForm, mapToAlertRequest } from '@metrikube/core'
+import { WidgetModel, AlertForm, mapToAlertRequest } from '@metrikube/core'
 import { Dialog, DialogContent, Button, DialogTitle } from '@mui/material'
 import { useQueryClient } from '@tanstack/react-query'
 import React, { Dispatch, SetStateAction } from 'react'
@@ -10,7 +10,7 @@ import { FormProvider, useForm } from 'react-hook-form'
 interface Props {
   open: boolean
   setOpenModal: Dispatch<SetStateAction<boolean>>
-  widget: ActiveMetricModel
+  widget: WidgetModel
 }
 
 const CreateAlertModal = ({ open, setOpenModal, widget }: Props) => {
@@ -22,7 +22,7 @@ const CreateAlertModal = ({ open, setOpenModal, widget }: Props) => {
     }
   })
 
-  const { mutate: createAlert } = createPluginAlertMutation(() => {
+  const { mutate: createAlert } = createAlertsMutation(() => {
     queryClient.invalidateQueries({ queryKey: ['getActiveMetricAlert'] })
   })
 
@@ -35,7 +35,7 @@ const CreateAlertModal = ({ open, setOpenModal, widget }: Props) => {
 
   const onSubmit = (data: { widgetAlerts: AlertForm[] }) => {
     createAlert({
-      pluginToMetricId: widget.id,
+      widgetId: widget.id,
       alerts: mapToAlertRequest(data.widgetAlerts, widget.metric.id)
     })
     handlerModalClose()

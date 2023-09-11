@@ -8,8 +8,8 @@ import { GithubPluginModule, GithubService } from '@metrikube/github-plugin';
 import { AlertRepositoryImpl } from '../infrastructure/database/repositories/alert.repository';
 import { CredentialRepositoryImpl } from '../infrastructure/database/repositories/credential.repository';
 import { MetricRepositoryImpl } from '../infrastructure/database/repositories/metric.repository';
-import { PluginToMetricRepositoryImpl } from '../infrastructure/database/repositories/plugin-to-metric.repository';
 import { PluginRepositoryImpl } from '../infrastructure/database/repositories/plugin.repository';
+import { WidgetRepositoryImpl } from '../infrastructure/database/repositories/wiget.repository';
 import { DiTokens } from '../infrastructure/di/tokens';
 import { InfrastructureModule } from '../infrastructure/infrastructure.module';
 import { NotificationService } from '../infrastructure/services/notification/notification.service';
@@ -22,22 +22,22 @@ import { WidgetUsecase } from './use-cases/widget/widget.usecase';
 
 const providers: Provider[] = [
   { provide: DiTokens.AlertUseCaseToken, useClass: AlertUseCase },
-  { provide: DiTokens.CredentialUseCaseToken, useClass: CredentialUseCase },
-  { provide: DiTokens.DashboardUseCaseToken, useClass: DashboardUseCase },
   { provide: DiTokens.PluginUseCaseToken, useClass: PluginUseCase },
+  { provide: DiTokens.DashboardUseCaseToken, useClass: DashboardUseCase },
+  { provide: DiTokens.CredentialUseCaseToken, useClass: CredentialUseCase },
   { provide: DiTokens.WidgetUseCaseToken, useClass: WidgetUsecase },
-  /////////////////////////////////////////
+  ///////////////////////////
   { provide: DiTokens.AlertRepositoryToken, useClass: AlertRepositoryImpl },
   { provide: DiTokens.CredentialRepositoryToken, useClass: CredentialRepositoryImpl },
-  { provide: DiTokens.MetricRepositoryToken, useClass: MetricRepositoryImpl },
   { provide: DiTokens.PluginRepositoryToken, useClass: PluginRepositoryImpl },
-  { provide: DiTokens.PluginToMetricRepositoryToken, useClass: PluginToMetricRepositoryImpl },
-  /////////////////////////////////////////
-  { provide: DiTokens.AWSServiceToken, useClass: AWSService },
-  { provide: DiTokens.ApiMonitoringToken, useClass: ApiMonitoringService },
+  { provide: DiTokens.MetricRepositoryToken, useClass: MetricRepositoryImpl },
+  { provide: DiTokens.WidgetRepositoryToken, useClass: WidgetRepositoryImpl },
+  ///////////////////////////
   { provide: DiTokens.DbAnalyticsPluginServiceToken, useClass: DbAnalyticsPluginService },
+  { provide: DiTokens.ApiMonitoringToken, useClass: ApiMonitoringService },
+  { provide: DiTokens.AWSServiceToken, useClass: AWSService },
   { provide: DiTokens.GithubServiceToken, useClass: GithubService },
-  /////////////////////////////////////////
+  ///////////////////////////
   { provide: DiTokens.Mailer, useClass: NotificationService },
   { provide: DiTokens.Scheduler, useClass: SchedulerService }
 ];
@@ -57,9 +57,9 @@ const providers: Provider[] = [
     DiTokens.Mailer,
     DiTokens.MetricRepositoryToken,
     DiTokens.PluginRepositoryToken,
-    DiTokens.PluginToMetricRepositoryToken,
     DiTokens.PluginUseCaseToken,
     DiTokens.Scheduler,
+    DiTokens.WidgetRepositoryToken,
     DiTokens.WidgetUseCaseToken
   ]
 })

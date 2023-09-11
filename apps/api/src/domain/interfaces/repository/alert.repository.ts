@@ -1,20 +1,18 @@
-import { FindManyOptions, FindOptionsWhere } from 'typeorm';
-
-import { AlertEntity } from '../../../infrastructure/database/entities/alert.entity';
+import { UpdateAlertDto } from '../../../presenter/alert/dtos/update-alert.dto';
 import { Alert } from '../../models/alert.model';
 
 export interface AlertRepository {
-  getAlerts(criterias: FindManyOptions<AlertEntity> | FindOptionsWhere<AlertEntity>): Promise<AlertEntity[]>;
+  getAlerts(): Promise<Alert[]>;
 
-  findAlertById(id: string): Promise<AlertEntity>;
+  findAlertById(id: string): Promise<Alert>;
 
-  findByWidgetId(widgetId: string): Promise<AlertEntity[]>;
+  findByWidgetId(widgetId: string): Promise<Alert[]>;
 
-  createAlerts(alertOrAlerts: Partial<Alert[]>): Promise<AlertEntity[]>;
+  createAlerts(alertOrAlerts: Partial<Alert[]>): Promise<Alert[]>;
 
-  updateAlert(id: string, payload: Partial<AlertEntity>): Promise<void>;
+  updateAlert(id: string, payload: UpdateAlertDto): Promise<void>;
 
   deleteAlert(alertId: string): Promise<void>;
 
-  findActiveAlertById(id: string): Promise<AlertEntity>;
+  findActiveAlertById(id: string): Promise<Alert>;
 }

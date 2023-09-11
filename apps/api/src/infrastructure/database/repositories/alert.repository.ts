@@ -1,10 +1,11 @@
-import { DataSource, FindManyOptions, FindOptionsWhere } from 'typeorm';
+import { DataSource } from 'typeorm';
 
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 
 import { AlertRepository } from '../../../domain/interfaces/repository/alert.repository';
 import { Alert } from '../../../domain/models/alert.model';
+import { UpdateAlertDto } from '../../../presenter/alert/dtos/update-alert.dto';
 import { AlertEntity } from '../entities/alert.entity';
 import { BaseRepository } from './base.repository';
 
@@ -14,27 +15,32 @@ export class AlertRepositoryImpl extends BaseRepository<AlertEntity> implements 
     super(connection, AlertEntity);
   }
 
-  getAlerts(criterias: FindManyOptions<AlertEntity> | FindOptionsWhere<AlertEntity>): Promise<AlertEntity[]> {
-    return this.find(criterias);
+  async getAlerts(): Promise<Alert[]> {
+    const alerts = await this.find();
+    return alerts.map(AlertEntity.toModel);
   }
 
-  findByWidgetId(widgetId: string): Promise<AlertEntity[]> {
-    return this.find({ where: { pluginToMetricId: widgetId } });
+  async findByWidgetId(widgetId: string): Promise<Alert[]> {
+    const alerts = await this.find({ where: { widgetId } });
+    return alerts.map(AlertEntity.toModel);
   }
 
-  findAlertById(id: string): Promise<AlertEntity> {
-    return this.findOne({ where: { id } });
+  async findActiveAlertById(id: string): Promise<Alert> {
+    const alert = await this.findOne({ where: { id, isActive: true } });
+    return AlertEntity.toModel(alert);
   }
 
-  createAlerts(payload: Partial<Alert[]>): Promise<AlertEntity[]> {
-    return this.saveMany(payload);
+  async findAlertById(id: string): Promise<Alert> {
+    const alert = await this.findOne({ where: { id } });
+    return AlertEntity.toModel(alert);
   }
 
-  findActiveAlertById(id: string): Promise<AlertEntity> {
-    return this.findOne({ where: { id, isActive: true } });
+  async createAlerts(payload: Partial<Alert[]>): Promise<Alert[]> {
+    const alerts = await this.saveMany(payload);
+    return alerts.map(AlertEntity.toModel);
   }
 
-  async updateAlert(id: string, payload: Partial<AlertEntity>): Promise<void> {
+  async updateAlert(id: string, payload: UpdateAlertDto): Promise<void> {
     await this.update({ id }, payload);
   }
 

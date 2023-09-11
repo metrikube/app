@@ -1,10 +1,9 @@
-import { Column, CreateDateColumn, Entity, Generated, ManyToOne, PrimaryGeneratedColumn, RelationId } from 'typeorm';
+import { Column, CreateDateColumn, Entity, Generated, ManyToOne, PrimaryGeneratedColumn, RelationId, UpdateDateColumn } from 'typeorm';
 
-import { ApiProperty } from '@nestjs/swagger';
+import { MetricThresholdOperator, MetricThresholdOperatorEnum } from '@metrikube/common';
 
-import { MetricThresholdOperator } from '@metrikube/common';
-
-import { PluginToMetricEntity } from './plugin_to_metric.entity';
+import { Alert } from '../../../domain/models/alert.model';
+import { WidgetEntity } from './widget.entity';
 
 @Entity('alert')
 export class AlertEntity {
@@ -21,12 +20,12 @@ export class AlertEntity {
   @Column({ default: true, type: 'boolean' })
   isActive: boolean;
 
-  @ManyToOne(() => PluginToMetricEntity, (pluginToMetric: PluginToMetricEntity) => pluginToMetric.metric)
-  pluginToMetric: PluginToMetricEntity;
+  @ManyToOne(() => WidgetEntity, (widget: WidgetEntity) => widget.metric)
+  widget: WidgetEntity;
 
   @Column({ type: 'uuid', nullable: false })
-  @RelationId((alert: AlertEntity) => alert.pluginToMetric)
-  pluginToMetricId: PluginToMetricEntity['id'];
+  @RelationId((alert: AlertEntity) => alert.widget)
+  widgetId: WidgetEntity['id'];
 
   @Column({ type: 'json' })
   condition: {
@@ -37,4 +36,21 @@ export class AlertEntity {
 
   @CreateDateColumn()
   createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
+
+  static toModel(entity: AlertEntity): Alert {
+    return new Alert(entity.id, entity.label, entity.widgetId, entity.isActive, entity.triggered, {
+      field: entity.condition.field,
+      operator: entity.condition.operator as MetricThresholdOperatorEnum,
+      threshold: entity.condition.threshold
+    });
+  }
+
+  static toModelDetailed(entity: AlertEntity): Alert {
+    const alertModel = this.toModel(entity);
+    alertModel.widget = entity.widget && WidgetEntity.toModel(entity.widget);
+    return alertModel;
+  }
 }

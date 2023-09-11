@@ -1,5 +1,5 @@
-import { deleteMetricMutation } from '../../../services/dashboard.service'
-import { ActiveMetricModel } from '@metrikube/core'
+import { deleteWidgetMutation } from '../../../services/dashboard.service'
+import { WidgetModel } from '@metrikube/core'
 import {
   Dialog,
   DialogContent,
@@ -16,14 +16,14 @@ import { useForm } from 'react-hook-form'
 interface Props {
   open: boolean
   setOpenModal: Dispatch<SetStateAction<boolean>>
-  metric: ActiveMetricModel
+  widget: WidgetModel
 }
 
 interface ConfirmDeletionForm {
   confirmDeletion: string
 }
 
-const ConfirmDeletionModal = ({ open, setOpenModal, metric }: Props) => {
+const ConfirmDeletionModal = ({ open, setOpenModal, widget }: Props) => {
   const { register, watch, reset } = useForm<ConfirmDeletionForm>()
 
   const confirmDeletionValue = watch('confirmDeletion')
@@ -38,8 +38,8 @@ const ConfirmDeletionModal = ({ open, setOpenModal, metric }: Props) => {
     }
   }, [confirmDeletionValue])
 
-  const { mutate: deleteMetric } = deleteMetricMutation(() => {
-    queryClient.invalidateQueries({ queryKey: ['getActiveMetrics'] })
+  const { mutate: deleteWidget } = deleteWidgetMutation(() => {
+    queryClient.invalidateQueries({ queryKey: ['getWidgets'] })
   })
 
   const handlerModalClose = () => {
@@ -47,8 +47,8 @@ const ConfirmDeletionModal = ({ open, setOpenModal, metric }: Props) => {
     reset()
   }
 
-  const handleMetricDelete = (activeMetricId: string) => {
-    deleteMetric(activeMetricId)
+  const handleWidgetDelete = (widgetId: string) => {
+    deleteWidget(widgetId)
     handlerModalClose()
   }
 
@@ -56,7 +56,7 @@ const ConfirmDeletionModal = ({ open, setOpenModal, metric }: Props) => {
     <Dialog open={open} onClose={handlerModalClose}>
       <DialogTitle>
         <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-          Supprimer : {metric?.metric.name}
+          Supprimer : {widget.metric.name}
         </Typography>
       </DialogTitle>
       <DialogContent>
@@ -76,7 +76,7 @@ const ConfirmDeletionModal = ({ open, setOpenModal, metric }: Props) => {
       <DialogActions>
         <Button onClick={handlerModalClose}>Cancel</Button>
         <Button
-          onClick={() => handleMetricDelete(metric.id)}
+          onClick={() => handleWidgetDelete(widget.id)}
           disabled={shouldDisableDeletionButton}
           variant="outlined"
           color="error">

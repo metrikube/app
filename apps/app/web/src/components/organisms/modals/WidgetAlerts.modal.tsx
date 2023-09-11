@@ -1,53 +1,54 @@
 import {
   deleteAlertMutation,
-  getActiveMetricAlertsQuery,
+  getWidgetAlertsQuery,
   toggleAlertMutation
 } from '../../../services/dashboard.service'
 import Loader from '../../atoms/Loader'
 import CreateAlertModal from './CreateAlert.modal'
-import { ActiveMetricModel } from '@metrikube/core'
+import { WidgetModel } from '@metrikube/core'
 import AddAlertOutlinedIcon from '@mui/icons-material/AddAlertOutlined'
 import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined'
 import NotificationsActiveOutlinedIcon from '@mui/icons-material/NotificationsActiveOutlined'
 import NotificationsOffOutlinedIcon from '@mui/icons-material/NotificationsOffOutlined'
 import {
+  Box,
+  Button,
   Dialog,
   DialogContent,
   DialogTitle,
-  Table,
-  TableHead,
-  TableRow,
-  TableCell,
-  TableBody,
   IconButton,
-  Button,
-  Box
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow
 } from '@mui/material'
 import { useQueryClient } from '@tanstack/react-query'
 import React, { Dispatch, SetStateAction, useEffect, useState } from 'react'
 
+
 interface Props {
   open: boolean
   setOpenModal: Dispatch<SetStateAction<boolean>>
-  metric: ActiveMetricModel
+  widget: WidgetModel
 }
 
-const MetricAlertsModal = ({ open, setOpenModal, metric }: Props) => {
+const WidgetAlertsModal = ({ open, setOpenModal, widget }: Props) => {
   const queryClient = useQueryClient()
-  const { data: alerts, refetch, isFetched, isFetching } = getActiveMetricAlertsQuery(metric.id)
+  const { data: alerts, refetch, isFetched, isFetching } = getWidgetAlertsQuery(widget.id)
   const [isOpened, setIsOpened] = useState(false)
 
   useEffect(() => {
     if (isFetched) {
       refetch()
     }
-  }, [metric])
+  }, [widget])
 
   const { mutate: toggleNotification } = toggleAlertMutation(() => {
-    queryClient.invalidateQueries({ queryKey: ['getActiveMetricAlert'] })
+    queryClient.invalidateQueries({ queryKey: ['getWidgetAlerts'] })
   })
   const { mutate: deleteAlert } = deleteAlertMutation(() => {
-    queryClient.invalidateQueries({ queryKey: ['getActiveMetricAlert'] })
+    queryClient.invalidateQueries({ queryKey: ['getWidgetAlerts'] })
   })
 
   const openModal = () => {
@@ -56,8 +57,9 @@ const MetricAlertsModal = ({ open, setOpenModal, metric }: Props) => {
 
   return (
     <Dialog open={open} onClose={() => setOpenModal(false)}>
+      <DialogTitle>Alertes {widget.metric.name}</DialogTitle>
       <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between' }}>
-        <span>Alertes {metric?.metric.name}</span>{' '}
+        <span>Alertes {widget.metric.name}</span>{' '}
         <Button
           onClick={openModal}
           size="small"
@@ -134,9 +136,9 @@ const MetricAlertsModal = ({ open, setOpenModal, metric }: Props) => {
           </Box>
         )}
       </DialogContent>
-      {isOpened && <CreateAlertModal open={isOpened} setOpenModal={setIsOpened} widget={metric} />}
+      {isOpened && <CreateAlertModal open={isOpened} setOpenModal={setIsOpened} widget={widget} />}
     </Dialog>
   )
 }
 
-export default MetricAlertsModal
+export default WidgetAlertsModal

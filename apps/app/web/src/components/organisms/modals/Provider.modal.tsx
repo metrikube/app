@@ -24,7 +24,7 @@ import { Close } from '@mui/icons-material'
 import { Dialog, DialogContent, DialogTitle, IconButton, Typography, Divider, Box } from '@mui/material'
 import React, { Dispatch, SetStateAction, useContext, useEffect, useState } from 'react'
 import { useForm, FormProvider } from 'react-hook-form'
-import { createPluginAlertMutation, getPluginsQuery, setupPluginMutation, validateCredentialsMutation } from '../../../services/plugin.service'
+import { createAlertsMutation, getPluginsQuery, setupPluginMutation, validateCredentialsMutation } from '../../../services/plugin.service'
 import { useQueryClient } from '@tanstack/react-query'
 
 interface Props {
@@ -82,11 +82,11 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
     }
     return setActiveStep(SetupPluginStepEnum.FINISH)
   })
-  const { mutate: createAlert, isLoading: isCreateAlertLoading } = createPluginAlertMutation()
+  const { mutate: createAlert, isLoading: isCreateAlertLoading } = createAlertsMutation()
 
   const { mutate: setupPlugin, isLoading: isSetupPluginLoading } = setupPluginMutation((data) => {
     setPluginToMetricId(data.id)
-    queryClient.invalidateQueries({ queryKey: ["getActiveMetrics"] })
+    queryClient.invalidateQueries({ queryKey: ["getWidgets"] })
   })
 
   const handleFilterChange = (categoryValue: string) => {
