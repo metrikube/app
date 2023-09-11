@@ -56,6 +56,7 @@ export const WidgetCard = ({
       <StyledCard>
         <CardHeader
           title={widget.name}
+          titleTypographyProps={{sx: {fontWeight: 'bold'}}}
           subheader={widget.metric.name}
           avatar={<Logo alt={widget.plugin.name} src={avatarUrl} />}
           action={

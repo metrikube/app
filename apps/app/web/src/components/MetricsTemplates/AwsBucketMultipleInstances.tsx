@@ -11,7 +11,7 @@ export const AwsBucketMultipleInstances = ({ widget }: Props) => {
   return (
     <ListResource
       tableHead={['Nom du bucket', 'Coût'].map((column, index) => (
-        <TableCell key={index}>{column}</TableCell>
+        <TableCell sx={{ fontWeight: 'bold' }} key={index}>{column}</TableCell>
       ))}
       tableBody={widget.data.map((instance: any) => (
         <TableRow key={instance.id}>

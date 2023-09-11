@@ -10,8 +10,8 @@ interface Props {
 export const GithubLastIssues = ({ widget }: Props) => {
   return (
     <ListResource
-      tableHead={['Numéro', 'Titre', 'Auteur', 'status'].map((column, index) => (
-        <TableCell key={index}>{column}</TableCell>
+      tableHead={['Numéro', 'Titre', 'Auteur', 'Status'].map((column, index) => (
+        <TableCell sx={{ fontWeight: 'bold' }} key={index}>{column}</TableCell>
       ))}
       tableBody={widget.data.map((issue, index) => (
         <TableRow key={index}>
