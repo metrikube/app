@@ -9,9 +9,9 @@ import { EmptyStateLayout } from '../layouts/EmptyStateLayout'
 import { WidgetsLayout } from '../layouts/WidgetsLayout'
 import { getWidgetsQuery } from '../services/dashboard.service'
 import styled from '@emotion/styled'
-import { WidgetModel, activeMetricsMock } from '@metrikube/core'
+import { WidgetModel } from '@metrikube/core'
 import { AddchartOutlined } from '@mui/icons-material'
-import { Button, Box, Typography } from '@mui/material'
+import { Box, Button, Typography } from '@mui/material'
 import React, { useState } from 'react'
 
 const metrikubeLogo = new URL(`/src/assets/img/metrikube-logo.png`, import.meta.url).href
@@ -71,7 +71,7 @@ const Dashboard = () => {
         ) : !widgets.length ? (
           <EmptyStateLayout
             title="Commencer par ajouter un widget"
-            description="The providers are the heart of Metrikube, they allow you to visualize your metrics according to the different plugins."
+            description="Les widget sont le coeur de Metrikube, Ils permettent de visualiser vos métriques."
             onActionButtonClick={openProviderModalHandler}
             buttonLabel="Ajouter un widget"
             imageAsset={PluginEmptyStateImg}
@@ -90,17 +90,21 @@ const Dashboard = () => {
 
         {selectedWidget && (
           <>
-            <WidgetAlertsModal
-              open={isWidgetAlertsModalOpen}
-              setOpenModal={setIsWidgetAlertsModalOpen}
-              widget={selectedWidget}
-            />
+            {isWidgetAlertsModalOpen && (
+              <WidgetAlertsModal
+                open={isWidgetAlertsModalOpen}
+                setOpenModal={setIsWidgetAlertsModalOpen}
+                widget={selectedWidget}
+              />
+            )}
 
-            <ConfirmDeletionModal
-              open={isMetricDeletionModalOpened}
-              setOpenModal={setIsMetricDeletionModalOpened}
-              widget={selectedWidget}
-            />
+            {isMetricDeletionModalOpened && (
+              <ConfirmDeletionModal
+                open={isMetricDeletionModalOpened}
+                setOpenModal={setIsMetricDeletionModalOpened}
+                widget={selectedWidget}
+              />
+            )}
           </>
         )}
       </DefaultLayout>

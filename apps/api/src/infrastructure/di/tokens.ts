@@ -7,6 +7,7 @@ export class DiTokens {
   static readonly AlertUseCaseToken = 'ALERT_USE_CASE' as const;
   static readonly DashboardUseCaseToken = 'DASHBOARD_USE_CASE' as const;
   static readonly MetricUseCaseToken = 'METRIC_USE_CASE' as const;
+  static readonly WidgetUseCaseToken = 'WIDGET_USE_CASE' as const;
 
   /**
    * Repositories
@@ -15,7 +16,7 @@ export class DiTokens {
   static readonly CredentialRepositoryToken = 'CREDENTIAL_REPOSITORY' as const;
   static readonly AlertRepositoryToken = 'ALERT_REPOSITORY' as const;
   static readonly MetricRepositoryToken = 'METRIC_REPOSITORY' as const;
-  static readonly widgetRepositoryToken = 'PLUGIN_TO_METRIC_REPOSITORY' as const;
+  static readonly WidgetRepositoryToken = 'WIDGET_METRIC_REPOSITORY' as const;
 
   /**
    * Plugins
@@ -30,4 +31,5 @@ export class DiTokens {
    */
   static readonly Mailer = 'MAILER' as const;
   static readonly Scheduler = 'SCHEDULER' as const;
+  static readonly PluginResolver = 'PLUGIN_RESOLVER' as const;
 }

@@ -2,7 +2,7 @@ import axios, { AxiosError } from 'axios';
 
 import { Injectable } from '@nestjs/common';
 
-import { ApiGithubError, ApiGithubIssues, ApiGithubPullRequestsOrIssues, GithubCredentialType, Issues, PluginConnectionInterface, PullRequests } from '@metrikube/common';
+import { ApiGithubError, ApiGithubIssues, ApiGithubPullRequestsOrIssues, GithubCredentialType, Issues, MetricType, PluginConnectionInterface, PluginResult, PullRequests } from '@metrikube/common';
 
 interface GithubErrorData {
   message: string;
@@ -30,7 +30,7 @@ export class GithubService implements PluginConnectionInterface {
     }
   }
 
-  async getRepoPRs({ accessToken, repo, owner }: GithubCredentialType): Promise<ApiGithubPullRequestsOrIssues[] | ApiGithubError> {
+    async getRepoPRs({ accessToken, repo, owner }: GithubCredentialType): Promise<ApiGithubPullRequestsOrIssues[] | ApiGithubError> {
     try {
       const { data: prs } = await axios.get<PullRequests>(`https://api.github.com/repos/${owner}/${repo}/pulls?per_page=${limit}&state=all`, {
         headers: {
@@ -60,5 +60,13 @@ export class GithubService implements PluginConnectionInterface {
       return { ok: false, message: (error as AxiosError<GithubErrorData>)?.response?.data.message || null };
     }
     return { ok: true, message: null };
+  }
+
+
+  describe(type: MetricType): string[] {
+    switch (type) {
+      default:
+        return [];
+    }
   }
 }

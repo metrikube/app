@@ -25,6 +25,15 @@ const LineChart = ({ labels, data }: Props) => {
       legend: {
         position: 'top' as const
       }
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        suggestedMax: 20,
+        ticks: {
+          stepSize: 1
+        }
+      }
     }
   }
   return (

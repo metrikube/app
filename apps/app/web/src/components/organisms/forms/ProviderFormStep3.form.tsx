@@ -1,4 +1,5 @@
 import { SetupPluginContext } from '../../../contexts/SetupPlugin.context'
+import { getAlertFieldsQuery } from '../../../services/dashboard.service'
 import OutlinedCard from '../../molecules/OutlinedCard'
 import { OPERATORS } from '@metrikube/core'
 import { TextField, Select, MenuItem, InputLabel, FormControl, Button } from '@mui/material'
@@ -6,7 +7,9 @@ import React, { useContext } from 'react'
 import { useFieldArray, useFormContext } from 'react-hook-form'
 
 const ProviderFormStep3 = () => {
-  const { metricFields } = useContext(SetupPluginContext)
+  const { selectedMetric } = useContext(SetupPluginContext)
+  const { data: alertFields } = getAlertFieldsQuery(selectedMetric?.id)
+
   const {
     register,
     control,
@@ -44,9 +47,9 @@ const ProviderFormStep3 = () => {
               // error={Boolean(errors.metricAlerts[index])}
               // helperText={errors.metricAlerts[index].condition.field.message as string}
               {...register(`metricAlerts.${index}.condition.field`, { required: 'Required' })}>
-              {Object.keys(metricFields).map((metricField, index) => (
-                <MenuItem key={index} value={metricField}>
-                  {metricField}
+              {alertFields.map((metricField, index) => (
+                <MenuItem key={index} value={metricField.value}>
+                  {metricField.label}
                 </MenuItem>
               ))}
             </Select>

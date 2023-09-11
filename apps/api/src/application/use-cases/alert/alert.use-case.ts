@@ -2,7 +2,6 @@ import { randomUUID } from 'node:crypto';
 
 import { Inject, Injectable, Logger } from '@nestjs/common';
 
-import { ApiMonitoringService } from '@metrikube/api-monitoring';
 import { MetricThresholdOperator, MetricType, PluginResult } from '@metrikube/common';
 
 import { NotificationInterface } from '../../../domain/interfaces/adapters/notification.interface';
@@ -25,12 +24,11 @@ export class AlertUseCase implements AlertUseCaseInterface {
 
   constructor(
     @Inject(DiTokens.AlertRepositoryToken) private readonly alertRepository: AlertRepository,
-    @Inject(DiTokens.widgetRepositoryToken) private readonly widgetRepository: WidgetRepository,
+    @Inject(DiTokens.WidgetRepositoryToken) private readonly widgetRepository: WidgetRepository,
     @Inject(DiTokens.Mailer) private readonly mailer: NotificationInterface,
     @Inject(DiTokens.CredentialRepositoryToken) private readonly credentialRepository: CredentialRepository,
     @Inject(DiTokens.Scheduler) private readonly scheduler: SchedulerInterface,
-    @Inject(DiTokens.PluginUseCaseToken) private readonly pluginUseCase: PluginUseCaseInterface,
-    @Inject(DiTokens.ApiMonitoringToken) private readonly apiMonitoringService: ApiMonitoringService
+    @Inject(DiTokens.PluginUseCaseToken) private readonly pluginUseCase: PluginUseCaseInterface
   ) {
   }
 
@@ -38,11 +36,12 @@ export class AlertUseCase implements AlertUseCaseInterface {
     return this.alertRepository.findByWidgetId(widgetId);
   }
 
-  updateAlert(alertId: string, payload: UpdateAlertDto): Promise<void> {
-    return this.alertRepository.updateAlert(alertId, payload);
-  }
-
   async deleteAlert(alertId: string): Promise<void> {
+    try {
+      this.scheduler.unscheduleRelatedAlerts(alertId);
+    } catch (e) {
+      this.logger.warn(e.message);
+    }
     return this.alertRepository.deleteAlert(alertId);
   }
 
@@ -53,7 +52,7 @@ export class AlertUseCase implements AlertUseCaseInterface {
         new Alert(randomUUID(), alert.label, widgetId, true, false, alert.condition))
     );
 
-    await Promise.all(createdAlerts.map(this.registerAlerJob.bind(this)(activatedMetric)));
+    await Promise.all(createdAlerts.map(this.registerAlertJob.bind(this)(activatedMetric)));
 
     return new CreateAlertResponseDto(createdAlerts);
   }
@@ -76,6 +75,23 @@ export class AlertUseCase implements AlertUseCaseInterface {
     }
   }
 
+  getPluginToMetricAlerts(pluginToMetricId: Widget['id']): Promise<Alert[]> {
+    return this.alertRepository.findByWidgetId(pluginToMetricId);
+  }
+
+  async updateAlert(alertId: string, payload: UpdateAlertDto): Promise<void> {
+    if (!('isActive' in payload)) return this.alertRepository.updateAlert(alertId, payload);
+    if (payload.isActive) {
+      const alert: Alert = await this.alertRepository.findAlertById(alertId);
+      const widget: Widget = await this.widgetRepository.findwidgetById(alert.widgetId);
+      await this.scheduler.scheduleAlert(alertId, widget.metric.refreshInterval, this.jobRunner.bind(this, alertId));
+      return this.alertRepository.updateAlert(alertId, payload);
+    }
+
+    this.scheduler.unscheduleRelatedAlerts(alertId);
+    return this.alertRepository.updateAlert(alertId, payload);
+  }
+
   checkConditionThreshold(value: string | number, operator: MetricThresholdOperator, threshold: string | number): boolean {
     const operators: MetricThresholdOperator[] = ['gt', 'lt', 'eq', 'gte', 'lte', 'neq'];
     if (!operators.includes(operator)) throw new Error('Invalid operator');
@@ -92,10 +108,9 @@ export class AlertUseCase implements AlertUseCaseInterface {
     return operation[operator](value);
   }
 
-  private registerAlerJob(activatedMetric: Widget): (alert: Alert) => Promise<void> {
+  private registerAlertJob(activatedMetric: Widget): (alert: Alert) => Promise<void> {
     return (alert: Alert): Promise<void> => {
-      const jobName = `[${alert.id}] ${activatedMetric.plugin.name} // ${activatedMetric.metric.name}`;
-      return this.scheduler.scheduleAlert(jobName, activatedMetric.metric.refreshInterval, this.jobRunner.bind(this, alert.id));
+      return this.scheduler.scheduleAlert(alert.id, activatedMetric.metric.refreshInterval, this.jobRunner.bind(this, alert.id));
     };
   }
 

@@ -1,9 +1,8 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Inject, Param, ParseArrayPipe, ParseUUIDPipe, Patch, Post, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Inject, Param, ParseArrayPipe, ParseUUIDPipe, Patch, Post, ValidationPipe } from '@nestjs/common';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
 
 import { AlertUseCaseInterface } from '../../../domain/interfaces/use-cases/alert.use-case.interface';
 import { Alert } from '../../../domain/models/alert.model';
-import { AlertEntity } from '../../../infrastructure/database/entities/alert.entity';
 import { DiTokens } from '../../../infrastructure/di/tokens';
 import { CreateAlertRequestDto, CreateAlertResponseDto } from '../dtos/create-alert.dto';
 import { UpdateAlertDto } from '../dtos/update-alert.dto';
@@ -31,7 +30,14 @@ export class AlertController {
 
   @Patch(':alertId')
   @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiBody({ type: UpdateAlertDto })
   async updateAlert(@Param('alertId') alertId: string, @Body(new ValidationPipe()) payload: UpdateAlertDto): Promise<void> {
     return this.alertUseCase.updateAlert(alertId, payload);
+  }
+
+  @Delete(':alertId')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async deleteAlert(@Param('alertId') alertId: string): Promise<void> {
+    return this.alertUseCase.deleteAlert(alertId);
   }
 }

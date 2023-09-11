@@ -36,7 +36,7 @@ const ConfirmDeletionModal = ({ open, setOpenModal, widget }: Props) => {
     } else {
       setShouldDisableDeletionButton(true)
     }
-  }, [confirmDeletionValue, setShouldDisableDeletionButton])
+  }, [confirmDeletionValue])
 
   const { mutate: deleteWidget } = deleteWidgetMutation(() => {
     queryClient.invalidateQueries({ queryKey: ['getWidgets'] })

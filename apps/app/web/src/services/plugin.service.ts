@@ -11,6 +11,7 @@ import {
 import { useMutation, useQuery } from '@tanstack/react-query'
 
 const { pluginAdapter, alertAdapter } = useAdapter()
+
 export const getPluginsQuery = () => {
   return useQuery({
     queryKey: ['getPlugins'],
@@ -46,15 +47,16 @@ export const validateCredentialsMutation = (onSuccess: (data: unknown) => void) 
   )
 }
 
-export const createAlertsMutation = () => {
+export const createAlertsMutation = (onSuccess?: (data: unknown) => void) => {
   return useMutation(
-    ({ pluginToMetricId, alerts }: CreateAlertRequest) => {
+    ({ widgetId, alerts }: CreateAlertRequest) => {
       return new CreateAlertUsecase(alertAdapter).execute({
-        pluginToMetricId,
+        widgetId,
         alerts
       })
     },
     {
+      onSuccess,
       onError: () => {
         alert('An error was occurred')
       }

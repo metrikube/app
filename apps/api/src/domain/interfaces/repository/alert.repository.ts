@@ -13,4 +13,6 @@ export interface AlertRepository {
   updateAlert(id: string, payload: UpdateAlertDto): Promise<void>;
 
   deleteAlert(alertId: string): Promise<void>;
+
+  findActiveAlertById(id: string): Promise<Alert>;
 }

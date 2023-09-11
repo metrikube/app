@@ -13,6 +13,10 @@ export class AlertInMemoryRepositoryImpl implements AlertRepository {
     return this.alerts.find((alert) => alert.id === id);
   }
 
+  async findActiveAlertById(id: string): Promise<Alert> {
+    return this.alerts.find((alert) => alert.id === id && alert.isActive);
+  }
+
   async findByWidgetId(widgetId: string): Promise<Alert[]> {
     return this.alerts.filter((alert) => alert.widgetId === widgetId);
   }

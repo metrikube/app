@@ -8,4 +8,6 @@ export interface WidgetRepository {
   findwidgetById(id: string): Promise<Widget | undefined>;
 
   disablewidget(widgetId: string): Promise<Widget>;
+
+  deleteWidget(widgetId: string): Promise<void>;
 }

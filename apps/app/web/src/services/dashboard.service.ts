@@ -6,6 +6,8 @@ import {
   DeleteWidgetUsecase,
   GetActiveMetricAlertUsecase,
   GetWidgetsUsecase,
+  GetAlertFieldsUsecase,
+  Option,
   ToggleAlertNotification,
   ToggleAlertNotificationUsecase
 } from '@metrikube/core'
@@ -19,6 +21,7 @@ export const getWidgetsQuery = () => {
     queryFn: () => new GetWidgetsUsecase(dashboardMetricsAdapter).execute(),
     initialData: () => [],
     refetchOnWindowFocus: false
+    // refetchIntervalInBackground - à creuser
   })
 }
 
@@ -58,5 +61,15 @@ export const deleteAlertMutation = (onSuccess: () => void) => {
       await new DeleteActiveMetricAlertUsecase(alertAdapter).execute(alertId)
     },
     onSuccess
+  })
+}
+
+export const getAlertFieldsQuery = (metricId: string) => {
+  return useQuery({
+    queryKey: ['getAlertFields'],
+    queryFn: async (): Promise<Option[]> =>
+      new GetAlertFieldsUsecase(dashboardMetricsAdapter).execute(metricId),
+    initialData: () => [],
+    refetchOnWindowFocus: false
   })
 }

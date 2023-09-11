@@ -25,6 +25,10 @@ export class WidgetRepositoryImpl extends BaseRepository<WidgetEntity> implement
     return widgets.map(WidgetEntity.toModelDetailed);
   }
 
+  async deleteWidget(id: string): Promise<void> {
+    await this.delete({ id });
+  }
+
   disablewidget(widgetId: string): Promise<WidgetEntity> {
     return this.save({ id: widgetId, isActive: false });
   }

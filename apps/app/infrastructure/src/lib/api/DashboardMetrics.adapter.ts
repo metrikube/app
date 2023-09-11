@@ -1,9 +1,9 @@
-import { WidgetModel, DashboardMetricsAdapter } from '@metrikube/core';
 import { AxiosInstance } from 'axios';
 
-export class DashboardMetricsImpl implements DashboardMetricsAdapter {
+import { DashboardMetricsAdapter, WidgetModel } from '@metrikube/core';
 
-  constructor(private readonly http: AxiosInstance) { }
+export class DashboardMetricsImpl implements DashboardMetricsAdapter {
+  constructor(private readonly http: AxiosInstance) {}
 
   async getWidgets(): Promise<WidgetModel[]> {
     const { data } = await this.http.get<WidgetModel[]>('/dashboard');
@@ -12,6 +12,11 @@ export class DashboardMetricsImpl implements DashboardMetricsAdapter {
   }
 
   async deleteWidget(widgetId: string): Promise<void> {
-    await this.http.delete(`/dashboard/disable/${widgetId}`)
+    await this.http.delete(`/dashboard/disable/${widgetId}`);
+  }
+
+  async getAlertFields(metricId: string): Promise<string[]> {
+    const { data } = await this.http.get(`/metrics/${metricId}/describe`);
+    return data;
   }
 }

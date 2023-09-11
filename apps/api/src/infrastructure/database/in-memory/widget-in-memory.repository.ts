@@ -18,6 +18,11 @@ export class WidgetInMemoryRepositoryImpl implements WidgetRepository {
     return Promise.resolve(widget as WidgetEntity);
   }
 
+  async deleteWidget(widgetId: string): Promise<void> {
+    const index = this.widgets.findIndex((widget) => widget.id === widgetId);
+    if (index !== -1) this.widgets.splice(index, 1);
+  }
+
   findwidgetById(id: string): Promise<WidgetEntity> {
     return Promise.resolve(this.widgets.find((widget) => widget.id === id));
   }

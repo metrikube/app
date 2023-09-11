@@ -21,12 +21,17 @@ export class AlertRepositoryImpl extends BaseRepository<AlertEntity> implements 
   }
 
   async findByWidgetId(widgetId: string): Promise<Alert[]> {
-    const alerts = await this.find({ where: { widgetId, isActive: true } });
+    const alerts = await this.find({ where: { widgetId } });
     return alerts.map(AlertEntity.toModel);
   }
 
-  async findAlertById(id: string): Promise<Alert> {
+  async findActiveAlertById(id: string): Promise<Alert> {
     const alert = await this.findOne({ where: { id, isActive: true } });
+    return AlertEntity.toModel(alert);
+  }
+
+  async findAlertById(id: string): Promise<Alert> {
+    const alert = await this.findOne({ where: { id } });
     return AlertEntity.toModel(alert);
   }
 

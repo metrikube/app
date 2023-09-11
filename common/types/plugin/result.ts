@@ -82,4 +82,5 @@ export interface ApiGithubError {
 
 export interface PluginConnectionInterface {
   testConnection(credential: GenericCredentialType): Promise<{ ok: boolean; message: string | null }>;
+  describe(metricType: MetricType): string[];
 }

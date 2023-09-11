@@ -1,5 +1,3 @@
-import { Metric } from "@metrikube/common";
+import { Metric } from '@metrikube/common';
 
-
-export type MetricModel = Omit<Metric, "createdAt">
-
+export type MetricModel = Omit<Metric, 'createdAt'>;

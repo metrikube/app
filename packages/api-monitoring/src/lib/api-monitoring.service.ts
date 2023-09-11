@@ -1,8 +1,9 @@
-import { ApiEndpointCredentialType, PluginConnectionInterface, PluginResult } from '@metrikube/common';
 import axios, { AxiosResponse } from 'axios';
 import type { AxiosError } from 'axios';
 
 import { HttpStatus, Injectable, Logger } from '@nestjs/common';
+
+import { ApiEndpointCredentialType, MetricType, PluginConnectionInterface, PluginResult } from '@metrikube/common';
 
 @Injectable()
 export class ApiMonitoringService implements PluginConnectionInterface {
@@ -50,6 +51,15 @@ export class ApiMonitoringService implements PluginConnectionInterface {
         ok: [HttpStatus.NOT_FOUND, HttpStatus.UNAUTHORIZED, HttpStatus.INTERNAL_SERVER_ERROR].includes((error as AxiosError)?.status as HttpStatus),
         message: (error as AxiosError)?.message || null
       };
+    }
+  }
+
+  describe(type: MetricType): (keyof PluginResult<'api-endpoint-health-check'>)[] {
+    switch (type) {
+      case 'api-endpoint-health-check':
+        return ['status', 'value'];
+      default:
+        return [];
     }
   }
 }
