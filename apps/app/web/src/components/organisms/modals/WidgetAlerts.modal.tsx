@@ -1,9 +1,9 @@
 import {
   deleteAlertMutation,
-  getActiveMetricAlertsQuery,
+  getWidgetAlertsQuery,
   toggleAlertMutation
 } from '../../../services/dashboard.service'
-import { ActiveMetricModel } from '@metrikube/core'
+import { WidgetModel } from '@metrikube/core'
 import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined'
 import NotificationsActiveOutlinedIcon from '@mui/icons-material/NotificationsActiveOutlined'
 import NotificationsOffOutlinedIcon from '@mui/icons-material/NotificationsOffOutlined'
@@ -24,23 +24,23 @@ import React, { Dispatch, SetStateAction } from 'react'
 interface Props {
   open: boolean
   setOpenModal: Dispatch<SetStateAction<boolean>>
-  metric: ActiveMetricModel
+  widget: WidgetModel
 }
 
-const MetricAlertsModal = ({ open, setOpenModal, metric }: Props) => {
+const WidgetAlertsModal = ({ open, setOpenModal, widget }: Props) => {
   const queryClient = useQueryClient()
-  const { data: alerts } = getActiveMetricAlertsQuery(metric.id)
+  const { data: alerts } = getWidgetAlertsQuery(widget.id)
 
   const { mutate: toggleNotification } = toggleAlertMutation(() => {
-    queryClient.invalidateQueries({ queryKey: ['getActiveMetricAlert'] })
+    queryClient.invalidateQueries({ queryKey: ['getWidgetAlerts'] })
   })
   const { mutate: deleteAlert } = deleteAlertMutation(() => {
-    queryClient.invalidateQueries({ queryKey: ['getActiveMetricAlert'] })
+    queryClient.invalidateQueries({ queryKey: ['getWidgetAlerts'] })
   })
 
   return (
     <Dialog open={open} onClose={() => setOpenModal(false)}>
-      <DialogTitle>Alertes {metric?.metric.name}</DialogTitle>
+      <DialogTitle>Alertes {widget.metric.name}</DialogTitle>
       <DialogContent>
         <Table>
           <TableHead>
@@ -93,4 +93,4 @@ const MetricAlertsModal = ({ open, setOpenModal, metric }: Props) => {
   )
 }
 
-export default MetricAlertsModal
+export default WidgetAlertsModal

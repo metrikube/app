@@ -4,7 +4,8 @@ import { ApiProperty } from '@nestjs/swagger';
 
 import { GenericCredentialType, MetricType, PluginResult } from '@metrikube/common';
 
-import { PluginToMetricEntity } from '../../../infrastructure/database/entities/plugin_to_metric.entity';
+import { Widget } from '../../../domain/models/widget.model';
+import { WidgetEntity } from '../../../infrastructure/database/entities/widget.entity';
 
 export class RegisterPluginRequestDto {
   @ApiProperty({
@@ -41,7 +42,7 @@ export class RegisterPluginResponseDto {
   @ApiProperty({
     type: String,
     name: 'id',
-    description: 'The id of the created plugin_to_metric entity, it represents the connected metric in the dashboard',
+    description: 'The id of the created widget entity, it represents the connected metric in the dashboard',
     example: '1fe68a45-b3a1-44a5-bf87-7393cfa4017a'
   })
   public id: string;
@@ -59,8 +60,8 @@ export class RegisterPluginResponseDto {
   })
   data: PluginResult<MetricType>;
 
-  constructor(pluginToMetric: PluginToMetricEntity | null, metricDataSample: PluginResult<MetricType>) {
-    this.id = pluginToMetric?.id ?? null;
+  constructor(widget: Widget | null, metricDataSample: PluginResult<MetricType>) {
+    this.id = widget?.id ?? null;
     this.data = metricDataSample;
   }
 }

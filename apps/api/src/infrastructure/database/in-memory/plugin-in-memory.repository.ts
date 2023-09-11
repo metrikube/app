@@ -1,8 +1,7 @@
-import { Plugin } from '@metrikube/common';
-
 import { Injectable } from '@nestjs/common';
 
 import { PluginRepository } from '../../../domain/interfaces/repository/plugin.repository';
+import { Plugin } from '../../../domain/models/plugin.model';
 import { PluginEntity } from '../entities/plugin.entity';
 
 @Injectable()

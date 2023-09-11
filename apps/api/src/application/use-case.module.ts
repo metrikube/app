@@ -8,8 +8,8 @@ import { GithubPluginModule, GithubService } from '@metrikube/github-plugin';
 import { AlertRepositoryImpl } from '../infrastructure/database/repositories/alert.repository';
 import { CredentialRepositoryImpl } from '../infrastructure/database/repositories/credential.repository';
 import { MetricRepositoryImpl } from '../infrastructure/database/repositories/metric.repository';
-import { PluginToMetricRepositoryImpl } from '../infrastructure/database/repositories/plugin-to-metric.repository';
 import { PluginRepositoryImpl } from '../infrastructure/database/repositories/plugin.repository';
+import { WidgetRepositoryImpl } from '../infrastructure/database/repositories/wiget.repository';
 import { DiTokens } from '../infrastructure/di/tokens';
 import { InfrastructureModule } from '../infrastructure/infrastructure.module';
 import { NotificationService } from '../infrastructure/services/notification/notification.service';
@@ -31,7 +31,7 @@ import { PluginUseCase } from './use-cases/plugin/plugin.use-case';
     { provide: DiTokens.CredentialRepositoryToken, useClass: CredentialRepositoryImpl },
     { provide: DiTokens.PluginRepositoryToken, useClass: PluginRepositoryImpl },
     { provide: DiTokens.MetricRepositoryToken, useClass: MetricRepositoryImpl },
-    { provide: DiTokens.PluginToMetricRepositoryToken, useClass: PluginToMetricRepositoryImpl },
+    { provide: DiTokens.widgetRepositoryToken, useClass: WidgetRepositoryImpl },
 
     { provide: DiTokens.DbAnalyticsPluginServiceToken, useClass: DbAnalyticsPluginService },
     { provide: DiTokens.ApiMonitoringToken, useClass: ApiMonitoringService },
@@ -54,7 +54,7 @@ import { PluginUseCase } from './use-cases/plugin/plugin.use-case';
     DiTokens.Mailer,
     DiTokens.MetricRepositoryToken,
     DiTokens.PluginRepositoryToken,
-    DiTokens.PluginToMetricRepositoryToken,
+    DiTokens.widgetRepositoryToken,
     DiTokens.Scheduler
   ]
 })

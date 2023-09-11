@@ -4,13 +4,13 @@ import { CredentialEntity } from '../../../infrastructure/database/entities/cred
 import { Credential } from '../../models/credential.model';
 
 export interface CredentialRepository {
-  getCredentials(criterias?: FindManyOptions<CredentialEntity> | FindOptionsWhere<CredentialEntity>): Promise<CredentialEntity[]>;
+  getCredentials(criterias?: FindManyOptions<CredentialEntity> | FindOptionsWhere<CredentialEntity>): Promise<Credential[]>;
 
-  findCrendentialByPluginId(pluginId: string): Promise<CredentialEntity>;
+  findCrendentialByPluginId(pluginId: string): Promise<Credential>;
 
-  createCredential(credential: Credential): Promise<CredentialEntity>;
+  createCredential(credential: Partial<Credential>): Promise<Credential>;
 
-  findCredentialByIdWithPlugin(id: string): Promise<CredentialEntity>;
+  findCredentialByIdWithPlugin(id: string): Promise<Credential>;
 
-  findCredentialByIdAndPluginId(id: string, pluginId: string): Promise<CredentialEntity>;
+  findCredentialByIdAndPluginId(id: string, pluginId: string): Promise<Credential>;
 }

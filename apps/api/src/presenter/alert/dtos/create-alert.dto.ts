@@ -5,7 +5,7 @@ import { ApiProperty } from '@nestjs/swagger';
 
 import { MetricThresholdOperatorEnum } from '@metrikube/common';
 
-import { AlertEntity } from '../../../infrastructure/database/entities/alert.entity';
+import { Alert } from '../../../domain/models/alert.model';
 
 class AlertConditionRequestDto {
   @ApiProperty({ name: 'field', type: String, description: 'The field to check', example: 'value' })
@@ -59,14 +59,14 @@ export class CreateAlertResponseDto {
   alerts: {
     label: string;
     id: string;
-    pluginToMetricId: string;
+    widgetId: string;
   }[];
 
-  constructor(alerts: AlertEntity[]) {
+  constructor(alerts: Alert[]) {
     this.alerts = alerts.map((alert) => ({
       label: alert.label,
       id: alert.id,
-      pluginToMetricId: alert.pluginToMetricId
+      widgetId: alert.widgetId
     }));
   }
 }
