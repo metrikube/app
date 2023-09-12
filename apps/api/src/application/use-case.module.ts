@@ -12,6 +12,7 @@ import { PluginRepositoryImpl } from '../infrastructure/database/repositories/pl
 import { WidgetRepositoryImpl } from '../infrastructure/database/repositories/wiget.repository';
 import { DiTokens } from '../infrastructure/di/tokens';
 import { InfrastructureModule } from '../infrastructure/infrastructure.module';
+import { PluginResolverService } from '../infrastructure/services/common/plugin-resolver.service';
 import { NotificationService } from '../infrastructure/services/notification/notification.service';
 import { SchedulerService } from '../infrastructure/services/scheduler/scheduler.service';
 import { AlertUseCase } from './use-cases/alert/alert.use-case';
@@ -39,11 +40,14 @@ const providers: Provider[] = [
   { provide: DiTokens.GithubServiceToken, useClass: GithubService },
   ///////////////////////////
   { provide: DiTokens.Mailer, useClass: NotificationService },
+  { provide: DiTokens.PluginResolver, useClass: PluginResolverService },
   { provide: DiTokens.Scheduler, useClass: SchedulerService }
 ];
 
+const plugins = [ApiMonitoringModule, AwsPluginModule, DbAnalyticsPluginModule, GithubPluginModule];
+
 @Module({
-  imports: [InfrastructureModule, AwsPluginModule, ApiMonitoringModule, DbAnalyticsPluginModule, GithubPluginModule],
+  imports: [InfrastructureModule, ...plugins],
   providers,
   exports: [
     DiTokens.AWSServiceToken,
@@ -57,6 +61,7 @@ const providers: Provider[] = [
     DiTokens.Mailer,
     DiTokens.MetricRepositoryToken,
     DiTokens.PluginRepositoryToken,
+    DiTokens.PluginResolver,
     DiTokens.PluginUseCaseToken,
     DiTokens.Scheduler,
     DiTokens.WidgetRepositoryToken,

@@ -11,9 +11,9 @@ export type ApiResult = {
   'aws-bucket-multiple-instances': ApiAWSSingleResourceInstanceResult[];
   'aws-ec2-single-instance-usage': ApiAWSSingleResourceInstanceResult;
   'aws-ec2-multiple-instances-usage': ApiAWSSingleResourceInstanceResult[];
-  'github-last-prs': ApiGithubPullRequestsOrIssues;
-  'github-last-issues': ApiGithubPullRequestsOrIssues;
-  'database-queries': ApiDatabaseLastAverageQueriesByHour[];
+  'github-last-prs': ApiGithubIssues[] | ApiGithubError;
+  'github-last-issues': ApiGithubIssues[] | ApiGithubError;
+  'database-queries': ApiDatabaseLastAverageQueriesByHour;
   'database-size': ApiDatabaseSize;
   'database-slow-queries': ApiDatabaseSlowQueries[];
 };

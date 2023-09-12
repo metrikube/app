@@ -72,7 +72,7 @@ export class DbAnalyticsPluginService implements PluginConnectionInterface {
 
   // prettier-ignore
   describe(type: MetricType): (
-    | keyof PluginResult<'database-queries'>[number]['queries'][number]
+    | keyof PluginResult<'database-queries'>['queries'][number]
     | keyof PluginResult<'database-size'>
     | keyof PluginResult<'database-slow-queries'>[number]
   )[] {

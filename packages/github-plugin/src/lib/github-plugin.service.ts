@@ -30,7 +30,7 @@ export class GithubService implements PluginConnectionInterface {
     }
   }
 
-    async getRepoPRs({ accessToken, repo, owner }: GithubCredentialType): Promise<ApiGithubPullRequestsOrIssues[] | ApiGithubError> {
+    async getRepoPRs({ accessToken, repo, owner }: GithubCredentialType): Promise<ApiGithubIssues[] | ApiGithubError> {
     try {
       const { data: prs } = await axios.get<PullRequests>(`https://api.github.com/repos/${owner}/${repo}/pulls?per_page=${limit}&state=all`, {
         headers: {
