@@ -54,6 +54,7 @@ const WidgetAlertsModal = ({ open, setOpenModal, widget }: Props) => {
   })
   const { mutate: deleteAlert } = deleteAlertMutation(() => {
     queryClient.invalidateQueries({ queryKey: ['getWidgetAlerts'] })
+    queryClient.invalidateQueries({ queryKey: ['getWidgets'] })
   })
 
   const openModal = () => {

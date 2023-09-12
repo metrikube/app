@@ -3,7 +3,7 @@ import { WidgetModel } from '@metrikube/core'
 import MoreVertIcon from '@mui/icons-material/MoreVert'
 import DeleteIcon from '@mui/icons-material/Delete';
 import NotificationsIcon from '@mui/icons-material/Notifications';
-import { Grid, CardHeader, IconButton, CardContent, MenuItem } from '@mui/material'
+import { Grid, CardHeader, IconButton, CardContent, Chip, Box, Badge } from '@mui/material'
 import { MetrikubeMenu } from 'apps/app/web/src/components/molecules/MetrikubeMenu'
 import { MetrikubeMenuItem } from 'apps/app/web/src/components/molecules/MetrikubeMenu/models'
 import React from 'react'
@@ -56,27 +56,30 @@ export const WidgetCard = ({
       <StyledCard>
         <CardHeader
           title={widget.name}
-          titleTypographyProps={{sx: {fontWeight: 'bold'}}}
+          titleTypographyProps={{ sx: { fontWeight: 'bold' } }}
           subheader={widget.metric.name}
           avatar={<Logo alt={widget.plugin.name} src={avatarUrl} />}
           action={
-            <IconsActionContainer>
-              <div>
-                <IconButton onClick={handleMoreButtonClick}>
-                  <MoreVertIcon />
-                </IconButton>
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+              {widget.metric.isNotifiable && widget.alertNumber > 0 && (
+                <Chip label={widget.alertNumber > 1 ? `${widget.alertNumber} alertes` : `${widget.alertNumber} alerte`} color="info" variant="outlined" size="small" />
+              )}
+              <IconsActionContainer>
+                <div>
+                  <IconButton onClick={handleMoreButtonClick}>
+                    <MoreVertIcon />
+                  </IconButton>
 
-                <MetrikubeMenu
-                  id={`widget-menu-${widget.metric.id}`}
-                  anchorEl={anchorEl}
-                  open={isMetricMenuOpen}
-                  onClose={() => setAnchorEl(null)}
-                  menuItems={metricMenuItems}
-                />
-
-
-              </div>
-            </IconsActionContainer>
+                  <MetrikubeMenu
+                    id={`widget-menu-${widget.metric.id}`}
+                    anchorEl={anchorEl}
+                    open={isMetricMenuOpen}
+                    onClose={() => setAnchorEl(null)}
+                    menuItems={metricMenuItems}
+                  />
+                </div>
+              </IconsActionContainer>
+            </Box>
           }
         />
         <CardContent>{children}</CardContent>

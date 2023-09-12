@@ -24,6 +24,7 @@ const CreateAlertModal = ({ open, setOpenModal, widget }: Props) => {
 
   const { mutate: createAlert } = createAlertsMutation(() => {
     queryClient.invalidateQueries({ queryKey: ['getWidgetAlerts'] })
+    queryClient.invalidateQueries({ queryKey: ['getWidgets'] })
   })
 
   const { data: alertFields } = getAlertFieldsQuery(widget.metric.id)

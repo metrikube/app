@@ -14,7 +14,7 @@ import { Widget } from '../../../domain/models/widget.model';
 import { DiTokens } from '../../../infrastructure/di/tokens';
 import { RefreshDashboardResponseDto } from '../../../presenter/dashboard/dtos/refresh-dashboard-response.dto';
 
-type ActivatedMetric = Widget & { type: string; value: GenericCredentialType };
+export type ActivatedMetric = Widget & { type: string; value: GenericCredentialType };
 
 export class DashboardUseCase implements DashboardUseCaseInterface {
   private readonly logger = new Logger(this.constructor.name);
@@ -55,21 +55,14 @@ export class DashboardUseCase implements DashboardUseCaseInterface {
   }
 
   private async resolveMetrics(activatedMetricsWithCredentials: ActivatedMetric[]): Promise<RefreshDashboardResponseDto[]> {
-    const metricResultMap: Record<string, RefreshDashboardResponseDto> = {};
+    const metricResultMap: Map<string, RefreshDashboardResponseDto> = new Map<string, RefreshDashboardResponseDto>();
+
     for (const metricCredential of activatedMetricsWithCredentials) {
       const metricResult = await this.pluginResolver.queryPluginDataByMetricType(metricCredential.metric.type as MetricType, metricCredential.value);
-      metricResultMap[metricCredential.id] = new RefreshDashboardResponseDto(
-        metricCredential.id,
-        metricCredential.name,
-        metricCredential.description,
-        metricCredential.plugin,
-        metricCredential.metric,
-        metricCredential.resourceId,
-        metricResult
-      );
+      metricResultMap.set(metricCredential.id, new RefreshDashboardResponseDto(metricCredential, metricResult));
     }
 
-    return Object.values(metricResultMap);
+    return [...metricResultMap.values()];
   }
 
   private mapToPluginCredential(plugin: Plugin, credentialEntity: Credential): { type: string; value: GenericCredentialType } {

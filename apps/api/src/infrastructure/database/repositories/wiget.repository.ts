@@ -20,7 +20,7 @@ export class WidgetRepositoryImpl extends BaseRepository<WidgetEntity> implement
   async getActiveMetricsWithRelations(): Promise<Widget[]> {
     const widgets = await this.find({
       where: { isActive: true },
-      relations: { plugin: true, metric: true }
+      relations: { plugin: true, metric: true, alerts: true }
     });
     return widgets.map(WidgetEntity.toModelDetailed);
   }
