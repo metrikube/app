@@ -1,5 +1,5 @@
-import { Body, Controller, Delete, Get, HttpStatus, Inject, Param, ParseArrayPipe, ParseUUIDPipe, Post } from '@nestjs/common';
-import { ApiBody, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Inject, Param, ParseArrayPipe, ParseUUIDPipe, Post } from '@nestjs/common';
+import { ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 import { AlertUseCaseInterface } from '../../../domain/interfaces/use-cases/alert.use-case.interface';
 import { PluginUseCaseInterface } from '../../../domain/interfaces/use-cases/plugin.use-case.interface';
@@ -8,6 +8,7 @@ import { Alert } from '../../../domain/models/alert.model';
 import { AlertEntity } from '../../../infrastructure/database/entities/alert.entity';
 import { DiTokens } from '../../../infrastructure/di/tokens';
 import { CreateAlertRequestDto, CreateAlertResponseDto } from '../../alert/dtos/create-alert.dto';
+import { RegisterPluginRequestDto, RegisterPluginResponseDto } from '../../plugin/dtos/register-plugin.dto';
 
 @ApiTags('widgets')
 @Controller('widgets')
@@ -23,6 +24,14 @@ export class WidgetController {
   @ApiParam({ name: 'widgetId', type: String })
   getWidgetAlerts(@Param('widgetId', new ParseUUIDPipe()) widgetId: string): Promise<Alert[]> {
     return this.alertUsecase.getwidgetAlerts(widgetId);
+  }
+
+  @Post('/')
+  @HttpCode(HttpStatus.CREATED)
+  @ApiResponse({ status: HttpStatus.CREATED, description: 'RegisterPluginResponseDto', type: RegisterPluginResponseDto })
+  @ApiOperation({ summary: 'Add a new widget configuration' })
+  registerPlugin(@Body() body: RegisterPluginRequestDto): Promise<RegisterPluginResponseDto> {
+    return this.pluginUsecase.registerPlugin(body);
   }
 
   @Post(':widgetId/alerts')

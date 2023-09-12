@@ -27,14 +27,6 @@ export class PluginController {
     return this.pluginUseCase.listPlugins();
   }
 
-  @Post('/')
-  @HttpCode(HttpStatus.CREATED)
-  @ApiResponse({ status: HttpStatus.CREATED, description: 'RegisterPluginResponseDto', type: RegisterPluginResponseDto })
-  @ApiOperation({ summary: 'Add a new plugin configuration' })
-  registerPlugin(@Body() body: RegisterPluginRequestDto): Promise<RegisterPluginResponseDto> {
-    return this.pluginUseCase.registerPlugin(body);
-  }
-
   @Get('/:id/:widgetId')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Get plugin data' })
