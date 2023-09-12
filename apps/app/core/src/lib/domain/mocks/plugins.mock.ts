@@ -4,7 +4,7 @@ import { awsSingleInstance, awsBucketInstance, githubLastPrs } from './metrics.m
 
 export const providerCategoriesMock = [
   {
-    label: 'All',
+    label: 'Tous',
     value: ''
   },
   {
@@ -12,11 +12,11 @@ export const providerCategoriesMock = [
     value: 'cloud'
   },
   {
-    label: 'Database',
+    label: 'Base de données',
     value: 'db'
   },
   {
-    label: 'Versioning',
+    label: 'Gestion de version',
     value: 'versionning'
   },
   {

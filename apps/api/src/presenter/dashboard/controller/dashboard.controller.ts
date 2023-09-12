@@ -17,10 +17,10 @@ export class DashboardController {
     return this.dashboardUseCase.refreshDashboard();
   }
 
-  @Delete('disable/:pluginToMetricId')
+  @Delete('disable/:widgetId')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Disable dashbaord widget' })
-  disableDashboard(@Param('pluginToMetricId', new ParseUUIDPipe()) pluginToMetricId: string): Promise<void> {
-    return this.dashboardUseCase.disableDashboardMetric(pluginToMetricId);
+  disableDashboard(@Param('widgetId', new ParseUUIDPipe()) widgetId: string): Promise<void> {
+    return this.dashboardUseCase.disableDashboardMetric(widgetId);
   }
 }

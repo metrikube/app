@@ -1,8 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { ApiAWSSingleResourceInstanceResult, PluginConnectionInterface } from '@metrikube/common';
-import { AwsCredentialType } from '@metrikube/common';
+import { ApiAWSSingleResourceInstanceResult, AwsCredentialType, MetricType, PluginConnectionInterface, PluginResult } from '@metrikube/common';
 
+import { InvalidCredentialException } from '../../../../apps/api/src/domain/exceptions/invalid-credential.exception';
 import { EC2Service } from './ec2.service';
 import { S3Service } from './s3.service';
 
@@ -21,6 +21,7 @@ export class AWSService implements PluginConnectionInterface {
       throw error;
     }
   }
+
   async getEc2Instances(credentials: AwsCredentialType) {
     try {
       const ec2Service = new EC2Service(credentials);
@@ -69,10 +70,27 @@ export class AWSService implements PluginConnectionInterface {
       };
     } catch (error) {
       Logger.log(`🏓 Pinging AWS on region"${credentials.region}" failed`);
-      return {
-        ok: false,
-        message: `Pinging AWS on region"${credentials.region}" failed`
-      };
+      throw new InvalidCredentialException(error);
+    }
+  }
+
+  describe(
+    type: MetricType
+  ): (
+    | keyof PluginResult<'aws-ec2-multiple-instances-usage'>[number]
+    | keyof PluginResult<'aws-ec2-single-instance-usage'>
+    | keyof PluginResult<'aws-bucket-single-instance'>
+    | keyof PluginResult<'aws-bucket-multiple-instances'>[number]
+  )[] {
+    switch (type) {
+      case 'aws-ec2-single-instance-usage':
+      case 'aws-ec2-multiple-instances-usage':
+        return ['cost', 'status'];
+      case 'aws-bucket-single-instance':
+      case 'aws-bucket-multiple-instances':
+        return ['cost', 'status'];
+      default:
+        return [];
     }
   }
 }

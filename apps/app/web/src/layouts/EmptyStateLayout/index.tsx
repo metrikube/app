@@ -1,4 +1,4 @@
-import { AddOutlined } from '@mui/icons-material'
+import { AddchartOutlined } from '@mui/icons-material'
 import { Box, Button, Typography } from '@mui/material'
 import React from 'react'
 
@@ -42,8 +42,9 @@ export const EmptyStateLayout = ({
           display: 'flex',
           columnGap: '0.5rem'
         }}
+        startIcon={<AddchartOutlined />}
         variant="contained">
-        <AddOutlined /> {buttonLabel}
+        {buttonLabel}
       </Button>
     </Box>
   )

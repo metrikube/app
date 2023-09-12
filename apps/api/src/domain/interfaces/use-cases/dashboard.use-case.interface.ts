@@ -3,5 +3,5 @@ import { RefreshDashboardResponseDto } from '../../../presenter/dashboard/dtos/r
 export interface DashboardUseCaseInterface {
   refreshDashboard(): Promise<RefreshDashboardResponseDto[]>;
 
-  disableDashboardMetric(pluginToMetricId: string): Promise<void>;
+  disableDashboardMetric(widgetId: string): Promise<void>;
 }

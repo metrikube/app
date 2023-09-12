@@ -1,14 +1,8 @@
 import { Column, CreateDateColumn, Entity, Generated, JoinColumn, OneToMany, PrimaryColumn } from 'typeorm';
 
+import { Plugin } from '../../../domain/models/plugin.model';
 import { MetricEntity } from './metric.entity';
-import { PluginToMetricEntity } from './plugin_to_metric.entity';
-
-const pluginInstructionExample = `
-  *1. Create an IAM user with the following permissions:*
-      - AmazonEC2ReadOnlyAccess, AmazonS3ReadOnlyAccess, AmazonSNSReadOnlyAccess [...]
-  *2. Create a new credential with the following parameters:*
-  *3. Enjoy!*
-`;
+import { WidgetEntity } from './widget.entity';
 
 @Entity('plugin')
 export class PluginEntity {
@@ -32,12 +26,12 @@ export class PluginEntity {
   category: string;
 
   @JoinColumn()
-  @OneToMany(() => PluginToMetricEntity, (pluginToMetric: PluginToMetricEntity) => pluginToMetric.plugin)
-  pluginToMetrics: PluginToMetricEntity[];
+  @OneToMany(() => WidgetEntity, (widget: WidgetEntity) => widget.plugin)
+  widgets: WidgetEntity[];
 
   @JoinColumn()
   @OneToMany(() => MetricEntity, (metric: MetricEntity) => metric.plugin)
-  metrics: MetricEntity;
+  metrics: MetricEntity[];
 
   @Column({ type: 'varchar', nullable: false })
   credentialType: string;
@@ -47,4 +41,29 @@ export class PluginEntity {
 
   @CreateDateColumn()
   createdAt: Date;
+
+  /**
+   * Maps a PluginEntity to a Plugin domain model
+   * @param entity
+   */
+  static toModel(entity: PluginEntity): Plugin {
+    // prettier-ignore
+    return new Plugin(
+      entity.id,
+      entity.name,
+      entity.type,
+      entity.description,
+      entity.instruction,
+      entity.category,
+      entity.credentialType,
+      entity.iconUrl
+    );
+  }
+
+  static toModelDetailed(entity: PluginEntity): Plugin {
+    const pluginModel = PluginEntity.toModel(entity);
+    pluginModel.metrics = entity.metrics.map(MetricEntity.toModel);
+    pluginModel.widgets = entity.widgets.map(WidgetEntity.toModel);
+    return pluginModel;
+  }
 }

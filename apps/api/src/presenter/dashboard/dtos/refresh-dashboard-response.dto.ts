@@ -2,6 +2,9 @@ import { ApiProperty } from '@nestjs/swagger';
 
 import { MetricType, PluginResult } from '@metrikube/common';
 
+import { ActivatedMetric } from '../../../application/use-cases/dashboard/dashboard.use-case';
+import { Metric } from '../../../domain/models/metric.model';
+import { Plugin } from '../../../domain/models/plugin.model';
 import { MetricEntity } from '../../../infrastructure/database/entities/metric.entity';
 import { PluginEntity } from '../../../infrastructure/database/entities/plugin.entity';
 
@@ -18,7 +21,7 @@ class DashboardPluginDto {
   @ApiProperty()
   description: string;
 
-  constructor(plugin: PluginEntity) {
+  constructor(plugin: Plugin) {
     this.id = plugin.id;
     this.name = plugin.name;
     this.type = plugin.type;
@@ -39,7 +42,7 @@ class DashboardMetricDto {
   @ApiProperty()
   isNotifiable: boolean;
 
-  constructor(metric: MetricEntity) {
+  constructor(metric: Metric) {
     this.id = metric.id;
     this.name = metric.name;
     this.type = metric.type;
@@ -55,7 +58,7 @@ export class RefreshDashboardResponseDto {
   name: string;
 
   @ApiProperty()
-  description: string;
+  alertNumber: number;
 
   @ApiProperty({ type: DashboardPluginDto })
   plugin: DashboardPluginDto;
@@ -69,13 +72,13 @@ export class RefreshDashboardResponseDto {
   @ApiProperty()
   data: PluginResult<MetricType>;
 
-  constructor(id: string, name: string, description: string, plugin: PluginEntity, metric: MetricEntity, resourceId: string, data: PluginResult<MetricType>) {
-    this.id = id;
-    this.name = name;
-    this.description = description;
-    this.plugin = new DashboardPluginDto(plugin);
-    this.metric = new DashboardMetricDto(metric);
-    this.resourceId = resourceId;
+  constructor(activatedMetric: ActivatedMetric, data: PluginResult<MetricType>) {
+    this.id = activatedMetric.id;
+    this.name = activatedMetric.name;
+    this.alertNumber = activatedMetric.alerts.length;
+    this.plugin = new DashboardPluginDto(activatedMetric.plugin);
+    this.metric = new DashboardMetricDto(activatedMetric.metric);
+    this.resourceId = activatedMetric.resourceId;
     this.data = data;
   }
 }

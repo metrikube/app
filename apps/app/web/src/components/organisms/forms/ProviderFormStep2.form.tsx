@@ -21,12 +21,12 @@ const ProviderFormStep2 = () => {
 
   return (
     <Step2Container>
-      <OutlinedCard title="Instructions">
-        {selectedProvider?.instruction && (
-          <ReactMarkdown>{selectedProvider.instruction}</ReactMarkdown>
-        )}
-      </OutlinedCard>
-      <OutlinedCard title="Credentials">
+      {selectedProvider?.instruction && (
+        <OutlinedCard title="Instructions">
+          <div dangerouslySetInnerHTML={{ __html: selectedProvider.instruction }} />
+        </OutlinedCard>
+      )}
+      <OutlinedCard title="Identifiants">
         {credentialType && (
           <>
             {credentialType === 'github' && <GithubCredentialForm />}
@@ -36,15 +36,17 @@ const ProviderFormStep2 = () => {
           </>
         )}
       </OutlinedCard>
-      <OutlinedCard title="Metrics">
+      <OutlinedCard title="Widget">
         <TextField
           id="name"
           label="Nom"
           type="text"
           variant="outlined"
           size="small"
+          error={Boolean(errors.name)}
+          helperText={errors.name?.message as string}
           {...register('name', {
-            required: 'This field is required.'
+            required: 'Ce champs est obligatoire'
           })}
         />
         <Autocomplete
@@ -58,18 +60,20 @@ const ProviderFormStep2 = () => {
             <TextField
               {...params}
               variant="outlined"
-              label="Metrics"
+              label="Metriques"
               error={Boolean(errors.metric)}
               helperText={errors.metric?.message as string}
-              placeholder="Select a metric"
+              placeholder="Sélectionner une métrique"
               {...register('metric', {
-                required: 'test'
+                required: 'Ce champs est obligatoire'
               })}
               sx={{ minWidth: '250px' }}
             />
           )}
         />
-        <TextField label="Resource ID" variant="outlined" size="small" />
+        {selectedProvider?.type === 'aws' && (
+          <TextField label="Ressource ID" variant="outlined" size="small" />
+        )}
       </OutlinedCard>
     </Step2Container>
   )

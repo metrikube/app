@@ -33,7 +33,7 @@ export class MetricRepositoryImpl extends BaseRepository<MetricEntity> implement
   findMetricByType(pluginId: string, type: MetricType): Promise<MetricEntity> {
     return this.findOne({
       where: { type, plugin: { id: pluginId } },
-      relations: { pluginToMetrics: true }
+      relations: { widgets: true }
     });
   }
 }

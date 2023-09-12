@@ -6,7 +6,7 @@ import { AlertEntity } from '../../apps/api/src/infrastructure/database/entities
 import { CredentialEntity } from '../../apps/api/src/infrastructure/database/entities/credential.entity';
 import { MetricEntity } from '../../apps/api/src/infrastructure/database/entities/metric.entity';
 import { PluginEntity } from '../../apps/api/src/infrastructure/database/entities/plugin.entity';
-import { PluginToMetricEntity } from '../../apps/api/src/infrastructure/database/entities/plugin_to_metric.entity';
+import { WidgetEntity } from '../../apps/api/src/infrastructure/database/entities/widget.entity';
 
 export class SeedDefaultDatabase1693679995600 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
@@ -35,7 +35,7 @@ export class SeedDefaultDatabase1693679995600 implements MigrationInterface {
       github: randomUUID()
     };
 
-    const pluginToMetricIds = {
+    const widgetIds = {
       pingApi: randomUUID()
     };
 
@@ -45,7 +45,56 @@ export class SeedDefaultDatabase1693679995600 implements MigrationInterface {
         name: 'AWS',
         type: 'aws',
         description: 'Amazon Web Services Plugin',
-        instruction: '...waiting for instruction...',
+        instruction: `
+        <h2 id="guide-installation-plugin-aws">Guide installation plugin AWS</h2>
+        <h3 id="database-compatible">Activer Cost Explorer</h3>
+        <p>Pour utiliser l'API Cost Explorer, vous devez activer l'accès au service Cost Explorer via la console AWS en allant dans le service <strong>"Cost Explorer"</strong></p>
+        <h3 id="database-compatible">Créer un utilisateur </h3>
+        <p>Vous devez tout d'abord créer un utilisateur<a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html">IAM<a/> avec la politique suivante:</p>
+        <pre><code class="lang-json">
+          {
+            "Version": "2012-10-17",
+            "Statement": [
+                {
+                    "Effect": "Allow",
+                    "Action": [
+                        "ce:*"
+                    ],
+                    "Resource": [
+                        "*"
+                    ]
+                },
+                {
+                    "Effect": "Allow",
+                    "Action": [
+                        "ec2:DescribeInstances"
+                    ],
+                    "Resource": "*"
+                },
+                {
+                    "Effect": "Allow",
+                    "Action": [
+                        "s3:ListAllMyBuckets",
+                        "s3:GetBucketLocation"
+                    ],
+                    "Resource": "*"
+                }
+            ]
+          }
+        </code></pre>
+        <p>Remarque: Cela vous permettra d'avoir les accès pour appeler les services AWS (vous pouvez éléver ou non ces déclarations, ici nous sommes en lecture et liste).</p>
+        <h3 id="creation-des-credentials">Création des identifiants</h3>
+        <p>Une fois votre utilisateur IAM créé, il faudra <a href="https://docs.aws.amazon.com/powershell/latest/userguide/pstools-appendix-sign-up.html">récupérer vos clefs d'accès</a>.</p>
+        <p>Une fois les clefs récupérées, copiez vos deux clefs d'accès et copiez les dans la configuration du plugin</p>
+		    <p>Format de valeurs du json:</p>
+        <pre><code class="lang-json">
+          {
+              <span class="hljs-attr">"accessKeyId"</span>: <span class="hljs-string">"AKIAIOSFODNN7EXAMPLE"</span>,
+              <span class="hljs-attr">"secretAccessKey"</span>: <span class="hljs-string">"wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"</span>,
+              <span class="hljs-attr">"region"</span>: <span class="hljs-string">"eu-west-2"</span>,
+          }
+        </code></pre>
+        `,
         category: 'cloud',
         credentialType: 'aws',
         iconUrl: ''
@@ -55,7 +104,60 @@ export class SeedDefaultDatabase1693679995600 implements MigrationInterface {
         name: 'SQL Database',
         type: 'sql_database',
         description: 'SQL Database Plugin',
-        instruction: '...waiting for instruction...',
+        instruction: `
+        <h2 id="guide-installation-plugin-db">Guide installation plugin Db</h2>
+        <h3 id="database-compatible">Database compatible</h3>
+        <ul>
+        <li>Mysql</li>
+        <li>Mariadb</li>
+        </ul>
+        <h3 id="lignes-executer-sur-votre-base-de-donn-es">Lignes à executer sur votre base de données</h3>
+        <pre><code class="lang-sql"><span class="hljs-keyword">select</span> * <span class="hljs-keyword">from</span> performance_schema.setup_consumers <span class="hljs-keyword">where</span> <span class="hljs-keyword">name</span> <span class="hljs-keyword">like</span> <span class="hljs-string">'events%statement%'</span>;
+        </code></pre>
+        <p>Si dans la colonne <code>ENABLED</code> vous avez des valeurs qui ne sont pas <code>YES</code> ou vrai. Vous devez les activer avec la commande:</p>
+        <pre><code class="lang-sql"><span class="hljs-keyword">UPDATE</span>  performance_schema.setup_consumers  <span class="hljs-keyword">SET</span> ENABLED = <span class="hljs-string">'YES'</span> <span class="hljs-keyword">WHERE</span> <span class="hljs-keyword">NAME</span>=<span class="hljs-string">'events_statements_history_long'</span> ;
+        </code></pre>
+        <p>Dans cet exemeple on active la table: <code>events_statements_history_long</code> mais il faut le faire avec vos table non activées. Ensuite il faut lancer cette commande:</p>
+        <pre><code class="lang-sql"><span class="hljs-keyword">Set</span> global <span class="hljs-comment">general_log=</span><span class="hljs-comment">'ON'</span>;
+        <span class="hljs-keyword">SET</span> global <span class="hljs-comment">log_output =</span> <span class="hljs-comment">'table'</span>;
+        </code></pre>
+        <h3 id="creation-des-credentials">Creation des credentials</h3>
+        <p>Vous pouvez créer un utilisateur avec des accès en lecture seule.
+        Il faut ajouter les accès pour cette table, avec ces commandes:</p>
+        <pre><code class="lang-sql"><span class="hljs-keyword">CREATE</span> <span class="hljs-keyword">USER</span> <span class="hljs-string">'metrikube_user'</span> <span class="hljs-keyword">IDENTIFIED</span> <span class="hljs-keyword">BY</span> <span class="hljs-string">'metrikube_pwd'</span>
+        <span class="hljs-keyword">GRANT</span> <span class="hljs-keyword">SELECT</span> <span class="hljs-keyword">ON</span> <span class="hljs-keyword">ON</span> mysql.general_log <span class="hljs-keyword">TO</span> <span class="hljs-string">'metrikube_user'</span>;
+        <span class="hljs-keyword">GRANT</span> <span class="hljs-keyword">SELECT</span> <span class="hljs-keyword">ON</span> mysql.general_log <span class="hljs-keyword">TO</span> <span class="hljs-string">'metrikube_user'</span>;
+        <span class="hljs-keyword">GRANT</span> <span class="hljs-keyword">SELECT</span> <span class="hljs-keyword">ON</span> performance_schema.* <span class="hljs-keyword">TO</span> <span class="hljs-string">'metrikube_user'</span>;
+        <span class="hljs-keyword">GRANT</span> <span class="hljs-keyword">SELECT</span> <span class="hljs-keyword">ON</span> informations_schema.* <span class="hljs-keyword">TO</span> <span class="hljs-string">'metrikube_user'</span>;
+        <span class="hljs-keyword">GRANT</span> <span class="hljs-keyword">SELECT</span> <span class="hljs-keyword">ON</span> &lt;nom_de_votre_db&gt; <span class="hljs-keyword">TO</span> <span class="hljs-string">'metrikube_user'</span>;
+        <span class="hljs-keyword">GRANT</span> PROCESS <span class="hljs-keyword">ON</span> *.* <span class="hljs-keyword">TO</span> <span class="hljs-string">'metrikube_user'</span>;
+        <span class="hljs-keyword">FLUSH</span> <span class="hljs-keyword">PRIVILEGES</span>;
+        </code></pre>
+        <p>Les valeurs de connexion attendus sont sous ce format-ci:</p>
+        <p>Format de valeurs du json</p>
+        <pre><code class="lang-json">{
+            <span class="hljs-attr">"dbName"</span>: <span class="hljs-string">"str"</span>,
+            <span class="hljs-attr">"dbUser"</span>: <span class="hljs-string">"str"</span>,
+            <span class="hljs-attr">"dbPassword"</span>: <span class="hljs-string">"str"</span>,
+            <span class="hljs-attr">"dbPort"</span>: <span class="hljs-string">"str"</span>,
+            <span class="hljs-attr">"dbHost"</span>: <span class="hljs-number">3306</span>
+        }
+        </code></pre>
+        <h3 id="description-des-donn-es">Description des données</h3>
+        <p><strong>Le graphiques nombres de requêtes par heure:</strong></p>
+        <ul>
+        <li>Il contient le nombre de requêtes executés sur la base de données de ces 12 dernières heures </li>
+        </ul>
+        <p><strong>Les requetes les plus lentes:</strong></p>
+        <ul>
+        <li>Ce sont les requêtes qui ont été executés sur la base de données au moins une fois. Avec la datetime de la dernière execution, la requête sql, le temps moyen d&#39;execution et le temps maximum d&#39;execution</li>
+        </ul>
+        <p><strong>La taille de la base de donnée:</strong></p>
+        <ul>
+        <li>La taille de la bdd en mégabits </li>
+        <li>Le nombre de table dans la base </li>
+        <li>Le nombre d&#39;enregistrement dans la base</li>
+        </ul>`,
         category: 'db',
         credentialType: 'dbConnection'
       },
@@ -64,7 +166,10 @@ export class SeedDefaultDatabase1693679995600 implements MigrationInterface {
         name: 'Github',
         type: 'github',
         description: 'Github Plugin',
-        instruction: '...waiting for instruction...',
+        instruction: `<h1>Github Plugin</h1>
+        <p>Grace a ce plugin vous pourrez récuperer les dernières issues et pull requests de vos repositories Github.</p>
+        <h2>Configuration</h2>
+        <p>Pour pouvoir utiliser ce plugin vous devrez créer un token d&#39;accès dans votre compte Github. Vous pouvez le créer <a href="https://github.com/settings/personal-access-tokens/new">ici</a>.<br>Nous vous recommandons d&#39;utiliser les <cite>fine-grained tokens</cite>, car comme son nom l&#39;indique, vous pouvez donner au token seulement les permissions dont vous avez besoin.<br>Pour récuperer les dernières issues, vous devrez donner au token la permission <cite>Issues</cite> en lecture seule.<br>Pareil pour les dernières pull requests, vous devrez donner au token la permission <cite>Pull requests</cite> en lecture seule.</p>`,
         category: 'versionning',
         credentialType: 'github',
         iconUrl: ''
@@ -74,7 +179,8 @@ export class SeedDefaultDatabase1693679995600 implements MigrationInterface {
         name: 'API Health Check',
         type: 'api_endpoint',
         description: 'API Health Check Plugin',
-        instruction: '...waiting for instruction...',
+        instruction:
+          "<p><strong>Installation plugin API :</strong></p> <ol> <li>Sur votre API mettez à disposition un endpoint API accesssible en [GET] sur la route de votre choix.</li> <li>Assurez-vous que votre API soit acessible sans authentification, ou alors que vous ayez un token d'autorisation à fournir dans le les paramètres de votre requête (ex: https://monapi.com/api/v1/endpoint?token=123456789).</li> <li>Enfin, assurez-vous que votre endpoint retourne un code HTTP de réponses de succès (200 - 299)</li> </ol>",
         category: 'api',
         credentialType: 'apiEndpoint',
         iconUrl: ''
@@ -167,9 +273,9 @@ export class SeedDefaultDatabase1693679995600 implements MigrationInterface {
           'eyJhY2Nlc3NUb2tlbiI6ImdpdGh1Yl9wYXRfMTFBS1RYRFBBMHhVUGUzbFRUOTFXNl9CMXJzd1hwRGJCU01NTVZUUmdESE1PTUFVTHMwSkV3NlZpaHlYVjd3MFd1V01NTEZHUjRQZDNHVnA3UCIsIm93bmVyIjoibWV0cmlrdWJlIiwicmVwbyI6ImFwcCJ9'
       }
     ];
-    const pluginToMetrics = [
+    const widgets = [
       {
-        id: pluginToMetricIds.pingApi,
+        id: widgetIds.pingApi,
         pluginId: pluginIds.apiHealthCheck,
         metricId: metricIds.apiHealthCheck,
         credentialId: credentialIds.apiHealthCheck,
@@ -182,7 +288,7 @@ export class SeedDefaultDatabase1693679995600 implements MigrationInterface {
     const alerts = [
       {
         id: '5607a60c-1dc9-455e-817a-59c3f82a176b',
-        pluginToMetricId: pluginToMetricIds.pingApi,
+        widgetId: widgetIds.pingApi,
         label: 'API Response Time > 50ms',
         triggered: false,
         isActive: true,
@@ -197,14 +303,14 @@ export class SeedDefaultDatabase1693679995600 implements MigrationInterface {
     await this.execute(queryRunner, PluginEntity, plugins);
     await this.execute(queryRunner, MetricEntity, metrics);
     await this.execute(queryRunner, CredentialEntity, credentials);
-    await this.execute(queryRunner, PluginToMetricEntity, pluginToMetrics);
+    await this.execute(queryRunner, WidgetEntity, widgets);
     await this.execute(queryRunner, AlertEntity, alerts);
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query('DELETE FROM alert WHERE id');
     await queryRunner.query('DELETE FROM credential WHERE id');
-    await queryRunner.query('DELETE FROM plugin_to_metric WHERE id');
+    await queryRunner.query('DELETE FROM widget WHERE id');
     await queryRunner.query('DELETE FROM metric WHERE id');
     await queryRunner.query('DELETE FROM plugin WHERE id');
   }

@@ -19,3 +19,10 @@ export type ToggleAlertNotification = {
   alertId: string
   isActive: boolean
 }
+
+export const mapToAlertRequest = (widgetAlerts: AlertForm[], metricId: string): AlertRequest[] => {
+  return widgetAlerts.map((widgetAlert: AlertForm) => ({
+    ...widgetAlert,
+    metricId
+  }))
+}

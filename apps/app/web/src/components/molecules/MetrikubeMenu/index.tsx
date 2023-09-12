@@ -19,16 +19,19 @@ export const MetrikubeMenu = ({ id, anchorEl, open, onClose, menuItems }: Props)
 
   return (
     <Menu id={id} anchorEl={anchorEl} open={open} onClose={onClose}>
-      {menuItems.map((item) => (
-        <MenuButton onClick={() => handleItemClick(item)} key={item.key} variant={item.variant}>
-          {item.icon && (
-            <IconWrapper>
-              <item.icon />
-            </IconWrapper>
-          )}
-          {item.label}
-        </MenuButton>
-      ))}
+      {menuItems.map(
+        (item) =>
+          item.show && (
+            <MenuButton onClick={() => handleItemClick(item)} key={item.key} variant={item.variant}>
+              {item.icon && (
+                <IconWrapper>
+                  <item.icon />
+                </IconWrapper>
+              )}
+              {item.label}
+            </MenuButton>
+          )
+      )}
     </Menu>
   )
 }

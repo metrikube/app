@@ -4,13 +4,14 @@ import {
   CreateAlertUsecase,
   GetPluginsUsecase,
   SetupPluginRequest,
-  SetupPluginUsecase,
+  SetupWidgetUsecase,
   ValidateCredentialsRequest,
   ValidateCredentialsUsecase
 } from '@metrikube/core'
 import { useMutation, useQuery } from '@tanstack/react-query'
 
 const { pluginAdapter, alertAdapter } = useAdapter()
+
 export const getPluginsQuery = () => {
   return useQuery({
     queryKey: ['getPlugins'],
@@ -23,36 +24,39 @@ export const getPluginsQuery = () => {
 export const setupPluginMutation = (onSuccess: (data: unknown) => void) => {
   return useMutation(
     ({ pluginId, name, metricType, credential }: SetupPluginRequest) =>
-      new SetupPluginUsecase(pluginAdapter).execute(pluginId, name, metricType, credential),
+      new SetupWidgetUsecase(pluginAdapter).execute(pluginId, name, metricType, credential),
     {
-      // how to type that ??
-      onSuccess,
-      onError: () => {
-        alert('there was an error')
-      }
+      onSuccess
     }
   )
 }
 
-export const validateCredentialsMutation = (onSuccess: (data: unknown) => void) => {
+export const validateCredentialsMutation = (
+  onSuccess?: (data: unknown) => void,
+  onError?: (data: unknown) => void
+) => {
   return useMutation(
     (payload: ValidateCredentialsRequest) =>
       new ValidateCredentialsUsecase(pluginAdapter).execute(payload),
-    { onSuccess }
+    {
+      onSuccess,
+      onError
+    }
   )
 }
 
-export const createPluginAlertMutation = () => {
+export const createAlertsMutation = (onSuccess?: (data: unknown) => void) => {
   return useMutation(
-    ({ pluginToMetricId, alerts }: CreateAlertRequest) => {
+    ({ widgetId, alerts }: CreateAlertRequest) => {
       return new CreateAlertUsecase(alertAdapter).execute({
-        pluginToMetricId,
+        widgetId,
         alerts
       })
     },
     {
+      onSuccess,
       onError: () => {
-        alert('there was an error')
+        alert('An error was occurred')
       }
     }
   )

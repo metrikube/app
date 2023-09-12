@@ -7,8 +7,8 @@ export class PluginAdapterImpl implements PluginAdapter {
   constructor(private readonly http: AxiosInstance) { }
 
   // FIX resource id
-  async setupPlugin<T extends MetricType>({ pluginId, name, metricType, credential }: SetupPluginRequest): Promise<PluginResult<T>> {
-    const { data } = await this.http.post('/plugins', { pluginId, metricType, credential, ressourceId: 'test', name });
+  async setupWidget<T extends MetricType>({ pluginId, name, metricType, credential }: SetupPluginRequest): Promise<PluginResult<T>> {
+    const { data } = await this.http.post('/widgets', { pluginId, metricType, credential, ressourceId: 'test', name });
     return data;
   }
 
@@ -18,7 +18,11 @@ export class PluginAdapterImpl implements PluginAdapter {
   }
 
   async validateCredentials<T extends MetricType>(payload: ValidateCredentialsRequest): Promise<PluginResult<T>> {
-    const { data } = await this.http.post(`/credentials/validate/${payload.metricId}`, payload.credentials)
-    return data
+    try {
+      const { data } = await this.http.post(`/credentials/validate/${payload.metricId}`, payload.credentials)
+      return data
+    } catch (error) {
+      throw new Error(error.response.data.message)
+    }
   };
 }

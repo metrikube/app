@@ -11,7 +11,6 @@ interface Props {
   isCreateAlertLoading: boolean
   isProviderChose: boolean
   setActiveStep: Dispatch<SetStateAction<number>>
-  handleModalClose: () => void
 }
 
 const ProviderFormActionButtons = ({
@@ -20,8 +19,7 @@ const ProviderFormActionButtons = ({
   isSetupPluginLoading,
   isCreateAlertLoading,
   isProviderChose,
-  setActiveStep,
-  handleModalClose
+  setActiveStep
 }: Props) => {
   const isFirstStep: boolean = activeStep === SetupPluginStepEnum.CHOOSE_PLUGIN
   const isLastStep = (steps: string[], activeStep: number): boolean =>
@@ -36,7 +34,6 @@ const ProviderFormActionButtons = ({
   }
 
   return (
-    //  isFirstStep={isFirstStep} produce an error
     <StyledDialogActions isFirstStep={isFirstStep}>
       {!isFirstStep && !isLastStep(steps, activeStep) && (
         <Button
@@ -44,10 +41,10 @@ const ProviderFormActionButtons = ({
           disableRipple
           startIcon={<ArrowBack />}
           onClick={() => handleBack()}>
-          Back
+          Retour
         </Button>
       )}
-      {activeStep === 1 && (
+      {activeStep === SetupPluginStepEnum.FILL_CREDENTIAL && (
         <LoadingButton
           type="submit"
           size="small"
@@ -68,7 +65,7 @@ const ProviderFormActionButtons = ({
         </LoadingButton>
       )}
       {activeStep === SetupPluginStepEnum.CHOOSE_PLUGIN && (
-        <Tooltip disableHoverListener={isProviderChose} title="You have to choose a provider">
+        <Tooltip disableHoverListener={isProviderChose} title="Vous devez choisir un plugin">
           <span>
             <Button
               onClick={() => handleNext()}
@@ -76,27 +73,29 @@ const ProviderFormActionButtons = ({
               disableRipple
               disabled={!isProviderChose}
               endIcon={<ArrowForward />}>
-              Next
+              Suivant
             </Button>
           </span>
         </Tooltip>
       )}
       {isLastStep(steps, activeStep) && (
         <Button
-          onClick={() => handleModalClose()}
+          type="submit"
           color="success"
           variant="contained"
           disableRipple
           disabled={!isProviderChose}
           endIcon={<Done />}>
-          Finish
+          Terminé
         </Button>
       )}
     </StyledDialogActions>
   )
 }
 
-const StyledDialogActions = styled(DialogActions) <{ isFirstStep: boolean }>`
+const StyledDialogActions = styled(DialogActions, {
+  shouldForwardProp: (prop) => prop !== 'isFirstStep'
+}) <{ isFirstStep: boolean }>`
   display: flex;
   justify-content: ${({ isFirstStep }) => (isFirstStep ? 'flex-end' : 'space-between')};
   margin-top: 12px;

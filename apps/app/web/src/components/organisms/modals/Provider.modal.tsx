@@ -24,7 +24,7 @@ import { Close } from '@mui/icons-material'
 import { Dialog, DialogContent, DialogTitle, IconButton, Typography, Divider, Box } from '@mui/material'
 import React, { Dispatch, SetStateAction, useContext, useEffect, useState } from 'react'
 import { useForm, FormProvider } from 'react-hook-form'
-import { createPluginAlertMutation, getPluginsQuery, setupPluginMutation, validateCredentialsMutation } from '../../../services/plugin.service'
+import { createAlertsMutation, getPluginsQuery, setupPluginMutation, validateCredentialsMutation } from '../../../services/plugin.service'
 import { useQueryClient } from '@tanstack/react-query'
 
 interface Props {
@@ -43,65 +43,26 @@ type SetupPluginFormValues = {
 }
 
 const steps: string[] = [
-  'Choose your provider',
-  'Fill your credential',
-  'Configure your notification',
-  'Finish 🎉'
+  'Choix du plugin',
+  'Renseigner vos identifiants',
+  'Configurer vos notifications',
+  'Terminé 🎉'
 ]
 
 const ProviderModal = ({ open, setOpenModal }: Props) => {
-
   const {
     selectedProvider,
     selectedMetric,
-    pluginToMetricId,
+    widgetId,
     setSelectedProvider,
     setSelectedMetric,
-    setPluginToMetricId,
-    setMetricFields
+    setWidgetId,
   } = useContext(SetupPluginContext)
 
   const methods = useForm<SetupPluginFormValues>({
     mode: 'all',
     defaultValues: {
-      api_endpoint: {
-        apiEndpoint: ''
-      },
-      aws: {
-        accessKeyId: '',
-        secretAccessKey: '',
-        region: ''
-      },
-      github: {
-        accessToken: '',
-        owner: '',
-        repo: ''
-      },
-      sql_database: {
-        dbHost: '',
-        dbName: '',
-        dbPort: 0,
-        dbUsername: '',
-        dbPassword: ''
-      },
-      name: '',
-      metric: {
-        id: '',
-        name: '',
-        isNotifiable: false,
-        refreshInterval: 30,
-        type: undefined
-      },
-      metricAlerts: [
-        {
-          label: '',
-          condition: {
-            field: '',
-            operator: 'gt',
-            threshold: ''
-          }
-        }
-      ]
+      metricAlerts: []
     }
   })
 
@@ -115,38 +76,31 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
     setIsProviderChose(selectedProvider !== null)
   }, [selectedProvider])
 
-  const { mutate: validateCredentials } = validateCredentialsMutation((data) => {
-    setMetricFields(data.dataSample)
-    setActiveStep(SetupPluginStepEnum.ALERT_CONFIG)
+  const { mutate: validateCredentials } = validateCredentialsMutation(() => {
+    if (!selectedMetric?.isNotifiable) {
+      return setActiveStep(SetupPluginStepEnum.FINISH)
+    }
+    return setActiveStep(SetupPluginStepEnum.ALERT_CONFIG)
+  }, (err) => {
+    setActiveStep(SetupPluginStepEnum.FILL_CREDENTIAL)
+    alert(err)
   })
-  const { mutate: createAlert, isLoading: isCreateAlertLoading } = createPluginAlertMutation()
+  const { mutate: createAlert, isLoading: isCreateAlertLoading } = createAlertsMutation()
 
-  const { mutate: setupPlugin, isLoading: isSetupPluginLoading } = setupPluginMutation((data) => {
-    setPluginToMetricId(data.id)
-    queryClient.invalidateQueries({ queryKey: ["getActiveMetrics"] })
+  const { mutate: setupWidget, isLoading: isSetupPluginLoading } = setupPluginMutation((data) => {
+    setWidgetId(data.id)
+    queryClient.invalidateQueries({ queryKey: ["getWidgets"] })
   })
 
   const handleFilterChange = (categoryValue: string) => {
     setSelectedProviderCategory(categoryValue)
   }
 
-  const handleConnectionTest = (pluginType: string, metricId: string, credentials: GenericCredentialType) => {
-    switch (pluginType) {
-      case 'aws':
-        validateCredentials({ metricId, credentials })
-        break
-      case 'github':
-        validateCredentials({ metricId, credentials })
-        break
-      case 'api_endpoint':
-        validateCredentials({ metricId, credentials })
-        break
-      case 'sql_database':
-        validateCredentials({ metricId, credentials })
-        break
-      default:
-        throw Error("You can't make a test connection without plugin or metric")
-    }
+  const handleConnectionTest = (metricId: string, credentials: GenericCredentialType) => {
+    return new Promise((resolve) => {
+      validateCredentials({ metricId, credentials })
+        resolve(null)
+    })
   }
 
   const handlMetricInstallation = (name: string,
@@ -154,47 +108,15 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
     metric: MetricModel,
     credential: GenericCredentialType) => {
     return new Promise((resolve) => {
-      switch (plugin.type) {
-        case 'aws':
-          setupPlugin({
-            pluginId: plugin.id,
-            metricType: metric.type,
-            name,
-            credential
-          })
-          break
-        case 'github':
-          setupPlugin({
-            pluginId: plugin.id,
-            metricType: metric.type,
-            name,
-            credential
-          })
-          break
-        case 'api_endpoint':
-          setupPlugin({
-            pluginId: plugin.id,
-            metricType: metric.type,
-            name,
-            credential
-          })
-          break
-        case 'sql_database':
-          setupPlugin({
-            pluginId: plugin.id,
-            metricType: metric.type,
-            name,
-            credential
-          })
-          break
-        default:
-          throw Error("You can't make a test connection without plugin or metric")
-      }
+      setupWidget({
+        pluginId: plugin.id,
+        metricType: metric.type,
+        name,
+        credential
+      })
       resolve(null)
     });
   }
-
-
 
   const handleModalClose = () => {
     setOpenModal(false)
@@ -202,6 +124,7 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
     setSelectedProvider(null)
     setSelectedMetric(null)
     setActiveStep(0)
+    methods.reset()
   }
 
   const onSubmit = (data: SetupPluginFormValues) => {
@@ -218,22 +141,29 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
 
     switch (activeStep) {
       case SetupPluginStepEnum.FILL_CREDENTIAL:
-        handleConnectionTest(pluginType, selectedMetric.id, credentials)
+        handleConnectionTest(selectedMetric.id, credentials)
+          .then(() => {
+            if (!selectedMetric.isNotifiable) {
+              handlMetricInstallation(data.name, selectedProvider, selectedMetric, credentials)
+            }
+          })
         break
       case SetupPluginStepEnum.ALERT_CONFIG:
         handlMetricInstallation(data.name, selectedProvider, selectedMetric, credentials)
           .then(() => {
             if (alerts.length) {
               createAlert({
-                pluginToMetricId,
+                widgetId,
                 alerts
               })
             }
           }).finally(() => {
-            setActiveStep(activeStep + 1)
+            setActiveStep(SetupPluginStepEnum.FINISH)
           })
+
         break
       case SetupPluginStepEnum.FINISH:
+        handleModalClose()
         break
       default:
         break
@@ -242,9 +172,9 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
   return (
     <Dialog open={open} maxWidth="md" fullWidth={true} onClose={handleModalClose}>
       <DialogTitle>
-        <DialogHeader >
+        <DialogHeader>
           <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
-            {activeStep === SetupPluginStepEnum.ALERT_CONFIG ? `${selectedProvider?.name} settings` : 'Set up your provider'}
+            Ajouter un widget
           </Typography>
           <IconButton onClick={handleModalClose}>
             <Close />

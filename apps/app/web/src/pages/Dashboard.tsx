@@ -1,75 +1,86 @@
 import PluginEmptyStateImg from '../assets/img/undraws/undraw_online_stats.svg'
+import Loader from '../components/atoms/Loader'
 import ConfirmDeletionModal from '../components/organisms/modals/ConfirmDeletion.modal'
-import MetricAlertsModal from '../components/organisms/modals/MetricAlerts.modal'
 import ProviderModal from '../components/organisms/modals/Provider.modal'
+import WidgetAlertsModal from '../components/organisms/modals/WidgetAlerts.modal'
 import { SetupPluginProvider } from '../contexts/SetupPlugin.context'
 import DefaultLayout from '../layouts/DefaultLayout'
 import { EmptyStateLayout } from '../layouts/EmptyStateLayout'
-import { MetricsLayout } from '../layouts/MetricsLayout'
-import { getActiveMetricQuery } from '../services/dashboard.service'
+import { WidgetsLayout } from '../layouts/WidgetsLayout'
+import { getWidgetsQuery } from '../services/dashboard.service'
 import styled from '@emotion/styled'
-import { ActiveMetricModel, activeMetricsMock } from '@metrikube/core'
-import { AddCircleOutline, AddchartOutlined } from '@mui/icons-material'
-import { Button } from '@mui/material'
+import { WidgetModel, activeMetricsMock } from '@metrikube/core'
+import { AddchartOutlined } from '@mui/icons-material'
+import { Box, Button, Typography } from '@mui/material'
 import React, { useState } from 'react'
+
+const metrikubeLogo = new URL(`/src/assets/img/metrikube-logo.png`, import.meta.url).href
 
 const Dashboard = () => {
   const [openedModal, setOpenModal] = useState(false)
-  const [isMetricAlertsModalOpen, setIsMetricAlertsModalOpen] = useState(false)
+  const [isWidgetAlertsModalOpen, setIsWidgetAlertsModalOpen] = useState(false)
   const [isMetricDeletionModalOpened, setIsMetricDeletionModalOpened] = useState(false)
-  const [selectedMetric, setSelectedMetric] = useState<ActiveMetricModel | null>(null)
-  const { data: activeMetrics } = getActiveMetricQuery()
+  const [selectedWidget, setSelectedWidget] = useState<WidgetModel | null>(null)
+  const { data: widgets, isFetching } = getWidgetsQuery()
 
   const openProviderModalHandler = () => {
     setOpenModal(true)
   }
 
-  const handleAlertOpenRequest = (metric: ActiveMetricModel) => {
-    setSelectedMetric(metric)
-    setIsMetricAlertsModalOpen(true)
+  const handleAlertOpenRequest = (widget: WidgetModel) => {
+    setSelectedWidget(widget)
+    setIsWidgetAlertsModalOpen(true)
   }
 
-  const handleMetricDeletionRequest = (metric: ActiveMetricModel) => {
-    setSelectedMetric(metric)
+  const handleMetricDeletionRequest = (widget: WidgetModel) => {
+    setSelectedWidget(widget)
     setIsMetricDeletionModalOpened(true)
   }
 
   return (
-    <DefaultLayout>
-      <>
-        <StyledHeader>
-          <h3>Metric</h3>
-          <div>
-            <Button
-              onClick={openProviderModalHandler}
-              size="medium"
-              variant="contained"
-              startIcon={<AddCircleOutline />}>
-              Add a new provider
-            </Button>
-            <Button
-              sx={{ ml: 1 }}
-              size="medium"
-              variant="contained"
-              startIcon={<AddchartOutlined />}>
-              Add a new widget
-            </Button>
-          </div>
-        </StyledHeader>
-
-        {activeMetrics.length ? (
-          <MetricsLayout
-            metrics={activeMetrics}
-            onAlertOpenRequest={handleAlertOpenRequest}
-            onMetricDeletionRequest={handleMetricDeletionRequest}
+    <>
+      <StyledHeader>
+        <Brand>
+          <img src={metrikubeLogo} style={{ height: '45px' }} />
+          <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
+            MetriKube
+          </Typography>
+        </Brand>
+        <div>
+          <Button
+            onClick={openProviderModalHandler}
+            size="medium"
+            variant="contained"
+            startIcon={<AddchartOutlined />}>
+            Ajouter un widget
+          </Button>
+        </div>
+      </StyledHeader>
+      <DefaultLayout>
+        {isFetching ? (
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              width: '100%',
+              height: '100%'
+            }}>
+            <Loader />
+          </Box>
+        ) : !widgets.length ? (
+          <EmptyStateLayout
+            title="Commencer par ajouter un widget"
+            description="Les widgets sont le coeur de Metrikube, Ils permettent de visualiser vos métriques."
+            onActionButtonClick={openProviderModalHandler}
+            buttonLabel="Ajouter un widget"
+            imageAsset={PluginEmptyStateImg}
           />
         ) : (
-          <EmptyStateLayout
-            title="Get started by adding a provider"
-            description="The providers are the heart of Metrikube, they allow you to visualize your metrics according to the different plugins."
-            onActionButtonClick={openProviderModalHandler}
-            buttonLabel="Add a new provider"
-            imageAsset={PluginEmptyStateImg}
+          <WidgetsLayout
+            widgets={widgets}
+            onAlertOpenRequest={handleAlertOpenRequest}
+            onMetricDeletionRequest={handleMetricDeletionRequest}
           />
         )}
 
@@ -77,23 +88,27 @@ const Dashboard = () => {
           <ProviderModal open={openedModal} setOpenModal={setOpenModal} />
         </SetupPluginProvider>
 
-        {selectedMetric && (
+        {selectedWidget && (
           <>
-            <MetricAlertsModal
-              open={isMetricAlertsModalOpen}
-              setOpenModal={setIsMetricAlertsModalOpen}
-              metric={selectedMetric}
-            />
+            {isWidgetAlertsModalOpen && (
+              <WidgetAlertsModal
+                open={isWidgetAlertsModalOpen}
+                setOpenModal={setIsWidgetAlertsModalOpen}
+                widget={selectedWidget}
+              />
+            )}
 
-            <ConfirmDeletionModal
-              open={isMetricDeletionModalOpened}
-              setOpenModal={setIsMetricDeletionModalOpened}
-              metric={selectedMetric}
-            />
+            {isMetricDeletionModalOpened && (
+              <ConfirmDeletionModal
+                open={isMetricDeletionModalOpened}
+                setOpenModal={setIsMetricDeletionModalOpened}
+                widget={selectedWidget}
+              />
+            )}
           </>
         )}
-      </>
-    </DefaultLayout>
+      </DefaultLayout>
+    </>
   )
 }
 
@@ -102,6 +117,19 @@ const StyledHeader = styled.header`
   align-items: center;
   justify-content: space-between;
   margin-bottom: 2rem;
+  position: fixed;
+  width: 100%;
+  padding: 1rem;
+  top: 0;
+  background-color: ${({ theme }) => theme.palette.background.default};
+  z-index: 10;
+`
+
+const Brand = styled(Box)`
+  display: flex;
+  column-gap: ${(props) => props.theme.spacing(2)};
+  align-items: center;
+  justify-content: center;
 `
 
 export default Dashboard
