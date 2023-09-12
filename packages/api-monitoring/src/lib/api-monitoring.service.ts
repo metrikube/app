@@ -1,9 +1,11 @@
-import axios, { AxiosResponse } from 'axios';
 import type { AxiosError } from 'axios';
+import axios, { AxiosResponse } from 'axios';
 
-import { HttpStatus, Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { ApiEndpointCredentialType, MetricType, PluginConnectionInterface, PluginResult } from '@metrikube/common';
+
+import { InvalidCredentialException } from '../../../../apps/api/src/domain/exceptions/invalid-credential.exception';
 
 @Injectable()
 export class ApiMonitoringService implements PluginConnectionInterface {
@@ -41,16 +43,10 @@ export class ApiMonitoringService implements PluginConnectionInterface {
     Logger.log(`🏓 Pinging "${credential.apiEndpoint}"`, ApiMonitoringService.name);
     try {
       await axios.get(credential.apiEndpoint);
-      return {
-        ok: true,
-        message: null
-      };
+      return { ok: true, message: null };
     } catch (error) {
       Logger.log(`🏓 Pinging "${credential.apiEndpoint}" failed, status: ${(error as AxiosError)?.status}`, ApiMonitoringService.name);
-      return {
-        ok: [HttpStatus.NOT_FOUND, HttpStatus.UNAUTHORIZED, HttpStatus.INTERNAL_SERVER_ERROR].includes((error as AxiosError)?.status as HttpStatus),
-        message: (error as AxiosError)?.message || null
-      };
+      throw new InvalidCredentialException(error);
     }
   }
 

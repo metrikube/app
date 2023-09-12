@@ -4,6 +4,8 @@ import { Injectable } from '@nestjs/common';
 
 import { ApiGithubError, ApiGithubIssues, ApiGithubPullRequestsOrIssues, GithubCredentialType, Issues, MetricType, PluginConnectionInterface, PluginResult, PullRequests } from '@metrikube/common';
 
+import { InvalidCredentialException } from '../../../../apps/api/src/domain/exceptions/invalid-credential.exception';
+
 interface GithubErrorData {
   message: string;
 }
@@ -54,12 +56,10 @@ export class GithubService implements PluginConnectionInterface {
           Authorization: `token ${accessToken}`
         }
       });
-
       return { ok: true, message: null };
     } catch (error) {
-      return { ok: false, message: (error as AxiosError<GithubErrorData>)?.response?.data.message || null };
+      throw new InvalidCredentialException(error);
     }
-    return { ok: true, message: null };
   }
 
 

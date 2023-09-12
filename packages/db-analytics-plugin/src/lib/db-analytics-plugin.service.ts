@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { ApiDatabaseLastAverageQueriesByHour, ApiDatabaseSize, ApiDatabaseSlowQueries, DbConnectionCredentialType, MetricType, PluginConnectionInterface, PluginResult } from '@metrikube/common';
 
+import { InvalidCredentialException } from '../../../../apps/api/src/domain/exceptions/invalid-credential.exception';
 import { DbService } from './db.service';
 
 @Injectable()
@@ -57,16 +58,10 @@ export class DbAnalyticsPluginService implements PluginConnectionInterface {
       const dbService = new DbService(credentialData);
       const connection = dbService.connection();
       connection.ping();
-      return {
-        ok: true,
-        message: null
-      };
+      return { ok: true, message: null };
     } catch (error) {
       Logger.log(`🏓 Pinging database "${credentialData.dbName}" failed, status: ${(error as Error).message}`, DbAnalyticsPluginService.name);
-      return {
-        ok: false,
-        message: `db connection failed : ${(error as Error).message}` || null
-      };
+      throw new InvalidCredentialException(error);
     }
   }
 

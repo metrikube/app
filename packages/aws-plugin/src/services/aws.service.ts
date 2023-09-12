@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { ApiAWSSingleResourceInstanceResult, AwsCredentialType, MetricType, PluginConnectionInterface, PluginResult } from '@metrikube/common';
 
+import { InvalidCredentialException } from '../../../../apps/api/src/domain/exceptions/invalid-credential.exception';
 import { EC2Service } from './ec2.service';
 import { S3Service } from './s3.service';
 
@@ -69,10 +70,7 @@ export class AWSService implements PluginConnectionInterface {
       };
     } catch (error) {
       Logger.log(`🏓 Pinging AWS on region"${credentials.region}" failed`);
-      return {
-        ok: false,
-        message: `Pinging AWS on region"${credentials.region}" failed`
-      };
+      throw new InvalidCredentialException(error);
     }
   }
 

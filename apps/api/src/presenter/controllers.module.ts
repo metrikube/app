@@ -1,16 +1,10 @@
 import { Module } from '@nestjs/common';
 
-import { ApiMonitoringService } from '@metrikube/api-monitoring';
-import { AWSService } from '@metrikube/aws-plugin';
-import { DbAnalyticsPluginService } from '@metrikube/db-analytics-plugin';
-import { GithubService } from '@metrikube/github-plugin';
-
 import { UseCaseModule } from '../application/use-case.module';
 import { AlertUseCase } from '../application/use-cases/alert/alert.use-case';
 import { CredentialUseCase } from '../application/use-cases/credential/credential.use-case';
 import { DashboardUseCase } from '../application/use-cases/dashboard/dashboard.use-case';
 import { PluginUseCase } from '../application/use-cases/plugin/plugin.use-case';
-import { CredentialRepositoryImpl } from '../infrastructure/database/repositories/credential.repository';
 import { DiTokens } from '../infrastructure/di/tokens';
 import { AlertController } from './alert/controller/alert.controller';
 import { CredentialController } from './credential/controller/credential.controller';
