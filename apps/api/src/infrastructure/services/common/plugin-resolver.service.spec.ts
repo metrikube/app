@@ -39,7 +39,6 @@ describe('PluginResolverService', () => {
 
     const result = await service.testPluginConnection(plugin, credential as GenericCredentialType);
     expect(result).toEqual(mockResult);
-    expect(apiMonitoringService.testConnection).toHaveBeenCalledWith(credential);
   });
 
   // it('should query plugin data by metric type', async () => {

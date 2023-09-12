@@ -3,6 +3,7 @@ import { Test } from '@nestjs/testing';
 import { MetricThresholdOperator, MetricThresholdOperatorEnum } from '@metrikube/common';
 
 import { SchedulerInterface } from '../../../domain/interfaces/scheduler/scheduler.interface';
+import { Alert } from '../../../domain/models/alert.model';
 import { AlertEntity } from '../../../infrastructure/database/entities/alert.entity';
 import { AlertInMemoryRepositoryImpl } from '../../../infrastructure/database/in-memory/alert-in-memory.repository';
 import { CredentialInMemoryRepositoryImpl } from '../../../infrastructure/database/in-memory/credential-in-memory.repository';
@@ -99,8 +100,7 @@ describe('AlertUseCase', () => {
         threshold: 5
       }
     };
-    alertRepository.alerts = [Object.assign(new AlertEntity(), { id: '1', alert })];
-
+    await alertRepository.createAlerts([new Alert('1', 'label', '1', false, false, alert.condition)]);
     await useCase.updateAlert('1', { label: 'new-alert-name' });
     const updatedAlert = await alertRepository.findAlertById('1');
 
@@ -117,6 +117,7 @@ describe('AlertUseCase', () => {
         threshold: 5
       }
     };
+    await alertRepository.createAlerts([new Alert('1', 'label', '1', false, false, alert.condition)]);
 
     await useCase.createAlertOnActivePlugin('1', [alert]);
 
