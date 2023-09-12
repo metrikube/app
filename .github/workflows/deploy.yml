@@ -59,3 +59,16 @@ jobs:
           file: ./docker/Dockerfile
           push: true
           tags: ${{ steps.meta.outputs.tags }}
+
+  release:
+    needs: build_and_deploy
+    name: "Release ${{ needs.build_and_deploy.outputs.tags }}"
+    runs-on: "ubuntu-latest"
+
+    steps:
+      - name: Create release
+        uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+          repo_token: "${{ secrets.ACCESS_TOKEN }}"
+          automatic_release_tag: true
+          prerelease: false
