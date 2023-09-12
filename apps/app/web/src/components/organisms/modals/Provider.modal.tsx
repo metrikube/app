@@ -76,15 +76,18 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
     setIsProviderChose(selectedProvider !== null)
   }, [selectedProvider])
 
-  const { mutate: validateCredentials } = validateCredentialsMutation((data) => {
-    if (data.dataSample) {
-      return setActiveStep(SetupPluginStepEnum.ALERT_CONFIG)
+  const { mutate: validateCredentials } = validateCredentialsMutation(() => {
+    if (!selectedMetric?.isNotifiable) {
+      return setActiveStep(SetupPluginStepEnum.FINISH)
     }
-    return setActiveStep(SetupPluginStepEnum.FINISH)
+    return setActiveStep(SetupPluginStepEnum.ALERT_CONFIG)
+  }, (err) => {
+    setActiveStep(SetupPluginStepEnum.FILL_CREDENTIAL)
+    alert(err)
   })
   const { mutate: createAlert, isLoading: isCreateAlertLoading } = createAlertsMutation()
 
-  const { mutate: setupPlugin, isLoading: isSetupPluginLoading } = setupPluginMutation((data) => {
+  const { mutate: setupWidget, isLoading: isSetupPluginLoading } = setupPluginMutation((data) => {
     setWidgetId(data.id)
     queryClient.invalidateQueries({ queryKey: ["getWidgets"] })
   })
@@ -96,7 +99,7 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
   const handleConnectionTest = (metricId: string, credentials: GenericCredentialType) => {
     return new Promise((resolve) => {
       validateCredentials({ metricId, credentials })
-      resolve(null)
+        resolve(null)
     })
   }
 
@@ -105,7 +108,7 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
     metric: MetricModel,
     credential: GenericCredentialType) => {
     return new Promise((resolve) => {
-      setupPlugin({
+      setupWidget({
         pluginId: plugin.id,
         metricType: metric.type,
         name,
@@ -138,22 +141,12 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
 
     switch (activeStep) {
       case SetupPluginStepEnum.FILL_CREDENTIAL:
-        handleConnectionTest(selectedMetric.id, credentials).then(() => {
-          if (!selectedMetric.isNotifiable) {
-            handlMetricInstallation(data.name, selectedProvider, selectedMetric, credentials)
-              .then(() => {
-                if (alerts.length) {
-                  createAlert({
-                    widgetId,
-                    alerts
-                  })
-                }
-              }).finally(() => {
-                setActiveStep(SetupPluginStepEnum.FINISH)
-              })
-          }
-          setActiveStep(SetupPluginStepEnum.ALERT_CONFIG)
-        })
+        handleConnectionTest(selectedMetric.id, credentials)
+          .then(() => {
+            if (!selectedMetric.isNotifiable) {
+              handlMetricInstallation(data.name, selectedProvider, selectedMetric, credentials)
+            }
+          })
         break
       case SetupPluginStepEnum.ALERT_CONFIG:
         handlMetricInstallation(data.name, selectedProvider, selectedMetric, credentials)

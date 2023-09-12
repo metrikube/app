@@ -21,7 +21,6 @@ export const getWidgetsQuery = () => {
     queryFn: () => new GetWidgetsUsecase(dashboardMetricsAdapter).execute(),
     initialData: () => [],
     refetchOnWindowFocus: false
-    // refetchIntervalInBackground - à creuser
   })
 }
 

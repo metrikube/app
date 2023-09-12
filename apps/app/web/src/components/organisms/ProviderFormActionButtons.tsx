@@ -65,7 +65,7 @@ const ProviderFormActionButtons = ({
         </LoadingButton>
       )}
       {activeStep === SetupPluginStepEnum.CHOOSE_PLUGIN && (
-        <Tooltip disableHoverListener={isProviderChose} title="You have to choose a provider">
+        <Tooltip disableHoverListener={isProviderChose} title="Vous devez choisir un plugin">
           <span>
             <Button
               onClick={() => handleNext()}
@@ -95,7 +95,7 @@ const ProviderFormActionButtons = ({
 
 const StyledDialogActions = styled(DialogActions, {
   shouldForwardProp: (prop) => prop !== 'isFirstStep'
-})<{ isFirstStep: boolean }>`
+}) <{ isFirstStep: boolean }>`
   display: flex;
   justify-content: ${({ isFirstStep }) => (isFirstStep ? 'flex-end' : 'space-between')};
   margin-top: 12px;

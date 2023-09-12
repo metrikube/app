@@ -4,7 +4,7 @@ import {
   CreateAlertUsecase,
   GetPluginsUsecase,
   SetupPluginRequest,
-  SetupPluginUsecase,
+  SetupWidgetUsecase,
   ValidateCredentialsRequest,
   ValidateCredentialsUsecase
 } from '@metrikube/core'
@@ -24,25 +24,23 @@ export const getPluginsQuery = () => {
 export const setupPluginMutation = (onSuccess: (data: unknown) => void) => {
   return useMutation(
     ({ pluginId, name, metricType, credential }: SetupPluginRequest) =>
-      new SetupPluginUsecase(pluginAdapter).execute(pluginId, name, metricType, credential),
+      new SetupWidgetUsecase(pluginAdapter).execute(pluginId, name, metricType, credential),
     {
-      onSuccess,
-      onError: () => {
-        alert('there was an error')
-      }
+      onSuccess
     }
   )
 }
 
-export const validateCredentialsMutation = (onSuccess: (data: unknown) => void) => {
+export const validateCredentialsMutation = (
+  onSuccess?: (data: unknown) => void,
+  onError?: (data: unknown) => void
+) => {
   return useMutation(
     (payload: ValidateCredentialsRequest) =>
       new ValidateCredentialsUsecase(pluginAdapter).execute(payload),
     {
       onSuccess,
-      onError() {
-        alert('Test failed')
-      }
+      onError
     }
   )
 }
