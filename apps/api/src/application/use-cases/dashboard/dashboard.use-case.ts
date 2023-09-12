@@ -1,9 +1,8 @@
 import { Inject, Logger } from '@nestjs/common';
 
-import { ApiMonitoringService } from '@metrikube/api-monitoring';
 import { GenericCredentialType, MetricType } from '@metrikube/common';
-import { GithubService } from '@metrikube/github-plugin';
 
+import { PluginResolverInterface } from '../../../domain/interfaces/common/plugin-resolver.interface';
 import { CredentialRepository } from '../../../domain/interfaces/repository/credential.repository';
 import { WidgetRepository } from '../../../domain/interfaces/repository/widget.repository';
 import { SchedulerInterface } from '../../../domain/interfaces/scheduler/scheduler.interface';
@@ -25,8 +24,7 @@ export class DashboardUseCase implements DashboardUseCaseInterface {
     @Inject(DiTokens.CredentialRepositoryToken) private readonly credentialRepository: CredentialRepository,
     @Inject(DiTokens.PluginUseCaseToken) private readonly pluginUseCase: PluginUseCaseInterface,
     @Inject(DiTokens.Scheduler) private readonly scheduler: SchedulerInterface,
-    @Inject(DiTokens.ApiMonitoringToken) private readonly apiMonitoringService: ApiMonitoringService,
-    @Inject(DiTokens.GithubServiceToken) private readonly githubService: GithubService
+    @Inject(DiTokens.PluginResolver) private readonly pluginResolver: PluginResolverInterface
   ) {}
 
   async refreshDashboard(): Promise<RefreshDashboardResponseDto[]> {
@@ -58,9 +56,8 @@ export class DashboardUseCase implements DashboardUseCaseInterface {
 
   private async resolveMetrics(activatedMetricsWithCredentials: ActivatedMetric[]): Promise<RefreshDashboardResponseDto[]> {
     const metricResultMap: Record<string, RefreshDashboardResponseDto> = {};
-
     for (const metricCredential of activatedMetricsWithCredentials) {
-      const metricResult = await this.pluginUseCase.getMetricMethodByMetricType(metricCredential.metric.type as MetricType)(metricCredential.value);
+      const metricResult = await this.pluginResolver.queryPluginDataByMetricType(metricCredential.metric.type as MetricType, metricCredential.value);
       metricResultMap[metricCredential.id] = new RefreshDashboardResponseDto(
         metricCredential.id,
         metricCredential.name,

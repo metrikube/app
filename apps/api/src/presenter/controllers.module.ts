@@ -26,12 +26,12 @@ import { WidgetController } from './widgets/controllers/widget.controller';
     { provide: DiTokens.CredentialUseCaseToken, useClass: CredentialUseCase },
     { provide: DiTokens.AlertUseCaseToken, useClass: AlertUseCase },
     { provide: DiTokens.PluginUseCaseToken, useClass: PluginUseCase },
-    { provide: DiTokens.ApiMonitoringToken, useClass: ApiMonitoringService },
-    { provide: DiTokens.CredentialRepositoryToken, useClass: CredentialRepositoryImpl },
-    { provide: DiTokens.GithubServiceToken, useClass: GithubService },
-    { provide: DiTokens.AWSServiceToken, useClass: AWSService },
-    { provide: DiTokens.DbAnalyticsPluginServiceToken, useClass: DbAnalyticsPluginService },
     { provide: DiTokens.DashboardUseCaseToken, useClass: DashboardUseCase }
+    // { provide: DiTokens.ApiMonitoringToken, useClass: ApiMonitoringService },
+    // { provide: DiTokens.CredentialRepositoryToken, useClass: CredentialRepositoryImpl },
+    // { provide: DiTokens.GithubServiceToken, useClass: GithubService },
+    // { provide: DiTokens.AWSServiceToken, useClass: AWSService },
+    // { provide: DiTokens.DbAnalyticsPluginServiceToken, useClass: DbAnalyticsPluginService },
   ]
 })
 export class ControllersModule {}

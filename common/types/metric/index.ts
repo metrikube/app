@@ -8,8 +8,7 @@ export type MetricType =
   | 'github-last-issues'
   | 'database-queries'
   | 'database-size'
-  | 'database-slow-queries'
-  | 'database-connections';
+  | 'database-slow-queries';
 
 export enum MetricTypeEnum {
   ApiEndpointHealthCheck = 'api-endpoint-health-check',
@@ -17,7 +16,6 @@ export enum MetricTypeEnum {
   AwsBucketSingleInstance = 'aws-bucket-single-instance',
   AwsEc2MultipleInstancesUsage = 'aws-ec2-multiple-instances-usage',
   AwsEc2SingleInstanceUsage = 'aws-ec2-single-instance-usage',
-  DatabaseConnections = 'database-connections',
   DatabaseQueries = 'database-queries',
   DatabaseSize = 'database-size',
   DatabaseSlowQueries = 'database-slow-queries',

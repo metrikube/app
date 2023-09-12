@@ -3,6 +3,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { ApiDatabaseLastAverageQueriesByHour, ApiDatabaseSize, ApiDatabaseSlowQueries, GenericCredentialType, Plugin } from '@metrikube/common';
 import { DbAnalyticsPluginService } from '@metrikube/db-analytics-plugin';
 
+import { PluginResolverInterface } from '../../../domain/interfaces/common/plugin-resolver.interface';
 import { CredentialRepository } from '../../../domain/interfaces/repository/credential.repository';
 import { MetricRepository } from '../../../domain/interfaces/repository/metric.repository';
 import { CredentialUseCaseInterface } from '../../../domain/interfaces/use-cases/credential.use-case.interface';
@@ -17,7 +18,8 @@ export class CredentialUseCase implements CredentialUseCaseInterface {
     @Inject(DiTokens.CredentialRepositoryToken) private readonly credentialRepository: CredentialRepository,
     @Inject(DiTokens.DbAnalyticsPluginServiceToken) private readonly DbAnalyticsPluginService: DbAnalyticsPluginService,
     @Inject(DiTokens.PluginUseCaseToken) private readonly pluginUseCase: PluginUseCaseInterface,
-    @Inject(DiTokens.MetricRepositoryToken) private readonly metricRepository: MetricRepository
+    @Inject(DiTokens.MetricRepositoryToken) private readonly metricRepository: MetricRepository,
+    @Inject(DiTokens.PluginResolver) private readonly pluginResolver: PluginResolverInterface
   ) {}
 
   async insertCredentialForPlugin(pluginId: Plugin['id'], paylad: Credential): Promise<Credential> {
@@ -27,9 +29,9 @@ export class CredentialUseCase implements CredentialUseCaseInterface {
   async validateCredential(metricId: string, credential: CredentialTypesDtos): Promise<ValidateCredentialResponseDto> {
     const metric = await this.metricRepository.findById(metricId);
 
-    await this.pluginUseCase.testPluginConnection(metric.plugin, credential);
+    await this.pluginResolver.testPluginConnection(metric.plugin, credential);
 
-    const dataSample = metric.isNotifiable ? await this.pluginUseCase.fetchMetricDataSampleWithCredential(metricId, credential) : null;
+    const dataSample = metric.isNotifiable ? await this.pluginResolver.queryPluginDataByMetricType(metric.type, credential) : null;
 
     return new ValidateCredentialResponseDto(metric.pluginId, dataSample);
   }
