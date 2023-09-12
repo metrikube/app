@@ -1,3 +1,4 @@
+import { Alert } from './alert.model';
 import { Credential } from './credential.model';
 import { Metric } from './metric.model';
 import { Plugin } from './plugin.model';
@@ -6,6 +7,7 @@ export class Widget {
   public credential?: Credential;
   public metric?: Metric;
   public plugin?: Plugin;
+  public alerts?: Alert[] = [];
 
   // prettier-ignore
   constructor(
