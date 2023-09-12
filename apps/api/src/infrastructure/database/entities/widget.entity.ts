@@ -1,6 +1,7 @@
-import { Column, CreateDateColumn, Entity, Generated, JoinColumn, ManyToOne, PrimaryColumn, RelationId } from 'typeorm';
+import { Column, CreateDateColumn, Entity, Generated, JoinColumn, ManyToOne, OneToMany, PrimaryColumn, RelationId } from 'typeorm';
 
 import { Widget } from '../../../domain/models/widget.model';
+import { AlertEntity } from './alert.entity';
 import { CredentialEntity } from './credential.entity';
 import { MetricEntity } from './metric.entity';
 import { PluginEntity } from './plugin.entity';
@@ -46,6 +47,10 @@ export class WidgetEntity {
   @Column({ type: 'boolean', default: true })
   isActive: boolean;
 
+  @JoinColumn()
+  @OneToMany(() => AlertEntity, (alert: AlertEntity) => alert.widget)
+  alerts: AlertEntity[];
+
   @CreateDateColumn()
   createdAt: Date;
 
@@ -58,6 +63,7 @@ export class WidgetEntity {
     widget.plugin = entity.plugin && PluginEntity.toModel(entity.plugin);
     widget.credential = entity.credential && CredentialEntity.toModel(entity.credential);
     widget.metric = entity.metric && MetricEntity.toModel(entity.metric);
+    widget.alerts = entity.alerts && entity.alerts.map(AlertEntity.toModel);
     return widget;
   }
 }

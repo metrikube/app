@@ -1,4 +1,4 @@
-import { Column, CreateDateColumn, Entity, Generated, ManyToOne, OneToMany, PrimaryGeneratedColumn, RelationId } from 'typeorm';
+import { Column, CreateDateColumn, Entity, Generated, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn, RelationId } from 'typeorm';
 
 import { CredentialType } from '@metrikube/common';
 
@@ -28,6 +28,7 @@ export class CredentialEntity {
   @Column({ type: 'uuid', nullable: false })
   pluginId: PluginEntity['id'];
 
+  @JoinColumn()
   @OneToMany(() => WidgetEntity, (widget: WidgetEntity) => widget.credential)
   widgets: WidgetEntity[];
 

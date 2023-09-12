@@ -1,4 +1,4 @@
-import { Column, CreateDateColumn, Entity, Generated, ManyToOne, PrimaryGeneratedColumn, RelationId, UpdateDateColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, Generated, JoinColumn, ManyToOne, PrimaryGeneratedColumn, RelationId, UpdateDateColumn } from 'typeorm';
 
 import { MetricThresholdOperator, MetricThresholdOperatorEnum } from '@metrikube/common';
 
@@ -20,6 +20,7 @@ export class AlertEntity {
   @Column({ default: true, type: 'boolean' })
   isActive: boolean;
 
+  @JoinColumn({ foreignKeyConstraintName: 'fk_widget_id' })
   @ManyToOne(() => WidgetEntity, (widget: WidgetEntity) => widget.metric)
   widget: WidgetEntity;
 
