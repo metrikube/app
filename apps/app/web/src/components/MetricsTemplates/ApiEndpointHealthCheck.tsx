@@ -43,7 +43,7 @@ export const ApiEndpointHealthCheck = ({ widget }: Props) => {
             {widget.data.status}
           </Typography>
         </TitledBox>
-        <TitledBox title="Statut" icon={SpeedIcon} iconColor="#50D768">
+        <TitledBox title="Temps de réponse" icon={SpeedIcon} iconColor="#50D768">
           <Typography
             sx={{
               fontSize: '20px'
