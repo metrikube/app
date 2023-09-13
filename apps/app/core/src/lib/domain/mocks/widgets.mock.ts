@@ -1,14 +1,32 @@
-import { WidgetModel, githubProviderMock } from '@metrikube/core';
+import { AWSPluginMock, WidgetModel, apiHealthCheckPluginMock, githubPluginMock, sqlPluginMock } from '@metrikube/core';
+import { pingApiMetricMock, githubLastIssuesMetricMock, githubLastPrsMetricMock, awsBucketInstanceMetricMock, dbQueriesMock, dbSizeMetricMock, dbSlowQueriesMetricMock, awsListS3MetricMock } from './metrics.mock';
 
-import { githubLastIssues, githubLastPrs } from './metrics.mock';
+// #region API widgets
+export const pingApiWidgetMock: WidgetModel = {
+  id: 'ping-api-1',
+  name: "Json placeholder - users",
+  resourceId: undefined,
+  alertNumber: 4,
+  plugin: apiHealthCheckPluginMock,
+  metric: pingApiMetricMock,
+  data: {
+    status: 200,
+    value: 100,
+    unit: "ms",
+    details: ""
+  }
+}
+// #endregion
+export const apiWidgets: WidgetModel[] = [pingApiWidgetMock]
 
-export const lastPullRequestMock: WidgetModel = {
+// #region Github widgets
+export const lastPullRequestWidgetMock: WidgetModel = {
   id: '094bf35c-5d7c-4e0f-b88c-7372c318b32c',
   name: 'Les 5 dernières Pull Requests',
-  description: undefined,
   resourceId: undefined,
-  plugin: githubProviderMock,
-  metric: githubLastPrs,
+  alertNumber: 0,
+  plugin: githubPluginMock,
+  metric: githubLastPrsMetricMock,
   data: [
     {
       title: 'Feat/aws',
@@ -48,13 +66,13 @@ export const lastPullRequestMock: WidgetModel = {
   ]
 };
 
-export const lastIssuesMock: WidgetModel = {
+export const lastIssuesWidgetMock: WidgetModel = {
   id: '094bf35c-5d7c-4e0f-b88c-7372c318b',
   name: 'Les 5 dernières issues',
-  description: undefined,
   resourceId: undefined,
-  plugin: githubProviderMock,
-  metric: githubLastIssues,
+  alertNumber: 0,
+  plugin: githubPluginMock,
+  metric: githubLastIssuesMetricMock,
   data: [
     {
       title: 'Beautify dashboard',
@@ -93,53 +111,35 @@ export const lastIssuesMock: WidgetModel = {
     }
   ]
 };
+// #endregion
+export const githubWidgets: WidgetModel[] = [lastPullRequestWidgetMock, lastIssuesWidgetMock]
 
-export const singleInstanceEC2Mock: WidgetModel = {
+// #region AWS widgets
+export const singleBucketS3WidgetMock: WidgetModel = {
   id: 'bf32add2-ae8a-42b0-af8f-5a30a851a3ad',
-  name: 'AWS Second Bucket',
-  description: undefined,
-  resourceId: null,
-  plugin: {
-    id: 'c5cced6d-095e-4b98-af8c-0d5378a43e24',
-    name: 'AWS',
-    type: 'aws',
-    description: 'Amazon Web Services Plugin'
-  },
-  metric: {
-    id: '02426c10-11dc-42a4-a543-0055d9d2322d',
-    name: 'AWS Bucket single instance cost',
-    type: 'aws-bucket-single-instance',
-    isNotifiable: false
-  },
+  name: 'AWS S3',
+  alertNumber: 1,
+  resourceId: "resource-123",
+  plugin: AWSPluginMock,
+  metric: awsBucketInstanceMetricMock,
   data: {
     id: 'second-bucket',
     name: 'second-bucket',
     region: 'eu-west-3',
-    cost: 7,
+    cost: 74,
     currency: 'USD',
     additionnalData: {
       creationDate: '2022-09-06T08:44:09.000Z'
     }
   }
-};
-
-export const singleBucketS3Mock: WidgetModel = {
+}
+export const singleBucketS3Widget2Mock: WidgetModel = {
   id: '094bf35c-5d7c-4e0f-b88c-73318b32c',
   name: 'S3 First Bucket',
-  description: undefined,
+  alertNumber: 0,
   resourceId: undefined,
-  plugin: {
-    id: 'c5aded82-094e-7n98-af8c-0d4788a43e24',
-    name: 'AWS',
-    type: 'aws',
-    description: 'Amazon Web Services Plugin'
-  },
-  metric: {
-    id: '02426c10-11dc-42a4-a543-0055d9d2322d',
-    name: 'AWS Bucket single instance cost',
-    type: 'aws-bucket-single-instance',
-    isNotifiable: false
-  },
+  plugin: AWSPluginMock,
+  metric: awsBucketInstanceMetricMock,
   data: {
     id: 'first-bucket',
     name: 'first-bucket',
@@ -151,24 +151,13 @@ export const singleBucketS3Mock: WidgetModel = {
     }
   }
 };
-
-export const listBucketS3Mock: WidgetModel = {
+export const listBucketS3WidgetMock: WidgetModel = {
   id: '20f96417-5333-4dc0-979d-2b4d73f4ec80',
   name: 'AWS S3 List of buckets',
-  description: undefined,
-  resourceId: undefined,
-  plugin: {
-    id: 'c5cced6d-095e-4b98-af8c-0d5378a43e24',
-    name: 'AWS',
-    type: 'aws',
-    description: 'Amazon Web Services Plugin'
-  },
-  metric: {
-    id: '5dda4d85-ec61-49f6-86a5-43e64d2576f7',
-    name: 'AWS Bucket multiple instances cost',
-    type: 'aws-bucket-multiple-instances',
-    isNotifiable: false
-  },
+  alertNumber: 0,
+  resourceId: "resource",
+  plugin: AWSPluginMock,
+  metric: awsListS3MetricMock,
   data: [
     {
       id: 'first-bucket',
@@ -199,24 +188,17 @@ export const listBucketS3Mock: WidgetModel = {
     }
   ]
 };
+// #endregion
+export const awsWidgets: WidgetModel[] = [singleBucketS3WidgetMock, singleBucketS3Widget2Mock, listBucketS3WidgetMock]
 
+// #region SQL widgets
 export const nbRequestsPerHour: WidgetModel = {
-  id: 'rregergrgg',
+  id: 'widget-sql-1',
   name: 'MariaDB - Requête par heures (12 dernières heures)',
-  description: undefined,
+  alertNumber: 0,
   resourceId: undefined,
-  plugin: {
-    id: 'maria-db',
-    name: 'Maria DB',
-    type: 'sql_database',
-    description: 'Maria DB plugin'
-  },
-  metric: {
-    id: 'b26edf54-a2b2-4ff2-b747-64c761340a30',
-    type: 'database-queries',
-    name: 'SQL Database Usage',
-    isNotifiable: false
-  },
+  plugin: sqlPluginMock,
+  metric: dbQueriesMock,
   data: {
     queries: [
       {
@@ -271,24 +253,13 @@ export const nbRequestsPerHour: WidgetModel = {
     date: '2023-09-06T08:40:12.106Z'
   }
 };
-
-export const dbSizeMock: WidgetModel = {
+export const dbSizeWidgetMock: WidgetModel = {
   id: 'db-size213',
   name: 'MariaDB - Taille db',
-  description: undefined,
   resourceId: undefined,
-  plugin: {
-    id: 'maria-db',
-    name: 'Maria DB',
-    type: 'sql_database',
-    description: 'Maria DB plugin'
-  },
-  metric: {
-    id: '9a18c04e-3643-4488-8d72-8e377fbf3f91',
-    type: 'database-size',
-    name: 'SQL Database Size',
-    isNotifiable: false
-  },
+  alertNumber: 0,
+  plugin: sqlPluginMock,
+  metric: dbSizeMetricMock,
   data: {
     size: 0.0469, // Size en Mb
     numberOfTables: 4,
@@ -296,24 +267,13 @@ export const dbSizeMock: WidgetModel = {
     databaseName: 'metrikube-test'
   }
 };
-
-export const slowQueries: WidgetModel = {
+export const slowQueriesWidgetMock: WidgetModel = {
   id: 'db-size213',
   name: 'Database - Requêtes lente',
-  description: undefined,
+  alertNumber: 0,
   resourceId: undefined,
-  plugin: {
-    id: 'maria-db',
-    name: 'Maria DB',
-    type: 'sql_database',
-    description: 'Maria DB plugin'
-  },
-  metric: {
-    id: '8233cf2a-0ae1-4b8f-9197-36b564a808b5',
-    type: 'database-slow-queries',
-    name: 'SQL Database Slow Queries',
-    isNotifiable: false
-  },
+  plugin: sqlPluginMock,
+  metric: dbSlowQueriesMetricMock,
   data: [
     {
       executionTime: 1.1004,
@@ -372,5 +332,12 @@ export const slowQueries: WidgetModel = {
     }
   ]
 };
+// #endregion
+export const sqlWidgets: WidgetModel[] = [nbRequestsPerHour, dbSizeWidgetMock, slowQueriesWidgetMock]
 
-export const activeMetricsMock: WidgetModel[] = [singleBucketS3Mock, singleInstanceEC2Mock, listBucketS3Mock, lastPullRequestMock, lastIssuesMock, nbRequestsPerHour, dbSizeMock, slowQueries];
+export const widgetsMock: WidgetModel[] = [
+  ...apiWidgets,
+  ...githubWidgets,
+  ...awsWidgets,
+  ...sqlWidgets
+]
