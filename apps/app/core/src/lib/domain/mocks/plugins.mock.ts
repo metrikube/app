@@ -63,7 +63,7 @@ export const githubPluginMock: PluginModel = {
 
 export const apiHealthCheckPluginMock: PluginModel = {
   id: 'f5e90849-9c70-433d-9d66-dac20be2c4e7',
-  name: 'Api heath check',
+  name: 'API Health Check',
   type: 'api_endpoint',
   category: 'api',
   description: 'Description',

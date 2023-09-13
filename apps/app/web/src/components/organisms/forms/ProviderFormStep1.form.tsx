@@ -41,7 +41,7 @@ const ProviderFormStep1 = ({ providerCategory, allPlugins, onCategoryClick }: Pr
           />
         ))}
       </ChipContainer>
-      <ProvidersContainer>
+      <ProvidersContainer title="plugins">
         {filteredPlugins.map((provider) => (
           <ProviderCard
             key={provider.id}

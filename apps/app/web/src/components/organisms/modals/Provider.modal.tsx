@@ -99,7 +99,7 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
   const handleConnectionTest = (metricId: string, credentials: GenericCredentialType) => {
     return new Promise((resolve) => {
       validateCredentials({ metricId, credentials })
-        resolve(null)
+      resolve(null)
     })
   }
 
@@ -173,9 +173,9 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
     <Dialog open={open} maxWidth="md" fullWidth={true} onClose={handleModalClose}>
       <DialogTitle>
         <DialogHeader>
-          <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
+          <span>
             Ajouter un widget
-          </Typography>
+          </span>
           <IconButton onClick={handleModalClose}>
             <Close />
           </IconButton>
@@ -216,7 +216,10 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
 
 const DialogHeader = styled.div`
   display: flex;
+  align-items: center;
   justify-content: space-between;
+  font-size: 1.5rem;
+  font-weight: bold;
 `
 
 export default ProviderModal
