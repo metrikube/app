@@ -1,4 +1,4 @@
-import { ApiAWSSingleResourceInstanceResult, ApiGithubIssues, ApiHealthCheckResult } from '@metrikube/common';
+import { ApiAWSSingleResourceInstanceResult, ApiDatabaseLastAverageQueriesByHour, ApiDatabaseSize, ApiDatabaseSlowQueries, ApiGithubIssues, ApiHealthCheckResult } from '@metrikube/common';
 import { MetricModel, PluginModel } from '@metrikube/core';
 
 export type WidgetModel = {
@@ -8,5 +8,12 @@ export type WidgetModel = {
   alertNumber: number;
   plugin: Pick<PluginModel, 'id' | 'name' | 'type' | 'description'>;
   metric: Pick<MetricModel, 'id' | 'name' | 'type' | 'isNotifiable'>;
-  data: ApiHealthCheckResult | ApiAWSSingleResourceInstanceResult;
+  data:
+    | ApiHealthCheckResult
+    | ApiAWSSingleResourceInstanceResult
+    | ApiGithubIssues[]
+    | ApiAWSSingleResourceInstanceResult[]
+    | ApiDatabaseLastAverageQueriesByHour
+    | ApiDatabaseSlowQueries[]
+    | ApiDatabaseSize;
 };

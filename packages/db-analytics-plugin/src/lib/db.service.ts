@@ -1,14 +1,12 @@
 import * as mysql from 'mysql2';
 
-import { ApiDatabaseLastAverageQueriesByHour, ApiDatabaseSlowQueries, DbConnectionCredentialType, DbConnectionType } from '@metrikube/common';
+import { ApiDatabaseLastAverageQueriesByHour, ApiDatabaseSize, ApiDatabaseSlowQueries, DbConnectionCredentialType, DbConnectionType } from '@metrikube/common';
 
 type SlowQueriesType = {
   query: string;
   executionTime: string;
   date: string;
-}
-
-
+};
 
 export class DbService {
   private readonly credentials: DbConnectionType;
@@ -39,7 +37,6 @@ export class DbService {
   }
 
   public async getNbQueries(): Promise<ApiDatabaseLastAverageQueriesByHour> {
-
     const query = `
     WITH hours AS (SELECT DATE_FORMAT(NOW() - INTERVAL n HOUR, '%Y-%m-%d %H:00:00') AS hour
     FROM (SELECT 0 AS n UNION SELECT 1 UNION SELECT 2 UNION SELECT 3
@@ -71,7 +68,7 @@ export class DbService {
     } catch (error) {
       console.error('Error generated during query execution: ', error);
       throw error;
-    }  finally {
+    } finally {
       connection.end();
     }
   }
@@ -141,16 +138,33 @@ export class DbService {
       WHERE SCHEMA_NAME = '${this.credentials.database}'
       ORDER BY executionTime DESC LIMIT 10;
     `;
-
     try {
       return this.executeQuery(connection, query);
     } catch (error) {
       console.error('Error executing getDbSizeMb: ', error);
       throw error;
-    }  finally {
+    } finally {
+      connection.end();
+    }
+  }
+
+  public async aggregateDbSizeData(): Promise<ApiDatabaseSize> {
+    const connection = await this.connection();
+    try {
+      const dbSizeMb = await this.getDbSizeMb();
+      const nbRows = await this.getNbRows();
+      const nbTables = await this.getNbTables();
+      return {
+        size: dbSizeMb,
+        numberOfTables: nbTables,
+        numberOfTotalRows: nbRows,
+        databaseName: this.credentials.database
+      };
+    } catch (error) {
+      console.error('Error executing aggregateDbSizeData: ', error);
+      throw error;
+    } finally {
       connection.end();
     }
   }
 }
-
-

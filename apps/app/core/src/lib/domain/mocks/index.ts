@@ -1,3 +1,3 @@
-export * from "./plugins.mock"
-export * from "./dashboard.mock"
-export * from "./metrics.mock"
+export * from './widgets.mock';
+export * from './metrics.mock';
+export * from './plugins.mock';
