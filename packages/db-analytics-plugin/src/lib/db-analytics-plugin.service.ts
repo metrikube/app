@@ -22,16 +22,8 @@ export class DbAnalyticsPluginService implements PluginConnectionInterface {
   public async getDbSize(credentialData: DbConnectionCredentialType): Promise<ApiDatabaseSize | DatabaseError>{
     try {
       const dbService = await new DbService(credentialData);
-      const dbSizeMb = await dbService.getDbSizeMb();
-      const nbRows = await dbService.getNbRows();
-      const nbTables = await dbService.getNbTables();
-
-      return {
-        size: dbSizeMb,
-        numberOfTables: nbTables,
-        numberOfTotalRows: nbRows,
-        databaseName: credentialData.dbName
-      };
+      const dbSizeMb = await dbService.aggregateDbSizeData();
+      return dbSizeMb;
     } catch (error) {
       console.error('Error executing getDbSizeMb: ', error);
       return {
