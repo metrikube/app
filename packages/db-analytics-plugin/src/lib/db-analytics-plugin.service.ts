@@ -7,8 +7,9 @@ import { DbService } from './db.service';
 export class DbAnalyticsPluginService implements PluginConnectionInterface {
   public async getNbQueries(credentialData: DbConnectionCredentialType): Promise<ApiDatabaseLastAverageQueriesByHour | DatabaseError> {
     try {
-      const dbService = await new DbService(credentialData);
-      return dbService.getNbQueries();
+      const dbService = new DbService(credentialData);
+      const nbQueries = await dbService.getNbQueries();
+      return nbQueries;
     } catch (error) {
       console.error('Error generated during query execution: ', error);
       return {
@@ -21,7 +22,7 @@ export class DbAnalyticsPluginService implements PluginConnectionInterface {
 
   public async getDbSize(credentialData: DbConnectionCredentialType): Promise<ApiDatabaseSize | DatabaseError>{
     try {
-      const dbService = await new DbService(credentialData);
+      const dbService = new DbService(credentialData);
       const dbSizeMb = await dbService.aggregateDbSizeData();
       return dbSizeMb;
     } catch (error) {
