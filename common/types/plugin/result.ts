@@ -13,7 +13,7 @@ export type ApiResult = {
   'aws-ec2-multiple-instances-usage': ApiAWSSingleResourceInstanceResult[];
   'github-last-prs': ApiGithubIssues[] | ApiGithubError;
   'github-last-issues': ApiGithubIssues[] | ApiGithubError;
-  'database-queries': ApiDatabaseLastAverageQueriesByHour;
+  'database-queries': ApiDatabaseLastAverageQueriesByHour | DatabaseError;
   'database-size': ApiDatabaseSize;
   'database-slow-queries': ApiDatabaseSlowQueries[];
 };
@@ -32,6 +32,11 @@ export interface NbRequestsByHour {
 export interface ApiDatabaseLastAverageQueriesByHour {
   queries: NbRequestsByHour[];
   date: Timestamp;
+}
+
+export interface DatabaseError {
+  message: string;
+  error: true;
 }
 
 export interface ApiDatabaseSize {
