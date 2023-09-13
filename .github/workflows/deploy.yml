@@ -1,4 +1,4 @@
-name: Deploy new version to Docker Hub
+name: Deploy to Docker Hub
 
 on:
   push:
@@ -76,16 +76,3 @@ jobs:
           file: ./docker/Dockerfile
           push: true
           tags: ${{ steps.meta.outputs.tags }}
-
-  release:
-    needs: deploy
-    name: "Release ${{ needs.deploy.outputs.tags }}"
-    runs-on: "ubuntu-latest"
-
-    steps:
-      - name: Create release
-        uses: "marvinpinto/action-automatic-releases@latest"
-        with:
-          repo_token: "${{ secrets.ACCESS_TOKEN }}"
-          automatic_release_tag: true
-          prerelease: false
