@@ -137,7 +137,7 @@ export class SeedDefaultDatabase1693679995600 implements MigrationInterface {
         <p>Format de valeurs du json</p>
         <pre><code class="lang-json">{
             <span class="hljs-attr">"dbName"</span>: <span class="hljs-string">"str"</span>,
-            <span class="hljs-attr">"dbUser"</span>: <span class="hljs-string">"str"</span>,
+            <span class="hljs-attr">"dbUsername"</span>: <span class="hljs-string">"str"</span>,
             <span class="hljs-attr">"dbPassword"</span>: <span class="hljs-string">"str"</span>,
             <span class="hljs-attr">"dbPort"</span>: <span class="hljs-string">"str"</span>,
             <span class="hljs-attr">"dbHost"</span>: <span class="hljs-number">3306</span>
