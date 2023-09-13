@@ -1,5 +1,16 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { ApiDatabaseLastAverageQueriesByHour, ApiDatabaseSize, ApiDatabaseSlowQueries, DbConnectionCredentialType, MetricType, PluginConnectionInterface, PluginResult, DatabaseError } from '@metrikube/common';
+
+import {
+  ApiDatabaseLastAverageQueriesByHour,
+  ApiDatabaseSize,
+  ApiDatabaseSlowQueries,
+  DatabaseError,
+  DbConnectionCredentialType,
+  MetricType,
+  PluginConnectionInterface,
+  PluginResult
+} from '@metrikube/common';
+
 import { InvalidCredentialException } from '../../../../apps/api/src/domain/exceptions/invalid-credential.exception';
 import { DbService } from './db.service';
 
@@ -16,11 +27,11 @@ export class DbAnalyticsPluginService implements PluginConnectionInterface {
         message: `Error raised while get data of database ${credentialData.dbName}: ${error}
         , Check the instructions of this plugin.`,
         error: true
-      }
+      };
     }
   }
 
-  public async getDbSize(credentialData: DbConnectionCredentialType): Promise<ApiDatabaseSize | DatabaseError>{
+  public async getDbSize(credentialData: DbConnectionCredentialType): Promise<ApiDatabaseSize | DatabaseError> {
     try {
       const dbService = new DbService(credentialData);
       const dbSizeMb = await dbService.aggregateDbSizeData();
@@ -31,7 +42,7 @@ export class DbAnalyticsPluginService implements PluginConnectionInterface {
         message: `Error raised while get data of database ${credentialData.dbName}: ${error}
         , Check the instructions of this plugin.`,
         error: true
-      }
+      };
     }
   }
 
@@ -50,7 +61,7 @@ export class DbAnalyticsPluginService implements PluginConnectionInterface {
         message: `Error raised while get data of database ${credentialData.dbName}: ${error}
         , Check the instructions of this plugin.`,
         error: true
-      }
+      };
     }
   }
 
@@ -75,4 +86,3 @@ export class DbAnalyticsPluginService implements PluginConnectionInterface {
     }
   }
 }
-

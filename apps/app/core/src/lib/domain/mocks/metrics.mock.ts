@@ -1,4 +1,4 @@
-import { MetricModel } from "@metrikube/core";
+import { MetricModel } from '@metrikube/core';
 
 //METRICS
 // #region AWS metrics
@@ -19,14 +19,12 @@ export const awsBucketInstanceMetricMock: MetricModel = {
   isNotifiable: true
 };
 export const awsListS3MetricMock: MetricModel = {
-    id: '5dda4d85-ec61-49f6-86a5-43e64d2576f7',
-    name: 'AWS Bucket multiple instances cost',
-    type: 'aws-bucket-multiple-instances',
-    refreshInterval: 30,
-    isNotifiable: false
-
-}
-
+  id: '5dda4d85-ec61-49f6-86a5-43e64d2576f7',
+  name: 'AWS Bucket multiple instances cost',
+  type: 'aws-bucket-multiple-instances',
+  refreshInterval: 30,
+  isNotifiable: false
+};
 
 export const AWSMetricsMock: MetricModel[] = [awsSingleEC2InstanceMetricMock, awsBucketInstanceMetricMock, awsListS3MetricMock];
 // #endregion
@@ -59,7 +57,7 @@ export const pingApiMetricMock: MetricModel = {
   // description: "Description last PR",
   refreshInterval: 30,
   isNotifiable: true
-}
+};
 export const ApiMetricsMock: MetricModel[] = [pingApiMetricMock];
 
 // #endregion
@@ -72,7 +70,7 @@ export const dbSizeMetricMock: MetricModel = {
   // description: "Description last PR",
   refreshInterval: 30,
   isNotifiable: true
-}
+};
 
 export const dbSlowQueriesMetricMock: MetricModel = {
   id: 'sql-metric-1',
@@ -81,7 +79,7 @@ export const dbSlowQueriesMetricMock: MetricModel = {
   // description: "Description last PR",
   refreshInterval: 30,
   isNotifiable: false
-}
+};
 
 export const dbQueriesMock: MetricModel = {
   id: 'sql-metric-1',
@@ -90,7 +88,7 @@ export const dbQueriesMock: MetricModel = {
   // description: "Description last PR",
   refreshInterval: 30,
   isNotifiable: false
-}
+};
 
 export const SqlDatabaseMetricsMock: MetricModel[] = [dbSizeMetricMock, dbSlowQueriesMetricMock, dbQueriesMock];
 // #endregion

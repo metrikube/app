@@ -31,7 +31,7 @@ export const AWSPluginMock: PluginModel = {
   type: 'aws',
   category: 'cloud',
   description: 'Cloud provider',
-  instruction: "Instructions ",
+  instruction: 'Instructions ',
   // credential: {
   //   type: 'aws',
   //   value: {
@@ -69,7 +69,7 @@ export const apiHealthCheckPluginMock: PluginModel = {
   description: 'Description',
   instruction: "Pas d'instruction",
   metrics: ApiMetricsMock
-}
+};
 
 export const sqlPluginMock: PluginModel = {
   id: 'f5e90849-9c70-433d-9d66-dac20be2c4e7',
@@ -79,6 +79,6 @@ export const sqlPluginMock: PluginModel = {
   description: 'Description',
   instruction: "Pas d'instruction",
   metrics: SqlDatabaseMetricsMock
-}
+};
 
 export const pluginsMock = [AWSPluginMock, githubPluginMock, sqlPluginMock, apiHealthCheckPluginMock];

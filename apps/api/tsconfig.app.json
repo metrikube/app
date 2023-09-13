@@ -1,14 +1,24 @@
 {
   "extends": "./tsconfig.json",
+  "buildOptions": {
+    "incremental": true
+  },
   "compilerOptions": {
     "module": "commonjs",
+    "typeRoots": [
+      "../node_modules/@types/node",
+      "../node_modules/@types/jest"
+    ],
     "declaration": true,
     "removeComments": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "target": "ES2021",
-    "outDir": "./dist",
+    "target": "es2020",
+    "types": ["node", "jest"],
+    "resolveJsonModule": true,
+    "outDir": "../../dist-migrations",
     "incremental": true,
+    "esModuleInterop": true,
     "skipLibCheck": true,
     "strictNullChecks": false,
     "noImplicitAny": false,
@@ -16,8 +26,38 @@
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
     "moduleResolution": "node",
-    "lib": ["ESNext", "ES2022"]
+    "lib": [
+      "esnext"
+    ],
+    "paths": {
+      "@metrikube/common": [
+        "common/index.ts"
+      ],
+      "@metrikube/api-monitoring": [
+        "packages/api-monitoring/src/index.ts"
+      ],
+      "@metrikube/aws-plugin": [
+        "packages/aws-plugin/src/index.ts"
+      ],
+      "@metrikube/db-analytics-plugin": [
+        "packages/db-analytics-plugin/src/index.ts"
+      ],
+      "@metrikube/github-plugin": [
+        "packages/github-plugin/src/index.ts"
+      ]
+    }
   },
-  "exclude": ["jest.config.ts", "**/*.spec.ts", "**/*.test.ts"],
-  "include": ["**/*.ts", "../../common/types/plugin/plugin.ts"]
+  "exclude": [
+    "jest.config.ts",
+    "**/*.spec.ts",
+    "**/*.test.ts",
+    "../../packages/**/*.spec.ts",
+    "../../packages/**/*.test.ts",
+  ],
+  "include": [
+    "**/*.ts",
+    "../../data/**/*.ts",
+    "../../packages/**/*.ts",
+    "../../common/types/plugin/plugin.ts"
+  ]
 }

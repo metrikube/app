@@ -1,11 +1,21 @@
-import { AWSPluginMock, apiHealthCheckPluginMock, githubPluginMock, sqlPluginMock } from './plugins.mock';
-import { pingApiMetricMock, githubLastIssuesMetricMock, githubLastPrsMetricMock, awsBucketInstanceMetricMock, dbQueriesMock, dbSizeMetricMock, dbSlowQueriesMetricMock, awsListS3MetricMock } from './metrics.mock';
 import { WidgetModel } from '@metrikube/core';
+
+import {
+  awsBucketInstanceMetricMock,
+  awsListS3MetricMock,
+  dbQueriesMock,
+  dbSizeMetricMock,
+  dbSlowQueriesMetricMock,
+  githubLastIssuesMetricMock,
+  githubLastPrsMetricMock,
+  pingApiMetricMock
+} from './metrics.mock';
+import { AWSPluginMock, apiHealthCheckPluginMock, githubPluginMock, sqlPluginMock } from './plugins.mock';
 
 // #region API widgets
 export const pingApiWidgetMock: WidgetModel = {
   id: 'ping-api-1',
-  name: "Json placeholder - users",
+  name: 'Json placeholder - users',
   resourceId: undefined,
   alertNumber: 4,
   plugin: apiHealthCheckPluginMock,
@@ -13,12 +23,12 @@ export const pingApiWidgetMock: WidgetModel = {
   data: {
     status: 200,
     value: 100,
-    unit: "ms",
-    details: ""
+    unit: 'ms',
+    details: ''
   }
-}
+};
 // #endregion
-export const apiWidgets: WidgetModel[] = [pingApiWidgetMock]
+export const apiWidgets: WidgetModel[] = [pingApiWidgetMock];
 
 // #region Github widgets
 export const lastPullRequestWidgetMock: WidgetModel = {
@@ -113,14 +123,14 @@ export const lastIssuesWidgetMock: WidgetModel = {
   ]
 };
 // #endregion
-export const githubWidgets: WidgetModel[] = [lastPullRequestWidgetMock, lastIssuesWidgetMock]
+export const githubWidgets: WidgetModel[] = [lastPullRequestWidgetMock, lastIssuesWidgetMock];
 
 // #region AWS widgets
 export const singleBucketS3WidgetMock: WidgetModel = {
   id: 'bf32add2-ae8a-42b0-af8f-5a30a851a3ad',
   name: 'AWS S3',
   alertNumber: 1,
-  resourceId: "resource-123",
+  resourceId: 'resource-123',
   plugin: AWSPluginMock,
   metric: awsBucketInstanceMetricMock,
   data: {
@@ -133,7 +143,7 @@ export const singleBucketS3WidgetMock: WidgetModel = {
       creationDate: '2022-09-06T08:44:09.000Z'
     }
   }
-}
+};
 export const singleBucketS3Widget2Mock: WidgetModel = {
   id: '094bf35c-5d7c-4e0f-b88c-73318b32c',
   name: 'S3 First Bucket',
@@ -156,7 +166,7 @@ export const listBucketS3WidgetMock: WidgetModel = {
   id: '20f96417-5333-4dc0-979d-2b4d73f4ec80',
   name: 'AWS S3 List of buckets',
   alertNumber: 0,
-  resourceId: "resource",
+  resourceId: 'resource',
   plugin: AWSPluginMock,
   metric: awsListS3MetricMock,
   data: [
@@ -190,7 +200,7 @@ export const listBucketS3WidgetMock: WidgetModel = {
   ]
 };
 // #endregion
-export const awsWidgets: WidgetModel[] = [singleBucketS3WidgetMock, singleBucketS3Widget2Mock, listBucketS3WidgetMock]
+export const awsWidgets: WidgetModel[] = [singleBucketS3WidgetMock, singleBucketS3Widget2Mock, listBucketS3WidgetMock];
 
 // #region SQL widgets
 export const nbRequestsPerHour: WidgetModel = {
@@ -334,11 +344,6 @@ export const slowQueriesWidgetMock: WidgetModel = {
   ]
 };
 // #endregion
-export const sqlWidgets: WidgetModel[] = [nbRequestsPerHour, dbSizeWidgetMock, slowQueriesWidgetMock]
+export const sqlWidgets: WidgetModel[] = [nbRequestsPerHour, dbSizeWidgetMock, slowQueriesWidgetMock];
 
-export const widgetsMock: WidgetModel[] = [
-  ...apiWidgets,
-  ...githubWidgets,
-  ...awsWidgets,
-  ...sqlWidgets
-]
+export const widgetsMock: WidgetModel[] = [...apiWidgets, ...githubWidgets, ...awsWidgets, ...sqlWidgets];

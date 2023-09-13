@@ -8,11 +8,12 @@ export type WidgetModel = {
   alertNumber: number;
   plugin: Pick<PluginModel, 'id' | 'name' | 'type' | 'description'>;
   metric: Pick<MetricModel, 'id' | 'name' | 'type' | 'isNotifiable'>;
-  data: ApiHealthCheckResult |
-  ApiAWSSingleResourceInstanceResult | 
-  ApiGithubIssues[] | 
-  ApiAWSSingleResourceInstanceResult[] | 
-  ApiDatabaseLastAverageQueriesByHour |
-  ApiDatabaseSlowQueries[] |
-  ApiDatabaseSize;
+  data:
+    | ApiHealthCheckResult
+    | ApiAWSSingleResourceInstanceResult
+    | ApiGithubIssues[]
+    | ApiAWSSingleResourceInstanceResult[]
+    | ApiDatabaseLastAverageQueriesByHour
+    | ApiDatabaseSlowQueries[]
+    | ApiDatabaseSize;
 };

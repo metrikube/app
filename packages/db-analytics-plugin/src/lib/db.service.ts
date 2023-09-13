@@ -1,12 +1,12 @@
 import * as mysql from 'mysql2';
 
-import { ApiDatabaseLastAverageQueriesByHour, ApiDatabaseSlowQueries, DbConnectionCredentialType, DbConnectionType, ApiDatabaseSize } from '@metrikube/common';
+import { ApiDatabaseLastAverageQueriesByHour, ApiDatabaseSize, ApiDatabaseSlowQueries, DbConnectionCredentialType, DbConnectionType } from '@metrikube/common';
 
 type SlowQueriesType = {
   query: string;
   executionTime: string;
   date: string;
-}
+};
 
 export class DbService {
   private readonly credentials: DbConnectionType;
@@ -68,7 +68,7 @@ export class DbService {
     } catch (error) {
       console.error('Error generated during query execution: ', error);
       throw error;
-    }  finally {
+    } finally {
       connection.end();
     }
   }
@@ -143,7 +143,7 @@ export class DbService {
     } catch (error) {
       console.error('Error executing getDbSizeMb: ', error);
       throw error;
-    }  finally {
+    } finally {
       connection.end();
     }
   }
@@ -163,9 +163,8 @@ export class DbService {
     } catch (error) {
       console.error('Error executing aggregateDbSizeData: ', error);
       throw error;
-    }  finally {
+    } finally {
       connection.end();
     }
   }
 }
-

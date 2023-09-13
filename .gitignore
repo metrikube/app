@@ -2,9 +2,11 @@
 
 # compiled output
 dist
+dist-migrations
 tmp
 /out-tsc
 /data/db-data
+data/raw/db
 /data/db.db
 /data/mariadb.cnf
 # dependencies
