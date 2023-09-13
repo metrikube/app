@@ -1,3 +1,12 @@
+on:
+  release:
+    types: [ published ]
+
+permissions:
+  contents: write
+  packages: write
+
+
 changelog:
   categories:
     - title: What's Changed 🏕
