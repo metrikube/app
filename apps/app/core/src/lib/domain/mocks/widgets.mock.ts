@@ -1,5 +1,6 @@
-import { AWSPluginMock, WidgetModel, apiHealthCheckPluginMock, githubPluginMock, sqlPluginMock } from '@metrikube/core';
+import { AWSPluginMock, apiHealthCheckPluginMock, githubPluginMock, sqlPluginMock } from './plugins.mock';
 import { pingApiMetricMock, githubLastIssuesMetricMock, githubLastPrsMetricMock, awsBucketInstanceMetricMock, dbQueriesMock, dbSizeMetricMock, dbSlowQueriesMetricMock, awsListS3MetricMock } from './metrics.mock';
+import { WidgetModel } from '@metrikube/core';
 
 // #region API widgets
 export const pingApiWidgetMock: WidgetModel = {
