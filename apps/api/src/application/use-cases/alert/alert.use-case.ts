@@ -29,11 +29,14 @@ export class AlertUseCase implements AlertUseCaseInterface {
     @Inject(DiTokens.CredentialRepositoryToken) private readonly credentialRepository: CredentialRepository,
     @Inject(DiTokens.Scheduler) private readonly scheduler: SchedulerInterface,
     @Inject(DiTokens.PluginUseCaseToken) private readonly pluginUseCase: PluginUseCaseInterface
-  ) {
-  }
+  ) {}
 
   getwidgetAlerts(widgetId: string): Promise<Alert[]> {
     return this.alertRepository.findByWidgetId(widgetId);
+  }
+
+  getTriggeredAlerts(): Promise<Alert[]> {
+    return this.alertRepository.findTriggeredAlerts();
   }
 
   async deleteAlert(alertId: string): Promise<void> {
@@ -47,10 +50,7 @@ export class AlertUseCase implements AlertUseCaseInterface {
 
   async createAlertOnActivePlugin(widgetId: Widget['id'], alerts: CreateAlertRequestDto[]): Promise<CreateAlertResponseDto> {
     const activatedMetric = await this.widgetRepository.findwidgetById(widgetId);
-    const createdAlerts = await this.alertRepository.createAlerts(
-      alerts.map((alert) =>
-        new Alert(randomUUID(), alert.label, widgetId, true, false, alert.condition))
-    );
+    const createdAlerts = await this.alertRepository.createAlerts(alerts.map((alert) => new Alert(randomUUID(), alert.label, widgetId, true, false, alert.condition)));
 
     await Promise.all(createdAlerts.map(this.registerAlertJob.bind(this)(activatedMetric)));
 
@@ -63,14 +63,18 @@ export class AlertUseCase implements AlertUseCaseInterface {
 
     const isBelowThresholdAndNotified = !isConditionMet && alert.triggered;
     if (isBelowThresholdAndNotified && alert.triggered !== isBelowThresholdAndNotified) {
-      Logger.log('L\'alerte passe sous le seuil', this.constructor.name);
+      Logger.log("L'alerte passe sous le seuil", this.constructor.name);
       return this.alertRepository.updateAlert(alert.id, { triggered: false });
     }
 
     if (isConditionMet && !alert.triggered) {
       Logger.warn(`La condition est remplie [${metricData[field]} ${operator} ${threshold}] 👉🏼 on doit notifier`, this.constructor.name);
       // todo : pass the user_email when running the container
-      await this.mailer.sendMail(process.env.USER_EMAIL, `🚨 Metrikube: alerte ${alert.label}`, `Bonjour,<br>L'alerte ${alert.label} a été activée.<br>Le seuil défini est ${alert.condition.threshold}, mais le résultat est ${metricData[field]}.`);
+      await this.mailer.sendMail(
+        process.env.USER_EMAIL,
+        `🚨 Metrikube: alerte ${alert.label}`,
+        `Bonjour,<br>L'alerte ${alert.label} a été activée.<br>Le seuil défini est ${alert.condition.threshold}, mais le résultat est ${metricData[field]}.`
+      );
       return this.alertRepository.updateAlert(alert.id, { triggered: true });
     }
   }

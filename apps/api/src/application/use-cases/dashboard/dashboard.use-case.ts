@@ -7,12 +7,14 @@ import { PluginResolverInterface } from '../../../domain/interfaces/common/plugi
 import { CredentialRepository } from '../../../domain/interfaces/repository/credential.repository';
 import { WidgetRepository } from '../../../domain/interfaces/repository/widget.repository';
 import { SchedulerInterface } from '../../../domain/interfaces/scheduler/scheduler.interface';
+import { AlertUseCaseInterface } from '../../../domain/interfaces/use-cases/alert.use-case.interface';
 import { DashboardUseCaseInterface } from '../../../domain/interfaces/use-cases/dashboard.use-case.interface';
 import { PluginUseCaseInterface } from '../../../domain/interfaces/use-cases/plugin.use-case.interface';
 import { Credential } from '../../../domain/models/credential.model';
 import { Plugin } from '../../../domain/models/plugin.model';
 import { Widget } from '../../../domain/models/widget.model';
 import { DiTokens } from '../../../infrastructure/di/tokens';
+import { DashboardNotificationDto } from '../../../presenter/dashboard/dtos/dashboard-notification.dto';
 import { RefreshDashboardResponseDto } from '../../../presenter/dashboard/dtos/refresh-dashboard-response.dto';
 
 export type ActivatedMetric = Widget & { type: string; value: GenericCredentialType };
@@ -24,6 +26,7 @@ export class DashboardUseCase implements DashboardUseCaseInterface {
     @Inject(DiTokens.WidgetRepositoryToken) private readonly widgetRepository: WidgetRepository,
     @Inject(DiTokens.CredentialRepositoryToken) private readonly credentialRepository: CredentialRepository,
     @Inject(DiTokens.PluginUseCaseToken) private readonly pluginUseCase: PluginUseCaseInterface,
+    @Inject(DiTokens.AlertUseCaseToken) private readonly alertUseCase: AlertUseCaseInterface,
     @Inject(DiTokens.Scheduler) private readonly scheduler: SchedulerInterface,
     @Inject(DiTokens.PluginResolver) private readonly pluginResolver: PluginResolverInterface,
     @Inject(DiTokens.EncryptionService) private readonly encryptionService: EncryptionServiceInterface
@@ -34,6 +37,12 @@ export class DashboardUseCase implements DashboardUseCaseInterface {
     const activatedMetricsWithCredentials = await this.getActiveMetricsWithCredentials(credentials);
 
     return this.resolveMetrics(activatedMetricsWithCredentials);
+  }
+
+  async getDashboardNotification(): Promise<DashboardNotificationDto[]> {
+    const triggeredAlerts = await this.alertUseCase.getTriggeredAlerts();
+
+    return triggeredAlerts.map((alert) => new DashboardNotificationDto(alert));
   }
 
   async disableDashboardMetric(widgetId: string): Promise<void> {

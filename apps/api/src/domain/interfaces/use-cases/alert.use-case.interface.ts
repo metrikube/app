@@ -10,4 +10,6 @@ export interface AlertUseCaseInterface {
   updateAlert(alertId: string, payload: UpdateAlertDto): Promise<void>;
 
   deleteAlert(alertId: string): Promise<void>;
+
+  getTriggeredAlerts(): Promise<Alert[]>;
 }
