@@ -12,15 +12,7 @@ import { EncryptionService } from './services/common/encryption.service';
 
 @Module({
   imports: [DatabaseModule, ScheduleModule.forRoot()],
-  providers: [
-    { provide: DiTokens.EncryptionService, useFactory: () => new EncryptionService(process.env.MASTER_PASSWORD) },
-    PluginRepositoryImpl,
-    CredentialRepositoryImpl,
-    AlertRepositoryImpl,
-    MetricRepositoryImpl,
-    CredentialRepositoryImpl,
-    WidgetRepositoryImpl
-  ],
+  providers: [PluginRepositoryImpl, CredentialRepositoryImpl, AlertRepositoryImpl, MetricRepositoryImpl, CredentialRepositoryImpl, WidgetRepositoryImpl],
   exports: [PluginRepositoryImpl, CredentialRepositoryImpl, AlertRepositoryImpl, MetricRepositoryImpl, CredentialRepositoryImpl, WidgetRepositoryImpl]
 })
 export class InfrastructureModule {}

@@ -40,7 +40,7 @@ const providers: Provider[] = [
   { provide: DiTokens.AWSServiceToken, useClass: AWSService },
   { provide: DiTokens.GithubServiceToken, useClass: GithubService },
   ///////////////////////////
-  { provide: DiTokens.EncryptionService, useValue: new EncryptionService(process.env.MASTER_PASSWORD) },
+  { provide: DiTokens.EncryptionService, useFactory: () => new EncryptionService(process.env.MASTER_PASSWORD) },
   { provide: DiTokens.Mailer, useClass: NotificationService },
   { provide: DiTokens.PluginResolver, useClass: PluginResolverService },
   { provide: DiTokens.Scheduler, useClass: SchedulerService }
