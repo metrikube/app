@@ -50,7 +50,7 @@ export class AlertUseCase implements AlertUseCaseInterface {
 
   async createAlertOnActivePlugin(widgetId: Widget['id'], alerts: CreateAlertRequestDto[]): Promise<CreateAlertResponseDto> {
     const activatedMetric = await this.widgetRepository.findwidgetById(widgetId);
-    const createdAlerts = await this.alertRepository.createAlerts(alerts.map((alert) => new Alert(randomUUID(), alert.label, widgetId, true, false, alert.condition)));
+    const createdAlerts = await this.alertRepository.createAlerts(alerts.map((alert) => new Alert(null, alert.label, widgetId, true, false, alert.condition)));
 
     await Promise.all(createdAlerts.map(this.registerAlertJob.bind(this)(activatedMetric)));
 

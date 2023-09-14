@@ -1,3 +1,6 @@
+import { randomUUID } from 'crypto';
+
+import { BadRequestException } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 
 import { MetricThresholdOperator, MetricThresholdOperatorEnum } from '@metrikube/common';
@@ -16,7 +19,6 @@ describe('AlertUseCase', () => {
   let useCase: AlertUseCase;
   let alertRepository: AlertInMemoryRepositoryImpl;
   let scheduler: SchedulerInterface;
-  let wigetRepository: WidgetInMemoryRepositoryImpl;
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
@@ -26,7 +28,7 @@ describe('AlertUseCase', () => {
         { provide: DiTokens.WidgetRepositoryToken, useClass: WidgetInMemoryRepositoryImpl },
         { provide: DiTokens.CredentialRepositoryToken, useClass: CredentialInMemoryRepositoryImpl },
         { provide: DiTokens.Mailer, useValue: { sendMail: jest.fn() } },
-        { provide: DiTokens.Scheduler, useValue: { scheduleAlert: jest.fn() } },
+        { provide: DiTokens.Scheduler, useValue: { scheduleAlert: jest.fn(), unscheduleRelatedAlerts: jest.fn() } },
         { provide: DiTokens.PluginUseCaseToken, useValue: {} },
         { provide: DiTokens.ApiMonitoringToken, useValue: {} }
       ]
@@ -35,99 +37,145 @@ describe('AlertUseCase', () => {
     useCase = module.get(AlertUseCase);
     alertRepository = module.get(DiTokens.AlertRepositoryToken);
     scheduler = module.get(DiTokens.Scheduler);
-    wigetRepository = module.get(DiTokens.WidgetRepositoryToken);
   });
 
-  it('should create alert', async () => {
-    const alert = {
-      metricId: 'metric-id',
-      label: 'alert-name',
-      condition: {
-        field: 'field',
-        operator: 'operator' as MetricThresholdOperator,
-        threshold: 'threshold'
-      }
-    } as CreateAlertRequestDto;
-
-    const createdAlert = await useCase.createAlertOnActivePlugin('1', [alert]);
-    expect(createdAlert.alerts.length).toEqual(1);
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 
-  it('should check condition threshold', () => {
-    const value = 10;
-    const operator = 'gte';
-    const threshold = 5;
+  describe('Creating alerts and crons', () => {
+    it('should create alert and register an new cron job', async () => {
+      // Arrange
+      const spyScheduler = jest.spyOn(scheduler, 'scheduleAlert');
+      const alert = {
+        metricId: 'metric-id',
+        label: 'alert-name',
+        condition: {
+          field: 'field',
+          operator: 'operator' as MetricThresholdOperator,
+          threshold: 'threshold'
+        }
+      } as CreateAlertRequestDto;
 
-    expect(useCase.checkConditionThreshold(value, operator, threshold)).toEqual(true);
+      // Act
+      const createdAlert = await useCase.createAlertOnActivePlugin('1', [alert]);
+
+      // Assert
+      expect(createdAlert.alerts.length).toEqual(1);
+      expect(createdAlert.alerts[0].widgetId).toEqual('1');
+      expect(spyScheduler).toHaveBeenCalled();
+      expect(spyScheduler).toHaveBeenCalledTimes(1);
+    });
   });
 
-  it('should throw error when invalid condition', () => {
-    const value = 10;
-    const operator = '>' as MetricThresholdOperator;
-    const threshold = 5;
+  describe('Check condition threshold', () => {
+    it('should check condition threshold', () => {
+      const value = 10;
+      const operator = 'gte';
+      const threshold = 5;
 
-    expect(() => useCase.checkConditionThreshold(value, operator, threshold)).toThrowError();
+      expect(useCase.checkConditionThreshold(value, operator, threshold)).toEqual(true);
+    });
+
+    it('should throw error when invalid condition', () => {
+      const value = 10;
+      const operator = '>' as MetricThresholdOperator;
+      const threshold = 5;
+
+      expect(() => useCase.checkConditionThreshold(value, operator, threshold)).toThrowError();
+    });
+
+    it('should check condition and notify', async () => {
+      const metricData = {
+        field: 10
+      };
+      const alert = {
+        label: 'alert-name',
+        condition: {
+          field: 'field',
+          operator: 'gte' as MetricThresholdOperator,
+          threshold: 5
+        }
+      } as CreateAlertRequestDto;
+
+      await useCase.createAlertOnActivePlugin('1', [alert]);
+
+      const spy = jest.spyOn(useCase, 'checkConditionThreshold');
+      await useCase.checkContiditionAndNotify(metricData, Object.assign(new AlertEntity(), alert));
+      expect(spy).toHaveBeenCalled();
+      expect(spy).toHaveBeenCalledWith(metricData.field, alert.condition.operator, alert.condition.threshold);
+    });
   });
 
-  it('should check condition and notify', async () => {
-    const metricData = {
-      field: 10
-    };
-    const alert = {
-      label: 'alert-name',
-      condition: {
-        field: 'field',
-        operator: 'gte' as MetricThresholdOperator,
-        threshold: 5
-      }
-    } as CreateAlertRequestDto;
+  describe('Update alerts', () => {
+    it('should update alert when isActive is not in payload', async () => {
+      const alert: CreateAlertRequestDto = {
+        label: 'alert-name',
+        metricId: 'metric-id',
+        condition: {
+          field: 'field',
+          operator: MetricThresholdOperatorEnum.GTE,
+          threshold: 5
+        }
+      };
+      await alertRepository.createAlerts([new Alert('1', 'label', '1', false, false, alert.condition)]);
+      await useCase.updateAlert('1', { label: 'new-alert-name' });
+      const updatedAlert = await alertRepository.findAlertById('1');
 
-    await useCase.createAlertOnActivePlugin('1', [alert]);
+      expect(updatedAlert.label).toEqual('new-alert-name');
+    });
 
-    const spy = jest.spyOn(useCase, 'checkConditionThreshold');
-    await useCase.checkContiditionAndNotify(metricData, Object.assign(new AlertEntity(), alert));
-    expect(spy).toHaveBeenCalled();
-    expect(spy).toHaveBeenCalledWith(metricData.field, alert.condition.operator, alert.condition.threshold);
-  });
+    it('should schedule and update alert when isActive is true', async () => {
+      const spyScheduler = jest.spyOn(scheduler, 'scheduleAlert');
+      const alert: CreateAlertRequestDto = {
+        label: 'alert-name',
+        metricId: 'metric-id',
+        condition: {
+          field: 'field',
+          operator: MetricThresholdOperatorEnum.GTE,
+          threshold: 5
+        }
+      };
+      await alertRepository.createAlerts([new Alert('1', 'label', '1', false, false, alert.condition)]);
 
-  it('should update alert when isActive is not in payload', async () => {
-    const alert: CreateAlertRequestDto = {
-      label: 'alert-name',
-      metricId: 'metric-id',
-      condition: {
+      await useCase.createAlertOnActivePlugin('1', [alert]);
+
+      await useCase.updateAlert('1', { isActive: true });
+
+      expect(spyScheduler).toHaveBeenCalled();
+    });
+
+    it('should unschedule and update alert when isActive is false', async () => {
+      const spyUnscheduleRelatedAlerts = jest.spyOn(scheduler, 'unscheduleRelatedAlerts');
+
+      const alertCondition: CreateAlertRequestDto['condition'] = {
         field: 'field',
         operator: MetricThresholdOperatorEnum.GTE,
         threshold: 5
-      }
-    };
-    await alertRepository.createAlerts([new Alert('1', 'label', '1', false, false, alert.condition)]);
-    await useCase.updateAlert('1', { label: 'new-alert-name' });
-    const updatedAlert = await alertRepository.findAlertById('1');
+      };
 
-    expect(updatedAlert.label).toEqual('new-alert-name');
+      const createdAlerts = await alertRepository.createAlerts([new Alert('1', 'label', '1', false, false, alertCondition)]);
+
+      await useCase.updateAlert(createdAlerts[0].id, { isActive: false });
+
+      expect(spyUnscheduleRelatedAlerts).toHaveBeenCalled();
+      expect(spyUnscheduleRelatedAlerts).toHaveBeenCalledWith('1');
+    });
   });
 
-  it('should schedule and update alert when isActive is true', async () => {
-    const alert: CreateAlertRequestDto = {
-      label: 'alert-name',
-      metricId: 'metric-id',
-      condition: {
-        field: 'field',
-        operator: MetricThresholdOperatorEnum.GTE,
-        threshold: 5
-      }
-    };
-    await alertRepository.createAlerts([new Alert('1', 'label', '1', false, false, alert.condition)]);
+  describe('Deleting alerts and crons', () => {
+    it('should delete an alert and unschedule the job', async () => {
+      await alertRepository.createAlerts([new Alert('1', 'label', '1', false, false, { field: 'field', operator: MetricThresholdOperatorEnum.GTE, threshold: 5 })]);
+      // Arrange
+      const alertId = '1';
+      const unscheduleSpy = jest.spyOn(scheduler, 'unscheduleRelatedAlerts');
 
-    await useCase.createAlertOnActivePlugin('1', [alert]);
+      // Act
+      await useCase.deleteAlert(alertId);
 
-    await useCase.updateAlert('1', { isActive: true });
-
-    // spy on scheduler
-    const spyScheduler = jest.spyOn(scheduler, 'scheduleAlert');
-
-    expect(spyScheduler).toHaveBeenCalled();
+      // Assert
+      expect(unscheduleSpy).toHaveBeenCalledWith(alertId);
+      expect(alertRepository.alerts.length).toEqual(0);
+    });
   });
-
-  it.todo('should unschedule and update alert when isActive is false');
 });
