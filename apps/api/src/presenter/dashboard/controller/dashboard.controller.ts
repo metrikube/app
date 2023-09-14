@@ -1,8 +1,9 @@
-import { Controller, Delete, Get, HttpCode, HttpStatus, Inject, Param, ParseUUIDPipe, Post } from '@nestjs/common';
+import { Controller, Delete, Get, HttpCode, HttpStatus, Inject, Param, ParseUUIDPipe } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { DashboardUseCaseInterface } from '../../../domain/interfaces/use-cases/dashboard.use-case.interface';
 import { DiTokens } from '../../../infrastructure/di/tokens';
+import { DashboardNotificationDto } from '../dtos/dashboard-notification.dto';
 import { RefreshDashboardResponseDto } from '../dtos/refresh-dashboard-response.dto';
 
 @ApiTags('dashboard')
@@ -15,6 +16,13 @@ export class DashboardController {
   @ApiOperation({ summary: 'Refresh dashbaord dat' })
   fetchDashboardMetricData(): Promise<RefreshDashboardResponseDto[]> {
     return this.dashboardUseCase.refreshDashboard();
+  }
+
+  @Get('/notifications')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Get dashboard notifications' })
+  getDashboardNotification(): Promise<DashboardNotificationDto[]> {
+    return this.dashboardUseCase.getDashboardNotification();
   }
 
   @Delete('disable/:widgetId')
