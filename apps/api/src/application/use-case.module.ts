@@ -12,6 +12,7 @@ import { PluginRepositoryImpl } from '../infrastructure/database/repositories/pl
 import { WidgetRepositoryImpl } from '../infrastructure/database/repositories/wiget.repository';
 import { DiTokens } from '../infrastructure/di/tokens';
 import { InfrastructureModule } from '../infrastructure/infrastructure.module';
+import { EncryptionService } from '../infrastructure/services/common/encryption.service';
 import { PluginResolverService } from '../infrastructure/services/common/plugin-resolver.service';
 import { NotificationService } from '../infrastructure/services/notification/notification.service';
 import { SchedulerService } from '../infrastructure/services/scheduler/scheduler.service';
@@ -39,6 +40,7 @@ const providers: Provider[] = [
   { provide: DiTokens.AWSServiceToken, useClass: AWSService },
   { provide: DiTokens.GithubServiceToken, useClass: GithubService },
   ///////////////////////////
+  { provide: DiTokens.EncryptionService, useFactory: () => new EncryptionService(process.env.MASTER_PASSWORD) },
   { provide: DiTokens.Mailer, useClass: NotificationService },
   { provide: DiTokens.PluginResolver, useClass: PluginResolverService },
   { provide: DiTokens.Scheduler, useClass: SchedulerService }
@@ -57,6 +59,7 @@ const plugins = [ApiMonitoringModule, AwsPluginModule, DbAnalyticsPluginModule, 
     DiTokens.CredentialRepositoryToken,
     DiTokens.DashboardUseCaseToken,
     DiTokens.DbAnalyticsPluginServiceToken,
+    DiTokens.EncryptionService,
     DiTokens.GithubServiceToken,
     DiTokens.Mailer,
     DiTokens.MetricRepositoryToken,

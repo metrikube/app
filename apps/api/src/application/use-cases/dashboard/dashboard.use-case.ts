@@ -2,6 +2,7 @@ import { Inject, Logger } from '@nestjs/common';
 
 import { GenericCredentialType, MetricType } from '@metrikube/common';
 
+import { EncryptionServiceInterface } from '../../../domain/interfaces/common/encryption-service.interface';
 import { PluginResolverInterface } from '../../../domain/interfaces/common/plugin-resolver.interface';
 import { CredentialRepository } from '../../../domain/interfaces/repository/credential.repository';
 import { WidgetRepository } from '../../../domain/interfaces/repository/widget.repository';
@@ -24,12 +25,11 @@ export class DashboardUseCase implements DashboardUseCaseInterface {
     @Inject(DiTokens.CredentialRepositoryToken) private readonly credentialRepository: CredentialRepository,
     @Inject(DiTokens.PluginUseCaseToken) private readonly pluginUseCase: PluginUseCaseInterface,
     @Inject(DiTokens.Scheduler) private readonly scheduler: SchedulerInterface,
-    @Inject(DiTokens.PluginResolver) private readonly pluginResolver: PluginResolverInterface
+    @Inject(DiTokens.PluginResolver) private readonly pluginResolver: PluginResolverInterface,
+    @Inject(DiTokens.EncryptionService) private readonly encryptionService: EncryptionServiceInterface
   ) {}
 
   async refreshDashboard(): Promise<RefreshDashboardResponseDto[]> {
-    this.logger.log('refreshing dashboard...');
-
     const credentials = await this.credentialRepository.getCredentials();
     const activatedMetricsWithCredentials = await this.getActiveMetricsWithCredentials(credentials);
 
@@ -65,10 +65,10 @@ export class DashboardUseCase implements DashboardUseCaseInterface {
     return [...metricResultMap.values()];
   }
 
-  private mapToPluginCredential(plugin: Plugin, credentialEntity: Credential): { type: string; value: GenericCredentialType } {
+  private mapToPluginCredential(plugin: Plugin, credential: Credential): { type: string; value: GenericCredentialType } {
     return {
       type: plugin.credentialType,
-      value: credentialEntity?.value ? (JSON.parse(Buffer.from(credentialEntity.value, 'base64').toString('utf-8')) as GenericCredentialType) : null
+      value: this.encryptionService.decryptJson<GenericCredentialType>(credential.value) || null
     };
   }
 }

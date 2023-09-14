@@ -263,14 +263,14 @@ export class SeedDefaultDatabase1693679995600 implements MigrationInterface {
         id: credentialIds.apiHealthCheck,
         pluginId: pluginIds.apiHealthCheck,
         type: 'apiEndpoint',
-        value: 'eyJhcGlFbmRwb2ludCI6ICJodHRwczovL2pzb25wbGFjZWhvbGRlci50eXBpY29kZS5jb20vdXNlcnMifQo='
+        value:
+          'eyJpdiI6IjViMWQ0NWRiNGYyZmY4NGZiOGU5ZjZlOGQ4NTY2NTk3IiwiZW5jcnlwdGVkRGF0YSI6ImY5OGU5NzRlYWNmMWE1MWM0Yjg5MmEwNmM4NTBhYTEzNTA1Y2IyOTEwOWY5YTUyNmVlMjk5OTdhYmQ0ZTk4OTQ5MTA5OTNkMzM2Y2ViMmZhZjZhZjZmM2RkMDNiMjczODY5MTNlNWY2NjkxZGEzM2YxZjEwYjU1OSJ9'
       },
       {
         id: credentialIds.github,
         pluginId: pluginIds.github,
         type: 'github',
-        value:
-          'eyJhY2Nlc3NUb2tlbiI6ImdpdGh1Yl9wYXRfMTFBS1RYRFBBMHhVUGUzbFRUOTFXNl9CMXJzd1hwRGJCU01NTVZUUmdESE1PTUFVTHMwSkV3NlZpaHlYVjd3MFd1V01NTEZHUjRQZDNHVnA3UCIsIm93bmVyIjoibWV0cmlrdWJlIiwicmVwbyI6ImFwcCJ9'
+        value: ''
       }
     ];
     const widgets = [
