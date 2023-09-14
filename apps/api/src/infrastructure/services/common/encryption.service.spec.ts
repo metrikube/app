@@ -66,4 +66,22 @@ describe('[Encryption Service]', () => {
 
     expect(decryptedValue).toStrictEqual(originalValue);
   });
+
+  it('should handle JSON input', () => {
+    const service = new EncryptionService('masterPassword');
+    const originalValue = { foo: 'bar', baz: 123, qux: true };
+    const encryptedValue = service.encryptJson(originalValue);
+    const decryptedValue = service.decryptJson(encryptedValue);
+
+    expect(decryptedValue).toStrictEqual(originalValue);
+  });
+
+  it('should not handle JSON empty input', () => {
+    const service = new EncryptionService('masterPassword');
+    const originalValue = {};
+    const encryptedValue = service.encryptJson(originalValue);
+    const decryptedValue = service.decryptJson(encryptedValue);
+
+    expect(decryptedValue).toStrictEqual(originalValue);
+  });
 });

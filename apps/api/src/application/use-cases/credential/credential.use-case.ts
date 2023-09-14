@@ -1,7 +1,6 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 
-import { ApiDatabaseLastAverageQueriesByHour, ApiDatabaseSize, ApiDatabaseSlowQueries, GenericCredentialType, Plugin } from '@metrikube/common';
-import { DbAnalyticsPluginService } from '@metrikube/db-analytics-plugin';
+import { Plugin } from '@metrikube/common';
 
 import { PluginResolverInterface } from '../../../domain/interfaces/common/plugin-resolver.interface';
 import { CredentialRepository } from '../../../domain/interfaces/repository/credential.repository';
@@ -10,13 +9,12 @@ import { CredentialUseCaseInterface } from '../../../domain/interfaces/use-cases
 import { PluginUseCaseInterface } from '../../../domain/interfaces/use-cases/plugin.use-case.interface';
 import { Credential } from '../../../domain/models/credential.model';
 import { DiTokens } from '../../../infrastructure/di/tokens';
-import { CredentialTypesDtos, ValidateCredentialResponseDto } from '../../../presenter/credential/dtos/validate-credential-response.dto';
+import { CredentialTypesDtos } from '../../../presenter/credential/dtos/validate-credential-response.dto';
 
 @Injectable()
 export class CredentialUseCase implements CredentialUseCaseInterface {
   constructor(
     @Inject(DiTokens.CredentialRepositoryToken) private readonly credentialRepository: CredentialRepository,
-    @Inject(DiTokens.DbAnalyticsPluginServiceToken) private readonly DbAnalyticsPluginService: DbAnalyticsPluginService,
     @Inject(DiTokens.PluginUseCaseToken) private readonly pluginUseCase: PluginUseCaseInterface,
     @Inject(DiTokens.MetricRepositoryToken) private readonly metricRepository: MetricRepository,
     @Inject(DiTokens.PluginResolver) private readonly pluginResolver: PluginResolverInterface
