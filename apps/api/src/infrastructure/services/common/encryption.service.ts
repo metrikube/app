@@ -2,13 +2,23 @@ import { createCipheriv, createDecipheriv, createHash, randomBytes } from 'node:
 
 import { Injectable } from '@nestjs/common';
 
+import { EncryptionServiceInterface } from '../../../domain/interfaces/common/encryption-service.interface';
+
 type DynamicKeyValue = { [key: string]: string };
 
 @Injectable()
-export class EncryptionService {
+export class EncryptionService implements EncryptionServiceInterface {
   algorithm = 'aes-256-ctr';
 
   constructor(private masterPassword: string) {}
+
+  encryptJson<T extends Record<string, string | number | boolean>>(value: T): string {
+    return this.encrypt(JSON.stringify(value));
+  }
+
+  decryptJson<T extends Record<string, string | number | boolean>>(hash: string): T {
+    return JSON.parse(this.decrypt(hash));
+  }
 
   encrypt(value: string): string {
     const iv = randomBytes(16);

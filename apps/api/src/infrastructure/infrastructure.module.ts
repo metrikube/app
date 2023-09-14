@@ -7,10 +7,20 @@ import { CredentialRepositoryImpl } from './database/repositories/credential.rep
 import { MetricRepositoryImpl } from './database/repositories/metric.repository';
 import { PluginRepositoryImpl } from './database/repositories/plugin.repository';
 import { WidgetRepositoryImpl } from './database/repositories/wiget.repository';
+import { DiTokens } from './di/tokens';
+import { EncryptionService } from './services/common/encryption.service';
 
 @Module({
   imports: [DatabaseModule, ScheduleModule.forRoot()],
-  providers: [PluginRepositoryImpl, CredentialRepositoryImpl, AlertRepositoryImpl, MetricRepositoryImpl, CredentialRepositoryImpl, WidgetRepositoryImpl],
+  providers: [
+    { provide: DiTokens.EncryptionService, useFactory: () => new EncryptionService(process.env.MASTER_PASSWORD) },
+    PluginRepositoryImpl,
+    CredentialRepositoryImpl,
+    AlertRepositoryImpl,
+    MetricRepositoryImpl,
+    CredentialRepositoryImpl,
+    WidgetRepositoryImpl
+  ],
   exports: [PluginRepositoryImpl, CredentialRepositoryImpl, AlertRepositoryImpl, MetricRepositoryImpl, CredentialRepositoryImpl, WidgetRepositoryImpl]
 })
 export class InfrastructureModule {}

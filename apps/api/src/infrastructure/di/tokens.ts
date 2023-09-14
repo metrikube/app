@@ -32,4 +32,5 @@ export class DiTokens {
   static readonly Mailer = 'MAILER' as const;
   static readonly Scheduler = 'SCHEDULER' as const;
   static readonly PluginResolver = 'PLUGIN_RESOLVER' as const;
+  static readonly EncryptionService = 'ENCRYPTION_SERVICE' as const;
 }

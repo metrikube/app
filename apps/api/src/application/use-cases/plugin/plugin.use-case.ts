@@ -1,7 +1,8 @@
 import { BadRequestException, Inject, Injectable, NotFoundException } from '@nestjs/common';
 
-import { CredentialType, GenericCredentialType, MetricType, PluginResult } from '@metrikube/common';
+import { GenericCredentialType, MetricType, PluginResult } from '@metrikube/common';
 
+import { EncryptionServiceInterface } from '../../../domain/interfaces/common/encryption-service.interface';
 import { PluginResolverInterface } from '../../../domain/interfaces/common/plugin-resolver.interface';
 import { AlertRepository } from '../../../domain/interfaces/repository/alert.repository';
 import { CredentialRepository } from '../../../domain/interfaces/repository/credential.repository';
@@ -30,7 +31,8 @@ export class PluginUseCase implements PluginUseCaseInterface {
     @Inject(DiTokens.PluginRepositoryToken) private readonly pluginRepository: PluginRepository,
     @Inject(DiTokens.PluginResolver) private readonly pluginResolver: PluginResolverInterface,
     @Inject(DiTokens.Scheduler) private readonly scheduler: SchedulerInterface,
-    @Inject(DiTokens.WidgetRepositoryToken) private readonly widgetRepository: WidgetRepository
+    @Inject(DiTokens.WidgetRepositoryToken) private readonly widgetRepository: WidgetRepository,
+    @Inject(DiTokens.EncryptionService) private readonly encryptionService: EncryptionServiceInterface
   ) {
   }
 
@@ -40,6 +42,8 @@ export class PluginUseCase implements PluginUseCaseInterface {
       this.metricRepository.getMetrics(),
       this.credentialRepository.getCredentials()
     ]);
+
+    // const mappedPlugins = plugins.map((plugin) => ({}));
 
     return new PluginResponseDto(plugins, metrics, credentials);
   }
@@ -54,10 +58,11 @@ export class PluginUseCase implements PluginUseCaseInterface {
     await this.pluginResolver.testPluginConnection(plugin, credential);
 
     const pluginCredential = await this.credentialRepository.createCredential({
-      value: credential as unknown as string,
-      plugin,
-      type: plugin.credentialType as CredentialType
+      type: plugin.credentialType,
+      value: this.encryptionService.encryptJson(credential),
+      pluginId
     });
+
     const widget = await this.widgetRepository.createwidget({
       pluginId,
       name,
@@ -86,12 +91,12 @@ export class PluginUseCase implements PluginUseCaseInterface {
    */
   async refreshPluginMetric(pluginId: PluginEntity["id"], widgetId: WidgetEntity["id"]): Promise<PluginResult<MetricType>> {
     const widget = await this.widgetRepository.findwidgetById(widgetId);
-    const credentials = await this.credentialRepository.findCredentialByIdAndPluginId(widget.credentialId, pluginId);
-    if (!credentials) throw new BadRequestException("No credentials found for this plugin");
+    const credential = await this.credentialRepository.findCredentialByIdAndPluginId(widget.credentialId, pluginId);
+    if (!credential) throw new BadRequestException("No credentials found for this plugin");
     const metricType = widget.metric.type as MetricType;
 
-    const parsedCredentials = JSON.parse(Buffer.from(credentials.value, "base64").toString("utf-8")) as GenericCredentialType;
-    return this.pluginResolver.queryPluginDataByMetricType(metricType, parsedCredentials);
+    const parsedCredential = this.encryptionService.decryptJson<GenericCredentialType>(credential.value);
+    return this.pluginResolver.queryPluginDataByMetricType(metricType, parsedCredential);
   }
 
   getPluginCredentials(pluginId: string): Promise<Credential> {

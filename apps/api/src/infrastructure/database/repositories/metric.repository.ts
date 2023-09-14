@@ -6,6 +6,7 @@ import { InjectDataSource } from '@nestjs/typeorm';
 import { MetricType } from '@metrikube/common';
 
 import { MetricRepository } from '../../../domain/interfaces/repository/metric.repository';
+import { Metric } from '../../../domain/models/metric.model';
 import { MetricEntity } from '../entities/metric.entity';
 import { BaseRepository } from './base.repository';
 
@@ -15,25 +16,29 @@ export class MetricRepositoryImpl extends BaseRepository<MetricEntity> implement
     super(connection, MetricEntity);
   }
 
-  getMetrics(criterias: FindManyOptions<MetricEntity> | FindOptionsWhere<MetricEntity>): Promise<MetricEntity[]> {
-    return this.find(criterias);
+  async getMetrics(criterias: FindManyOptions<MetricEntity> | FindOptionsWhere<MetricEntity>): Promise<Metric[]> {
+    const metrics = await this.find(criterias);
+    return metrics.map(MetricEntity.toModel);
   }
 
-  findById(id: string): Promise<MetricEntity> {
-    return this.findOne({
+  async findById(id: string): Promise<Metric> {
+    const metric = await this.findOne({
       where: { id },
       relations: { plugin: true }
     });
+    return MetricEntity.toModelDetailed(metric);
   }
 
-  findMetricByPluginId(pluginId: string): Promise<MetricEntity[]> {
-    return this.find({ where: { plugin: { id: pluginId } } });
+  async findMetricByPluginId(pluginId: string): Promise<Metric[]> {
+    const metrics = await this.find({ where: { plugin: { id: pluginId } } });
+    return metrics.map(MetricEntity.toModel);
   }
 
-  findMetricByType(pluginId: string, type: MetricType): Promise<MetricEntity> {
-    return this.findOne({
+  async findMetricByType(pluginId: string, type: MetricType): Promise<Metric> {
+    const metric = await this.findOne({
       where: { type, plugin: { id: pluginId } },
       relations: { widgets: true }
     });
+    return MetricEntity.toModelDetailed(metric);
   }
 }
