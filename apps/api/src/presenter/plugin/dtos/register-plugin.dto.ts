@@ -13,7 +13,7 @@ export class RegisterPluginRequestDto {
     name: 'credential',
     description: 'The credential to use to connect to the plugin',
     example: {
-      apiEndpoint: 'https://jsonplaceholder.typicode.com/users'
+      apiEndpoint: 'https://httpstat.us/200'
     }
   })
   @IsDefined()

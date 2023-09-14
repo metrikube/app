@@ -54,7 +54,7 @@ export class DbConnectionCredentialDTO {
 }
 
 export class ApiEndpointCredentialDTO {
-  @ApiProperty({ name: 'apiEndpoint', type: String, description: 'API Endpoint', example: 'https://jsonplaceholder.typicode.com/users' })
+  @ApiProperty({ name: 'apiEndpoint', type: String, description: 'API Endpoint', example: 'https://httpstat.us/200' })
   @IsDefined()
   @IsString({ message: '"apiEndpoint" field must be a string!' })
   @IsUrl(undefined, { message: 'Endpoint url is not valid' })
@@ -100,7 +100,7 @@ export type CredentialTypesDtos = ApiKeyCredentialDTO | UserPasswordCredentialDT
 export const credentialsDtosExamples = {
   apiEndpoint: {
     value: {
-      apiEndpoint: 'https://jsonplaceholder.typicode.com/users'
+      apiEndpoint: 'https://httpstat.us/200'
     }
   },
   apiKey: {
