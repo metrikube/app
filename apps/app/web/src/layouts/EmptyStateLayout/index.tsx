@@ -1,4 +1,4 @@
-import { AddchartOutlined } from '@mui/icons-material'
+import { SvgIconComponent } from '@mui/icons-material'
 import { Box, Button, Typography } from '@mui/material'
 import React from 'react'
 
@@ -8,6 +8,7 @@ interface Props {
   onActionButtonClick: () => void
   buttonLabel: string
   imageAsset: string
+  buttonIcon: SvgIconComponent
 }
 
 export const EmptyStateLayout = ({
@@ -15,7 +16,8 @@ export const EmptyStateLayout = ({
   description,
   onActionButtonClick,
   buttonLabel,
-  imageAsset
+  imageAsset,
+  ...props
 }: Props) => {
   return (
     <Box
@@ -42,7 +44,7 @@ export const EmptyStateLayout = ({
           display: 'flex',
           columnGap: '0.5rem'
         }}
-        startIcon={<AddchartOutlined />}
+        startIcon={<props.buttonIcon />}
         variant="contained">
         {buttonLabel}
       </Button>
