@@ -12,6 +12,7 @@ export class Alert {
     public widgetId: Widget['id'],
     public isActive: boolean,
     public triggered: boolean,
+    public triggeredAt: Date,
     public condition: {
       field: string;
       operator: MetricThresholdOperator;

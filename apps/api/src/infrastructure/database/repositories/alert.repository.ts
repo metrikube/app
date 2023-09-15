@@ -50,7 +50,7 @@ export class AlertRepositoryImpl extends BaseRepository<AlertEntity> implements 
   }
 
   async updateAlert(id: string, payload: UpdateAlertDto): Promise<void> {
-    await this.update({ id }, payload);
+    await this.update({ id }, this.create(payload));
   }
 
   async deleteAlert(alertId: string): Promise<void> {

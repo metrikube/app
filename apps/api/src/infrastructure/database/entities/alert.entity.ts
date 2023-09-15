@@ -1,4 +1,4 @@
-import { Column, CreateDateColumn, Entity, Generated, JoinColumn, ManyToOne, PrimaryGeneratedColumn, RelationId, UpdateDateColumn } from 'typeorm';
+import { BeforeInsert, BeforeUpdate, Column, CreateDateColumn, Entity, Generated, JoinColumn, ManyToOne, PrimaryGeneratedColumn, RelationId, UpdateDateColumn, UpdateEvent } from 'typeorm';
 
 import { MetricThresholdOperator, MetricThresholdOperatorEnum } from '@metrikube/common';
 
@@ -16,6 +16,9 @@ export class AlertEntity {
 
   @Column({ default: false })
   triggered: boolean;
+
+  @Column({ type: 'datetime', default: null })
+  triggeredAt: Date;
 
   @Column({ default: true, type: 'boolean' })
   isActive: boolean;
@@ -41,8 +44,14 @@ export class AlertEntity {
   @UpdateDateColumn()
   updatedAt: Date;
 
+  // @BeforeUpdate()
+  // beforeUpdate(event: UpdateEvent<AlertEntity>) {
+  //   console.log("event : ", event);
+  //   if (event.entity?.triggered) event.entity.triggeredAt = new Date();
+  // }
+
   static toModel(entity: AlertEntity): Alert {
-    return new Alert(entity.id, entity.label, entity.widgetId, entity.isActive, entity.triggered, {
+    return new Alert(entity.id, entity.label, entity.widgetId, entity.isActive, entity.triggered, entity.triggeredAt, {
       field: entity.condition.field,
       operator: entity.condition.operator as MetricThresholdOperatorEnum,
       threshold: entity.condition.threshold
