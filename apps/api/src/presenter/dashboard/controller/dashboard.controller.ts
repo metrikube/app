@@ -24,11 +24,14 @@ export class DashboardController {
     );
   }
 
-  @Get('/notifications')
+  @Sse('/notifications')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Get dashboard notifications' })
-  getDashboardNotification(): Promise<DashboardNotificationDto[]> {
-    return this.dashboardUseCase.getDashboardNotification();
+  getDashboardNotification(): Observable<{ data: DashboardNotificationDto[] }> {
+    return interval(2000).pipe(
+      switchMap((_) => this.dashboardUseCase.getDashboardNotification()),
+      map((data) => ({ data }))
+    );
   }
 
   @Delete('disable/:widgetId')
