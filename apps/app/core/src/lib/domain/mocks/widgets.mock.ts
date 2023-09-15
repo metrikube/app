@@ -13,7 +13,7 @@ import {
 import { AWSPluginMock, apiHealthCheckPluginMock, githubPluginMock, sqlPluginMock } from './plugins.mock';
 
 // #region API widgets
-export const pingApiWidgetMock: WidgetModel = {
+export const pingApiWidgetMock1: WidgetModel = {
   id: 'ping-api-1',
   name: 'Json placeholder - users',
   resourceId: undefined,
@@ -27,8 +27,38 @@ export const pingApiWidgetMock: WidgetModel = {
     details: ''
   }
 };
+
+export const pingApiWidgetMock2: WidgetModel = {
+  id: 'ping-api-1',
+  name: 'Json placeholder - users',
+  resourceId: undefined,
+  alertNumber: 2,
+  plugin: apiHealthCheckPluginMock,
+  metric: pingApiMetricMock,
+  data: {
+    status: 400,
+    value: 200,
+    unit: 'ms',
+    details: ''
+  }
+};
+
+export const pingApiWidgetMock3: WidgetModel = {
+  id: 'ping-api-1',
+  name: 'Json placeholder - users',
+  resourceId: undefined,
+  alertNumber: 2,
+  plugin: apiHealthCheckPluginMock,
+  metric: pingApiMetricMock,
+  data: {
+    status: 500,
+    value: 50,
+    unit: 'ms',
+    details: ''
+  }
+};
 // #endregion
-export const apiWidgets: WidgetModel[] = [pingApiWidgetMock];
+export const apiWidgets: WidgetModel[] = [pingApiWidgetMock1, pingApiWidgetMock2, pingApiWidgetMock3];
 
 // #region Github widgets
 export const lastPullRequestWidgetMock: WidgetModel = {
