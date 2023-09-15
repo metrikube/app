@@ -1,5 +1,4 @@
 import PluginEmptyStateImg from '../assets/img/undraws/undraw_online_stats.svg'
-import Loader from '../components/atoms/Loader'
 import ConfirmDeletionModal from '../components/organisms/modals/ConfirmDeletion.modal'
 import ProviderModal from '../components/organisms/modals/Provider.modal'
 import WidgetAlertsModal from '../components/organisms/modals/WidgetAlerts.modal'
@@ -9,11 +8,7 @@ import { SetupPluginProvider } from '../contexts/SetupPlugin.context'
 import DefaultLayout from '../layouts/DefaultLayout'
 import { EmptyStateLayout } from '../layouts/EmptyStateLayout'
 import { WidgetsLayout } from '../layouts/WidgetsLayout'
-import {
-  getWidgetsQuery,
-  getNotificationsQuery,
-  resetTriggeredAlertMutation
-} from '../services/dashboard.service'
+import { getNotificationsQuery, resetTriggeredAlertMutation } from '../services/dashboard.service'
 import styled from '@emotion/styled'
 import { GetWidgetsUsecase, WidgetModel, widgetsMock } from '@metrikube/core'
 import { AddchartOutlined } from '@mui/icons-material'
@@ -33,7 +28,6 @@ const Dashboard = () => {
   const [selectedWidget, setSelectedWidget] = useState<WidgetModel | null>(null)
   const [widgets, setWidgets] = useState<WidgetModel[]>([])
   const [collapseChecked, setCollapseChecked] = useState(false)
-  const [timeStamp, setTimeStamp] = useState(0)
   const queryClient = useQueryClient()
 
   const { data: notifications } = getNotificationsQuery()
@@ -43,10 +37,9 @@ const Dashboard = () => {
   const { dashboardMetricsAdapter } = useAdapter()
   useEffect(() => {
     new GetWidgetsUsecase(dashboardMetricsAdapter).execute().onmessage = function (event) {
-      setTimeStamp(event.timeStamp)
       setWidgets(JSON.parse(event.data))
     }
-  }, [timeStamp])
+  }, [])
 
   const openProviderModalHandler = () => {
     setOpenModal(true)
@@ -187,7 +180,7 @@ const StyledHeader = styled.header`
 
 const Brand = styled(Box)`
   display: flex;
-  column-gap: ${(props) => props.theme.spacing(2)};
+  column-gap: ${({ theme }) => theme.spacing(2)};
   align-items: center;
   justify-content: center;
 `
