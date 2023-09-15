@@ -1,4 +1,6 @@
-import { Controller, Delete, Get, HttpCode, HttpStatus, Inject, Param, ParseUUIDPipe } from '@nestjs/common';
+import { Observable, interval, map } from 'rxjs';
+
+import { Controller, Delete, Get, HttpCode, HttpStatus, Inject, Param, ParseUUIDPipe, Sse } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { DashboardUseCaseInterface } from '../../../domain/interfaces/use-cases/dashboard.use-case.interface';
@@ -11,11 +13,11 @@ import { RefreshDashboardResponseDto } from '../dtos/refresh-dashboard-response.
 export class DashboardController {
   constructor(@Inject(DiTokens.DashboardUseCaseToken) private readonly dashboardUseCase: DashboardUseCaseInterface) {}
 
-  @Get('/')
+  @Sse('/')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Refresh dashbaord dat' })
-  fetchDashboardMetricData(): Promise<RefreshDashboardResponseDto[]> {
-    return this.dashboardUseCase.refreshDashboard();
+  fetchDashboardMetricData(): Observable<{ data: Promise<RefreshDashboardResponseDto[]> }> {
+    return interval(1000).pipe(map((_) => ({ data: this.dashboardUseCase.refreshDashboard() })));
   }
 
   @Get('/notifications')
