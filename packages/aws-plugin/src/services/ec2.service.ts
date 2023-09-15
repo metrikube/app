@@ -15,13 +15,6 @@ export class EC2Service {
     this.credentials = credentials;
   }
 
-  // private createEC2Client(region: string): EC2Client {
-  //   return new EC2Client({
-  //     region: region,
-  //     credentials: this.credentials,
-  //   });
-  // }
-
   async getInstanceInformations(instanceId: string): Promise<ApiAWSSingleResourceInstanceResult> {
     try {
       const params = {
@@ -40,7 +33,7 @@ export class EC2Service {
       return {
         id: instanceId,
         name: instanceFound.Tags?.find((tag) => tag.Key === 'Name')?.Value || '',
-        status: instanceFound.State?.Name === 'running',
+        status: instanceFound.State?.Name,
         region: instanceFound.Placement?.AvailabilityZone?.slice(0, -1) || '',
         cost: cost.currentCost,
         currency: cost.currency
@@ -121,7 +114,7 @@ export class EC2Service {
           const instanceInfo = {
             id: instanceId,
             name: this.getInstanceName(instance.Tags) || '',
-            status: instance.State.Name === 'running',
+            status: instance.State.Name,
             region: instance.Placement.AvailabilityZone.slice(0, -1),
             cost: cost.currentCost,
             currency: cost.currency
