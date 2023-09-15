@@ -49,7 +49,7 @@ export interface ApiDatabaseSize {
 export interface ApiAWSSingleResourceInstanceResult {
   id?: string;
   name: string;
-  status?: boolean;
+  status?: string;
   cost: number | string;
   region?: string;
   currency?: string;
