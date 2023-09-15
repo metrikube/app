@@ -36,51 +36,6 @@ export const DataBaseSize = ({ widget }: Props) => {
             }
           ]}
         />
-        {/* <Box
-          sx={{
-            display: 'flex',
-            columnGap: '70px',
-            flexWrap: 'wrap',
-            rowGap: '30px',
-            flexDirection: 'column'
-          }}>
-          <TitledBox title="Nom" icon={BadgeIcon} iconColor="#4160b4">
-            <Typography
-              sx={{
-                fontSize: '15px',
-                fontWeight: 'bold'
-              }}>
-              {widget.data.databaseName}
-            </Typography>
-          </TitledBox>
-          <TitledBox title="Taille" icon={StraightenIcon} iconColor="#8DDFCB">
-            <Typography
-              sx={{
-                fontSize: '15px',
-                fontWeight: 'bold'
-              }}>
-              {widget.data.size + ' Mb'}
-            </Typography>
-          </TitledBox>
-          <TitledBox title="Nombre de tables" icon={DatasetIcon} iconColor="#57375D">
-            <Typography
-              sx={{
-                fontSize: '15px',
-                fontWeight: 'bold'
-              }}>
-              {widget.data.numberOfTables}
-            </Typography>
-          </TitledBox>
-          <TitledBox title="Nombre de lignes" icon={TableRowsIcon} iconColor="#FCBAAD">
-            <Typography
-              sx={{
-                fontSize: '15px',
-                fontWeight: 'bold'
-              }}>
-              {widget.data.numberOfTotalRows}
-            </Typography>
-          </TitledBox>
-        </Box> */}
       </>
     </SimpleWidget>
   )
