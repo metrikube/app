@@ -299,6 +299,7 @@ export class SeedDefaultDatabase1693679995600 implements MigrationInterface {
         widgetId: widgetIds.pingApi,
         label: 'API Response Time > 50ms',
         triggered: false,
+        triggeredAt: null,
         isActive: true,
         condition: {
           field: 'value',
