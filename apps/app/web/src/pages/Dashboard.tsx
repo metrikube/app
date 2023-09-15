@@ -136,10 +136,11 @@ const Dashboard = () => {
               onActionButtonClick={openProviderModalHandler}
               buttonLabel="Ajouter un widget"
               imageAsset={PluginEmptyStateImg}
+              buttonIcon={AddchartOutlined}
             />
           ) : (
             <WidgetsLayout
-              widgets={widgetsMock}
+              widgets={widgets}
               onAlertOpenRequest={handleAlertOpenRequest}
               onMetricDeletionRequest={handleMetricDeletionRequest}
             />

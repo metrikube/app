@@ -51,9 +51,7 @@ const CreateAlertModal = ({ open, setOpenModal, widget }: Props) => {
         <FormProvider {...methods}>
           <form onSubmit={methods.handleSubmit(onSubmit)}>
             <AlertCreationForm alertFields={alertFields} />
-            <Button type="submit" disabled={!methods.getValues().widgetAlerts.length}>
-              Confirmer
-            </Button>
+            <Button type="submit">Confirmer</Button>
           </form>
         </FormProvider>
       </DialogContent>

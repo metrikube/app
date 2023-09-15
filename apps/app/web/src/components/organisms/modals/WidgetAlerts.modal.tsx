@@ -1,3 +1,5 @@
+import AlertEmptyStateLayout from '../../../assets/img/undraws/undraw_warning_re_eoyh.svg'
+import { EmptyStateLayout } from '../../../layouts/EmptyStateLayout'
 import {
   deleteAlertMutation,
   getWidgetAlertsQuery,
@@ -11,7 +13,6 @@ import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined
 import NotificationsActiveOutlinedIcon from '@mui/icons-material/NotificationsActiveOutlined'
 import NotificationsOffOutlinedIcon from '@mui/icons-material/NotificationsOffOutlined'
 import {
-  Box,
   Button,
   Dialog,
   DialogContent,
@@ -61,17 +62,23 @@ const WidgetAlertsModal = ({ open, setOpenModal, widget }: Props) => {
     setIsOpened(true)
   }
 
+  console.log(alerts)
+
   return (
     <Dialog open={open} onClose={() => setOpenModal(false)}>
       <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between' }}>
-        <span>Alertes {widget.metric.name}</span>{' '}
-        <Button
-          onClick={openModal}
-          size="small"
-          variant="contained"
-          startIcon={<AddAlertOutlinedIcon />}>
-          Ajouter une alerte
-        </Button>
+        <span>
+          Alertes pour : <strong>{widget.name}</strong>
+        </span>{' '}
+        {Boolean(alerts.length) && (
+          <Button
+            onClick={openModal}
+            size="small"
+            variant="contained"
+            startIcon={<AddAlertOutlinedIcon />}>
+            Ajouter une alerte
+          </Button>
+        )}
       </DialogTitle>
       <DialogContent>
         {isFetching && isInitialLoading ? (
@@ -122,23 +129,14 @@ const WidgetAlertsModal = ({ open, setOpenModal, widget }: Props) => {
             </TableBody>
           </Table>
         ) : (
-          <Box
-            sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '0.5rem'
-            }}>
-            <p>Pas d'alerte</p>
-            <Button
-              onClick={openModal}
-              size="small"
-              variant="contained"
-              startIcon={<AddAlertOutlinedIcon />}>
-              Ajouter une alerte
-            </Button>
-          </Box>
+          <EmptyStateLayout
+            title="Aucune alerte pour ce widget"
+            description="Créez une alerte pour être notifié en cas de dépassement de seuil."
+            onActionButtonClick={openModal}
+            buttonLabel="Ajouter une alerte"
+            imageAsset={AlertEmptyStateLayout}
+            buttonIcon={AddAlertOutlinedIcon}
+          />
         )}
       </DialogContent>
       {isOpened && <CreateAlertModal open={isOpened} setOpenModal={setIsOpened} widget={widget} />}
