@@ -225,7 +225,7 @@ export class SeedDefaultDatabase1693679995600 implements MigrationInterface {
       {
         id: metricIds.githubLastIssues,
         type: 'github-last-issues',
-        name: 'Github last ussues',
+        name: 'Github last issues',
         pluginId: pluginIds.github,
         isNotifiable: false
       },
