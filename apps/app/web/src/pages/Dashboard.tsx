@@ -101,7 +101,7 @@ const Dashboard = () => {
                     severity="warning"
                     action={
                       <Button
-                        sx={{}}
+                        sx={{ textTransform: 'none' }}
                         onClick={() => resetTriggeredAlert(notification.id)}
                         color="inherit"
                         endIcon={<VerifiedIcon />}
