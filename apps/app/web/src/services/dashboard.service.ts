@@ -13,18 +13,18 @@ import {
   GetNotificationsUsecase,
   ResetTriggeredAlertUsecase
 } from '@metrikube/core'
-import { useMutation, useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useInfiniteQuery } from '@tanstack/react-query'
 
 const { dashboardMetricsAdapter, alertAdapter } = useAdapter()
 
-export const getWidgetsQuery = () => {
-  return useQuery<WidgetModel[]>({
-    queryKey: ['getWidgets'],
-    queryFn: () => new GetWidgetsUsecase(dashboardMetricsAdapter).execute(),
-    initialData: () => [],
-    refetchOnWindowFocus: false
-  })
-}
+// export const getWidgetsQuery = () => {
+//   return useInfiniteQuery<WidgetModel[]>({
+//     queryKey: ['getWidgets'],
+//     queryFn: () => new GetWidgetsUsecase(dashboardMetricsAdapter).execute(),
+//     initialData: () => [],
+//     refetchOnWindowFocus: false
+//   })
+// }
 
 export const getWidgetAlertsQuery = (widgetId: string) =>
   useQuery({
