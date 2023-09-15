@@ -9,7 +9,9 @@ import {
   GetAlertFieldsUsecase,
   Option,
   ToggleAlertNotification,
-  ToggleAlertNotificationUsecase
+  ToggleAlertNotificationUsecase,
+  GetNotificationsUsecase,
+  ResetTriggeredAlertUsecase
 } from '@metrikube/core'
 import { useMutation, useQuery } from '@tanstack/react-query'
 
@@ -70,5 +72,25 @@ export const getAlertFieldsQuery = (metricId: string) => {
       new GetAlertFieldsUsecase(dashboardMetricsAdapter).execute(metricId),
     initialData: () => [],
     refetchOnWindowFocus: false
+  })
+}
+
+export const getNotificationsQuery = () => {
+  return useQuery({
+    queryKey: ['getNotifications'],
+    queryFn: async (): Promise<AlertModel[]> =>
+      new GetNotificationsUsecase(dashboardMetricsAdapter).execute(),
+    initialData: () => [],
+    refetchOnWindowFocus: false
+  })
+}
+
+export const resetTriggeredAlertMutation = (onSuccess: () => void) => {
+  return useMutation({
+    mutationKey: ['resetTriggeredAlert'],
+    mutationFn: async (alertId: string) => {
+      await new ResetTriggeredAlertUsecase(alertAdapter).execute(alertId)
+    },
+    onSuccess
   })
 }
