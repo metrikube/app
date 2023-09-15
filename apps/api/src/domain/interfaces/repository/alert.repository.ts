@@ -15,4 +15,6 @@ export interface AlertRepository {
   deleteAlert(alertId: string): Promise<void>;
 
   findActiveAlertById(id: string): Promise<Alert>;
+
+  findTriggeredAlerts(): Promise<Alert[]>;
 }

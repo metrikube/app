@@ -50,7 +50,7 @@ export class AlertEntity {
   }
 
   static toModelDetailed(entity: AlertEntity): Alert {
-    const alertModel = this.toModel(entity);
+    const alertModel = AlertEntity.toModel(entity);
     alertModel.widget = entity.widget && WidgetEntity.toModel(entity.widget);
     return alertModel;
   }
