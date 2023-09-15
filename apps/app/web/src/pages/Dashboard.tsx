@@ -16,9 +16,9 @@ import {
 import styled from '@emotion/styled'
 import { WidgetModel, widgetsMock } from '@metrikube/core'
 import { AddchartOutlined } from '@mui/icons-material'
+import VerifiedIcon from '@mui/icons-material/Verified'
 import VisibilityIcon from '@mui/icons-material/Visibility'
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff'
-import VerifiedIcon from '@mui/icons-material/Verified';
 import { Alert, Box, Button, Typography, Collapse } from '@mui/material'
 import { useQueryClient } from '@tanstack/react-query'
 import React, { useState } from 'react'
@@ -75,7 +75,7 @@ const Dashboard = () => {
       <DefaultLayout>
         <>
           {notifications.length > 0 && (
-            <>
+            <div>
               <Alert
                 sx={{ marginY: 1 }}
                 severity="error"
@@ -116,7 +116,7 @@ const Dashboard = () => {
                   </Alert>
                 ))}
               </Collapse>
-            </>
+            </div>
           )}
           {isFetching ? (
             <Box
@@ -139,7 +139,7 @@ const Dashboard = () => {
             />
           ) : (
             <WidgetsLayout
-              widgets={widgets}
+              widgets={widgetsMock}
               onAlertOpenRequest={handleAlertOpenRequest}
               onMetricDeletionRequest={handleMetricDeletionRequest}
             />
