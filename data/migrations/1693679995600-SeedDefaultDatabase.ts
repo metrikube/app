@@ -111,18 +111,10 @@ export class SeedDefaultDatabase1693679995600 implements MigrationInterface {
         <li>Mysql</li>
         <li>Mariadb</li>
         </ul>
-        <h3 id="lignes-executer-sur-votre-base-de-donn-es">Lignes à executer sur votre base de données</h3>
-        <pre><code class="lang-sql"><span class="hljs-keyword">select</span> * <span class="hljs-keyword">from</span> performance_schema.setup_consumers <span class="hljs-keyword">where</span> <span class="hljs-keyword">name</span> <span class="hljs-keyword">like</span> <span class="hljs-string">'events%statement%'</span>;
-        </code></pre>
-        <p>Si dans la colonne <code>ENABLED</code> vous avez des valeurs qui ne sont pas <code>YES</code> ou vrai. Vous devez les activer avec la commande:</p>
-        <pre><code class="lang-sql"><span class="hljs-keyword">UPDATE</span>  performance_schema.setup_consumers  <span class="hljs-keyword">SET</span> ENABLED = <span class="hljs-string">'YES'</span> <span class="hljs-keyword">WHERE</span> <span class="hljs-keyword">NAME</span>=<span class="hljs-string">'events_statements_history_long'</span> ;
-        </code></pre>
-        <p>Dans cet exemeple on active la table: <code>events_statements_history_long</code> mais il faut le faire avec vos table non activées. Ensuite il faut lancer cette commande:</p>
-        <pre><code class="lang-sql"><span class="hljs-keyword">Set</span> global <span class="hljs-comment">general_log=</span><span class="hljs-comment">'ON'</span>;
-        <span class="hljs-keyword">SET</span> global <span class="hljs-comment">log_output =</span> <span class="hljs-comment">'table'</span>;
-        </code></pre>
-        <h3 id="creation-des-credentials">Creation des credentials</h3>
-        <p>Vous pouvez créer un utilisateur avec des accès en lecture seule.
+        <h2 id="lignes-executer-sur-votre-base-de-donn-es">Lignes à executer sur votre base de données</h2>
+        <h3 id="cr-er-utilisateur">Créer utilisateur</h3>
+        <p>Vous devez ouvrir un shell mysql avec votre utilisateur root ou équivalent.</p>
+        <p>Vous devez créer un utilisateur avec des accès en lecture seule.
         Il faut ajouter les accès pour cette table, avec ces commandes:</p>
         <pre><code class="lang-sql"><span class="hljs-keyword">CREATE</span> <span class="hljs-keyword">USER</span> <span class="hljs-string">'metrikube_user'</span> <span class="hljs-keyword">IDENTIFIED</span> <span class="hljs-keyword">BY</span> <span class="hljs-string">'metrikube_pwd'</span>
         <span class="hljs-keyword">GRANT</span> <span class="hljs-keyword">SELECT</span> <span class="hljs-keyword">ON</span> <span class="hljs-keyword">ON</span> mysql.general_log <span class="hljs-keyword">TO</span> <span class="hljs-string">'metrikube_user'</span>;
@@ -133,11 +125,26 @@ export class SeedDefaultDatabase1693679995600 implements MigrationInterface {
         <span class="hljs-keyword">GRANT</span> PROCESS <span class="hljs-keyword">ON</span> *.* <span class="hljs-keyword">TO</span> <span class="hljs-string">'metrikube_user'</span>;
         <span class="hljs-keyword">FLUSH</span> <span class="hljs-keyword">PRIVILEGES</span>;
         </code></pre>
+        <h3 id="activer-les-tables-n-cessaires">Activer les tables nécessaires</h3>
+        <p>Ensuite il faut regarder les tables qui sont actives dans
+        <code>performance_schema</code>.</p>
+        <pre><code class="lang-sql"><span class="hljs-keyword">select</span> * <span class="hljs-keyword">from</span> performance_schema.setup_consumers <span class="hljs-keyword">where</span> <span class="hljs-keyword">name</span> <span class="hljs-keyword">like</span> <span class="hljs-string">'events%statement%'</span>;
+        </code></pre>
+        <p>Si dans la colonne <code>ENABLED</code> vous avez des valeurs qui ne sont pas <code>YES</code> ou vrai. Vous devez les activer avec la commande:</p>
+        <pre><code class="lang-sql"><span class="hljs-keyword">UPDATE</span>  performance_schema.setup_consumers  <span class="hljs-keyword">SET</span> ENABLED = <span class="hljs-string">'YES'</span> <span class="hljs-keyword">WHERE</span> <span class="hljs-keyword">NAME</span>=<span class="hljs-string">'events_statements_history_long'</span> ;
+        </code></pre>
+        <p>Dans cet exemeple on active la table: <code>events_statements_history_long</code> mais il faut le faire avec vos table non activées.</p>
+        <h3 id="modifier-le-fichier-de-configuration">Modifier le fichier de configuration</h3>
+        <p>Ensuite il faut modifier le fichier de conf. Généralement il s&#39;appelle <code>my.cnf</code>. Vous devez ajouter ces lignes:</p>
+        <pre><code class="lang-sql"><span class="hljs-attr">general_log</span> = <span class="hljs-literal">ON</span>
+        <span class="hljs-attr">log_output</span> = TABLE
+        </code></pre>
+        <h3 id="creation-des-credentials-depuis-le-dashboard">Creation des credentials depuis le dashboard</h3>
         <p>Les valeurs de connexion attendus sont sous ce format-ci:</p>
         <p>Format de valeurs du json</p>
         <pre><code class="lang-json">{
             <span class="hljs-attr">"dbName"</span>: <span class="hljs-string">"str"</span>,
-            <span class="hljs-attr">"dbUsername"</span>: <span class="hljs-string">"str"</span>,
+            <span class="hljs-attr">"dbUser"</span>: <span class="hljs-string">"str"</span>,
             <span class="hljs-attr">"dbPassword"</span>: <span class="hljs-string">"str"</span>,
             <span class="hljs-attr">"dbPort"</span>: <span class="hljs-string">"str"</span>,
             <span class="hljs-attr">"dbHost"</span>: <span class="hljs-number">3306</span>
@@ -157,7 +164,8 @@ export class SeedDefaultDatabase1693679995600 implements MigrationInterface {
         <li>La taille de la bdd en mégabits </li>
         <li>Le nombre de table dans la base </li>
         <li>Le nombre d&#39;enregistrement dans la base</li>
-        </ul>`,
+        </ul>
+        `,
         category: 'db',
         credentialType: 'dbConnection'
       },
