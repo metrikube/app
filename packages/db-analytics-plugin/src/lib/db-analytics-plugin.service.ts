@@ -1,31 +1,24 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import {
-  ApiDatabaseLastAverageQueriesByHour,
-  ApiDatabaseSize,
-  ApiDatabaseSlowQueries,
-  DatabaseError,
-  DbConnectionCredentialType,
-  MetricType,
-  PluginConnectionInterface,
-  PluginResult
-} from '@metrikube/common';
+import { ApiDatabaseLastAverageQueriesByHour, ApiDatabaseSize, ApiDatabaseSlowQueries, DatabaseError, DbConnectionCredentialType, MetricType, PluginConnectionInterface } from '@metrikube/common';
 
 import { InvalidCredentialException } from '../../../../apps/api/src/domain/exceptions/invalid-credential.exception';
 import { DbService } from './db.service';
 
 @Injectable()
 export class DbAnalyticsPluginService implements PluginConnectionInterface {
+  constructor() {}
+
   public async getNbQueries(credentialData: DbConnectionCredentialType): Promise<ApiDatabaseLastAverageQueriesByHour | DatabaseError> {
     try {
       const dbService = new DbService(credentialData);
-      const nbQueries = await dbService.getNbQueries();
+      const connection = await dbService.connection();
+      const nbQueries = await dbService.getNbQueries(connection);
       return nbQueries;
     } catch (error) {
-      console.error('Error generated during query execution: ', error);
+      Logger.error(`Error executing getNbQueries: ${(error as Error).message}`, DbAnalyticsPluginService.name);
       return {
-        message: `Error raised while get data of database ${credentialData.dbName}: ${error}
-        , Check the instructions of this plugin.`,
+        message: `Error raised while get data of database ${credentialData.dbName}: ${(error as Error).message}, Check the instructions of this plugin.`,
         error: true
       };
     }
@@ -34,13 +27,13 @@ export class DbAnalyticsPluginService implements PluginConnectionInterface {
   public async getDbSize(credentialData: DbConnectionCredentialType): Promise<ApiDatabaseSize | DatabaseError> {
     try {
       const dbService = new DbService(credentialData);
-      const dbSizeMb = await dbService.aggregateDbSizeData();
+      const connection = await dbService.connection();
+      const dbSizeMb = await dbService.aggregateDbSizeData(connection);
       return dbSizeMb;
     } catch (error) {
-      console.error('Error executing getDbSizeMb: ', error);
+      Logger.error(`Error executing getDbSize: ${(error as Error).message}`, DbAnalyticsPluginService.name);
       return {
-        message: `Error raised while get data of database ${credentialData.dbName}: ${error}
-        , Check the instructions of this plugin.`,
+        message: `Error raised while get data of database ${credentialData.dbName}: ${(error as Error).message}, Check the instructions of this plugin.`,
         error: true
       };
     }
@@ -49,38 +42,45 @@ export class DbAnalyticsPluginService implements PluginConnectionInterface {
   public async getSlowQuery(credentialData: DbConnectionCredentialType): Promise<ApiDatabaseSlowQueries[] | DatabaseError> {
     try {
       const dbService = new DbService(credentialData);
-      const slowQueries = await dbService.getSlowQuery();
+      const connection = await dbService.connection();
+      const slowQueries = await dbService.getSlowQuery(connection);
       return slowQueries.map((slowQuery) => ({
         executionTime: parseFloat(slowQuery.executionTime),
         query: slowQuery.query,
         date: slowQuery.date
       }));
     } catch (error) {
-      console.error('Error executing getDbSizeMb: ', error);
+      Logger.error(`Error executing getSlowQuery: ${(error as Error).message}`, DbAnalyticsPluginService.name);
       return {
-        message: `Error raised while get data of database ${credentialData.dbName}: ${error}
-        , Check the instructions of this plugin.`,
+        message: `Error raised while get data of database ${credentialData.dbName}: ${(error as Error).message}, Check the instructions of this plugin.`,
         error: true
       };
     }
   }
 
   async testConnection(credentialData: DbConnectionCredentialType): Promise<{ ok: boolean; message: string | null }> {
-    Logger.log(`🏓 Pinging database "${credentialData.dbName}"`, DbAnalyticsPluginService.name);
     try {
+      Logger.log(`🏓 Pinging database "${credentialData.dbName}"`, DbAnalyticsPluginService.name);
       const dbService = new DbService(credentialData);
-      const connection = dbService.connection();
-      connection.ping();
+      const connection = await dbService.connection();
+      await connection.ping();
       return { ok: true, message: null };
     } catch (error) {
-      Logger.log(`🏓 Pinging database "${credentialData.dbName}" failed, status: ${(error as Error).message}`, DbAnalyticsPluginService.name);
+      Logger.error(`🏓 Pinging database "${credentialData.dbName}" failed, status: ${(error as Error).message}`, DbAnalyticsPluginService.name);
       throw new InvalidCredentialException(error);
     }
   }
 
   // prettier-ignore
-  describe(type: MetricType): string[] {
+  describe(type: MetricType): (
+    | keyof ApiDatabaseLastAverageQueriesByHour["queries"][number]
+    | keyof ApiDatabaseSlowQueries
+    )[] {
     switch (type) {
+      case "database-queries":
+        return ["nbRequests"];
+      case "database-slow-queries":
+        return ["executionTime"];
       default:
         return [];
     }
