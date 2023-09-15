@@ -1,7 +1,10 @@
+import { TitledBox } from '../molecules/TitledBox'
 import SimpleWidget from '../molecules/WidgetsGenericTemplates/SimpleWidget'
 import styled from '@emotion/styled'
 import { WidgetModel } from '@metrikube/core'
-import { List, ListItem, ListItemText } from '@mui/material'
+import MonitorHeartIcon from '@mui/icons-material/MonitorHeart'
+import SpeedIcon from '@mui/icons-material/Speed'
+import { Box, List, ListItem, ListItemText, Typography } from '@mui/material'
 import React from 'react'
 
 interface Props {
@@ -13,15 +16,15 @@ export const ApiEndpointHealthCheck = ({ widget }: Props) => {
     if (typeof statusCode !== 'number') return 'gray'
     switch (Math.floor(statusCode / 100)) {
       case 1:
-        return 'lightblue' // 1xx Informational responses
+        return '#9ac9c6' // 1xx Informational responses
       case 2:
-        return 'green' // 2xx Success
+        return '#83b17f' // 2xx Success
       case 3:
-        return 'blue' // 3xx Redirection
+        return '#5e7fbd' // 3xx Redirection
       case 4:
-        return 'orange' // 4xx Client errors
+        return '#d6926e' // 4xx Client errors
       case 5:
-        return 'red' // 5xx Server errors
+        return '#cc6363' // 5xx Server errors
       default:
         return 'gray' // Other
     }
@@ -29,25 +32,26 @@ export const ApiEndpointHealthCheck = ({ widget }: Props) => {
 
   return (
     <SimpleWidget>
-      <>
-        <List dense={true}>
-          <ListItem>
-            <StyledItemText
-              primary="Statut :"
-              secondary={widget.data.status}
-              secondaryTypographyProps={{
-                sx: { color: getColorForStatus(widget.data.status), display: 'inline' }
-              }}
-            />
-          </ListItem>
-          <ListItem>
-            <StyledItemText
-              primary="Temps de réponse : "
-              secondary={`${widget.data.value} ${widget.data.unit}`}
-            />
-          </ListItem>
-        </List>
-      </>
+      <Box sx={{ display: 'flex', columnGap: '70px' }}>
+        <TitledBox title="Statut" icon={MonitorHeartIcon} iconColor="#4160b4">
+          <Typography
+            sx={{
+              color: getColorForStatus(widget.data.status),
+              fontSize: '30px',
+              fontWeight: 'bold'
+            }}>
+            {widget.data.status}
+          </Typography>
+        </TitledBox>
+        <TitledBox title="Temps de réponse" icon={SpeedIcon} iconColor="#50D768">
+          <Typography
+            sx={{
+              fontSize: '20px'
+            }}>
+            {`${widget.data.value} ${widget.data.unit}`}
+          </Typography>
+        </TitledBox>
+      </Box>
     </SimpleWidget>
   )
 }
