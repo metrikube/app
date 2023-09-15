@@ -1,6 +1,6 @@
-import * as mysql from 'mysql2';
+import * as mysql from 'mysql2/promise';
 
-import { ApiDatabaseLastAverageQueriesByHour, ApiDatabaseSize, ApiDatabaseSlowQueries, DbConnectionCredentialType, DbConnectionType } from '@metrikube/common';
+import { ApiDatabaseLastAverageQueriesByHour, ApiDatabaseSize, DbConnectionCredentialType, DbConnectionType } from '@metrikube/common';
 
 type SlowQueriesType = {
   query: string;
@@ -10,6 +10,7 @@ type SlowQueriesType = {
 
 export class DbService {
   private readonly credentials: DbConnectionType;
+
   constructor(credentials: DbConnectionCredentialType) {
     this.credentials = {
       host: credentials.dbHost,
@@ -20,61 +21,70 @@ export class DbService {
     };
   }
 
-  connection(): mysql.Connection {
+  connection(): Promise<mysql.Connection> {
     return mysql.createConnection(this.credentials);
   }
 
-  public executeQuery(connection: mysql.Connection, query: string): Promise<any> {
-    return new Promise((resolve, reject) => {
-      connection.query(query, (err, results) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(results);
-        }
-      });
-    });
+  public async executeQuery(connection: mysql.Connection, query: string): Promise<any> {
+    return connection.query(query);
   }
 
-  public async getNbQueries(): Promise<ApiDatabaseLastAverageQueriesByHour> {
+  public async getNbQueries(connection: mysql.Connection): Promise<ApiDatabaseLastAverageQueriesByHour> {
     const query = `
-    WITH hours AS (SELECT DATE_FORMAT(NOW() - INTERVAL n HOUR, '%Y-%m-%d %H:00:00') AS hour
-    FROM (SELECT 0 AS n UNION SELECT 1 UNION SELECT 2 UNION SELECT 3
-     UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7
-     UNION SELECT 8 UNION SELECT 9 UNION SELECT 10 UNION SELECT 11) numbers),
-     schema_requests AS (SELECT
-     DATE_FORMAT(es.EVENT_TIME, '%Y-%m-%d %H:00:00') AS hour,
-     COUNT(*) AS nbRequests FROM  mysql.general_log es
-     LEFT JOIN information_schema.processlist p
-     ON es.THREAD_ID = p.ID
-     WHERE es.EVENT_TIME >= NOW() - INTERVAL 12 HOUR
-     AND p.USER <> '${this.credentials.user}'
-     GROUP BY hour)
-     SELECT h.hour,
-     IFNULL(sr.nbRequests, 0) AS nbRequests  FROM hours h
-     LEFT JOIN schema_requests sr
-     ON h.hour = sr.hour
-     WHERE h.hour >= DATE_FORMAT(NOW() - INTERVAL 12 HOUR, '%Y-%m-%d %H:00:00')           AND h.hour <= DATE_FORMAT(NOW(), '%Y-%m-%d %H:00:00')
-     ORDER BY h.hour;`;
-
-    const connection = await this.connection();
+      WITH hours AS (SELECT DATE_FORMAT(NOW() - INTERVAL n HOUR, '%Y-%m-%d %H:00:00') AS hour
+                     FROM (SELECT 0 AS n
+                           UNION
+                           SELECT 1
+                           UNION
+                           SELECT 2
+                           UNION
+                           SELECT 3
+                           UNION
+                           SELECT 4
+                           UNION
+                           SELECT 5
+                           UNION
+                           SELECT 6
+                           UNION
+                           SELECT 7
+                           UNION
+                           SELECT 8
+                           UNION
+                           SELECT 9
+                           UNION
+                           SELECT 10
+                           UNION
+                           SELECT 11) numbers),
+           schema_requests AS (SELECT DATE_FORMAT(es.EVENT_TIME, '%Y-%m-%d %H:00:00') AS hour,
+                                      COUNT(*)                                        AS nbRequests
+                               FROM mysql.general_log es
+                                      LEFT JOIN information_schema.processlist p ON es.THREAD_ID = p.ID
+                               WHERE es.EVENT_TIME >= NOW() - INTERVAL 12 HOUR
+                                 AND p.USER <> '${this.credentials.user}'
+                               GROUP BY hour)
+      SELECT h.hour,
+             IFNULL(sr.nbRequests, 0) AS nbRequests
+      FROM hours h
+             LEFT JOIN schema_requests sr
+                       ON h.hour = sr.hour
+      WHERE h.hour >= DATE_FORMAT(NOW() - INTERVAL 12 HOUR, '%Y-%m-%d %H:00:00')
+        AND h.hour <= DATE_FORMAT(NOW(), '%Y-%m-%d %H:00:00')
+      ORDER BY h.hour;`;
     try {
-      const results = await this.executeQuery(connection, query);
-      const currentDate = new Date();
+      const [results, ..._] = await this.executeQuery(connection, query);
       return {
         queries: results,
-        date: currentDate.toISOString()
+        date: new Date().toISOString()
       };
     } catch (error) {
       console.error('Error generated during query execution: ', error);
       throw error;
     } finally {
-      connection.end();
+      await connection.end();
     }
   }
 
-  public async getDbSizeMb(): Promise<number> {
-    const connection = await this.connection();
+  public async getDbSizeMb(connection: mysql.Connection): Promise<number> {
     const query = `
       SELECT FORMAT(SUM(data_length + index_length) / (1024 * 1024), 4) AS dbSizeMb
       FROM information_schema.tables
@@ -89,17 +99,16 @@ export class DbService {
       console.error('Error executing getDbSizeMb: ', error);
       throw error;
     } finally {
-      connection.end();
+      await connection.end();
     }
   }
 
-  public async getNbRows(): Promise<number> {
-    const connection = await this.connection();
+  public async getNbRows(connection: mysql.Connection): Promise<number> {
     const query = `
       SELECT SUM(TABLE_ROWS) as nbRows
       FROM information_schema.tables
       WHERE table_schema = '${this.credentials.database}'
-      and table_name <> '_dba_query_stats';
+        and table_name <> '_dba_query_stats';
     `;
     try {
       const results = await this.executeQuery(connection, query);
@@ -108,12 +117,11 @@ export class DbService {
       console.error('Error executing getDbSizeMb: ', error);
       throw error;
     } finally {
-      connection.end();
+      await connection.end();
     }
   }
 
-  public async getNbTables(): Promise<number> {
-    const connection = await this.connection();
+  public async getNbTables(connection: mysql.Connection): Promise<number> {
     const query = `
       SELECT COUNT(*) AS nbTables
       FROM information_schema.tables
@@ -125,18 +133,19 @@ export class DbService {
       console.error('Error executing getDbSizeMb: ', error);
       throw error;
     } finally {
-      connection.end();
+      await connection.end();
     }
   }
 
-  public async getSlowQuery(): Promise<SlowQueriesType[]> {
-    const connection = await this.connection();
+  public async getSlowQuery(connection: mysql.Connection): Promise<SlowQueriesType[]> {
     const query = `
       SELECT AVG_TIMER_WAIT / 1000000000000 AS executionTime,
-      DIGEST_TEXT AS query, LAST_SEEN AS date
+             DIGEST_TEXT                    AS query,
+             LAST_SEEN                      AS date
       FROM performance_schema.events_statements_summary_by_digest
       WHERE SCHEMA_NAME = '${this.credentials.database}'
-      ORDER BY executionTime DESC LIMIT 10;
+      ORDER BY executionTime DESC
+      LIMIT 10;
     `;
     try {
       return this.executeQuery(connection, query);
@@ -144,16 +153,16 @@ export class DbService {
       console.error('Error executing getDbSizeMb: ', error);
       throw error;
     } finally {
-      connection.end();
+      await connection.end();
     }
   }
 
-  public async aggregateDbSizeData(): Promise<ApiDatabaseSize> {
-    const connection = await this.connection();
+  public async aggregateDbSizeData(connection: mysql.Connection): Promise<ApiDatabaseSize> {
     try {
-      const dbSizeMb = await this.getDbSizeMb();
-      const nbRows = await this.getNbRows();
-      const nbTables = await this.getNbTables();
+      connection = await this.connection();
+      const dbSizeMb = await this.getDbSizeMb(connection);
+      const nbRows = await this.getNbRows(connection);
+      const nbTables = await this.getNbTables(connection);
       return {
         size: dbSizeMb,
         numberOfTables: nbTables,
@@ -164,7 +173,7 @@ export class DbService {
       console.error('Error executing aggregateDbSizeData: ', error);
       throw error;
     } finally {
-      connection.end();
+      await connection.end();
     }
   }
 }
