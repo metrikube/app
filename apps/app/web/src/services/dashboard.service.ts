@@ -1,19 +1,16 @@
 import { useAdapter } from '../config/axios'
 import {
-  WidgetModel,
   AlertModel,
   DeleteActiveMetricAlertUsecase,
   DeleteWidgetUsecase,
   GetActiveMetricAlertUsecase,
-  GetWidgetsUsecase,
   GetAlertFieldsUsecase,
   Option,
   ToggleAlertNotification,
   ToggleAlertNotificationUsecase,
-  GetNotificationsUsecase,
   ResetTriggeredAlertUsecase
 } from '@metrikube/core'
-import { useMutation, useQuery, useInfiniteQuery } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 
 const { dashboardMetricsAdapter, alertAdapter } = useAdapter()
 
