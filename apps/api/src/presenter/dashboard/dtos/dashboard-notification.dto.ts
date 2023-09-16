@@ -18,10 +18,14 @@ export class DashboardNotificationDto {
   @ApiProperty({ name: 'triggered', type: Boolean, example: true })
   triggered: boolean;
 
+  @ApiProperty({ name: 'triggeredAt', type: Date, example: true })
+  triggeredAt: Date;
+
   constructor(alert: Alert) {
     this.id = alert.id;
     this.title = alert.label;
     this.widgetName = alert.widget.name;
+    this.triggeredAt = alert.triggeredAt;
     this.description = `L'alerte se déclenche lorsque ${alert.condition.field} ${alert.condition.operator} ${alert.condition.threshold}`;
     this.triggered = alert.triggered;
   }
