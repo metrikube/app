@@ -28,7 +28,7 @@ export class DashboardController {
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Get dashboard notifications' })
   getDashboardNotification(): Observable<{ data: DashboardNotificationDto[] }> {
-    return interval(2000).pipe(
+    return interval(3000).pipe(
       switchMap((_) => this.dashboardUseCase.getDashboardNotification()),
       map((data) => ({ data }))
     );

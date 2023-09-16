@@ -8,9 +8,15 @@ import { SetupPluginProvider } from '../contexts/SetupPlugin.context'
 import DefaultLayout from '../layouts/DefaultLayout'
 import { EmptyStateLayout } from '../layouts/EmptyStateLayout'
 import { WidgetsLayout } from '../layouts/WidgetsLayout'
-import { getNotificationsQuery, resetTriggeredAlertMutation } from '../services/dashboard.service'
+import { resetTriggeredAlertMutation } from '../services/dashboard.service'
 import styled from '@emotion/styled'
-import { GetWidgetsUsecase, WidgetModel, widgetsMock } from '@metrikube/core'
+import {
+  GetNotificationsUsecase,
+  GetWidgetsUsecase,
+  NotificationModel,
+  WidgetModel,
+  widgetsMock
+} from '@metrikube/core'
 import { AddchartOutlined } from '@mui/icons-material'
 import VerifiedIcon from '@mui/icons-material/Verified'
 import VisibilityIcon from '@mui/icons-material/Visibility'
@@ -27,17 +33,25 @@ const Dashboard = () => {
   const [isMetricDeletionModalOpened, setIsMetricDeletionModalOpened] = useState(false)
   const [selectedWidget, setSelectedWidget] = useState<WidgetModel | null>(null)
   const [widgets, setWidgets] = useState<WidgetModel[]>([])
+  const [notifications, setNotifications] = useState<NotificationModel[]>([])
   const [collapseChecked, setCollapseChecked] = useState(false)
   const queryClient = useQueryClient()
+  const { dashboardMetricsAdapter } = useAdapter()
 
-  const { data: notifications } = getNotificationsQuery()
   const { mutate: resetTriggeredAlert } = resetTriggeredAlertMutation(() => {
     queryClient.invalidateQueries({ queryKey: ['getNotifications'] })
+    if (notifications.length === 0) setCollapseChecked(false)
   })
-  const { dashboardMetricsAdapter } = useAdapter()
+
   useEffect(() => {
-    new GetWidgetsUsecase(dashboardMetricsAdapter).execute().onmessage = function (event) {
+    new GetWidgetsUsecase(dashboardMetricsAdapter).execute().onmessage = (event) => {
       setWidgets(JSON.parse(event.data))
+    }
+  }, [])
+
+  useEffect(() => {
+    new GetNotificationsUsecase(dashboardMetricsAdapter).execute().onmessage = (event) => {
+      setNotifications(JSON.parse(event.data))
     }
   }, [])
 
@@ -114,6 +128,7 @@ const Dashboard = () => {
                     <p>
                       {notification.widgetName} - {notification.title}
                     </p>
+                    <pre>{notification.triggeredAt}</pre>
                     <small>{dayjs.duration(-1548381600000).humanize(true)}</small>
                   </Alert>
                 ))}

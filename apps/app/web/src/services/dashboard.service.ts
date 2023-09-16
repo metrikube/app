@@ -17,15 +17,6 @@ import { useMutation, useQuery, useInfiniteQuery } from '@tanstack/react-query'
 
 const { dashboardMetricsAdapter, alertAdapter } = useAdapter()
 
-// export const getWidgetsQuery = () => {
-//   return useInfiniteQuery<WidgetModel[]>({
-//     queryKey: ['getWidgets'],
-//     queryFn: () => new GetWidgetsUsecase(dashboardMetricsAdapter).execute(),
-//     initialData: () => [],
-//     refetchOnWindowFocus: false
-//   })
-// }
-
 export const getWidgetAlertsQuery = (widgetId: string) =>
   useQuery({
     queryKey: ['getWidgetAlerts'],
@@ -70,16 +61,6 @@ export const getAlertFieldsQuery = (metricId: string) => {
     queryKey: ['getAlertFields'],
     queryFn: async (): Promise<Option[]> =>
       new GetAlertFieldsUsecase(dashboardMetricsAdapter).execute(metricId),
-    initialData: () => [],
-    refetchOnWindowFocus: false
-  })
-}
-
-export const getNotificationsQuery = () => {
-  return useQuery({
-    queryKey: ['getNotifications'],
-    queryFn: async (): Promise<AlertModel[]> =>
-      new GetNotificationsUsecase(dashboardMetricsAdapter).execute(),
     initialData: () => [],
     refetchOnWindowFocus: false
   })
