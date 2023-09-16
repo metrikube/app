@@ -128,8 +128,7 @@ const Dashboard = () => {
                     <p>
                       {notification.widgetName} - {notification.title}
                     </p>
-                    <pre>{notification.triggeredAt}</pre>
-                    <small>{dayjs.duration(-1548381600000).humanize(true)}</small>
+                    <small>{dayjs(notification.triggeredAt).fromNow()}</small>
                   </Alert>
                 ))}
               </Collapse>
