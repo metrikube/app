@@ -91,9 +91,15 @@ const Dashboard = () => {
       <DefaultLayout>
         <>
           {notifications.length > 0 && (
-            <div>
+            <section>
               <Alert
-                sx={{ marginY: 1 }}
+                onClick={() => setCollapseChecked((prevState) => !prevState)}
+                sx={{
+                  marginY: 1,
+                  '&:hover': {
+                    cursor: 'pointer'
+                  }
+                }}
                 severity="error"
                 action={
                   <Button
@@ -132,7 +138,7 @@ const Dashboard = () => {
                   </Alert>
                 ))}
               </Collapse>
-            </div>
+            </section>
           )}
           {!widgets.length ? (
             <EmptyStateLayout
