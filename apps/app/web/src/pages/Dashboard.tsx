@@ -1,4 +1,5 @@
 import PluginEmptyStateImg from '../assets/img/undraws/undraw_online_stats.svg'
+import Loader from '../components/atoms/Loader'
 import ConfirmDeletionModal from '../components/organisms/modals/ConfirmDeletion.modal'
 import ProviderModal from '../components/organisms/modals/Provider.modal'
 import WidgetAlertsModal from '../components/organisms/modals/WidgetAlerts.modal'
@@ -33,6 +34,7 @@ const Dashboard = () => {
   const [isMetricDeletionModalOpened, setIsMetricDeletionModalOpened] = useState(false)
   const [selectedWidget, setSelectedWidget] = useState<WidgetModel | null>(null)
   const [widgets, setWidgets] = useState<WidgetModel[]>([])
+  const [isWidgetLoading, setisWidgetLoading] = useState(false)
   const [notifications, setNotifications] = useState<NotificationModel[]>([])
   const [collapseChecked, setCollapseChecked] = useState(false)
   const queryClient = useQueryClient()
@@ -44,14 +46,31 @@ const Dashboard = () => {
   })
 
   useEffect(() => {
-    new GetWidgetsUsecase(dashboardMetricsAdapter).execute().onmessage = (event) => {
+    const getWidgetUsecase = new GetWidgetsUsecase(dashboardMetricsAdapter)
+    getWidgetUsecase.execute().onopen = () => {
+      setisWidgetLoading(true)
+    }
+    getWidgetUsecase.execute().onmessage = (event) => {
       setWidgets(JSON.parse(event.data))
+      setisWidgetLoading(false)
+    }
+    return () => {
+      getWidgetUsecase.execute().close = () => {
+        console.info('GetWidgets usecase - Eventsource closed')
+      }
     }
   }, [])
 
   useEffect(() => {
-    new GetNotificationsUsecase(dashboardMetricsAdapter).execute().onmessage = (event) => {
+    const getNotificationsUsecase = new GetNotificationsUsecase(dashboardMetricsAdapter)
+    getNotificationsUsecase.execute().onmessage = (event) => {
       setNotifications(JSON.parse(event.data))
+    }
+
+    return () => {
+      getNotificationsUsecase.execute().close = () => {
+        console.info('GetNotifications usecase - Eventsource closed')
+      }
     }
   }, [])
 
@@ -140,7 +159,18 @@ const Dashboard = () => {
               </Collapse>
             </section>
           )}
-          {!widgets.length ? (
+          {isWidgetLoading ? (
+            <Box
+              sx={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                width: '100%',
+                height: '100%'
+              }}>
+              <Loader />
+            </Box>
+          ) : isWidgetLoading && !widgets.length ? (
             <EmptyStateLayout
               title="Commencer par ajouter un widget"
               description="Les widgets sont le coeur de Metrikube, Ils permettent de visualiser vos métriques."
