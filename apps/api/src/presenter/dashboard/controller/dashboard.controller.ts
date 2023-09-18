@@ -1,4 +1,6 @@
-import { Controller, Delete, Get, HttpCode, HttpStatus, Inject, Param, ParseUUIDPipe } from '@nestjs/common';
+import { Observable, interval, map, switchMap } from 'rxjs';
+
+import { Controller, Delete, Get, Header, HttpCode, HttpStatus, Inject, Param, ParseUUIDPipe, Sse } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { DashboardUseCaseInterface } from '../../../domain/interfaces/use-cases/dashboard.use-case.interface';
@@ -9,20 +11,27 @@ import { RefreshDashboardResponseDto } from '../dtos/refresh-dashboard-response.
 @ApiTags('dashboard')
 @Controller('dashboard')
 export class DashboardController {
-  constructor(@Inject(DiTokens.DashboardUseCaseToken) private readonly dashboardUseCase: DashboardUseCaseInterface) {}
+  constructor(@Inject(DiTokens.DashboardUseCaseToken) private readonly dashboardUseCase: DashboardUseCaseInterface) { }
 
-  @Get('/')
+  @Sse('/')
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Refresh dashbaord dat' })
-  fetchDashboardMetricData(): Promise<RefreshDashboardResponseDto[]> {
-    return this.dashboardUseCase.refreshDashboard();
+  @Header('Content-Type', 'text/event-stream')
+  @ApiOperation({ summary: 'Refresh dashbaord data' })
+  fetchDashboardMetricData(): Observable<{ data: RefreshDashboardResponseDto[] }> {
+    return interval(3000).pipe(
+      switchMap((_) => this.dashboardUseCase.refreshDashboard()),
+      map((data) => ({ data }))
+    );
   }
 
-  @Get('/notifications')
+  @Sse('/notifications')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Get dashboard notifications' })
-  getDashboardNotification(): Promise<DashboardNotificationDto[]> {
-    return this.dashboardUseCase.getDashboardNotification();
+  getDashboardNotification(): Observable<{ data: DashboardNotificationDto[] }> {
+    return interval(3000).pipe(
+      switchMap((_) => this.dashboardUseCase.getDashboardNotification()),
+      map((data) => ({ data }))
+    );
   }
 
   @Delete('disable/:widgetId')

@@ -3,25 +3,28 @@ import Loader from '../components/atoms/Loader'
 import ConfirmDeletionModal from '../components/organisms/modals/ConfirmDeletion.modal'
 import ProviderModal from '../components/organisms/modals/Provider.modal'
 import WidgetAlertsModal from '../components/organisms/modals/WidgetAlerts.modal'
+import { useAdapter } from '../config/axios'
 import dayjs from '../config/dayjs'
 import { SetupPluginProvider } from '../contexts/SetupPlugin.context'
 import DefaultLayout from '../layouts/DefaultLayout'
 import { EmptyStateLayout } from '../layouts/EmptyStateLayout'
 import { WidgetsLayout } from '../layouts/WidgetsLayout'
-import {
-  getWidgetsQuery,
-  getNotificationsQuery,
-  resetTriggeredAlertMutation
-} from '../services/dashboard.service'
+import { resetTriggeredAlertMutation } from '../services/dashboard.service'
 import styled from '@emotion/styled'
-import { WidgetModel, widgetsMock } from '@metrikube/core'
+import {
+  GetNotificationsUsecase,
+  GetWidgetsUsecase,
+  NotificationModel,
+  WidgetModel,
+  widgetsMock
+} from '@metrikube/core'
 import { AddchartOutlined } from '@mui/icons-material'
 import VerifiedIcon from '@mui/icons-material/Verified'
 import VisibilityIcon from '@mui/icons-material/Visibility'
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff'
 import { Alert, Box, Button, Typography, Collapse } from '@mui/material'
 import { useQueryClient } from '@tanstack/react-query'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 const metrikubeLogo = new URL(`/src/assets/img/metrikube-logo.png`, import.meta.url).href
 
@@ -30,14 +33,46 @@ const Dashboard = () => {
   const [isWidgetAlertsModalOpen, setIsWidgetAlertsModalOpen] = useState(false)
   const [isMetricDeletionModalOpened, setIsMetricDeletionModalOpened] = useState(false)
   const [selectedWidget, setSelectedWidget] = useState<WidgetModel | null>(null)
+  const [widgets, setWidgets] = useState<WidgetModel[]>([])
+  const [isWidgetLoading, setisWidgetLoading] = useState(false)
+  const [notifications, setNotifications] = useState<NotificationModel[]>([])
   const [collapseChecked, setCollapseChecked] = useState(false)
   const queryClient = useQueryClient()
+  const { dashboardMetricsAdapter } = useAdapter()
 
-  const { data: widgets, isFetching } = getWidgetsQuery()
-  const { data: notifications } = getNotificationsQuery()
   const { mutate: resetTriggeredAlert } = resetTriggeredAlertMutation(() => {
     queryClient.invalidateQueries({ queryKey: ['getNotifications'] })
+    if (notifications.length === 0) setCollapseChecked(false)
   })
+
+  useEffect(() => {
+    const getWidgetUsecase = new GetWidgetsUsecase(dashboardMetricsAdapter)
+    getWidgetUsecase.execute().onopen = () => {
+      setisWidgetLoading(true)
+    }
+    getWidgetUsecase.execute().onmessage = (event) => {
+      setWidgets(JSON.parse(event.data))
+      setisWidgetLoading(false)
+    }
+    return () => {
+      getWidgetUsecase.execute().close = () => {
+        console.info('GetWidgets usecase - Eventsource closed')
+      }
+    }
+  }, [])
+
+  useEffect(() => {
+    const getNotificationsUsecase = new GetNotificationsUsecase(dashboardMetricsAdapter)
+    getNotificationsUsecase.execute().onmessage = (event) => {
+      setNotifications(JSON.parse(event.data))
+    }
+
+    return () => {
+      getNotificationsUsecase.execute().close = () => {
+        console.info('GetNotifications usecase - Eventsource closed')
+      }
+    }
+  }, [])
 
   const openProviderModalHandler = () => {
     setOpenModal(true)
@@ -75,9 +110,15 @@ const Dashboard = () => {
       <DefaultLayout>
         <>
           {notifications.length > 0 && (
-            <div>
+            <section>
               <Alert
-                sx={{ marginY: 1 }}
+                onClick={() => setCollapseChecked((prevState) => !prevState)}
+                sx={{
+                  marginY: 1,
+                  '&:hover': {
+                    cursor: 'pointer'
+                  }
+                }}
                 severity="error"
                 action={
                   <Button
@@ -112,13 +153,13 @@ const Dashboard = () => {
                     <p>
                       {notification.widgetName} - {notification.title}
                     </p>
-                    <small>{dayjs.duration(-1548381600000).humanize(true)}</small>
+                    <small>{dayjs(notification.triggeredAt).fromNow()}</small>
                   </Alert>
                 ))}
               </Collapse>
-            </div>
+            </section>
           )}
-          {isFetching ? (
+          {isWidgetLoading ? (
             <Box
               sx={{
                 display: 'flex',
@@ -129,7 +170,7 @@ const Dashboard = () => {
               }}>
               <Loader />
             </Box>
-          ) : !widgets.length ? (
+          ) : isWidgetLoading && !widgets.length ? (
             <EmptyStateLayout
               title="Commencer par ajouter un widget"
               description="Les widgets sont le coeur de Metrikube, Ils permettent de visualiser vos métriques."
@@ -189,7 +230,7 @@ const StyledHeader = styled.header`
 
 const Brand = styled(Box)`
   display: flex;
-  column-gap: ${(props) => props.theme.spacing(2)};
+  column-gap: ${({ theme }) => theme.spacing(2)};
   align-items: center;
   justify-content: center;
 `

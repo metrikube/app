@@ -1,30 +1,18 @@
 import { useAdapter } from '../config/axios'
 import {
-  WidgetModel,
   AlertModel,
   DeleteActiveMetricAlertUsecase,
   DeleteWidgetUsecase,
   GetActiveMetricAlertUsecase,
-  GetWidgetsUsecase,
   GetAlertFieldsUsecase,
   Option,
   ToggleAlertNotification,
   ToggleAlertNotificationUsecase,
-  GetNotificationsUsecase,
   ResetTriggeredAlertUsecase
 } from '@metrikube/core'
 import { useMutation, useQuery } from '@tanstack/react-query'
 
 const { dashboardMetricsAdapter, alertAdapter } = useAdapter()
-
-export const getWidgetsQuery = () => {
-  return useQuery<WidgetModel[]>({
-    queryKey: ['getWidgets'],
-    queryFn: () => new GetWidgetsUsecase(dashboardMetricsAdapter).execute(),
-    initialData: () => [],
-    refetchOnWindowFocus: false
-  })
-}
 
 export const getWidgetAlertsQuery = (widgetId: string) =>
   useQuery({
@@ -70,16 +58,6 @@ export const getAlertFieldsQuery = (metricId: string) => {
     queryKey: ['getAlertFields'],
     queryFn: async (): Promise<Option[]> =>
       new GetAlertFieldsUsecase(dashboardMetricsAdapter).execute(metricId),
-    initialData: () => [],
-    refetchOnWindowFocus: false
-  })
-}
-
-export const getNotificationsQuery = () => {
-  return useQuery({
-    queryKey: ['getNotifications'],
-    queryFn: async (): Promise<AlertModel[]> =>
-      new GetNotificationsUsecase(dashboardMetricsAdapter).execute(),
     initialData: () => [],
     refetchOnWindowFocus: false
   })

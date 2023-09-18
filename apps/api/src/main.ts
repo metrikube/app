@@ -1,4 +1,4 @@
-import { Logger, ValidationPipe } from '@nestjs/common';
+import { INestApplication, Logger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
@@ -6,7 +6,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
-  const app = await NestFactory.create<NestFastifyApplication>(AppModule, new FastifyAdapter(), { logger: ['error', 'warn', 'log', 'debug', 'verbose'] });
+  const app = await NestFactory.create(AppModule, { logger: ['error', 'warn', 'log', 'debug', 'verbose'] });
 
   const port = process.env.PORT || 3000;
   const globalPrefix = 'api/v1';
@@ -16,12 +16,12 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe());
 
   await setupSwagger(app);
-  await app.listen(port, '0.0.0.0');
+  await app.listen(port);
 
   Logger.log(`🚀 Application is running on: http://localhost:${port}/${globalPrefix}`);
 }
 
-async function setupSwagger(app: NestFastifyApplication) {
+async function setupSwagger(app: INestApplication) {
   const options = new DocumentBuilder().setTitle('Metrikube API').setDescription('API').setVersion(process.env.npm_package_version).build();
   const document = SwaggerModule.createDocument(app, options);
   SwaggerModule.setup('swagger', app, document);
