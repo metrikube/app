@@ -1,9 +1,9 @@
 import type { DashboardMetricsAdapter, WidgetModel } from '@metrikube/core';
 
 export class GetWidgetsUsecase {
-  constructor(private readonly dashboardMetrics: DashboardMetricsAdapter) {}
+  constructor(private readonly dashboardMetrics: DashboardMetricsAdapter) { }
 
-  async execute(): Promise<WidgetModel[]> {
+  execute(): EventSource {
     return this.dashboardMetrics.getWidgets();
   }
 }

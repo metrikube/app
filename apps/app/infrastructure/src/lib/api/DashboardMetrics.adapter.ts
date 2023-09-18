@@ -1,20 +1,17 @@
 import { AxiosInstance } from 'axios';
+import { fetchEventSource } from '@microsoft/fetch-event-source';
 
 import { AlertModel, DashboardMetricsAdapter, WidgetModel } from '@metrikube/core';
 
 export class DashboardMetricsImpl implements DashboardMetricsAdapter {
-  constructor(private readonly http: AxiosInstance) {}
+  constructor(private readonly http: AxiosInstance) { }
 
-  async getWidgets(): Promise<WidgetModel[]> {
-    const { data } = await this.http.get<WidgetModel[]>('/dashboard');
-
-    return data;
+  getWidgets(): EventSource {
+    return new EventSource("http://localhost:3000/api/v1/dashboard");
   }
 
-  async getNotifications(): Promise<AlertModel[]> {
-    const { data } = await this.http.get<AlertModel[]>('/dashboard/notifications');
-
-    return data;
+  getNotifications(): EventSource {
+    return new EventSource("http://localhost:3000/api/v1/dashboard/notifications");
   }
 
   async deleteWidget(widgetId: string): Promise<void> {
