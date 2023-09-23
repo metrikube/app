@@ -31,11 +31,9 @@ const ConfirmDeletionModal = ({ open, setOpenModal, widget }: Props) => {
   const queryClient = useQueryClient()
 
   useEffect(() => {
-    if (confirmDeletionValue && confirmDeletionValue === 'SUPPRIMER') {
-      setShouldDisableDeletionButton(false)
-    } else {
-      setShouldDisableDeletionButton(true)
-    }
+    confirmDeletionValue && confirmDeletionValue === 'SUPPRIMER'
+      ? setShouldDisableDeletionButton(false)
+      : setShouldDisableDeletionButton(true)
   }, [confirmDeletionValue])
 
   const { mutate: deleteWidget } = deleteWidgetMutation(() => {
@@ -60,7 +58,7 @@ const ConfirmDeletionModal = ({ open, setOpenModal, widget }: Props) => {
         </Typography>
       </DialogTitle>
       <DialogContent>
-        <form>
+        <form onSubmit={() => handleWidgetDelete(widget.id)}>
           <Typography sx={{ mb: '15px' }}>
             Écrivez &apos;SUPPRIMER&apos; pour confirmer la suppression
           </Typography>
@@ -71,18 +69,18 @@ const ConfirmDeletionModal = ({ open, setOpenModal, widget }: Props) => {
             size="small"
             {...register('confirmDeletion')}
           />
+          <DialogActions>
+            <Button onClick={handlerModalClose}>Cancel</Button>
+            <Button
+              disabled={shouldDisableDeletionButton}
+              type="submit"
+              variant="outlined"
+              color="error">
+              SUPPRIMER
+            </Button>
+          </DialogActions>
         </form>
       </DialogContent>
-      <DialogActions>
-        <Button onClick={handlerModalClose}>Cancel</Button>
-        <Button
-          onClick={() => handleWidgetDelete(widget.id)}
-          disabled={shouldDisableDeletionButton}
-          variant="outlined"
-          color="error">
-          SUPPRIMER
-        </Button>
-      </DialogActions>
     </Dialog>
   )
 }
