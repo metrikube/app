@@ -1,6 +1,3 @@
-import { randomUUID } from 'crypto';
-
-import { BadRequestException } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 
 import { MetricThresholdOperator, MetricThresholdOperatorEnum } from '@metrikube/common';
@@ -118,7 +115,7 @@ describe('AlertUseCase', () => {
           threshold: 5
         }
       };
-      await alertRepository.createAlerts([new Alert('1', 'label', '1', false, false, alert.condition)]);
+      await alertRepository.createAlerts([new Alert('1', 'label', '1', false, false, null, alert.condition)]);
       await useCase.updateAlert('1', { label: 'new-alert-name' });
       const updatedAlert = await alertRepository.findAlertById('1');
 
@@ -136,7 +133,7 @@ describe('AlertUseCase', () => {
           threshold: 5
         }
       };
-      await alertRepository.createAlerts([new Alert('1', 'label', '1', false, false, alert.condition)]);
+      await alertRepository.createAlerts([new Alert('1', 'label', '1', false, false, null, alert.condition)]);
 
       await useCase.createAlertOnActivePlugin('1', [alert]);
 
@@ -154,7 +151,7 @@ describe('AlertUseCase', () => {
         threshold: 5
       };
 
-      const createdAlerts = await alertRepository.createAlerts([new Alert('1', 'label', '1', false, false, alertCondition)]);
+      const createdAlerts = await alertRepository.createAlerts([new Alert('1', 'label', '1', false, false, null, alertCondition)]);
 
       await useCase.updateAlert(createdAlerts[0].id, { isActive: false });
 
@@ -165,7 +162,7 @@ describe('AlertUseCase', () => {
 
   describe('Deleting alerts and crons', () => {
     it('should delete an alert and unschedule the job', async () => {
-      await alertRepository.createAlerts([new Alert('1', 'label', '1', false, false, { field: 'field', operator: MetricThresholdOperatorEnum.GTE, threshold: 5 })]);
+      await alertRepository.createAlerts([new Alert('1', 'label', '1', false, false, null, { field: 'field', operator: MetricThresholdOperatorEnum.GTE, threshold: 5 })]);
       // Arrange
       const alertId = '1';
       const unscheduleSpy = jest.spyOn(scheduler, 'unscheduleRelatedAlerts');
