@@ -8,7 +8,6 @@ import styled from '@emotion/styled'
 import { Autocomplete, TextField } from '@mui/material'
 import React, { useContext } from 'react'
 import { useFormContext } from 'react-hook-form'
-import ReactMarkdown from 'react-markdown'
 
 const ProviderFormStep2 = () => {
   const { selectedProvider, selectedMetric, setSelectedMetric } = useContext(SetupPluginContext)
@@ -23,7 +22,7 @@ const ProviderFormStep2 = () => {
     <Step2Container>
       {selectedProvider?.instruction && (
         <OutlinedCard title="Instructions">
-          <div dangerouslySetInnerHTML={{ __html: selectedProvider.instruction }} />
+          <InstructionWrapper dangerouslySetInnerHTML={{ __html: selectedProvider.instruction }} />
         </OutlinedCard>
       )}
       <OutlinedCard title="Identifiants">
@@ -81,6 +80,17 @@ const ProviderFormStep2 = () => {
 
 const Step2Container = styled.div`
   margin-top: 1rem;
+`
+
+const InstructionWrapper = styled.div`
+  overflow-x: auto;
+  padding: 0.5rem;
+  ul {
+    padding-left: 16px;
+  }
+  pre {
+    background-color: #f3f3f3;
+  }
 `
 
 export default ProviderFormStep2
