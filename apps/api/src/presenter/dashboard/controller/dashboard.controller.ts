@@ -11,14 +11,14 @@ import { RefreshDashboardResponseDto } from '../dtos/refresh-dashboard-response.
 @ApiTags('dashboard')
 @Controller('dashboard')
 export class DashboardController {
-  constructor(@Inject(DiTokens.DashboardUseCaseToken) private readonly dashboardUseCase: DashboardUseCaseInterface) { }
+  constructor(@Inject(DiTokens.DashboardUseCaseToken) private readonly dashboardUseCase: DashboardUseCaseInterface) {}
 
   @Sse('/')
   @HttpCode(HttpStatus.OK)
   @Header('Content-Type', 'text/event-stream')
   @ApiOperation({ summary: 'Refresh dashbaord data' })
   fetchDashboardMetricData(): Observable<{ data: RefreshDashboardResponseDto[] }> {
-    return interval(3000).pipe(
+    return interval(10000).pipe(
       switchMap((_) => this.dashboardUseCase.refreshDashboard()),
       map((data) => ({ data }))
     );
@@ -28,7 +28,7 @@ export class DashboardController {
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Get dashboard notifications' })
   getDashboardNotification(): Observable<{ data: DashboardNotificationDto[] }> {
-    return interval(3000).pipe(
+    return interval(10000).pipe(
       switchMap((_) => this.dashboardUseCase.getDashboardNotification()),
       map((data) => ({ data }))
     );

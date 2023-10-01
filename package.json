@@ -26,7 +26,7 @@
     "migration:create": "npm run typeorm migration:create ./data/migrations/$npm_config_name",
     "migration:generate": "npm run typeorm migration:generate ./data/migrations/$npm_config_name -- -d ./data/typeorm.config.ts",
     "migration:revert": "npm run typeorm migration:revert -- -d data/typeorm.config.ts",
-    "migration:run": "npm run typeorm migration:run -- -d data/typeorm.config.ts",
+    "migration:run": "rimraf npm run typeorm migration:run -- -d data/typeorm.config.ts",
     "migration:show": "npm run typeorm migration:show -- -d data/typeorm.config.ts",
     "schema:sync": "npm run typeorm schema:sync -- -d data/typeorm.config.ts",
     "typeorm:production": "ts-node ./node_modules/typeorm/cli",
