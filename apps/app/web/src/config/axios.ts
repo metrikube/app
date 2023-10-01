@@ -6,10 +6,9 @@ import {
 } from '@metrikube/infrastructure'
 import axios from 'axios'
 
-const axiosInstance = axios.create({
-  baseURL: `http://localhost:${env.API_PORT}/api/v1`,
-  timeout: 10000
-})
+export const baseURL = `http://localhost:${env.API_PORT}/api/v1`
+
+const axiosInstance = axios.create({ baseURL, timeout: 10000 })
 
 export const useAdapter = () => {
   const pluginAdapter = new PluginAdapterImpl(axiosInstance)
