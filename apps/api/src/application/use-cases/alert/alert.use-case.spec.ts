@@ -1,3 +1,6 @@
+import { randomUUID } from 'crypto';
+
+import { BadRequestException } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 
 import { MetricThresholdOperator, MetricThresholdOperatorEnum } from '@metrikube/common';
