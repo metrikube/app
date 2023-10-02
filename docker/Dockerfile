@@ -21,7 +21,7 @@ RUN npm install --omit=dev --ignore-scripts
 COPY --from=build /app/node_modules/better-sqlite3/build ./node_modules/better-sqlite3/build
 
 RUN apk add gettext
-RUN envsubst < ./dist/apps/app/web/config.template.json > ./dist/apps/app/web/config.json
+RUN envsubst < /app/dist/apps/app/web/config.template.json > /app/dist/apps/app/web/config.json
 
 ENV NODE_ENV=production
 

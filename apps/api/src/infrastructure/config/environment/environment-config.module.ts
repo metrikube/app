@@ -1,10 +1,6 @@
-import * as dotenv from 'dotenv'
+import { Module } from '@nestjs/common';
 
-import { Module } from '@nestjs/common'
-import { ConfigModule } from '@nestjs/config'
-
-import { validate } from '../environment/environment-config.validation'
-import { EnvironmentConfigService } from './environment-config.service'
+import { EnvironmentConfigService } from './environment-config.service';
 
 @Module({
   imports: [
