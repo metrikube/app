@@ -2,17 +2,15 @@ import { AxiosInstance } from 'axios';
 
 import { DashboardMetricsAdapter } from '@metrikube/core';
 
-import { baseURL } from '../../../../web/src/config/axios';
-
 export class DashboardMetricsImpl implements DashboardMetricsAdapter {
-  constructor(private readonly http: AxiosInstance) {}
+  constructor(private readonly http: AxiosInstance, private readonly baseURL: string) {}
 
   getWidgets(): EventSource {
-    return new EventSource(`${baseURL}/dashboard`);
+    return new EventSource(`${this.baseURL}/dashboard`);
   }
 
   getNotifications(): EventSource {
-    return new EventSource(`${baseURL}/api/v1/dashboard/notifications`);
+    return new EventSource(`${this.baseURL}/dashboard/notifications`);
   }
 
   async deleteWidget(widgetId: string): Promise<void> {

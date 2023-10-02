@@ -13,7 +13,7 @@ const axiosInstance = axios.create({ baseURL, timeout: 10000 })
 export const useAdapter = () => {
   const pluginAdapter = new PluginAdapterImpl(axiosInstance)
   const alertAdapter = new AlertAdapterImpl(axiosInstance)
-  const dashboardMetricsAdapter = new DashboardMetricsImpl(axiosInstance)
+  const dashboardMetricsAdapter = new DashboardMetricsImpl(axiosInstance, baseURL)
   return {
     pluginAdapter,
     alertAdapter,
