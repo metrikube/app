@@ -3,13 +3,15 @@
   "version": "0.7.7",
   "license": "MIT",
   "main": "dist/apps/api/main.js",
+  "private": true,
   "scripts": {
-    "build": "rimraf dist && npm run cache:clear && nx build",
-    "build:all": "rimraf dist && nx run-many --target=build",
-    "build:all:production": "npm run build:all -- --configuration=production && npm run build:migrations",
-    "build:api": "rimraf dist && npm run cache:clear && nx build api",
-    "build:migrations": "rimraf dist-migrations && tsc --p apps/api/tsconfig.app.json && tsc-alias -p apps/api/tsconfig.app.json",
+    "build": "npm run clean:build && npm run cache:clear && nx build",
+    "build:all": "npm run clean:build && nx run-many --target=build",
+    "build:all:production": "npm run clean:build && npm run build:all -- --configuration=production && npm run build:migrations",
+    "build:api": "npm run clean:build && npm run cache:clear && nx build api",
+    "build:migrations": "npm run clean:build && tsc -p apps/api/tsconfig.app.json && tsc-alias -p apps/api/tsconfig.app.json",
     "cache:clear": "nx clear-cache",
+    "clean:build": "rimraf dist*",
     "db:init": "npm run migration:run",
     "db:init:production": "npm run migration:run:production",
     "db:revert": "npm run migration:revert",
@@ -36,7 +38,6 @@
     "typeorm": "ts-node --project apps/api/tsconfig.app.json ./node_modules/typeorm/cli",
     "typeorm:production": "ts-node ./node_modules/typeorm/cli"
   },
-  "private": true,
   "dependencies": {
     "@aws-sdk/client-cost-explorer": "^3.357.0",
     "@aws-sdk/client-ec2": "^3.357.0",

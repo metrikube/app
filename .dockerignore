@@ -1,9 +1,11 @@
 .git
 .github
 .gitignore
+.husky
+.editorconfig
 .idea
 # ignore .env.local whenever it's present
-apps/**/.env.*
+apps/app/web/.env.local
 Dockerfile*
 README.md
 node_modules

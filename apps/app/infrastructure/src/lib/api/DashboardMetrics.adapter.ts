@@ -3,14 +3,14 @@ import { AxiosInstance } from 'axios';
 import { DashboardMetricsAdapter } from '@metrikube/core';
 
 export class DashboardMetricsImpl implements DashboardMetricsAdapter {
-  constructor(private readonly http: AxiosInstance, private readonly baseURL: string) {}
+  constructor(private readonly http: AxiosInstance) {}
 
   getWidgets(): EventSource {
-    return new EventSource(`${this.baseURL}/dashboard`);
+    return new EventSource(`${this.http.getUri()}/dashboard`);
   }
 
   getNotifications(): EventSource {
-    return new EventSource(`${this.baseURL}/dashboard/notifications`);
+    return new EventSource(`${this.http.getUri()}/dashboard/notifications`);
   }
 
   async deleteWidget(widgetId: string): Promise<void> {

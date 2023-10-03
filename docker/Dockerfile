@@ -20,9 +20,11 @@ RUN npm install --omit=dev --ignore-scripts
 # better-sqlite3 needs to be built
 COPY --from=build /app/node_modules/better-sqlite3/build ./node_modules/better-sqlite3/build
 
-RUN apk add gettext
-RUN envsubst < ./dist/apps/app/web/config.template.json > ./dist/apps/app/web/config.json
-
 ENV NODE_ENV=production
+ENV PORT=6661
+ENV SMTP_HOST=sandbox.smtp.mailtrap.io
+ENV SMTP_PORT=2525
+ENV SMTP_USERNAME=3c2381921e16de
+ENV SMTP_PASSWORD=9f10ddbbc8d8af
 
 CMD ["npm", "run", "start"]
