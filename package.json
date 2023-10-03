@@ -24,7 +24,7 @@
     "migration:generate:production": "npm run typeorm:production migration:generate ./data/migrations/$npm_config_name -- -d ./data/typeorm.config.ts",
     "migration:revert": "npm run typeorm migration:revert -- -d data/typeorm.config.ts",
     "migration:revert:production": "npm run typeorm:production migration:revert -- -d dist-migrations/data/typeorm.config.js",
-    "migration:run": "npm run typeorm migration:run -- -d data/typeorm.config.ts",
+    "migration:run": "npm run build:migrations && npm run typeorm migration:run -- -d data/typeorm.config.ts",
     "migration:run:production": "npm run typeorm:production migration:run -- -d dist-migrations/data/typeorm.config.js",
     "migration:show": "npm run typeorm migration:show -- -d data/typeorm.config.ts",
     "prepare": "husky install",
