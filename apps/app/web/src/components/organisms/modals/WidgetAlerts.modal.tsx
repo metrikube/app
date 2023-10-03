@@ -115,7 +115,7 @@ const WidgetAlertsModal = ({ open, setOpenModal, widget }: Props) => {
                       </IconButton>
                     )}
                   </TableCell>
-                  <TableCell>
+                  <TableCell align="right">
                     <IconButton
                       color="error"
                       size="large"
