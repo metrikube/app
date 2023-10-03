@@ -16,12 +16,19 @@ export class DashboardController {
   @Sse('/')
   @HttpCode(HttpStatus.OK)
   @Header('Content-Type', 'text/event-stream')
-  @ApiOperation({ summary: 'Refresh dashbaord data' })
-  fetchDashboardMetricData(): Observable<{ data: RefreshDashboardResponseDto[] }> {
+  @ApiOperation({ summary: 'Synchronize dashboard data using Serve Sent Events' })
+  syncDashboardMetricData(): Observable<{ data: string }> {
     return interval(10000).pipe(
-      switchMap((_) => this.dashboardUseCase.refreshDashboard()),
-      map((data) => ({ data }))
+      switchMap(() => this.dashboardUseCase.refreshDashboard()),
+      map((data) => ({ data: JSON.stringify(data) }))
     );
+  }
+
+  @Get('/refresh')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Refresh dashbaord data' })
+  fetchDashboardMetricData(): Promise<RefreshDashboardResponseDto[]> {
+    return this.dashboardUseCase.refreshDashboard();
   }
 
   @Sse('/notifications')

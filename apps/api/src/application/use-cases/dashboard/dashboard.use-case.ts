@@ -56,10 +56,7 @@ export class DashboardUseCase implements DashboardUseCaseInterface {
 
     return activatedMetrics.map((widget) => ({
       ...widget,
-      ...this.mapToPluginCredential(
-        widget.plugin,
-        credentials.find((credential) => credential.id === widget.credentialId)
-      )
+      ...this.mapToPluginCredential(widget.plugin, credentials?.length ? credentials?.find((credential) => credential.id === widget.credentialId) : null)
     }));
   }
 
@@ -77,7 +74,7 @@ export class DashboardUseCase implements DashboardUseCaseInterface {
   private mapToPluginCredential(plugin: Plugin, credential: Credential): { type: string; value: GenericCredentialType } {
     return {
       type: plugin.credentialType,
-      value: this.encryptionService.decryptJson<GenericCredentialType>(credential.value) || null
+      value: credential?.value ? this.encryptionService.decryptJson<GenericCredentialType>(credential?.value) : null
     };
   }
 }

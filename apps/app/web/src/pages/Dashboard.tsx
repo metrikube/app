@@ -15,14 +15,13 @@ import {
   GetNotificationsUsecase,
   GetWidgetsUsecase,
   NotificationModel,
-  WidgetModel,
-  widgetsMock
+  WidgetModel
 } from '@metrikube/core'
 import { AddchartOutlined } from '@mui/icons-material'
 import VerifiedIcon from '@mui/icons-material/Verified'
 import VisibilityIcon from '@mui/icons-material/Visibility'
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff'
-import { Alert, Box, Button, Typography, Collapse } from '@mui/material'
+import { Alert, Box, Button, Collapse, Typography } from '@mui/material'
 import { useQueryClient } from '@tanstack/react-query'
 import React, { useEffect, useState } from 'react'
 
@@ -47,17 +46,24 @@ const Dashboard = () => {
 
   useEffect(() => {
     const getWidgetUsecase = new GetWidgetsUsecase(dashboardMetricsAdapter)
-    getWidgetUsecase.execute().onopen = () => {
-      setisWidgetLoading(true)
-    }
-    getWidgetUsecase.execute().onmessage = (event) => {
-      setWidgets(JSON.parse(event.data))
-      setisWidgetLoading(false)
-    }
-    return () => {
-      getWidgetUsecase.execute().close = () => {
+    const execution = getWidgetUsecase.execute({
+      onOpen: () => {
+        setisWidgetLoading(true)
+      },
+      onError: (error) => {
+        setisWidgetLoading(false)
+      },
+      onMessage: (event) => {
+        setWidgets(JSON.parse(event.data))
+        setisWidgetLoading(false)
+      },
+      onClose: () => {
         console.info('GetWidgets usecase - Eventsource closed')
       }
+    })
+
+    return () => {
+      execution.close()
     }
   }, [])
 

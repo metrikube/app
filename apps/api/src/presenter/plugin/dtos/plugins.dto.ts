@@ -37,10 +37,7 @@ export class PluginResponseDto {
       description: plugin.description,
       name: plugin.name,
       category: plugin.category,
-      credential: this.mapToPluginCredential(
-        plugin,
-        credentials.find((credential) => credential.pluginId === plugin.id)
-      ),
+      credential: this.mapToPluginCredential(plugin, credentials?.length ? credentials?.find((credential) => credential.pluginId === plugin.id) : null),
       metrics: metrics
         .filter((metric) => metric.pluginId === plugin.id)
         .map((metric) => ({

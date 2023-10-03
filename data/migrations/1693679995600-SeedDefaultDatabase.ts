@@ -269,54 +269,54 @@ export class SeedDefaultDatabase1693679995600 implements MigrationInterface {
         isNotifiable: false
       }
     ];
-    const credentials = [
-      {
-        id: credentialIds.apiHealthCheck,
-        pluginId: pluginIds.apiHealthCheck,
-        type: 'apiEndpoint',
-        value:
-          'eyJpdiI6IjViMWQ0NWRiNGYyZmY4NGZiOGU5ZjZlOGQ4NTY2NTk3IiwiZW5jcnlwdGVkRGF0YSI6ImY5OGU5NzRlYWNmMWE1MWM0Yjg5MmEwNmM4NTBhYTEzNTA1Y2IyOTEwOWY5YTUyNmVlMjk5OTdhYmQ0ZTk4OTQ5MTA5OTNkMzM2Y2ViMmZhZjZhZjZmM2RkMDNiMjczODY5MTNlNWY2NjkxZGEzM2YxZjEwYjU1OSJ9'
-      },
-      {
-        id: credentialIds.github,
-        pluginId: pluginIds.github,
-        type: 'github',
-        value: ''
-      }
-    ];
-    const widgets = [
-      {
-        id: widgetIds.pingApi,
-        pluginId: pluginIds.apiHealthCheck,
-        metricId: metricIds.apiHealthCheck,
-        credentialId: credentialIds.apiHealthCheck,
-        isActive: true,
-        resourceId: '',
-        name: "Ping l'api jsonplaceholder",
-        description: null
-      }
-    ];
-    const alerts = [
-      {
-        id: '5607a60c-1dc9-455e-817a-59c3f82a176b',
-        widgetId: widgetIds.pingApi,
-        label: 'API Response Time > 50ms',
-        triggered: false,
-        triggeredAt: null,
-        isActive: true,
-        condition: {
-          field: 'value',
-          operator: 'gte',
-          threshold: 50
-        }
-      }
-    ];
+    // const credentials = [
+    //   {
+    //     id: credentialIds.apiHealthCheck,
+    //     pluginId: pluginIds.apiHealthCheck,
+    //     type: 'apiEndpoint',
+    //     value:
+    //       'eyJpdiI6IjViMWQ0NWRiNGYyZmY4NGZiOGU5ZjZlOGQ4NTY2NTk3IiwiZW5jcnlwdGVkRGF0YSI6ImY5OGU5NzRlYWNmMWE1MWM0Yjg5MmEwNmM4NTBhYTEzNTA1Y2IyOTEwOWY5YTUyNmVlMjk5OTdhYmQ0ZTk4OTQ5MTA5OTNkMzM2Y2ViMmZhZjZhZjZmM2RkMDNiMjczODY5MTNlNWY2NjkxZGEzM2YxZjEwYjU1OSJ9'
+    //   },
+    //   {
+    //     id: credentialIds.github,
+    //     pluginId: pluginIds.github,
+    //     type: 'github',
+    //     value: ''
+    //   }
+    // ];
+    // const widgets = [
+    //   {
+    //     id: widgetIds.pingApi,
+    //     pluginId: pluginIds.apiHealthCheck,
+    //     metricId: metricIds.apiHealthCheck,
+    //     credentialId: credentialIds.apiHealthCheck,
+    //     isActive: true,
+    //     resourceId: '',
+    //     name: "Ping l'api jsonplaceholder",
+    //     description: null
+    //   }
+    // ];
+    // const alerts = [
+    //   {
+    //     id: '5607a60c-1dc9-455e-817a-59c3f82a176b',
+    //     widgetId: widgetIds.pingApi,
+    //     label: 'API Response Time > 50ms',
+    //     triggered: false,
+    //     triggeredAt: null,
+    //     isActive: true,
+    //     condition: {
+    //       field: 'value',
+    //       operator: 'gte',
+    //       threshold: 50
+    //     }
+    //   }
+    // ];
 
     await this.execute(queryRunner, PluginEntity, plugins);
     await this.execute(queryRunner, MetricEntity, metrics);
-    await this.execute(queryRunner, CredentialEntity, credentials);
-    await this.execute(queryRunner, WidgetEntity, widgets);
-    await this.execute(queryRunner, AlertEntity, alerts);
+    // await this.execute(queryRunner, CredentialEntity, credentials);
+    // await this.execute(queryRunner, WidgetEntity, widgets);
+    // await this.execute(queryRunner, AlertEntity, alerts);
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
