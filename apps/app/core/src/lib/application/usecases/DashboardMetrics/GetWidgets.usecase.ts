@@ -1,4 +1,4 @@
-import type { DashboardMetricsAdapter, WidgetModel } from '@metrikube/core';
+import type { DashboardMetricsAdapter } from '@metrikube/core';
 
 export class GetWidgetsUsecase {
   constructor(private readonly dashboardMetrics: DashboardMetricsAdapter) { }

@@ -8,7 +8,9 @@ import {
   Option,
   ToggleAlertNotification,
   ToggleAlertNotificationUsecase,
-  ResetTriggeredAlertUsecase
+  ResetTriggeredAlertUsecase,
+  WidgetModel,
+  RefreshDashboardUsecase
 } from '@metrikube/core'
 import { useMutation, useQuery } from '@tanstack/react-query'
 
@@ -19,6 +21,15 @@ export const getWidgetAlertsQuery = (widgetId: string) =>
     queryKey: ['getWidgetAlerts'],
     queryFn: async (): Promise<AlertModel[]> =>
       new GetActiveMetricAlertUsecase(alertAdapter).execute(widgetId),
+    initialData: () => [],
+    refetchOnWindowFocus: false
+  })
+
+export const getWidgetsQuery = () =>
+  useQuery({
+    queryKey: ['getWidgets'],
+    queryFn: async (): Promise<WidgetModel[]> =>
+      new RefreshDashboardUsecase(dashboardMetricsAdapter).execute(),
     initialData: () => [],
     refetchOnWindowFocus: false
   })
