@@ -5,11 +5,12 @@ import ProviderModal from '../components/organisms/modals/Provider.modal'
 import WidgetAlertsModal from '../components/organisms/modals/WidgetAlerts.modal'
 import { useAdapter } from '../config/axios'
 import dayjs from '../config/dayjs'
+import { DashboardContext } from '../contexts/Dashboard.context'
 import { SetupPluginProvider } from '../contexts/SetupPlugin.context'
 import DefaultLayout from '../layouts/DefaultLayout'
 import { EmptyStateLayout } from '../layouts/EmptyStateLayout'
 import { WidgetsLayout } from '../layouts/WidgetsLayout'
-import { resetTriggeredAlertMutation } from '../services/dashboard.service'
+import { getWidgetsQuery, resetTriggeredAlertMutation } from '../services/dashboard.service'
 import styled from '@emotion/styled'
 import {
   GetNotificationsUsecase,
@@ -23,17 +24,17 @@ import VisibilityIcon from '@mui/icons-material/Visibility'
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff'
 import { Alert, Box, Button, Collapse, Typography } from '@mui/material'
 import { useQueryClient } from '@tanstack/react-query'
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 
 const metrikubeLogo = new URL(`/src/assets/img/metrikube-logo.png`, import.meta.url).href
 
 const Dashboard = () => {
+  const { widgets, setWidgets } = useContext(DashboardContext)
+
   const [openedModal, setOpenModal] = useState(false)
   const [isWidgetAlertsModalOpen, setIsWidgetAlertsModalOpen] = useState(false)
   const [isMetricDeletionModalOpened, setIsMetricDeletionModalOpened] = useState(false)
   const [selectedWidget, setSelectedWidget] = useState<WidgetModel | null>(null)
-  const [widgets, setWidgets] = useState<WidgetModel[]>([])
-  const [isWidgetLoading, setisWidgetLoading] = useState(false)
   const [notifications, setNotifications] = useState<NotificationModel[]>([])
   const [collapseChecked, setCollapseChecked] = useState(false)
   const queryClient = useQueryClient()
@@ -44,18 +45,15 @@ const Dashboard = () => {
     if (notifications.length === 0) setCollapseChecked(false)
   })
 
+  const { isSuccess, isFetching } = getWidgetsQuery((widgets: WidgetModel[]) => {
+    setWidgets(widgets)
+  })
+
   useEffect(() => {
     const getWidgetUsecase = new GetWidgetsUsecase(dashboardMetricsAdapter)
     const execution = getWidgetUsecase.execute({
-      onOpen: () => {
-        setisWidgetLoading(true)
-      },
-      onError: (error) => {
-        setisWidgetLoading(false)
-      },
       onMessage: (event) => {
-        setWidgets(JSON.parse(event.data))
-        setisWidgetLoading(false)
+        setWidgets(JSON.parse(event.data) as WidgetModel[])
       },
       onClose: () => {
         console.info('GetWidgets usecase - Eventsource closed')
@@ -164,7 +162,7 @@ const Dashboard = () => {
               </Collapse>
             </section>
           )}
-          {isWidgetLoading ? (
+          {isFetching ? (
             <Box
               sx={{
                 display: 'flex',
@@ -175,7 +173,7 @@ const Dashboard = () => {
               }}>
               <Loader />
             </Box>
-          ) : isWidgetLoading && !widgets.length ? (
+          ) : isSuccess && !widgets.length ? (
             <EmptyStateLayout
               title="Commencer par ajouter un widget"
               description="Les widgets sont le coeur de Metrikube, Ils permettent de visualiser vos métriques."

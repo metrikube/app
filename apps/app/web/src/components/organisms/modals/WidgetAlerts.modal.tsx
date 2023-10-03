@@ -62,8 +62,6 @@ const WidgetAlertsModal = ({ open, setOpenModal, widget }: Props) => {
     setIsOpened(true)
   }
 
-  console.log(alerts)
-
   return (
     <Dialog open={open} onClose={() => setOpenModal(false)}>
       <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between' }}>
