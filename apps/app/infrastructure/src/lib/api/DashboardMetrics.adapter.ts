@@ -1,12 +1,17 @@
 import { AxiosInstance } from 'axios';
 
-import { DashboardMetricsAdapter } from '@metrikube/core';
+import { DashboardMetricsAdapter, WidgetModel } from '@metrikube/core';
 
 export class DashboardMetricsImpl implements DashboardMetricsAdapter {
   constructor(private readonly http: AxiosInstance) {}
 
   getWidgets(): EventSource {
     return new EventSource(`${this.http.getUri()}/dashboard`);
+  }
+
+  async getWidgetsHTTP(): Promise<WidgetModel[]> {
+    const { data } = await this.http.get<WidgetModel[]>('/dashboard/refresh')
+    return data
   }
 
   getNotifications(): EventSource {
