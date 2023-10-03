@@ -1,6 +1,6 @@
 {
   "name": "metrikube",
-  "version": "0.7.3",
+  "version": "0.7.4",
   "license": "MIT",
   "main": "dist/apps/api/main.js",
   "private": true,
@@ -9,7 +9,7 @@
     "build:all": "npm run clean:build && nx run-many --target=build",
     "build:all:production": "npm run clean:build && npm run build:all -- --configuration=production && npm run build:migrations",
     "build:api": "npm run clean:build && npm run cache:clear && nx build api",
-    "build:migrations": "npm run clean:build && tsc -p apps/api/tsconfig.app.json && tsc-alias -p apps/api/tsconfig.app.json",
+    "build:migrations": "tsc -p apps/api/tsconfig.app.json && tsc-alias -p apps/api/tsconfig.app.json",
     "cache:clear": "nx clear-cache",
     "clean:build": "rimraf dist*",
     "db:init": "npm run migration:run",
