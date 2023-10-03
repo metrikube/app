@@ -1,4 +1,4 @@
-import type { DashboardMetricsAdapter, WidgetModel } from '@metrikube/core';
+import type { DashboardMetricsAdapter } from '@metrikube/core';
 
 interface Execution {
   close: () => void;
