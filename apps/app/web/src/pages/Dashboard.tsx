@@ -47,17 +47,21 @@ const Dashboard = () => {
 
   useEffect(() => {
     const getWidgetUsecase = new GetWidgetsUsecase(dashboardMetricsAdapter)
-    getWidgetUsecase.execute().onopen = () => {
-      setisWidgetLoading(true)
-    }
-    getWidgetUsecase.execute().onmessage = (event) => {
-      setWidgets(JSON.parse(event.data))
-      setisWidgetLoading(false)
-    }
-    return () => {
-      getWidgetUsecase.execute().close = () => {
+    const execution = getWidgetUsecase.execute({
+      onOpen: () => {
+        setisWidgetLoading(true)
+      },
+      onMessage: (event) => {
+        setWidgets(JSON.parse(event.data))
+        setisWidgetLoading(false)
+      },
+      onClose: () => {
         console.info('GetWidgets usecase - Eventsource closed')
       }
+    })
+
+    return () => {
+      execution.close()
     }
   }, [])
 
