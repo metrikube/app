@@ -122,7 +122,6 @@ const Dashboard = () => {
                 severity="error"
                 action={
                   <Button
-                    onClick={() => setCollapseChecked((prevState) => !prevState)}
                     sx={{ textTransform: 'none' }}
                     variant="text"
                     endIcon={collapseChecked ? <VisibilityOffIcon /> : <VisibilityIcon />}
