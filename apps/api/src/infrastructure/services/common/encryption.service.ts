@@ -28,7 +28,7 @@ export class EncryptionService implements EncryptionServiceInterface {
     }
   }
 
-  private encrypt(value: string): string {
+  encrypt(value: string): string {
     const iv = randomBytes(16);
 
     const cipher = createCipheriv(this.algorithm, this.getKey(), iv);
@@ -41,7 +41,7 @@ export class EncryptionService implements EncryptionServiceInterface {
     });
   }
 
-  private decrypt(hash: string): string {
+  decrypt(hash: string): string {
     const { iv: deIv, encryptedData } = this.decode64<{
       iv: string;
       encryptedData: string;
