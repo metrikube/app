@@ -16,9 +16,12 @@ import { useMutation, useQuery } from '@tanstack/react-query'
 
 const { dashboardMetricsAdapter, alertAdapter } = useAdapter()
 
+export const GET_WIDGETS_QUERY_KEY = 'getWidgets'
+export const GET_WIDGET_ALERTS_QUERY_KEY = 'getWidgetAlerts'
+
 export const getWidgetAlertsQuery = (widgetId: string) =>
   useQuery({
-    queryKey: ['getWidgetAlerts'],
+    queryKey: [GET_WIDGET_ALERTS_QUERY_KEY],
     queryFn: async (): Promise<AlertModel[]> =>
       new GetActiveMetricAlertUsecase(alertAdapter).execute(widgetId),
     initialData: () => [],
@@ -27,7 +30,7 @@ export const getWidgetAlertsQuery = (widgetId: string) =>
 
 export const getWidgetsQuery = (onSuccess: (widgets: WidgetModel[]) => void) =>
   useQuery({
-    queryKey: ['getWidgets'],
+    queryKey: [GET_WIDGETS_QUERY_KEY],
     queryFn: async (): Promise<WidgetModel[]> =>
       new RefreshDashboardUsecase(dashboardMetricsAdapter).execute(),
     initialData: () => [],
