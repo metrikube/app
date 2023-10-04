@@ -147,7 +147,7 @@ Distributed under the MIT License. See [LICENSE](https://github.com/metrikube/ap
 
 * [Clément JACQUELET](https://github.com/awuzi)
 * [Diarit SALIHAJ](https://github.com/awuzi)
-* [Jessy Vautour](https://github.com/awuzi)
+* [Jessy Vautour](https://github.com/JESSYV96)
 * [Louis GENESTIER](https://github.com/awuzi)
 * [Theotim HERIN](https://github.com/awuzi)
 * [Yahia LAMRI](https://github.com/awuzi)
