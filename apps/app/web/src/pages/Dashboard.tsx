@@ -10,7 +10,11 @@ import { SetupPluginProvider } from '../contexts/SetupPlugin.context'
 import DefaultLayout from '../layouts/DefaultLayout'
 import { EmptyStateLayout } from '../layouts/EmptyStateLayout'
 import { WidgetsLayout } from '../layouts/WidgetsLayout'
-import { getWidgetsQuery, resetTriggeredAlertMutation } from '../services/dashboard.service'
+import {
+  getNotificationsQuery,
+  getWidgetsQuery,
+  resetTriggeredAlertMutation
+} from '../services/dashboard.service'
 import styled from '@emotion/styled'
 import {
   GetNotificationsUsecase,
@@ -45,9 +49,17 @@ const Dashboard = () => {
     if (notifications.length === 0) setCollapseChecked(false)
   })
 
-  const { isSuccess, isFetching } = getWidgetsQuery((widgets: WidgetModel[]) => {
-    setWidgets(widgets)
-  })
+  const { isSuccess: isWidgetSuccess, isFetching: isWidgetFetching } = getWidgetsQuery(
+    (widgets: WidgetModel[]) => {
+      setWidgets(widgets)
+    }
+  )
+
+  const { isSuccess: isNotificationsSuccess } = getNotificationsQuery(
+    (notfications: NotificationModel[]) => {
+      setNotifications(notfications)
+    }
+  )
 
   useEffect(() => {
     const getWidgetUsecase = new GetWidgetsUsecase(dashboardMetricsAdapter)
@@ -113,7 +125,7 @@ const Dashboard = () => {
       </StyledHeader>
       <DefaultLayout>
         <>
-          {notifications.length > 0 && (
+          {isNotificationsSuccess && notifications.length > 0 && (
             <section>
               <Alert
                 onClick={() => setCollapseChecked((prevState) => !prevState)}
@@ -162,7 +174,7 @@ const Dashboard = () => {
               </Collapse>
             </section>
           )}
-          {isFetching ? (
+          {isWidgetFetching ? (
             <Box
               sx={{
                 display: 'flex',
@@ -173,7 +185,7 @@ const Dashboard = () => {
               }}>
               <Loader />
             </Box>
-          ) : isSuccess && !widgets.length ? (
+          ) : isWidgetSuccess && !widgets.length ? (
             <EmptyStateLayout
               title="Commencer par ajouter un widget"
               description="Les widgets sont le coeur de Metrikube, Ils permettent de visualiser vos métriques."
