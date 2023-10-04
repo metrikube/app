@@ -56,7 +56,8 @@ export const WidgetsLayout = ({ widgets, onAlertOpenRequest, onMetricDeletionReq
                 onDeleteButtonClick={() => onMetricDeletionRequest(widget)}>
                 {widget.data.error ? (
                   <Alert severity="error">
-                    Une erreur est survenue lors de la récupération des données : <strong>{widget.data.message}</strong>
+                    Une erreur est survenue lors de la récupération des données :{' '}
+                    <strong>{widget.data.message}</strong>
                   </Alert>
                 ) : (
                   widgetTemplateMap[widget.metric.type]({ widget })

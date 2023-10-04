@@ -1,6 +1,8 @@
 import AlertEmptyStateLayout from '../../../assets/img/undraws/undraw_warning_re_eoyh.svg'
 import { EmptyStateLayout } from '../../../layouts/EmptyStateLayout'
 import {
+  GET_WIDGETS_QUERY_KEY,
+  GET_WIDGET_ALERTS_QUERY_KEY,
   deleteAlertMutation,
   getWidgetAlertsQuery,
   toggleAlertMutation
@@ -51,11 +53,11 @@ const WidgetAlertsModal = ({ open, setOpenModal, widget }: Props) => {
   }, [widget])
 
   const { mutate: toggleNotification } = toggleAlertMutation(() => {
-    queryClient.invalidateQueries({ queryKey: ['getWidgetAlerts'] })
+    queryClient.invalidateQueries({ queryKey: [GET_WIDGET_ALERTS_QUERY_KEY] })
   })
   const { mutate: deleteAlert } = deleteAlertMutation(() => {
-    queryClient.invalidateQueries({ queryKey: ['getWidgetAlerts'] })
-    queryClient.invalidateQueries({ queryKey: ['getWidgets'] })
+    queryClient.invalidateQueries({ queryKey: [GET_WIDGET_ALERTS_QUERY_KEY] })
+    queryClient.invalidateQueries({ queryKey: [GET_WIDGETS_QUERY_KEY] })
   })
 
   const openModal = () => {
