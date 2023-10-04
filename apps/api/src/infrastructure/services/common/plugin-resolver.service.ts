@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 
 import { ApiMonitoringService } from '@metrikube/api-monitoring';
 import { AWSService } from '@metrikube/aws-plugin';
@@ -8,14 +8,15 @@ import { GithubService } from '@metrikube/github-plugin';
 
 import { PluginResolverInterface } from '../../../domain/interfaces/common/plugin-resolver.interface';
 import { Plugin } from '../../../domain/models/plugin.model';
+import { DiTokens } from '../../di/tokens';
 
 @Injectable()
 export class PluginResolverService implements PluginResolverInterface {
   constructor(
-    private readonly AWSService: AWSService,
-    private readonly apiMonitoringService: ApiMonitoringService,
-    private readonly databaseService: DbAnalyticsPluginService,
-    private readonly githubService: GithubService
+    @Inject(DiTokens.AWSServiceToken) private readonly AWSService: AWSService,
+    @Inject(DiTokens.ApiMonitoringToken) private readonly apiMonitoringService: ApiMonitoringService,
+    @Inject(DiTokens.DbAnalyticsPluginServiceToken) private readonly databaseService: DbAnalyticsPluginService,
+    @Inject(DiTokens.GithubServiceToken) private readonly githubService: GithubService
   ) {}
 
   resolvePluginConnector(pluginType: Plugin['type']): PluginConnectionInterface {
