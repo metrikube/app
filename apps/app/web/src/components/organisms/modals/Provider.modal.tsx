@@ -1,5 +1,12 @@
 /* eslint-disable prettier/prettier */
 import { SetupPluginContext } from '../../../contexts/SetupPlugin.context'
+import { GET_WIDGETS_QUERY_KEY } from '../../../services/dashboard.service'
+import {
+  createAlertsMutation,
+  getPluginsQuery,
+  setupPluginMutation,
+  validateCredentialsMutation
+} from '../../../services/plugin.service'
 import ProviderFormActionButtons from '../ProviderFormActionButtons'
 import ProviderFormStepper from '../ProviderFormStepper'
 import ProviderFormStep1 from '../forms/ProviderFormStep1.form'
@@ -21,11 +28,18 @@ import {
   PluginModel
 } from '@metrikube/core'
 import { Close } from '@mui/icons-material'
-import { Dialog, DialogContent, DialogTitle, IconButton, Typography, Divider, Box } from '@mui/material'
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  IconButton,
+  Typography,
+  Divider,
+  Box
+} from '@mui/material'
+import { useQueryClient } from '@tanstack/react-query'
 import React, { Dispatch, SetStateAction, useContext, useEffect, useState } from 'react'
 import { useForm, FormProvider } from 'react-hook-form'
-import { createAlertsMutation, getPluginsQuery, setupPluginMutation, validateCredentialsMutation } from '../../../services/plugin.service'
-import { useQueryClient } from '@tanstack/react-query'
 
 interface Props {
   open: boolean
@@ -56,7 +70,7 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
     widgetId,
     setSelectedProvider,
     setSelectedMetric,
-    setWidgetId,
+    setWidgetId
   } = useContext(SetupPluginContext)
 
   const methods = useForm<SetupPluginFormValues>({
@@ -76,20 +90,23 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
     setIsProviderChose(selectedProvider !== null)
   }, [selectedProvider])
 
-  const { mutate: validateCredentials } = validateCredentialsMutation(() => {
-    if (!selectedMetric?.isNotifiable) {
-      return setActiveStep(SetupPluginStepEnum.FINISH)
+  const { mutate: validateCredentials } = validateCredentialsMutation(
+    () => {
+      if (!selectedMetric?.isNotifiable) {
+        return setActiveStep(SetupPluginStepEnum.FINISH)
+      }
+      return setActiveStep(SetupPluginStepEnum.ALERT_CONFIG)
+    },
+    (err) => {
+      setActiveStep(SetupPluginStepEnum.FILL_CREDENTIAL)
+      alert(err)
     }
-    return setActiveStep(SetupPluginStepEnum.ALERT_CONFIG)
-  }, (err) => {
-    setActiveStep(SetupPluginStepEnum.FILL_CREDENTIAL)
-    alert(err)
-  })
+  )
   const { mutate: createAlert, isLoading: isCreateAlertLoading } = createAlertsMutation()
 
   const { mutate: setupWidget, isLoading: isSetupPluginLoading } = setupPluginMutation((data) => {
     setWidgetId(data.id)
-    queryClient.invalidateQueries({ queryKey: ["getWidgets"] })
+    queryClient.invalidateQueries({ queryKey: [GET_WIDGETS_QUERY_KEY] })
   })
 
   const handleFilterChange = (categoryValue: string) => {
@@ -99,14 +116,16 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
   const handleConnectionTest = (metricId: string, credentials: GenericCredentialType) => {
     return new Promise((resolve) => {
       validateCredentials({ metricId, credentials })
-        resolve(null)
+      resolve(null)
     })
   }
 
-  const handlMetricInstallation = (name: string,
+  const handlMetricInstallation = (
+    name: string,
     plugin: PluginModel,
     metric: MetricModel,
-    credential: GenericCredentialType) => {
+    credential: GenericCredentialType
+  ) => {
     return new Promise((resolve) => {
       setupWidget({
         pluginId: plugin.id,
@@ -115,7 +134,7 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
         credential
       })
       resolve(null)
-    });
+    })
   }
 
   const handleModalClose = () => {
@@ -141,12 +160,11 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
 
     switch (activeStep) {
       case SetupPluginStepEnum.FILL_CREDENTIAL:
-        handleConnectionTest(selectedMetric.id, credentials)
-          .then(() => {
-            if (!selectedMetric.isNotifiable) {
-              handlMetricInstallation(data.name, selectedProvider, selectedMetric, credentials)
-            }
-          })
+        handleConnectionTest(selectedMetric.id, credentials).then(() => {
+          if (!selectedMetric.isNotifiable) {
+            handlMetricInstallation(data.name, selectedProvider, selectedMetric, credentials)
+          }
+        })
         break
       case SetupPluginStepEnum.ALERT_CONFIG:
         handlMetricInstallation(data.name, selectedProvider, selectedMetric, credentials)
@@ -157,7 +175,8 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
                 alerts
               })
             }
-          }).finally(() => {
+          })
+          .finally(() => {
             setActiveStep(SetupPluginStepEnum.FINISH)
           })
 

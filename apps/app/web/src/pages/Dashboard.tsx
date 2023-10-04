@@ -1,16 +1,20 @@
 import PluginEmptyStateImg from '../assets/img/undraws/undraw_online_stats.svg'
 import Loader from '../components/atoms/Loader'
+import { Notifications } from '../components/molecules/Notifications'
 import ConfirmDeletionModal from '../components/organisms/modals/ConfirmDeletion.modal'
 import ProviderModal from '../components/organisms/modals/Provider.modal'
 import WidgetAlertsModal from '../components/organisms/modals/WidgetAlerts.modal'
 import { useAdapter } from '../config/axios'
-import dayjs from '../config/dayjs'
 import { DashboardContext } from '../contexts/Dashboard.context'
 import { SetupPluginProvider } from '../contexts/SetupPlugin.context'
 import DefaultLayout from '../layouts/DefaultLayout'
 import { EmptyStateLayout } from '../layouts/EmptyStateLayout'
 import { WidgetsLayout } from '../layouts/WidgetsLayout'
-import { getWidgetsQuery, resetTriggeredAlertMutation } from '../services/dashboard.service'
+import {
+  getNotificationsQuery,
+  getWidgetsQuery,
+  resetTriggeredAlertMutation
+} from '../services/dashboard.service'
 import styled from '@emotion/styled'
 import {
   GetNotificationsUsecase,
@@ -19,10 +23,7 @@ import {
   WidgetModel
 } from '@metrikube/core'
 import { AddchartOutlined } from '@mui/icons-material'
-import VerifiedIcon from '@mui/icons-material/Verified'
-import VisibilityIcon from '@mui/icons-material/Visibility'
-import VisibilityOffIcon from '@mui/icons-material/VisibilityOff'
-import { Alert, Box, Button, Collapse, Typography } from '@mui/material'
+import { Box, Button, Typography } from '@mui/material'
 import { useQueryClient } from '@tanstack/react-query'
 import React, { useContext, useEffect, useState } from 'react'
 
@@ -45,9 +46,17 @@ const Dashboard = () => {
     if (notifications.length === 0) setCollapseChecked(false)
   })
 
-  const { isSuccess, isFetching } = getWidgetsQuery((widgets: WidgetModel[]) => {
-    setWidgets(widgets)
-  })
+  const { isSuccess: isWidgetSuccess, isFetching: isWidgetFetching } = getWidgetsQuery(
+    (widgets: WidgetModel[]) => {
+      setWidgets(widgets)
+    }
+  )
+
+  const { isSuccess: isNotificationsSuccess } = getNotificationsQuery(
+    (notfications: NotificationModel[]) => {
+      setNotifications(notfications)
+    }
+  )
 
   useEffect(() => {
     const getWidgetUsecase = new GetWidgetsUsecase(dashboardMetricsAdapter)
@@ -113,56 +122,15 @@ const Dashboard = () => {
       </StyledHeader>
       <DefaultLayout>
         <>
-          {notifications.length > 0 && (
-            <section>
-              <Alert
-                onClick={() => setCollapseChecked((prevState) => !prevState)}
-                sx={{
-                  marginY: 1,
-                  '&:hover': {
-                    cursor: 'pointer'
-                  }
-                }}
-                severity="error"
-                action={
-                  <Button
-                    sx={{ textTransform: 'none' }}
-                    variant="text"
-                    endIcon={collapseChecked ? <VisibilityOffIcon /> : <VisibilityIcon />}
-                    disableRipple>
-                    {collapseChecked ? 'Masquer' : 'Afficher'}
-                  </Button>
-                }>
-                {notifications.length > 1
-                  ? `${notifications.length} alertes se sont déclanchées`
-                  : `${notifications.length} alerte s'est déclanchée`}
-              </Alert>
-              <Collapse in={collapseChecked}>
-                {notifications.map((notification) => (
-                  <Alert
-                    key={notification.id}
-                    sx={{ marginY: 1, alignItems: 'center' }}
-                    severity="warning"
-                    action={
-                      <Button
-                        sx={{ textTransform: 'none' }}
-                        onClick={() => resetTriggeredAlert(notification.id)}
-                        color="inherit"
-                        endIcon={<VerifiedIcon />}
-                        size="small">
-                        Marquer comme résolu
-                      </Button>
-                    }>
-                    <p>
-                      {notification.widgetName} - {notification.title}
-                    </p>
-                    <small>{dayjs(notification.triggeredAt).fromNow()}</small>
-                  </Alert>
-                ))}
-              </Collapse>
-            </section>
+          {isNotificationsSuccess && notifications.length > 0 && (
+            <Notifications
+              setCollapseChecked={setCollapseChecked}
+              collapseChecked={collapseChecked}
+              notifications={notifications}
+              resetTriggeredAlert={resetTriggeredAlert}
+            />
           )}
-          {isFetching ? (
+          {isWidgetFetching ? (
             <Box
               sx={{
                 display: 'flex',
@@ -173,7 +141,7 @@ const Dashboard = () => {
               }}>
               <Loader />
             </Box>
-          ) : isSuccess && !widgets.length ? (
+          ) : isWidgetSuccess && !widgets.length ? (
             <EmptyStateLayout
               title="Commencer par ajouter un widget"
               description="Les widgets sont le coeur de Metrikube, Ils permettent de visualiser vos métriques."

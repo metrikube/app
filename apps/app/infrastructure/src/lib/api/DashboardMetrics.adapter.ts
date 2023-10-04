@@ -1,9 +1,9 @@
 import { AxiosInstance } from 'axios';
 
-import { DashboardMetricsAdapter, WidgetModel } from '@metrikube/core';
+import { DashboardMetricsAdapter, NotificationModel, WidgetModel } from '@metrikube/core';
 
 export class DashboardMetricsImpl implements DashboardMetricsAdapter {
-  constructor(private readonly http: AxiosInstance) {}
+  constructor(private readonly http: AxiosInstance) { }
 
   getWidgets(): EventSource {
     return new EventSource(`${this.http.getUri()}/dashboard`);
@@ -16,6 +16,11 @@ export class DashboardMetricsImpl implements DashboardMetricsAdapter {
 
   getNotifications(): EventSource {
     return new EventSource(`${this.http.getUri()}/dashboard/notifications`);
+  }
+
+  async getNotificationsHTTP(): Promise<NotificationModel[]> {
+    const { data } = await this.http.get<NotificationModel[]>('/dashboard/notifications/refresh')
+    return data
   }
 
   async deleteWidget(widgetId: string): Promise<void> {
