@@ -1,4 +1,8 @@
-import { getAlertFieldsQuery } from '../../../services/dashboard.service'
+import {
+  GET_WIDGETS_QUERY_KEY,
+  GET_WIDGET_ALERTS_QUERY_KEY,
+  getAlertFieldsQuery
+} from '../../../services/dashboard.service'
 import { createAlertsMutation } from '../../../services/plugin.service'
 import AlertCreationForm from '../forms/AlertCreation.form'
 import { WidgetModel, AlertForm, mapToAlertRequest } from '@metrikube/core'
@@ -23,8 +27,8 @@ const CreateAlertModal = ({ open, setOpenModal, widget }: Props) => {
   })
 
   const { mutate: createAlert } = createAlertsMutation(() => {
-    queryClient.invalidateQueries({ queryKey: ['getWidgetAlerts'] })
-    queryClient.invalidateQueries({ queryKey: ['getWidgets'] })
+    queryClient.invalidateQueries({ queryKey: [GET_WIDGET_ALERTS_QUERY_KEY] })
+    queryClient.invalidateQueries({ queryKey: [GET_WIDGETS_QUERY_KEY] })
   })
 
   const { data: alertFields } = getAlertFieldsQuery(widget.metric.id)

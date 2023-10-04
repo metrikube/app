@@ -1,4 +1,4 @@
-import { deleteWidgetMutation } from '../../../services/dashboard.service'
+import { GET_WIDGETS_QUERY_KEY, deleteWidgetMutation } from '../../../services/dashboard.service'
 import { WidgetModel } from '@metrikube/core'
 import {
   Dialog,
@@ -37,7 +37,7 @@ const ConfirmDeletionModal = ({ open, setOpenModal, widget }: Props) => {
   }, [confirmDeletionValue])
 
   const { mutate: deleteWidget } = deleteWidgetMutation(() => {
-    queryClient.invalidateQueries({ queryKey: ['getWidgets'] })
+    queryClient.invalidateQueries({ queryKey: [GET_WIDGETS_QUERY_KEY] })
   })
 
   const handlerModalClose = () => {
