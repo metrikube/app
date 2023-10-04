@@ -7,16 +7,7 @@ export default defineConfig({
   cacheDir: '../../../node_modules/.vite/web',
   server: {
     port: 4200,
-    host: '0.0.0.0',
-    cors: true
-    // headers: {
-    //   'Access-Control-Allow-Origin': '*'
-    // },
-    // proxy: {
-    //   '/api/v1': {
-    //     changeOrigin: true
-    //   }
-    // }
+    host: 'localhost'
   },
 
   preview: {

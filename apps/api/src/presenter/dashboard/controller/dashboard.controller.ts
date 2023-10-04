@@ -17,8 +17,8 @@ export class DashboardController {
   @HttpCode(HttpStatus.OK)
   @Header('Content-Type', 'text/event-stream')
   @ApiOperation({ summary: 'Synchronize dashboard data using Serve Sent Events' })
-  syncDashboardMetricData(): Observable<{ data: string }> {
-    return interval(10000).pipe(
+  subscribeToDashboardMetricData(): Observable<{ data: string }> {
+    return interval(5000).pipe(
       switchMap(() => this.dashboardUseCase.refreshDashboard()),
       map((data) => ({ data: JSON.stringify(data) }))
     );
@@ -34,11 +34,18 @@ export class DashboardController {
   @Sse('/notifications')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Get dashboard notifications' })
-  getDashboardNotification(): Observable<{ data: DashboardNotificationDto[] }> {
-    return interval(10000).pipe(
-      switchMap((_) => this.dashboardUseCase.getDashboardNotification()),
-      map((data) => ({ data }))
+  subscribeToDashboardNotification(): Observable<{ data: string }> {
+    return interval(5000).pipe(
+      switchMap(() => this.dashboardUseCase.getDashboardNotification()),
+      map((data) => ({ data: JSON.stringify(data) }))
     );
+  }
+
+  @Get('/notifications/refresh')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Subscribe to dashboard notifications' })
+  refreshDashboardNotification(): Promise<DashboardNotificationDto[]> {
+    return this.dashboardUseCase.getDashboardNotification();
   }
 
   @Delete('disable/:widgetId')
