@@ -22,14 +22,14 @@ export class SchedulerService implements SchedulerInterface {
   async scheduleAlert(name: string, frequency: SecondsCronPattern | number, callback: () => Promise<void>): Promise<void> {
     const cronTime = `${frequency} * * * * *`;
     const job = new CronJob(cronTime, async () => {
-      this.logger.log(`---- job [${name}] running...`);
+      this.logger.verbose(`Job [${name}] running...`);
       await callback();
-      this.logger.log(`---- job [${name}] finished!`);
+      this.logger.verbose(`Job [${name}] finished!`);
     });
 
     this.schedulerRegistry.addCronJob(name, job);
     job.start();
 
-    this.logger.warn(`job ${name} added with frequency ${frequency}`);
+    this.logger.debug(`Job with name : "${name}" added with a ${frequency}s refresh frequency `);
   }
 }
