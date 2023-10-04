@@ -23,52 +23,47 @@ import { PluginUseCase } from './use-cases/plugin/plugin.use-case';
 import { WidgetUsecase } from './use-cases/widget/widget.usecase';
 
 const providers: Provider[] = [
+  // | Use Cases
+  // |
+  // |
+  // ---------------------------------------------------------------------------
   { provide: DiTokens.AlertUseCaseToken, useClass: AlertUseCase },
   { provide: DiTokens.PluginUseCaseToken, useClass: PluginUseCase },
   { provide: DiTokens.DashboardUseCaseToken, useClass: DashboardUseCase },
   { provide: DiTokens.CredentialUseCaseToken, useClass: CredentialUseCase },
   { provide: DiTokens.WidgetUseCaseToken, useClass: WidgetUsecase },
-  ///////////////////////////
+  // | Repositories
+  // |
+  // |
+  // ---------------------------------------------------------------------------
   { provide: DiTokens.AlertRepositoryToken, useClass: AlertRepositoryImpl },
   { provide: DiTokens.CredentialRepositoryToken, useClass: CredentialRepositoryImpl },
   { provide: DiTokens.PluginRepositoryToken, useClass: PluginRepositoryImpl },
   { provide: DiTokens.MetricRepositoryToken, useClass: MetricRepositoryImpl },
   { provide: DiTokens.WidgetRepositoryToken, useClass: WidgetRepositoryImpl },
-  ///////////////////////////
+  // | Plugin Services
+  // |
+  // |
+  // ---------------------------------------------------------------------------
   { provide: DiTokens.DbAnalyticsPluginServiceToken, useClass: DbAnalyticsPluginService },
   { provide: DiTokens.ApiMonitoringToken, useClass: ApiMonitoringService },
   { provide: DiTokens.AWSServiceToken, useClass: AWSService },
   { provide: DiTokens.GithubServiceToken, useClass: GithubService },
-  ///////////////////////////
+  // | Application Services
+  // |
+  // |
+  // ---------------------------------------------------------------------------
   { provide: DiTokens.EncryptionService, useFactory: () => new EncryptionService(process.env.MASTER_PASSWORD) },
   { provide: DiTokens.Mailer, useClass: NotificationService },
   { provide: DiTokens.PluginResolver, useClass: PluginResolverService },
   { provide: DiTokens.Scheduler, useClass: SchedulerService }
 ];
 
-const plugins = [ApiMonitoringModule, AwsPluginModule, DbAnalyticsPluginModule, GithubPluginModule];
+const pluginsModules = [ApiMonitoringModule, AwsPluginModule, DbAnalyticsPluginModule, GithubPluginModule];
 
 @Module({
-  imports: [InfrastructureModule, ...plugins],
+  imports: [InfrastructureModule, ...pluginsModules],
   providers,
-  exports: [
-    DiTokens.AWSServiceToken,
-    DiTokens.AlertRepositoryToken,
-    DiTokens.AlertUseCaseToken,
-    DiTokens.ApiMonitoringToken,
-    DiTokens.CredentialRepositoryToken,
-    DiTokens.DashboardUseCaseToken,
-    DiTokens.DbAnalyticsPluginServiceToken,
-    DiTokens.EncryptionService,
-    DiTokens.GithubServiceToken,
-    DiTokens.Mailer,
-    DiTokens.MetricRepositoryToken,
-    DiTokens.PluginRepositoryToken,
-    DiTokens.PluginResolver,
-    DiTokens.PluginUseCaseToken,
-    DiTokens.Scheduler,
-    DiTokens.WidgetRepositoryToken,
-    DiTokens.WidgetUseCaseToken
-  ]
+  exports: [...providers]
 })
 export class UseCaseModule {}

@@ -7,8 +7,6 @@ import { CredentialRepositoryImpl } from './database/repositories/credential.rep
 import { MetricRepositoryImpl } from './database/repositories/metric.repository';
 import { PluginRepositoryImpl } from './database/repositories/plugin.repository';
 import { WidgetRepositoryImpl } from './database/repositories/wiget.repository';
-import { DiTokens } from './di/tokens';
-import { EncryptionService } from './services/common/encryption.service';
 
 @Module({
   imports: [DatabaseModule, ScheduleModule.forRoot()],
