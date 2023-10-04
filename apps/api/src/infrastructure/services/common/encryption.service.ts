@@ -13,11 +13,19 @@ export class EncryptionService implements EncryptionServiceInterface {
   constructor(private masterPassword: string) {}
 
   encryptJson<T extends Record<string, string | number | boolean>>(value: T): string {
-    return this.encrypt(JSON.stringify(value));
+    try {
+      return this.encrypt(JSON.stringify(value));
+    } catch (e) {
+      throw new Error(`Unable to encrypt json : ${e.message}`);
+    }
   }
 
   decryptJson<T extends Record<string, string | number | boolean>>(hash: string): T {
-    return JSON.parse(this.decrypt(hash));
+    try {
+      return JSON.parse(this.decrypt(hash));
+    } catch (e) {
+      throw new Error(`Unable to decrypt json : ${e.message}`);
+    }
   }
 
   encrypt(value: string): string {

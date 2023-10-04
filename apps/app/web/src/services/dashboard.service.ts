@@ -25,13 +25,14 @@ export const getWidgetAlertsQuery = (widgetId: string) =>
     refetchOnWindowFocus: false
   })
 
-export const getWidgetsQuery = () =>
+export const getWidgetsQuery = (onSuccess: (widgets: WidgetModel[]) => void) =>
   useQuery({
     queryKey: ['getWidgets'],
     queryFn: async (): Promise<WidgetModel[]> =>
       new RefreshDashboardUsecase(dashboardMetricsAdapter).execute(),
     initialData: () => [],
-    refetchOnWindowFocus: false
+    refetchOnWindowFocus: false,
+    onSuccess
   })
 
 export const deleteWidgetMutation = (onSuccess: () => void) =>

@@ -5,10 +5,18 @@ import viteTsConfigPaths from 'vite-tsconfig-paths'
 
 export default defineConfig({
   cacheDir: '../../../node_modules/.vite/web',
-
   server: {
     port: 4200,
-    host: 'localhost'
+    host: '0.0.0.0',
+    cors: true
+    // headers: {
+    //   'Access-Control-Allow-Origin': '*'
+    // },
+    // proxy: {
+    //   '/api/v1': {
+    //     changeOrigin: true
+    //   }
+    // }
   },
 
   preview: {

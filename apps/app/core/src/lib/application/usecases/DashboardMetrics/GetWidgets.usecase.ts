@@ -8,6 +8,7 @@ interface EventHandlers {
   onOpen?: () => void;
   onMessage?: (event: MessageEvent) => void;
   onClose?: () => void;
+  onError?: (event: Event) => void;
 }
 
 export class GetWidgetsUsecase {
@@ -20,6 +21,9 @@ export class GetWidgetsUsecase {
     }
     if (eventHandlers.onMessage) {
       eventSource.onmessage = eventHandlers.onMessage;
+    }
+    if (eventHandlers.onError) {
+      eventSource.onerror = eventHandlers.onError;
     }
     return {
       close: () => {
