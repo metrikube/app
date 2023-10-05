@@ -1,4 +1,4 @@
-import { GenericCredentialType, MetricType, PluginConnectionInterface, PluginResult } from '@metrikube/common';
+import { GenericCredentialType, MetricType, PluginConnectionInterface, PluginMetricMethod, PluginResult } from '@metrikube/common';
 
 import { Plugin } from '../../models/plugin.model';
 
@@ -7,7 +7,7 @@ export interface PluginResolverInterface {
 
   testPluginConnection(plugin: Plugin, credentials: GenericCredentialType): Promise<{ ok: boolean; message: string }>;
 
-  getConnectorByMetricType(type: MetricType): (credentials: GenericCredentialType) => Promise<PluginResult<MetricType>>;
+  getConnectorByMetricType(type: MetricType): PluginMetricMethod;
 
   queryPluginDataByMetricType(type: MetricType, credentials: GenericCredentialType): Promise<PluginResult<MetricType>>;
 
