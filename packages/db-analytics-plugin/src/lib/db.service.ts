@@ -79,8 +79,6 @@ export class DbService {
     } catch (error) {
       console.error('Error generated during query execution: ', error);
       throw error;
-    } finally {
-      await connection.end();
     }
   }
 
@@ -164,8 +162,6 @@ export class DbService {
     } catch (error) {
       console.error('Error executing aggregateDbSizeData: ', error);
       throw error;
-    } finally {
-      await connection.end();
     }
   }
 }

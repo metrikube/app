@@ -14,6 +14,7 @@ export class DbAnalyticsPluginService implements PluginConnectionInterface {
       const dbService = new DbService(credentialData);
       const connection = await dbService.connection();
       const nbQueries = await dbService.getNbQueries(connection);
+      await connection.end();
       return nbQueries;
     } catch (error) {
       Logger.error(`Error executing getNbQueries: ${(error as Error).message}`, DbAnalyticsPluginService.name);
@@ -29,6 +30,7 @@ export class DbAnalyticsPluginService implements PluginConnectionInterface {
       const dbService = new DbService(credentialData);
       const connection = await dbService.connection();
       const dbSizeMb = await dbService.aggregateDbSizeData(connection);
+      await connection.end();
       return dbSizeMb;
     } catch (error) {
       Logger.error(`Error executing getDbSize: ${(error as Error).message}`, DbAnalyticsPluginService.name);
@@ -44,6 +46,7 @@ export class DbAnalyticsPluginService implements PluginConnectionInterface {
       const dbService = new DbService(credentialData);
       const connection = await dbService.connection();
       const slowQueries = await dbService.getSlowQuery(connection);
+      await connection.end();
       return slowQueries.map((slowQuery) => ({
         executionTime: parseFloat(slowQuery.executionTime),
         query: slowQuery.query,
