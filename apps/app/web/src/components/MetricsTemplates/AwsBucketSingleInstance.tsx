@@ -53,7 +53,7 @@ export const AwsBucketSingleInstance = ({ widget }: Props) => {
           <TitledBox title="Date de création" icon={HistoryIcon} iconColor="#48e052">
             <Typography
               sx={{
-                fontSize: '30px',
+                fontSize: '20px',
                 lineHeight: '1'
               }}>
               {dayjs((data.additionnalData as { creationDate: Date })?.creationDate).format(
