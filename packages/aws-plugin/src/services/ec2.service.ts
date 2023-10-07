@@ -2,6 +2,7 @@ import { DescribeInstancesCommand, DescribeInstancesCommandInput, EC2Client, Tag
 
 import { ApiAWSSingleResourceInstanceResult, AwsCredentialType } from '@metrikube/common';
 
+import { InvalidInstanceException } from '../../../../apps/api/src/domain/exceptions/invalid-instance.exception';
 import { CostExplorerService } from './cost-explorer.service';
 
 export class EC2Service {
@@ -22,7 +23,7 @@ export class EC2Service {
       };
       const res = await this.client.send(new DescribeInstancesCommand(params));
       if (!res.Reservations || res.Reservations.length === 0 || !res.Reservations[0].Instances || res.Reservations[0].Instances.length === 0) {
-        throw new Error('No instance found');
+        throw new InvalidInstanceException(new Error('No instance found'));
       }
       const instanceFound = res.Reservations[0].Instances[0];
       const cost = await CostExplorerService.getInstance(this.credentials).getInstanceCost(instanceId, {
@@ -39,7 +40,7 @@ export class EC2Service {
         currency: cost.currency
       };
     } catch (err) {
-      throw new Error('Error fetching instance infos:' + err);
+      throw new InvalidInstanceException(err);
     }
   }
 
@@ -102,8 +103,8 @@ export class EC2Service {
         }
         for (const instance of reservation.Instances) {
           const instanceId = instance.InstanceId;
-          if (!instanceId || !instance.Tags || !instance.Placement || !instance.State || !instance.Placement.AvailabilityZone) {
-            console.log('No instance id, tags, region or state found');
+          if (!instanceId || !instance.Placement || !instance.State || !instance.Placement.AvailabilityZone) {
+            console.log('No instance id, region or state found');
             return [];
           }
           const cost = await CostExplorerService.getInstance(this.credentials).getInstanceCost(instanceId, {
@@ -113,7 +114,7 @@ export class EC2Service {
 
           const instanceInfo = {
             id: instanceId,
-            name: this.getInstanceName(instance.Tags) || '',
+            name: this.getInstanceName(instance.Tags || []) || instanceId,
             status: instance.State.Name,
             region: instance.Placement.AvailabilityZone.slice(0, -1),
             cost: cost.currentCost,

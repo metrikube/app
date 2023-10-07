@@ -40,6 +40,14 @@ const AwsCredentialForm = () => {
           required: 'Ce champs est obligatoire'
         })}
       />
+      <TextField
+        label="Resource ID"
+        variant="outlined"
+        size="small"
+        error={Boolean(errors.aws?.resourceId)}
+        helperText={errors.aws?.resourceId?.message}
+        {...register('aws.resourceId')}
+      />
     </>
   )
 }
