@@ -3,6 +3,7 @@ import { WidgetModel } from '@metrikube/core';
 import {
   awsBucketInstanceMetricMock,
   awsListS3MetricMock,
+  awsSingleEC2InstanceMetricMock,
   dbQueriesMock,
   dbSizeMetricMock,
   dbSlowQueriesMetricMock,
@@ -156,16 +157,16 @@ export const lastIssuesWidgetMock: WidgetModel = {
 export const githubWidgets: WidgetModel[] = [lastPullRequestWidgetMock, lastIssuesWidgetMock];
 
 // #region AWS widgets
-export const singleBucketS3WidgetMock: WidgetModel = {
+export const singleEC2WidgetMock: WidgetModel = {
   id: 'bf32add2-ae8a-42b0-af8f-5a30a851a3ad',
   name: 'AWS S3',
   alertNumber: 1,
   resourceId: 'resource-123',
   plugin: AWSPluginMock,
-  metric: awsBucketInstanceMetricMock,
+  metric: awsSingleEC2InstanceMetricMock,
   data: {
-    id: 'second-bucket',
-    name: 'second-bucket',
+    id: '1d-ddjsqkdjs',
+    name: 'Web-Server-Mock',
     region: 'eu-west-3',
     cost: 74,
     status: 'Stopping',
@@ -175,25 +176,7 @@ export const singleBucketS3WidgetMock: WidgetModel = {
     }
   }
 };
-export const singleBucketS3Widget2Mock: WidgetModel = {
-  id: '094bf35c-5d7c-4e0f-b88c-73318b32c',
-  name: 'S3 First Bucket',
-  alertNumber: 0,
-  resourceId: undefined,
-  plugin: AWSPluginMock,
-  metric: awsBucketInstanceMetricMock,
-  data: {
-    id: 'first-bucket',
-    name: 'first-bucket',
-    region: 'eu-west-3',
-    cost: '10',
-    status: 'Running',
-    currency: 'USD',
-    additionnalData: {
-      creationDate: '2022-09-03T20:47:09.000Z'
-    }
-  }
-};
+
 export const singleBucketS3Widget3Mock: WidgetModel = {
   id: '094bf35c-5d7c-4e0f-b88c-73318b32c',
   name: 'S3 First Bucket',
@@ -207,7 +190,6 @@ export const singleBucketS3Widget3Mock: WidgetModel = {
     region: 'eu-west-3',
     cost: '10',
     currency: 'USD',
-    status: 'Stopped',
     additionnalData: {
       creationDate: '2022-09-03T20:47:09.000Z'
     }
@@ -251,7 +233,7 @@ export const listBucketS3WidgetMock: WidgetModel = {
   ]
 };
 // #endregion
-export const awsWidgets: WidgetModel[] = [singleBucketS3WidgetMock, singleBucketS3Widget2Mock, singleBucketS3Widget3Mock, listBucketS3WidgetMock];
+export const awsWidgets: WidgetModel[] = [singleEC2WidgetMock, singleBucketS3Widget3Mock, listBucketS3WidgetMock];
 
 // #region SQL widgets
 export const nbRequestsPerHour: WidgetModel = {

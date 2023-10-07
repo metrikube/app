@@ -12,13 +12,13 @@ export class AWSService implements PluginConnectionInterface {
   async getEc2Instance(credentials: AwsCredentialType) {
     try {
       if (!credentials.resourceId) {
-        throw new Error('No resource ID provided');
+        console.error('No resource ID provided');
+        throw new InvalidCredentialException(new Error('No resource ID provided'));
       }
       const ec2Service = new EC2Service(credentials);
       return await ec2Service.getInstanceInformations(credentials.resourceId);
     } catch (error) {
-      console.error('Error fetching instance infos:', error);
-      throw error;
+      throw new InvalidCredentialException(error);
     }
   }
 
@@ -33,16 +33,16 @@ export class AWSService implements PluginConnectionInterface {
   }
 
   // S3 Section
-  async getS3Bucket(credentials: AwsCredentialType): Promise<ApiAWSSingleResourceInstanceResult> {
+  async getS3Bucket(credentials: AwsCredentialType) {
     try {
       if (!credentials.resourceId) {
-        throw new Error('No resource ID provided');
+        console.error('No resource ID provided');
+        throw new InvalidCredentialException(new Error('No resource ID provided'));
       }
       const s3Service = new S3Service(credentials);
       return s3Service.getSingleBucket(credentials.resourceId);
     } catch (error) {
       console.error('Error fetching instances:', error);
-      throw error;
     }
   }
 

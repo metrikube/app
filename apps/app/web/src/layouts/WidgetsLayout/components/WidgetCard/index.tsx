@@ -1,10 +1,19 @@
 import styled from '@emotion/styled'
 import { WidgetModel } from '@metrikube/core'
+import DeleteIcon from '@mui/icons-material/Delete'
 import MoreVertIcon from '@mui/icons-material/MoreVert'
-import DeleteIcon from '@mui/icons-material/Delete';
-import NotificationsIcon from '@mui/icons-material/Notifications';
-import NotificationsActiveOutlinedIcon from '@mui/icons-material/NotificationsActiveOutlined';
-import { Grid, CardHeader, IconButton, CardContent, Chip, Box, Badge, Typography } from '@mui/material'
+import NotificationsIcon from '@mui/icons-material/Notifications'
+import NotificationsActiveOutlinedIcon from '@mui/icons-material/NotificationsActiveOutlined'
+import {
+  Grid,
+  CardHeader,
+  IconButton,
+  CardContent,
+  Chip,
+  Box,
+  Badge,
+  Typography
+} from '@mui/material'
 import { MetrikubeMenu } from 'apps/app/web/src/components/molecules/MetrikubeMenu'
 import { MetrikubeMenuItem } from 'apps/app/web/src/components/molecules/MetrikubeMenu/models'
 import React from 'react'
@@ -51,9 +60,8 @@ export const WidgetCard = ({
     }
   ]
 
-
   return (
-    <Grid item >
+    <Grid item>
       <StyledCard>
         <CardHeader
           title={widget.name}
@@ -63,7 +71,6 @@ export const WidgetCard = ({
           avatar={<Logo alt={widget.plugin.name} src={avatarUrl} />}
           action={
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            
               <IconsActionContainer>
                 <div>
                   <IconButton onClick={handleMoreButtonClick}>
@@ -84,15 +91,19 @@ export const WidgetCard = ({
         />
         <CardContent>
           {children}
-          {widget.metric.isNotifiable && <Box sx={{display: 'flex', columnGap: '5px', alignItems: 'center', marginTop: '25px'}}>
-            <Typography variant="caption" color="text.secondary" sx={{display: 'flex', alignItems: 'center', columnGap: '5px'}}>
-              <NotificationsActiveOutlinedIcon fontSize='small'/>
-              Alertes actives :
-            </Typography>
-            <Typography sx={{fontSize: '14px'}}>
-              {widget.alertNumber}
-            </Typography>
-          </Box>}
+          {widget.metric.isNotifiable && (
+            <Box
+              sx={{ display: 'flex', columnGap: '5px', alignItems: 'center', marginTop: '25px' }}>
+              <Typography
+                variant="caption"
+                color="text.secondary"
+                sx={{ display: 'flex', alignItems: 'center', columnGap: '5px' }}>
+                <NotificationsActiveOutlinedIcon fontSize="small" />
+                Alertes actives :
+              </Typography>
+              <Typography sx={{ fontSize: '14px' }}>{widget.alertNumber}</Typography>
+            </Box>
+          )}
         </CardContent>
       </StyledCard>
     </Grid>
@@ -105,7 +116,6 @@ const StyledCard = styled(Grid)`
   border-radius: ${({ theme }) => {
     return theme.shape.borderRadius * 3
   }}px;
-
 `
 
 const IconsActionContainer = styled.div`

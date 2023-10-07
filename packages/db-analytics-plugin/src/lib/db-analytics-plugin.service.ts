@@ -67,6 +67,7 @@ export class DbAnalyticsPluginService implements PluginConnectionInterface {
       const dbService = new DbService(credentialData);
       const connection = await dbService.connection();
       await connection.ping();
+      await connection.end();
       return { ok: true, message: null };
     } catch (error) {
       Logger.error(`🏓 Pinging database "${credentialData.dbName}" failed, status: ${(error as Error).message}`, DbAnalyticsPluginService.name);

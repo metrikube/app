@@ -1,12 +1,12 @@
 import { TitledBox } from '../molecules/TitledBox'
 import SimpleWidget from '../molecules/WidgetsGenericTemplates/SimpleWidget'
-import styled from '@emotion/styled'
+import { ApiAWSSingleResourceInstanceResult } from '@metrikube/common'
 import { WidgetModel, formatAsCurrency } from '@metrikube/core'
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney'
+import HistoryIcon from '@mui/icons-material/History'
 import LocationOnIcon from '@mui/icons-material/LocationOn'
-import MonitorHeartIcon from '@mui/icons-material/MonitorHeart'
-import StraightenIcon from '@mui/icons-material/Straighten'
-import { List, ListItem, ListItemText, Box, Typography } from '@mui/material'
+import { Box, Typography } from '@mui/material'
+import dayjs from 'dayjs'
 import React from 'react'
 
 interface Props {
@@ -14,32 +14,7 @@ interface Props {
 }
 
 export const AwsBucketSingleInstance = ({ widget }: Props) => {
-  const getColorForStatus = (status: string) => {
-    switch (status) {
-      case 'Stopped':
-        return '#cc6363' // 1xx Informational responses
-      case 'Running':
-        return '#83b17f' // 2xx Success
-      case 'Stopping':
-        return '#d6926e' // 4xx Client errors
-      default:
-        return 'gray' // Other
-    }
-  }
-
-  const getTranslationForStatus = (status: string) => {
-    switch (status) {
-      case 'Stopped':
-        return 'Arrêtée'
-      case 'Running':
-        return 'En cours'
-      case 'Stopping':
-        return 'Arrêt en cours'
-      default:
-        return 'Autre'
-    }
-  }
-
+  const data = widget.data as ApiAWSSingleResourceInstanceResult
   return (
     <SimpleWidget>
       <Box
@@ -50,64 +25,44 @@ export const AwsBucketSingleInstance = ({ widget }: Props) => {
           height: '60px'
         }}>
         <Typography sx={{ color: '#696969', fontSize: '18px', fontWeight: 'bold' }}>
-          {widget.data.name}
+          {data.name}
         </Typography>
       </Box>
       <Box sx={{ display: 'flex', columnGap: '70px' }}>
-        <TitledBox title="Coût" icon={AttachMoneyIcon} iconColor="#e2c36f">
-          <Typography
-            sx={{
-              fontSize: '30px',
-              fontWeight: 'bold'
-            }}>
-            {formatAsCurrency(widget.data.cost, widget.data.currency)}
-          </Typography>
-        </TitledBox>
-        <TitledBox title="Statut" icon={MonitorHeartIcon} iconColor="#50D768">
-          <Typography
-            sx={{
-              fontSize: '20px',
-              lineHeight: '1',
-              color: getColorForStatus(widget.data.status),
-              fontWeight: 'bold'
-            }}>
-            {getTranslationForStatus(widget.data.status)}
-          </Typography>
-        </TitledBox>
+        {data?.currency && data?.cost && (
+          <TitledBox title="Coût" icon={AttachMoneyIcon} iconColor="#e2c36f">
+            <Typography
+              sx={{
+                fontSize: '30px',
+                fontWeight: 'bold'
+              }}>
+              {formatAsCurrency(parseInt(data.cost as string, 10), data.currency)}
+            </Typography>
+          </TitledBox>
+        )}
         <TitledBox title="Région" icon={LocationOnIcon} iconColor="#4160b4">
           <Typography
             sx={{
               fontSize: '20px',
               lineHeight: '1'
             }}>
-            {widget.data.region}
+            {data.region}
           </Typography>
         </TitledBox>
+        {data?.additionnalData && (data.additionnalData as any)?.creationDate && (
+          <TitledBox title="Date de création" icon={HistoryIcon} iconColor="#48e052">
+            <Typography
+              sx={{
+                fontSize: '30px',
+                lineHeight: '1'
+              }}>
+              {dayjs((data.additionnalData as { creationDate: Date })?.creationDate).format(
+                'DD/MM/YYYY'
+              )}
+            </Typography>
+          </TitledBox>
+        )}
       </Box>
-
-      {/* 
-      <List dense={true}>
-        <ListItem>
-          <StyledItemText primary="Nom de l'instance : " secondary={widget.data.name} />
-        </ListItem>
-        <ListItem>
-          <StyledItemText primary="Région : " secondary={widget.data.region} />
-        </ListItem>
-        <ListItem>
-          <StyledItemText
-            primary="Coût : "
-            secondary={formatAsCurrency(widget.data.cost, widget.data.currency)}
-          />
-        </ListItem>
-      </List> */}
     </SimpleWidget>
   )
 }
-
-const StyledItemText = styled(ListItemText)`
-  display: flex;
-
-  .MuiListItemText-primary {
-    margin-right: 6px;
-  }
-`
