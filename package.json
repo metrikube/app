@@ -1,6 +1,6 @@
 {
   "name": "metrikube",
-  "version": "0.7.16",
+  "version": "0.7.17",
   "license": "MIT",
   "main": "dist/apps/api/main.js",
   "private": true,
