@@ -89,3 +89,6 @@ export interface PluginConnectionInterface {
   testConnection(credential: GenericCredentialType): Promise<{ ok: boolean; message: string | null }>;
   describe(metricType: MetricType): string[];
 }
+
+export type PluginMetricMethod = (credentials: GenericCredentialType) => Promise<PluginResult<MetricType>>;
+export type PluginConnectorMap = Map<MetricType, PluginMetricMethod>;

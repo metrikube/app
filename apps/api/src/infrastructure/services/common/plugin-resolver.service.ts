@@ -2,7 +2,7 @@ import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 
 import { ApiMonitoringService } from '@metrikube/api-monitoring';
 import { AWSService } from '@metrikube/aws-plugin';
-import { GenericCredentialType, MetricType, PluginConnectionInterface, PluginResult } from '@metrikube/common';
+import { GenericCredentialType, MetricType, PluginConnectionInterface, PluginConnectorMap, PluginMetricMethod, PluginResult } from '@metrikube/common';
 import { DbAnalyticsPluginService } from '@metrikube/db-analytics-plugin';
 import { GithubService } from '@metrikube/github-plugin';
 
@@ -43,11 +43,8 @@ export class PluginResolverService implements PluginResolverInterface {
     return this.resolvePluginConnector(pluginType).describe(metricType);
   }
 
-  getConnectorByMetricType(type: MetricType): (credentials: GenericCredentialType) => Promise<PluginResult<MetricType>> {
-    const connectors: Map<MetricType, (credentials: GenericCredentialType) => Promise<PluginResult<MetricType>>> = new Map<
-      MetricType,
-      (credentials: GenericCredentialType) => Promise<PluginResult<MetricType>>
-    >([
+  getConnectorByMetricType(type: MetricType): PluginMetricMethod {
+    const connectors: PluginConnectorMap = new Map<MetricType, PluginMetricMethod>([
       ['api-endpoint-health-check', this.apiMonitoringService.apiHealthCheck],
       ['aws-bucket-multiple-instances', this.AWSService.getS3Buckets],
       ['aws-bucket-single-instance', this.AWSService.getS3Bucket],
