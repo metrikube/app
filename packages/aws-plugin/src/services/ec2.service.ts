@@ -44,36 +44,6 @@ export class EC2Service {
     }
   }
 
-  // async getAvailableRegions() {
-  //   const command = new DescribeRegionsCommand({});
-  //   const response = await this.client.send(command);
-  //   return response?.Regions?.map((region) => region.RegionName);
-  // }
-
-  // async getInstancesByRegion(region: string) {
-  //   const client = new EC2Client({ credentials: this.credentials, region });
-  //   const command = new DescribeInstancesCommand({});
-  //   const response = await client.send(command);
-  //   return response?.Reservations?.flatMap((reservation) => reservation.Instances);
-  // }
-
-  // async getAllInstances() {
-  //   const regions = await this.getAvailableRegions();
-  //   const allInstances = [];
-  //   if (!regions || regions.length === 0) {
-  //     return [];
-  //   }
-  //   for (const region of regions) {
-  //     if (!region) {
-  //       continue;
-  //     }
-  //     console.log('Récupération des instances pour la région:', region);
-  //     const instances = await this.getInstancesByRegion(region);
-  //     allInstances.push(instances);
-  //   }
-  //   return allInstances;
-  // }
-
   /**
    * Get all instances information
    * @returns
@@ -92,20 +62,17 @@ export class EC2Service {
       const response = await this.client.send(new DescribeInstancesCommand(params));
 
       if (!response.Reservations || response.Reservations.length === 0) {
-        console.log('No reservations found');
-        return [];
+        throw new InvalidInstanceException(new Error('No reservations found'));
       }
 
       for (const reservation of response.Reservations) {
         if (!reservation.Instances || reservation.Instances.length === 0) {
-          console.log('No instances found');
-          return [];
+          throw new InvalidInstanceException(new Error('No instance found'));
         }
         for (const instance of reservation.Instances) {
           const instanceId = instance.InstanceId;
           if (!instanceId || !instance.Placement || !instance.State || !instance.Placement.AvailabilityZone) {
-            console.log('No instance id, region or state found');
-            return [];
+            throw new InvalidInstanceException(new Error('No instance id, region or state found'));
           }
           const cost = await CostExplorerService.getInstance(this.credentials).getInstanceCost(instanceId, {
             startDate: new Date().toISOString().split('T')[0].slice(0, -2) + '01',
@@ -124,10 +91,10 @@ export class EC2Service {
           instancesInformation.push(instanceInfo);
         }
       }
+      return instancesInformation;
     } catch (err) {
-      throw new Error('Error fetching instance infos:' + err);
+      throw new InvalidInstanceException(err);
     }
-    return instancesInformation;
   }
 
   async pingEC2(): Promise<{ status: number | undefined; message: string }> {

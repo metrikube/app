@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { ApiDatabaseLastAverageQueriesByHour, ApiDatabaseSize, ApiDatabaseSlowQueries, DatabaseError, DbConnectionCredentialType, MetricType, PluginConnectionInterface } from '@metrikube/common';
+import { ApiDatabaseLastAverageQueriesByHour, ApiDatabaseSize, ApiDatabaseSlowQueries, DbConnectionCredentialType, GenericPluginError, MetricType, PluginConnectionInterface } from '@metrikube/common';
 
 import { InvalidCredentialException } from '../../../../apps/api/src/domain/exceptions/invalid-credential.exception';
 import { DbService } from './db.service';
@@ -9,7 +9,7 @@ import { DbService } from './db.service';
 export class DbAnalyticsPluginService implements PluginConnectionInterface {
   constructor() {}
 
-  public async getNbQueries(credentialData: DbConnectionCredentialType): Promise<ApiDatabaseLastAverageQueriesByHour | DatabaseError> {
+  public async getNbQueries(credentialData: DbConnectionCredentialType): Promise<ApiDatabaseLastAverageQueriesByHour | GenericPluginError> {
     try {
       const dbService = new DbService(credentialData);
       const connection = await dbService.connection();
@@ -25,7 +25,7 @@ export class DbAnalyticsPluginService implements PluginConnectionInterface {
     }
   }
 
-  public async getDbSize(credentialData: DbConnectionCredentialType): Promise<ApiDatabaseSize | DatabaseError> {
+  public async getDbSize(credentialData: DbConnectionCredentialType): Promise<ApiDatabaseSize | GenericPluginError> {
     try {
       const dbService = new DbService(credentialData);
       const connection = await dbService.connection();
@@ -41,7 +41,7 @@ export class DbAnalyticsPluginService implements PluginConnectionInterface {
     }
   }
 
-  public async getSlowQuery(credentialData: DbConnectionCredentialType): Promise<ApiDatabaseSlowQueries[] | DatabaseError> {
+  public async getSlowQuery(credentialData: DbConnectionCredentialType): Promise<ApiDatabaseSlowQueries[] | GenericPluginError> {
     try {
       const dbService = new DbService(credentialData);
       const connection = await dbService.connection();

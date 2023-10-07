@@ -7,14 +7,14 @@ export type PluginResult<T extends MetricType> = ApiResult[T];
 
 export type ApiResult = {
   'api-endpoint-health-check': ApiHealthCheckResult;
-  'aws-bucket-single-instance': ApiAWSSingleResourceInstanceResult;
-  'aws-bucket-multiple-instances': ApiAWSSingleResourceInstanceResult[];
-  'aws-ec2-single-instance-usage': ApiAWSSingleResourceInstanceResult;
-  'aws-ec2-multiple-instances-usage': ApiAWSSingleResourceInstanceResult[];
-  'github-last-prs': ApiGithubIssues[] | ApiGithubError;
-  'github-last-issues': ApiGithubIssues[] | ApiGithubError;
-  'database-queries': ApiDatabaseLastAverageQueriesByHour | DatabaseError;
-  'database-size': ApiDatabaseSize;
+  'aws-bucket-single-instance': ApiAWSSingleResourceInstanceResult | GenericPluginError;
+  'aws-bucket-multiple-instances': ApiAWSSingleResourceInstanceResult[] | GenericPluginError;
+  'aws-ec2-single-instance-usage': ApiAWSSingleResourceInstanceResult | GenericPluginError;
+  'aws-ec2-multiple-instances-usage': ApiAWSSingleResourceInstanceResult[] | GenericPluginError;
+  'github-last-prs': ApiGithubIssues[] | ApiGithubError | GenericPluginError;
+  'github-last-issues': ApiGithubIssues[] | ApiGithubError | GenericPluginError;
+  'database-queries': ApiDatabaseLastAverageQueriesByHour | GenericPluginError;
+  'database-size': ApiDatabaseSize | GenericPluginError;
   'database-slow-queries': ApiDatabaseSlowQueries[];
 };
 
@@ -34,7 +34,7 @@ export interface ApiDatabaseLastAverageQueriesByHour {
   date: Timestamp;
 }
 
-export interface DatabaseError {
+export interface GenericPluginError {
   message: string;
   error: true;
 }
@@ -80,8 +80,8 @@ export interface ApiHealthCheckResult {
 }
 
 export interface ApiGithubError {
-  error: true;
-  status: number;
+  error: boolean;
+  status?: number;
   message: string | null;
 }
 

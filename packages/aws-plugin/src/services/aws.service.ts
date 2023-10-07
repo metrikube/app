@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { ApiAWSSingleResourceInstanceResult, AwsCredentialType, MetricType, PluginConnectionInterface, PluginResult } from '@metrikube/common';
+import { ApiAWSSingleResourceInstanceResult, AwsCredentialType, GenericPluginError, MetricType, PluginConnectionInterface, PluginResult } from '@metrikube/common';
 
 import { InvalidCredentialException } from '../../../../apps/api/src/domain/exceptions/invalid-credential.exception';
 import { EC2Service } from './ec2.service';
@@ -16,19 +16,26 @@ export class AWSService implements PluginConnectionInterface {
         throw new InvalidCredentialException(new Error('No resource ID provided'));
       }
       const ec2Service = new EC2Service(credentials);
-      return await ec2Service.getInstanceInformations(credentials.resourceId);
+      const instance = await ec2Service.getInstanceInformations(credentials.resourceId);
+      return instance;
     } catch (error) {
-      throw new InvalidCredentialException(error);
+      return {
+        error: true,
+        message: (error as Error).message
+      };
     }
   }
 
   async getEc2Instances(credentials: AwsCredentialType) {
     try {
       const ec2Service = new EC2Service(credentials);
-      return ec2Service.getInstancesInformations();
+      const instances = await ec2Service.getInstancesInformations();
+      return instances;
     } catch (error) {
-      console.error('Error fetching instances:', error);
-      throw error;
+      return {
+        error: true,
+        message: (error as Error).message
+      };
     }
   }
 
@@ -42,17 +49,22 @@ export class AWSService implements PluginConnectionInterface {
       const s3Service = new S3Service(credentials);
       return s3Service.getSingleBucket(credentials.resourceId);
     } catch (error) {
-      console.error('Error fetching instances:', error);
+      return {
+        error: true,
+        message: (error as Error).message
+      };
     }
   }
 
-  async getS3Buckets(credentials: AwsCredentialType) {
+  async getS3Buckets(credentials: AwsCredentialType): Promise<ApiAWSSingleResourceInstanceResult[] | GenericPluginError> {
     try {
       const s3Service = new S3Service(credentials);
       return s3Service.getBuckets();
     } catch (error) {
-      console.error('Error fetching instances:', error);
-      throw error;
+      return {
+        error: true,
+        message: (error as Error).message
+      };
     }
   }
 
@@ -69,19 +81,14 @@ export class AWSService implements PluginConnectionInterface {
         message: `${ec2Ping.message} and ${s3Ping.message}}`
       };
     } catch (error) {
-      Logger.log(`🏓 Pinging AWS on region"${credentials.region}" failed`);
-      throw new InvalidCredentialException(error);
+      return {
+        ok: false,
+        message: (error as Error).message || 'Error while pinging AWS'
+      };
     }
   }
 
-  describe(
-    type: MetricType
-  ): (
-    | keyof PluginResult<'aws-ec2-multiple-instances-usage'>[number]
-    | keyof PluginResult<'aws-ec2-single-instance-usage'>
-    | keyof PluginResult<'aws-bucket-single-instance'>
-    | keyof PluginResult<'aws-bucket-multiple-instances'>[number]
-  )[] {
+  describe(type: MetricType): string[] {
     switch (type) {
       case 'aws-ec2-single-instance-usage':
       case 'aws-ec2-multiple-instances-usage':

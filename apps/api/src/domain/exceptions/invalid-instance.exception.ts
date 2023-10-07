@@ -1,10 +1,10 @@
-import { BadRequestException } from '@nestjs/common';
+import { BadRequestException, NotFoundException } from '@nestjs/common';
 
 export class InvalidInstanceException extends BadRequestException {
   constructor(error?: any) {
     super({
       ok: false,
-      message: `Instance error`,
+      message: error.message || `AWS Instance error`,
       error
     });
   }
