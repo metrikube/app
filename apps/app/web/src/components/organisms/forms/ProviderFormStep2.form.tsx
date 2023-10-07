@@ -70,9 +70,6 @@ const ProviderFormStep2 = () => {
             />
           )}
         />
-        {selectedProvider?.type === 'aws' && (
-          <TextField label="Ressource ID" variant="outlined" size="small" />
-        )}
       </OutlinedCard>
     </Step2Container>
   )
