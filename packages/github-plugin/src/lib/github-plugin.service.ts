@@ -2,7 +2,7 @@ import axios, { AxiosError } from 'axios';
 
 import { Injectable } from '@nestjs/common';
 
-import { ApiGithubError, ApiGithubIssues, ApiGithubPullRequestsOrIssues, GithubCredentialType, Issues, MetricType, PluginConnectionInterface, PluginResult, PullRequests } from '@metrikube/common';
+import { ApiGithubError, ApiGithubIssues, GithubCredentialType, Issues, MetricType, PluginConnectionInterface, PullRequests } from '@metrikube/common';
 
 import { InvalidCredentialException } from '../../../../apps/api/src/domain/exceptions/invalid-credential.exception';
 
