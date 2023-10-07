@@ -93,13 +93,11 @@ export class DbService {
     `;
 
     try {
-      const results = await this.executeQuery(connection, query);
+      const [results] = await this.executeQuery(connection, query);
       return parseFloat(results[0].dbSizeMb);
     } catch (error) {
       console.error('Error executing getDbSizeMb: ', error);
       throw error;
-    } finally {
-      await connection.end();
     }
   }
 
@@ -111,13 +109,11 @@ export class DbService {
         and table_name <> '_dba_query_stats';
     `;
     try {
-      const results = await this.executeQuery(connection, query);
+      const [results] = await this.executeQuery(connection, query);
       return parseInt(results[0].nbRows, 10);
     } catch (error) {
       console.error('Error executing getDbSizeMb: ', error);
       throw error;
-    } finally {
-      await connection.end();
     }
   }
 
@@ -127,13 +123,11 @@ export class DbService {
       FROM information_schema.tables
       WHERE table_schema = '${this.credentials.database}';`;
     try {
-      const results = await this.executeQuery(connection, query);
+      const [results] = await this.executeQuery(connection, query);
       return parseInt(results[0].nbTables, 10);
     } catch (error) {
       console.error('Error executing getDbSizeMb: ', error);
       throw error;
-    } finally {
-      await connection.end();
     }
   }
 
@@ -148,18 +142,16 @@ export class DbService {
       LIMIT 10;
     `;
     try {
-      return this.executeQuery(connection, query);
+      const results = await this.executeQuery(connection, query);
+      return results;
     } catch (error) {
       console.error('Error executing getDbSizeMb: ', error);
       throw error;
-    } finally {
-      await connection.end();
     }
   }
 
   public async aggregateDbSizeData(connection: mysql.Connection): Promise<ApiDatabaseSize> {
     try {
-      connection = await this.connection();
       const dbSizeMb = await this.getDbSizeMb(connection);
       const nbRows = await this.getNbRows(connection);
       const nbTables = await this.getNbTables(connection);
