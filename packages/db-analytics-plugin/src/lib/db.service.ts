@@ -142,7 +142,7 @@ export class DbService {
       LIMIT 10;
     `;
     try {
-      const results = await this.executeQuery(connection, query);
+      const [results] = await this.executeQuery(connection, query);
       return results;
     } catch (error) {
       console.error('Error executing getDbSizeMb: ', error);
