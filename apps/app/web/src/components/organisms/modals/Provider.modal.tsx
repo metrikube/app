@@ -104,8 +104,8 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
   )
   const { mutate: createAlert, isLoading: isCreateAlertLoading } = createAlertsMutation()
 
-  const { mutate: setupWidget, isLoading: isSetupPluginLoading } = setupPluginMutation((data) => {
-    setWidgetId(data.id)
+  const { mutate: setupWidget, isLoading: isSetupPluginLoading } = setupPluginMutation((newWidget) => {
+    setWidgetId(newWidget.id)
     queryClient.invalidateQueries({ queryKey: [GET_WIDGETS_QUERY_KEY] })
   })
 
@@ -168,14 +168,6 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
         break
       case SetupPluginStepEnum.ALERT_CONFIG:
         handlMetricInstallation(data.name, selectedProvider, selectedMetric, credentials)
-          .then(() => {
-            if (alerts.length) {
-              createAlert({
-                widgetId,
-                alerts
-              })
-            }
-          })
           .finally(() => {
             setActiveStep(SetupPluginStepEnum.FINISH)
           })
@@ -188,6 +180,19 @@ const ProviderModal = ({ open, setOpenModal }: Props) => {
         break
     }
   }
+
+  useEffect(() => {
+    if (methods.getValues('metricAlerts').length && widgetId) {
+      createAlert({
+        widgetId,
+        alerts: methods.getValues('metricAlerts').map((metricAlert: AlertForm) => ({
+          ...metricAlert,
+          metricId: selectedMetric?.id
+        }))
+      })
+    }
+  }, [widgetId])
+  
   return (
     <Dialog open={open} maxWidth="md" fullWidth={true} onClose={handleModalClose}>
       <DialogTitle>
