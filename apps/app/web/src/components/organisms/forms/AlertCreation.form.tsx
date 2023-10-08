@@ -9,9 +9,10 @@ import { useFormContext, useFieldArray } from 'react-hook-form'
 
 type Props = {
   alertFields: Option[]
+  noDefaultForm?: boolean
 }
 
-const AlertCreationForm = ({ alertFields = [] }: Props) => {
+const AlertCreationForm = ({ alertFields = [], noDefaultForm }: Props) => {
   const {
     register,
     control,
@@ -24,7 +25,7 @@ const AlertCreationForm = ({ alertFields = [] }: Props) => {
   })
 
   useEffect(() => {
-    if (fields.length === 0) {
+    if (fields.length === 0 && !noDefaultForm) {
       append({ label: '', condition: { field: '', operator: 'gt', threshold: '' } })
     }
   }, [fields])

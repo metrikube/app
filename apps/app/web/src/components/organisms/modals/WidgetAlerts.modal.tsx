@@ -26,6 +26,7 @@ import {
   TableHead,
   TableRow
 } from '@mui/material'
+import Tooltip from '@mui/material/Tooltip'
 import { useQueryClient } from '@tanstack/react-query'
 import React, { Dispatch, SetStateAction, useEffect, useState } from 'react'
 
@@ -65,7 +66,7 @@ const WidgetAlertsModal = ({ open, setOpenModal, widget }: Props) => {
   }
 
   return (
-    <Dialog open={open} onClose={() => setOpenModal(false)}>
+    <Dialog open={open} onClose={() => setOpenModal(false)} maxWidth="md" fullWidth>
       <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between' }}>
         <span>
           Alertes pour : <strong>{widget.name}</strong>
@@ -87,8 +88,8 @@ const WidgetAlertsModal = ({ open, setOpenModal, widget }: Props) => {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell>Label</TableCell>
-                <TableCell align="right">Activé</TableCell>
+                <TableCell>Nom de l&apos;alerte</TableCell>
+                <TableCell align="right">Etat</TableCell>
                 <TableCell align="right">Action</TableCell>
               </TableRow>
             </TableHead>
@@ -98,31 +99,37 @@ const WidgetAlertsModal = ({ open, setOpenModal, widget }: Props) => {
                   <TableCell>{alert.label}</TableCell>
                   <TableCell align="right">
                     {alert.isActive ? (
-                      <IconButton
-                        onClick={() =>
-                          toggleNotification({ alertId: alert.id, isActive: !alert.isActive })
-                        }
-                        aria-label="alert-on">
-                        <NotificationsActiveOutlinedIcon />
-                      </IconButton>
+                      <Tooltip title="Activé">
+                        <IconButton
+                          onClick={() =>
+                            toggleNotification({ alertId: alert.id, isActive: !alert.isActive })
+                          }
+                          aria-label="alert-on">
+                          <NotificationsActiveOutlinedIcon />
+                        </IconButton>
+                      </Tooltip>
                     ) : (
-                      <IconButton
-                        onClick={() =>
-                          toggleNotification({ alertId: alert.id, isActive: !alert.isActive })
-                        }
-                        aria-label="alert-off">
-                        <NotificationsOffOutlinedIcon />
-                      </IconButton>
+                      <Tooltip title="Désactivé">
+                        <IconButton
+                          onClick={() =>
+                            toggleNotification({ alertId: alert.id, isActive: !alert.isActive })
+                          }
+                          aria-label="alert-off">
+                          <NotificationsOffOutlinedIcon />
+                        </IconButton>
+                      </Tooltip>
                     )}
                   </TableCell>
                   <TableCell align="right">
-                    <IconButton
-                      color="error"
-                      size="large"
-                      onClick={() => deleteAlert(alert.id)}
-                      aria-label="delete-alert">
-                      <DeleteForeverOutlinedIcon />
-                    </IconButton>
+                    <Tooltip title="Supprimer l'alerte">
+                      <IconButton
+                        color="error"
+                        size="large"
+                        onClick={() => deleteAlert(alert.id)}
+                        aria-label="delete-alert">
+                        <DeleteForeverOutlinedIcon />
+                      </IconButton>
+                    </Tooltip>
                   </TableCell>
                 </TableRow>
               ))}

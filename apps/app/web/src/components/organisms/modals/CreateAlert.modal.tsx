@@ -54,7 +54,7 @@ const CreateAlertModal = ({ open, setOpenModal, widget }: Props) => {
       <DialogContent>
         <FormProvider {...methods}>
           <form onSubmit={methods.handleSubmit(onSubmit)}>
-            <AlertCreationForm alertFields={alertFields} />
+            <AlertCreationForm alertFields={alertFields} noDefaultForm />
             <Button
               type="submit"
               variant="contained"
