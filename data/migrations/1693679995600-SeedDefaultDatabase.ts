@@ -106,48 +106,51 @@ export class SeedDefaultDatabase1693679995600 implements MigrationInterface {
         description: 'SQL Database Plugin',
         instruction: `
         <h2 id="guide-installation-plugin-db">Guide installation plugin Db</h2>
-        <h3 id="database-compatible">Base de données compatibles</h3>
+        <h3 id="database-compatible">Database compatible</h3>
         <ul>
         <li>Mysql</li>
         <li>Mariadb</li>
         </ul>
-        <h2 id="lignes-executer-sur-votre-base-de-donn-es">Lignes à exécuter sur votre base de données</h2>
-        <h3 id="cr-er-utilisateur">Créer utilisateur</h3>
+        <h3 id="lignes-executer-sur-votre-base-de-donn-es">Lignes à executer sur votre base de données</h3>
         <p>Vous devez ouvrir un shell mysql avec votre utilisateur root ou équivalent.</p>
         <p>Vous devez créer un utilisateur avec des accès en lecture seule.
         Il faut ajouter les accès pour cette table, avec ces commandes:</p>
-        <pre><code class="lang-sql">
-        <span class="hljs-keyword">CREATE</span> <span class="hljs-keyword">USER</span> <span class="hljs-string">'metrikube_user'</span> <span class="hljs-keyword">IDENTIFIED</span> <span class="hljs-keyword">BY</span> <span class="hljs-string">'metrikube_pwd'</span>
-        <span class="hljs-keyword">GRANT</span> <span class="hljs-keyword">SELECT</span> <span class="hljs-keyword">ON</span> <span class="hljs-keyword">ON</span> mysql.general_log <span class="hljs-keyword">TO</span> <span class="hljs-string">'metrikube_user'</span>;
+        <pre><code class="lang-sql"><span class="hljs-keyword">CREATE</span> <span class="hljs-keyword">USER</span> <span class="hljs-string">'metrikube_user'</span> <span class="hljs-keyword">IDENTIFIED</span> <span class="hljs-keyword">BY</span> <span class="hljs-string">'metrikube_pwd'</span>
         <span class="hljs-keyword">GRANT</span> <span class="hljs-keyword">SELECT</span> <span class="hljs-keyword">ON</span> mysql.general_log <span class="hljs-keyword">TO</span> <span class="hljs-string">'metrikube_user'</span>;
         <span class="hljs-keyword">GRANT</span> <span class="hljs-keyword">SELECT</span> <span class="hljs-keyword">ON</span> performance_schema.* <span class="hljs-keyword">TO</span> <span class="hljs-string">'metrikube_user'</span>;
-        <span class="hljs-keyword">GRANT</span> <span class="hljs-keyword">SELECT</span> <span class="hljs-keyword">ON</span> informations_schema.* <span class="hljs-keyword">TO</span> <span class="hljs-string">'metrikube_user'</span>;
-        <span class="hljs-keyword">GRANT</span> <span class="hljs-keyword">SELECT</span> <span class="hljs-keyword">ON</span> &lt;nom_de_votre_db&gt; <span class="hljs-keyword">TO</span> <span class="hljs-string">'metrikube_user'</span>;
+        <span class="hljs-keyword">GRANT</span> <span class="hljs-keyword">SELECT</span> <span class="hljs-keyword">ON</span> information_schema.* <span class="hljs-keyword">TO</span> <span class="hljs-string">'metrikube_user'</span>;
+        <span class="hljs-keyword">GRANT</span> <span class="hljs-keyword">SELECT</span> <span class="hljs-keyword">ON</span> &lt;nom_de_votre_db&gt;.* <span class="hljs-keyword">TO</span> <span class="hljs-string">'metrikube_user'</span>;
         <span class="hljs-keyword">GRANT</span> PROCESS <span class="hljs-keyword">ON</span> *.* <span class="hljs-keyword">TO</span> <span class="hljs-string">'metrikube_user'</span>;
         <span class="hljs-keyword">FLUSH</span> <span class="hljs-keyword">PRIVILEGES</span>;
         </code></pre>
-        <h3 id="activer-les-tables-n-cessaires">Activer les tables nécessaires</h3>
         <p>Ensuite il faut regarder les tables qui sont actives dans
-        <strong>performance_schema</strong>.</p>
+        <code>performance_schema</code>.</p>
         <pre><code class="lang-sql"><span class="hljs-keyword">select</span> * <span class="hljs-keyword">from</span> performance_schema.setup_consumers <span class="hljs-keyword">where</span> <span class="hljs-keyword">name</span> <span class="hljs-keyword">like</span> <span class="hljs-string">'events%statement%'</span>;
         </code></pre>
         <p>Si dans la colonne <code>ENABLED</code> vous avez des valeurs qui ne sont pas <code>YES</code> ou vrai. Vous devez les activer avec la commande:</p>
         <pre><code class="lang-sql"><span class="hljs-keyword">UPDATE</span>  performance_schema.setup_consumers  <span class="hljs-keyword">SET</span> ENABLED = <span class="hljs-string">'YES'</span> <span class="hljs-keyword">WHERE</span> <span class="hljs-keyword">NAME</span>=<span class="hljs-string">'events_statements_history_long'</span> ;
         </code></pre>
-        <p>Dans cet exemple on active la table: <code>events_statements_history_long</code> mais il faut le faire avec vos tables non activées.</p>
-        <h3 id="modifier-le-fichier-de-configuration">Modifier le fichier de configuration</h3>
-        <p>Ensuite il faut modifier le fichier de conf. Généralement il s&#39;appelle <code>my.cnf</code>. Vous devez ajouter ces lignes:</p>
-        <pre><code class="lang-sql">
-        <span class="hljs-attr">general_log</span> = <span class="hljs-literal">ON</span>
-        <span class="hljs-attr">log_output</span> = TABLE
+        <p>Dans cet exemeple on active la table: <code>events_statements_history_long</code> mais il faut le faire avec vos table non activées. Ensuite il faut modifier le fichier de conf. Géneralement il s&#39;appelle <code>my.cnf</code>.
+        Si vous utilisez une image mysql avec docker, vous pouvez precisez les lignes à ajouter dans votre <code>docker-compose.yml</code> ou modifier directement le fichier comme ceci:</p>
+        <p>Copier le fichier de conf sur votre machine </p>
+        <pre><code class="lang-bash">docker cp &lt;id du container&gt;<span class="hljs-symbol">:/etc/my</span>.cnf my.cnf
+        </code></pre>
+        <p>Modifier le fichier sur votre machine ou directement sur votre docker-compose ou encore directement dans l&#39;env Mysql si vous le pouvez. Ajouter ces lignes:</p>
+        <pre><code class="lang-sql"><span class="hljs-attr">general_log</span>=<span class="hljs-literal">ON</span>
+        <span class="hljs-attr">log_output</span>=TABLE
+        </code></pre>
+        <p>Remplacer le fichier de conf dans votre container (ne pas oublier de supprimer le ficher de votre machine virtuelle)</p>
+        <pre><code class="lang-bash">docker cp my.cnf &lt;nom du container&gt;<span class="hljs-symbol">:/etc/my</span>.cnf
+        </code></pre>
+        <p>Vous pouvez verifier si les lignes sont bien dans le fichier avec cette commande:</p>
+        <pre><code class="lang-bash">docker cat &lt;nom du container&gt;<span class="hljs-symbol">:/etc/my</span>.cnf
         </code></pre>
         <h3 id="creation-des-credentials-depuis-le-dashboard">Creation des credentials depuis le dashboard</h3>
         <p>Les valeurs de connexion attendus sont sous ce format-ci:</p>
         <p>Format de valeurs du json</p>
-        <pre><code class="lang-json">
-        {
+        <pre><code class="lang-json">{
             <span class="hljs-attr">"dbName"</span>: <span class="hljs-string">"str"</span>,
-            <span class="hljs-attr">"dbUser"</span>: <span class="hljs-string">"str"</span>,
+            <span class="hljs-attr">"dbUsername"</span>: <span class="hljs-string">"str"</span>,
             <span class="hljs-attr">"dbPassword"</span>: <span class="hljs-string">"str"</span>,
             <span class="hljs-attr">"dbPort"</span>: <span class="hljs-string">"str"</span>,
             <span class="hljs-attr">"dbHost"</span>: <span class="hljs-number">3306</span>
@@ -156,13 +159,13 @@ export class SeedDefaultDatabase1693679995600 implements MigrationInterface {
         <h3 id="description-des-donn-es">Description des données</h3>
         <p><strong>Le graphiques nombres de requêtes par heure:</strong></p>
         <ul>
-        <li>Il contient le nombre de requêtes exécutées sur la base de données de ces 12 dernières heures </li>
+        <li>Il contient le nombre de requêtes executés sur la base de données de ces 12 dernières heures </li>
         </ul>
-        <p><strong>Les requêtes les plus lentes:</strong></p>
+        <p><strong>Les requetes les plus lentes:</strong></p>
         <ul>
-        <li>Ce sont les requêtes qui ont été executées sur la base de données au moins une fois. Avec la datetime de la dernière execution, la requête sql, le temps moyen d&#39;execution et le temps maximum d&#39;execution</li>
+        <li>Ce sont les requêtes qui ont été executés sur la base de données au moins une fois. Avec la datetime de la dernière execution, la requête sql, le temps moyen d&#39;execution et le temps maximum d&#39;execution</li>
         </ul>
-        <p><strong>La taille de la base de données:</strong></p>
+        <p><strong>La taille de la base de donnée:</strong></p>
         <ul>
         <li>La taille de la bdd en mégabits </li>
         <li>Le nombre de table dans la base </li>
