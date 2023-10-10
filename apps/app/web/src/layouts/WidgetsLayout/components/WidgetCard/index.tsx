@@ -92,9 +92,11 @@ export const WidgetCard = ({
         />
         <StyledCardContent>
           {children}
-          {widget.metric.isNotifiable && (
+        </StyledCardContent>
+        <StyledCardActions>
+        {widget.metric.isNotifiable && (
             <Box
-              sx={{ display: 'flex', columnGap: '5px', alignItems: 'center', marginTop: '25px' }}>
+              sx={{ display: 'flex', columnGap: '5px', alignItems: 'center' }}>
               <Typography
                 variant="caption"
                 color="text.secondary"
@@ -105,13 +107,17 @@ export const WidgetCard = ({
               <Typography sx={{ fontSize: '14px' }}>{widget.alertNumber}</Typography>
             </Box>
           )}
-        </StyledCardContent>
+        </StyledCardActions>
+
       </StyledCard>
     </StyledGrid>
   )
 }
 
 const StyledCard = styled(Grid)`
+display: flex;
+flex-direction: column;
+justify-content: space-between;
   background-color: ${({ theme }) => theme.palette.background.paper};
   border: 1px solid ${({ theme }) => theme.palette.divider};
   border-radius: ${({ theme }) => {
@@ -129,14 +135,15 @@ const Logo = styled.img`
 `
 
 const StyledCardContent = styled(CardContent)`
-  height: calc(100% - 72px);
+  height: calc(100% - 72px - 45px);
+  flex-grow: 1;
   overflow-y: scroll;
   overflow-x: hidden;
   /* -ms-overflow-style: none; */
   /* scrollbar-width: none; */
 
   &::-webkit-scrollbar {
-    width: 5px;
+    width: 2px;
   }
 
     /* Track */
@@ -155,6 +162,13 @@ const StyledCardContent = styled(CardContent)`
   &::-webkit-scrollbar-thumb:hover {
     background: #555;
   }
+`
+
+const StyledCardActions = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 16px 8px 16px;
 `
 
 const WidgetSizeWidthValueMap: { [key in WidgetWidths]: string } = {
