@@ -311,6 +311,20 @@ export const dbSizeWidgetMock: WidgetModel = {
     databaseName: 'metrikube-test'
   }
 };
+export const dbSizeWidgetMock2: WidgetModel = {
+  id: 'db-size2134',
+  name: 'MariaDB - Taille db',
+  resourceId: undefined,
+  alertNumber: 0,
+  plugin: sqlPluginMock,
+  metric: dbSizeMetricMock,
+  data: {
+    size: 0.0469, // Size en Mb
+    numberOfTables: 4,
+    numberOfTotalRows: 25,
+    databaseName: 'metrikube-test'
+  }
+};
 export const slowQueriesWidgetMock: WidgetModel = {
   id: 'db-size213',
   name: 'Database - Requêtes lente',
@@ -377,6 +391,6 @@ export const slowQueriesWidgetMock: WidgetModel = {
   ]
 };
 // #endregion
-export const sqlWidgets: WidgetModel[] = [nbRequestsPerHour, dbSizeWidgetMock, slowQueriesWidgetMock];
+export const sqlWidgets: WidgetModel[] = [nbRequestsPerHour, dbSizeWidgetMock, dbSizeWidgetMock2, slowQueriesWidgetMock];
 
 export const widgetsMock: WidgetModel[] = [...apiWidgets, ...githubWidgets, ...awsWidgets, ...sqlWidgets];

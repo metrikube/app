@@ -35,7 +35,7 @@ export const WidgetsSize: Record<string, WidgetSize> = {
         height: WidgetHeights.Medium,
     },
     [MetricTypeEnum.DatabaseSlowQueries]: {
-        width: WidgetWidths.Large,
+        width: WidgetWidths.Medium,
         height: WidgetHeights.Medium,
     },
     [MetricTypeEnum.DatabaseSize]: {
