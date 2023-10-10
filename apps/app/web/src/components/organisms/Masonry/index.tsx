@@ -12,7 +12,7 @@ const MasonryGrid = ({ children }: Props) => {
   useEffect(() => {
     const msnry = new Masonry(gridRef.current, {
       itemSelector: '.grid-item',
-      columnWidth: '.grid-sizer',
+      columnWidth: '.grid-item',
       percentPosition: true
     })
 
@@ -23,7 +23,7 @@ const MasonryGrid = ({ children }: Props) => {
 
   return (
     <MasonryContainer ref={gridRef}>
-      <div className="grid-sizer"></div>
+      {/* <div className="grid-sizer"></div> */}
       {children}
     </MasonryContainer>
   )
@@ -33,18 +33,6 @@ const MasonryContainer = styled.div`
   display: flex;
   width: auto;
   margin-left: -10px;
-
-  .grid-sizer,
-  .grid-item {
-    width: 33.333%;
-    min-width: 33.333%;
-    padding: 10px;
-  }
-
-  .grid-item--large {
-    width: 66.666%;
-    min-width: 66.666%;
-  }
 `
 
 export default MasonryGrid
