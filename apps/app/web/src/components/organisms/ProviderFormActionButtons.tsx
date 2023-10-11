@@ -38,6 +38,7 @@ const ProviderFormActionButtons = ({
       {!isFirstStep && !isLastStep(steps, activeStep) && (
         <Button
           variant="outlined"
+          size="large"
           disableRipple
           startIcon={<ArrowBack />}
           onClick={() => handleBack()}>
@@ -47,21 +48,21 @@ const ProviderFormActionButtons = ({
       {activeStep === SetupPluginStepEnum.FILL_CREDENTIAL && (
         <LoadingButton
           type="submit"
-          size="small"
+          size="large"
           loading={isSetupPluginLoading}
           loadingIndicator="Loading…"
-          variant="outlined">
+          variant="contained">
           Tester et continuer
         </LoadingButton>
       )}
       {activeStep === SetupPluginStepEnum.ALERT_CONFIG && (
         <LoadingButton
           type="submit"
-          size="small"
+          size="large"
           loading={isCreateAlertLoading}
           loadingIndicator="Ajout en cours…"
-          variant="outlined">
-          Ajouter et continuer
+          variant="contained">
+          Finaliser
         </LoadingButton>
       )}
       {activeStep === SetupPluginStepEnum.CHOOSE_PLUGIN && (
@@ -95,7 +96,7 @@ const ProviderFormActionButtons = ({
 
 const StyledDialogActions = styled(DialogActions, {
   shouldForwardProp: (prop) => prop !== 'isFirstStep'
-}) <{ isFirstStep: boolean }>`
+})<{ isFirstStep: boolean }>`
   display: flex;
   justify-content: ${({ isFirstStep }) => (isFirstStep ? 'flex-end' : 'space-between')};
   margin-top: 12px;

@@ -43,27 +43,21 @@ export const WidgetsLayout = ({ widgets, onAlertOpenRequest, onMetricDeletionReq
       <MasonryGrid>
         {widgets.map((widget) => {
           return (
-            <article
-              className={`grid-item ${
-                WidgetsSize[widget.metric.type] === 'large' ? 'grid-item--large' : ''
-              }`}
-              key={widget.id}>
-              <WidgetCard
-                widget={widget}
-                key={widget.id}
-                size={WidgetsSize[widget.metric.type]}
-                onAlertButtonClick={() => onAlertOpenRequest(widget)}
-                onDeleteButtonClick={() => onMetricDeletionRequest(widget)}>
-                {widget.data.error ? (
-                  <Alert severity="error">
-                    Une erreur est survenue lors de la récupération des données :{' '}
-                    <strong>{widget.data.message}</strong>
-                  </Alert>
-                ) : (
-                  widgetTemplateMap[widget.metric.type]({ widget })
-                )}
-              </WidgetCard>
-            </article>
+            <WidgetCard
+              widget={widget}
+              key={widget.id}
+              size={WidgetsSize[widget.metric.type]}
+              onAlertButtonClick={() => onAlertOpenRequest(widget)}
+              onDeleteButtonClick={() => onMetricDeletionRequest(widget)}>
+              {widget.data.error ? (
+                <Alert severity="error">
+                  Une erreur est survenue lors de la récupération des données :{' '}
+                  <strong>{widget.data.message}</strong>
+                </Alert>
+              ) : (
+                widgetTemplateMap[widget.metric.type]({ widget })
+              )}
+            </WidgetCard>
           )
         })}
       </MasonryGrid>

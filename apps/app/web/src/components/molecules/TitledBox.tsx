@@ -16,7 +16,7 @@ export const TitledBox = (props: Props) => {
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'space-between',
-        height: '70px'
+        height: '57px'
       }}>
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
         {props.icon && <props.icon sx={{ color: props.iconColor }} />}

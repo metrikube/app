@@ -5,12 +5,22 @@ import AwsCredentialForm from './credentials/AwsCredential.form'
 import GithubCredentialForm from './credentials/GithubCredential.form'
 import SqlCredential from './credentials/SqlCredential.form'
 import styled from '@emotion/styled'
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
+import VisibilityIcon from '@mui/icons-material/Visibility'
 import { Autocomplete, TextField } from '@mui/material'
+import { Accordion, AccordionDetails, AccordionSummary, Typography } from '@mui/material'
+import Box from '@mui/material/Box'
 import React, { useContext } from 'react'
 import { useFormContext } from 'react-hook-form'
 
 const ProviderFormStep2 = () => {
   const { selectedProvider, selectedMetric, setSelectedMetric } = useContext(SetupPluginContext)
+  const [expanded, setExpanded] = React.useState<string | false>(false)
+
+  const handleChange = (panel: string) => (event: React.SyntheticEvent, isExpanded: boolean) => {
+    setExpanded(isExpanded ? panel : false)
+  }
+
   const {
     register,
     formState: { errors }
@@ -21,20 +31,30 @@ const ProviderFormStep2 = () => {
   return (
     <Step2Container>
       {selectedProvider?.instruction && (
-        <OutlinedCard title="Instructions">
-          <InstructionWrapper dangerouslySetInnerHTML={{ __html: selectedProvider.instruction }} />
-        </OutlinedCard>
+        <StyledAccordion expanded={expanded === 'panel1'} onChange={handleChange('panel1')}>
+          <AccordionSummary
+            expandIcon={<ExpandMoreIcon />}
+            aria-controls="panel1bh-content"
+            id="panel1bh-header">
+            <Typography
+              sx={{ width: '33%', flexShrink: 0, fontSize: '1.5rem', fontWeight: 'bold' }}>
+              Instructions
+            </Typography>
+            {!expanded && (
+              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <Typography sx={{ color: 'text.secondary' }}>Voir le guide</Typography>
+                <VisibilityIcon sx={{ ml: 1, color: 'text.secondary' }} />
+              </Box>
+            )}
+          </AccordionSummary>
+          <AccordionDetails>
+            <InstructionWrapper
+              dangerouslySetInnerHTML={{ __html: selectedProvider.instruction }}
+            />
+          </AccordionDetails>
+        </StyledAccordion>
       )}
-      <OutlinedCard title="Identifiants">
-        {credentialType && (
-          <>
-            {credentialType === 'github' && <GithubCredentialForm />}
-            {credentialType === 'aws' && <AwsCredentialForm />}
-            {credentialType === 'apiEndpoint' && <ApiCredentialForm />}
-            {credentialType === 'dbConnection' && <SqlCredential />}
-          </>
-        )}
-      </OutlinedCard>
+
       <OutlinedCard title="Widget">
         <TextField
           id="name"
@@ -71,6 +91,16 @@ const ProviderFormStep2 = () => {
           )}
         />
       </OutlinedCard>
+      <OutlinedCard title="Identifiants">
+        {credentialType && (
+          <>
+            {credentialType === 'github' && <GithubCredentialForm />}
+            {credentialType === 'aws' && <AwsCredentialForm />}
+            {credentialType === 'apiEndpoint' && <ApiCredentialForm />}
+            {credentialType === 'dbConnection' && <SqlCredential />}
+          </>
+        )}
+      </OutlinedCard>
     </Step2Container>
   )
 }
@@ -88,6 +118,13 @@ const InstructionWrapper = styled.div`
   pre {
     background-color: #f3f3f3;
   }
+`
+
+const StyledAccordion = styled(Accordion)`
+  margin-bottom: 1rem;
+  box-shadow: none;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
 `
 
 export default ProviderFormStep2

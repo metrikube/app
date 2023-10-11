@@ -25,12 +25,14 @@ import {
 import { AddchartOutlined } from '@mui/icons-material'
 import { Box, Button, Typography } from '@mui/material'
 import { useQueryClient } from '@tanstack/react-query'
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 
 const metrikubeLogo = new URL(`/src/assets/img/metrikube-logo.png`, import.meta.url).href
 
 const Dashboard = () => {
   const { widgets, setWidgets } = useContext(DashboardContext)
+
+  const scrollPosition = useRef(0)
 
   const [openedModal, setOpenModal] = useState(false)
   const [isWidgetAlertsModalOpen, setIsWidgetAlertsModalOpen] = useState(false)
@@ -62,6 +64,7 @@ const Dashboard = () => {
     const getWidgetUsecase = new GetWidgetsUsecase(dashboardMetricsAdapter)
     const execution = getWidgetUsecase.execute({
       onMessage: (event) => {
+        scrollPosition.current = window.scrollY
         setWidgets(JSON.parse(event.data) as WidgetModel[])
       },
       onClose: () => {
@@ -77,6 +80,7 @@ const Dashboard = () => {
   useEffect(() => {
     const getNotificationsUsecase = new GetNotificationsUsecase(dashboardMetricsAdapter)
     getNotificationsUsecase.execute().onmessage = (event) => {
+      scrollPosition.current = window.scrollY
       setNotifications(JSON.parse(event.data))
     }
 
@@ -86,6 +90,12 @@ const Dashboard = () => {
       }
     }
   }, [])
+
+  useEffect(() => {
+    if (scrollPosition.current) {
+      window.scrollTo(0, scrollPosition.current)
+    }
+  }, [widgets, notifications])
 
   const openProviderModalHandler = () => {
     setOpenModal(true)

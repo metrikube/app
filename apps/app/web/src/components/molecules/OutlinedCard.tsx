@@ -4,7 +4,7 @@ import React from 'react'
 
 interface Props {
   children: React.ReactNode
-  title: string
+  title?: string
   actionButtonTitle?: string
   onActionButtonClick?: () => void
 }
@@ -13,9 +13,11 @@ const OutlinedCard = ({ children, title, actionButtonTitle, onActionButtonClick 
   return (
     <StyledCard variant="outlined">
       <CardContent>
-        <Typography variant="h5" fontWeight="bold" gutterBottom>
-          {title}
-        </Typography>
+        {Boolean(title) && (
+          <Typography variant="h5" fontWeight="bold" gutterBottom>
+            {title}
+          </Typography>
+        )}
         <StyledBox>{children}</StyledBox>
       </CardContent>
       {Boolean(actionButtonTitle) && Boolean(onActionButtonClick) && (

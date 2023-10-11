@@ -33,7 +33,7 @@ const CreateAlertModal = ({ open, setOpenModal, widget }: Props) => {
 
   const { data: alertFields } = getAlertFieldsQuery(widget.metric.id)
 
-  const handlerModalClose = () => {
+  const triggerModalClose = () => {
     setOpenModal(false)
     methods.reset()
   }
@@ -43,19 +43,33 @@ const CreateAlertModal = ({ open, setOpenModal, widget }: Props) => {
       widgetId: widget.id,
       alerts: mapToAlertRequest(data.widgetAlerts, widget.metric.id)
     })
-    handlerModalClose()
+    triggerModalClose()
   }
 
   return (
-    <Dialog open={open} onClose={handlerModalClose}>
+    <Dialog open={open} onClose={triggerModalClose} maxWidth="lg">
       <DialogTitle>
-        <span>Ajouter une alerte</span>
+        <span>Ajouter des alertes</span>
       </DialogTitle>
       <DialogContent>
         <FormProvider {...methods}>
           <form onSubmit={methods.handleSubmit(onSubmit)}>
             <AlertCreationForm alertFields={alertFields} />
-            <Button type="submit">Confirmer</Button>
+            <Button
+              type="submit"
+              variant="contained"
+              sx={{ width: '100%', mt: '8px' }}
+              size="large">
+              Confirmer la création des alertes
+            </Button>
+            <Button
+              variant="outlined"
+              color="error"
+              sx={{ width: '100%', mt: '8px' }}
+              size="large"
+              onClick={triggerModalClose}>
+              Annuler
+            </Button>
           </form>
         </FormProvider>
       </DialogContent>

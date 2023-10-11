@@ -47,9 +47,9 @@ export const AwsEc2SingleInstanceUsage = ({ widget }: Props) => {
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'space-between',
-          height: '60px'
+          height: '30px'
         }}>
-        <Typography sx={{ color: '#696969', fontSize: '18px', fontWeight: 'bold' }}>
+        <Typography sx={{ color: '#696969', fontSize: '16px', fontWeight: 'bold' }}>
           {data.name}
         </Typography>
       </Box>
@@ -58,7 +58,7 @@ export const AwsEc2SingleInstanceUsage = ({ widget }: Props) => {
           <TitledBox title="Coût" icon={AttachMoneyIcon} iconColor="#e2c36f">
             <Typography
               sx={{
-                fontSize: '30px',
+                fontSize: '26px',
                 fontWeight: 'bold'
               }}>
               {formatAsCurrency(parseInt(data.cost as string, 10), data.currency)}

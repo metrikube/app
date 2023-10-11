@@ -26,6 +26,7 @@ const LineChart = ({ labels, data }: Props) => {
 
   const options = {
     responsive: true,
+    maintainAspectRatio: false,
     plugins: {
       legend: {
         display: false

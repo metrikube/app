@@ -17,10 +17,11 @@ import {
 import { MetrikubeMenu } from 'apps/app/web/src/components/molecules/MetrikubeMenu'
 import { MetrikubeMenuItem } from 'apps/app/web/src/components/molecules/MetrikubeMenu/models'
 import React from 'react'
+import { WidgetSize, WidgetHeights, WidgetWidths } from '@metrikube/core'
 
 interface Props {
   widget: WidgetModel
-  size: 'small' | 'large'
+  size: WidgetSize
   children: React.ReactNode
   onAlertButtonClick: () => void
   onDeleteButtonClick: () => void
@@ -31,7 +32,7 @@ export const WidgetCard = ({
   widget,
   children,
   onAlertButtonClick,
-  onDeleteButtonClick
+  onDeleteButtonClick,
 }: Props) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
   const isMetricMenuOpen = Boolean(anchorEl)
@@ -61,7 +62,7 @@ export const WidgetCard = ({
   ]
 
   return (
-    <Grid item>
+    <StyledGrid item className="grid-item" widgetSize={size}>
       <StyledCard>
         <CardHeader
           title={widget.name}
@@ -89,11 +90,13 @@ export const WidgetCard = ({
             </Box>
           }
         />
-        <CardContent>
+        <StyledCardContent>
           {children}
-          {widget.metric.isNotifiable && (
+        </StyledCardContent>
+        <StyledCardActions>
+        {widget.metric.isNotifiable && (
             <Box
-              sx={{ display: 'flex', columnGap: '5px', alignItems: 'center', marginTop: '25px' }}>
+              sx={{ display: 'flex', columnGap: '5px', alignItems: 'center' }}>
               <Typography
                 variant="caption"
                 color="text.secondary"
@@ -104,18 +107,23 @@ export const WidgetCard = ({
               <Typography sx={{ fontSize: '14px' }}>{widget.alertNumber}</Typography>
             </Box>
           )}
-        </CardContent>
+        </StyledCardActions>
+
       </StyledCard>
-    </Grid>
+    </StyledGrid>
   )
 }
 
 const StyledCard = styled(Grid)`
+display: flex;
+flex-direction: column;
+justify-content: space-between;
   background-color: ${({ theme }) => theme.palette.background.paper};
   border: 1px solid ${({ theme }) => theme.palette.divider};
   border-radius: ${({ theme }) => {
     return theme.shape.borderRadius * 3
   }}px;
+  height: 100%;
 `
 
 const IconsActionContainer = styled.div`
@@ -124,4 +132,63 @@ const IconsActionContainer = styled.div`
 
 const Logo = styled.img`
   width: 2rem;
+`
+
+const StyledCardContent = styled(CardContent)`
+  height: calc(100% - 72px - 45px);
+  flex-grow: 1;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  /* -ms-overflow-style: none; */
+  /* scrollbar-width: none; */
+
+  &::-webkit-scrollbar {
+    width: 2px;
+  }
+
+    /* Track */
+  &::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+  }
+
+  /* Handle */
+  &::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+  }
+
+  /* Handle on hover */
+  &::-webkit-scrollbar-thumb:hover {
+    background: #555;
+  }
+`
+
+const StyledCardActions = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 16px 8px 16px;
+`
+
+const WidgetSizeWidthValueMap: { [key in WidgetWidths]: string } = {
+  [WidgetWidths.Small]: '25%',
+  [WidgetWidths.Medium]: '50%',
+  [WidgetWidths.Large]: '100%',
+}
+
+const WidgetSizeHeightValueMap: { [key in WidgetHeights]: string } = {
+  [WidgetHeights.Small]: '250px',
+  [WidgetHeights.Medium]: '500px',
+  [WidgetHeights.Large]: '1000px',
+}
+
+
+
+const StyledGrid = styled(Grid)<{widgetSize: WidgetSize}>`
+  width: ${({ widgetSize }) => WidgetSizeWidthValueMap[widgetSize.width]};
+  min-width: 25%;
+  padding: 10px;
+  height: ${({ widgetSize }) => WidgetSizeHeightValueMap[widgetSize.height]};
+  overflow: hidden;
 `
