@@ -1,5 +1,5 @@
-import * as mysql from 'mysql2/promise';
 import { RowDataPacket } from 'mysql2';
+import * as mysql from 'mysql2/promise';
 
 import { ApiDatabaseLastAverageQueriesByHour, ApiDatabaseSize, DbConnectionCredentialType, DbConnectionType } from '@metrikube/common';
 
@@ -71,10 +71,10 @@ export class DbService {
       const [results, ..._] = await connection.query<RowDataPacket[]>(query);
       const apiData: ApiDatabaseLastAverageQueriesByHour = {
         queries: results.map((row) => ({
-          hour: row.hour,
-          nbRequests: row.nbRequests,
+          hour: row['hour'],
+          nbRequests: row['nbRequests']
         })),
-        date: new Date().toISOString(),
+        date: new Date().toISOString()
       };
       return apiData;
     } catch (error) {
@@ -92,8 +92,8 @@ export class DbService {
     `;
 
     try {
-      const [results] = await connection.query(query);
-      return parseFloat(results[0].dbSizeMb);
+      const [results] = await connection.query<RowDataPacket[]>(query);
+      return parseFloat(results[0]['dbSizeMb']);
     } catch (error) {
       console.error('Error executing getDbSizeMb: ', error);
       throw error;
@@ -108,8 +108,8 @@ export class DbService {
         and table_name <> '_dba_query_stats';
     `;
     try {
-      const [results] = await connection.query(query);
-      return parseInt(results[0].nbRows, 10);
+      const [results] = await connection.query<RowDataPacket[]>(query);
+      return parseInt(results[0]['nbRows'], 10);
     } catch (error) {
       console.error('Error executing getDbSizeMb: ', error);
       throw error;
@@ -122,8 +122,8 @@ export class DbService {
       FROM information_schema.tables
       WHERE table_schema = '${this.credentials.database}';`;
     try {
-      const [results] = await connection.query(query);
-      return parseInt(results[0].nbTables, 10);
+      const [results] = await connection.query<RowDataPacket[]>(query);
+      return parseInt(results[0]['nbTables'], 10);
     } catch (error) {
       console.error('Error executing getDbSizeMb: ', error);
       throw error;
@@ -143,9 +143,9 @@ export class DbService {
     try {
       const [results] = await connection.query<RowDataPacket[]>(query);
       const slowQueries: SlowQueriesType[] = results.map((row) => ({
-        query: row.query,
-        executionTime: row.executionTime,
-        date: row.date,
+        query: row['query'],
+        executionTime: row['executionTime'],
+        date: row['date']
       }));
       return slowQueries;
     } catch (error) {
