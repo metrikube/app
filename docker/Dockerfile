@@ -22,9 +22,9 @@ COPY --from=build /app/node_modules/better-sqlite3/build ./node_modules/better-s
 
 ENV NODE_ENV=production
 ENV PORT=6661
-ENV SMTP_HOST=sandbox.smtp.mailtrap.io
-ENV SMTP_PORT=2525
-ENV SMTP_USERNAME=3c2381921e16de
-ENV SMTP_PASSWORD=9f10ddbbc8d8af
+ENV SMTP_HOST=smtp.gmail.com
+ENV SMTP_PORT=587
+ENV SMTP_USERNAME=metrikube@gmail.com
+ENV SMTP_PASSWORD=metrikube123
 
 CMD ["npm", "run", "start"]
