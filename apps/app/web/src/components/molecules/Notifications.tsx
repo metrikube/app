@@ -37,8 +37,8 @@ export const Notifications = ({
         </Button>
       }>
       {notifications.length > 1
-        ? `${notifications.length} alertes se sont déclanchées`
-        : `${notifications.length} alerte s'est déclanchée`}
+        ? `${notifications.length} alertes se sont déclenchées`
+        : `${notifications.length} alerte s'est déclenchée`}
     </Alert>
     <Collapse in={collapseChecked}>
       {notifications.map((notification) => (
