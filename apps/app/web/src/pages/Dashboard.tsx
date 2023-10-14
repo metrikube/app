@@ -20,7 +20,8 @@ import {
   GetNotificationsUsecase,
   GetWidgetsUsecase,
   NotificationModel,
-  WidgetModel
+  WidgetModel,
+  widgetsMock
 } from '@metrikube/core'
 import { AddchartOutlined } from '@mui/icons-material'
 import { Box, Button, Typography } from '@mui/material'
@@ -162,7 +163,7 @@ const Dashboard = () => {
             />
           ) : (
             <WidgetsLayout
-              widgets={widgets}
+              widgets={widgetsMock}
               onAlertOpenRequest={handleAlertOpenRequest}
               onMetricDeletionRequest={handleMetricDeletionRequest}
             />

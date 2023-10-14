@@ -30,7 +30,7 @@ export const pingApiWidgetMock1: WidgetModel = {
 };
 
 export const pingApiWidgetMock2: WidgetModel = {
-  id: 'ping-api-1',
+  id: 'ping-api-2',
   name: 'Json placeholder - users',
   resourceId: undefined,
   alertNumber: 2,
@@ -45,7 +45,7 @@ export const pingApiWidgetMock2: WidgetModel = {
 };
 
 export const pingApiWidgetMock3: WidgetModel = {
-  id: 'ping-api-1',
+  id: 'ping-api-3',
   name: 'Json placeholder - users',
   resourceId: undefined,
   alertNumber: 2,
@@ -326,7 +326,7 @@ export const dbSizeWidgetMock2: WidgetModel = {
   }
 };
 export const slowQueriesWidgetMock: WidgetModel = {
-  id: 'db-size213',
+  id: 'db-size215',
   name: 'Database - Requêtes lente',
   alertNumber: 0,
   resourceId: undefined,

@@ -185,7 +185,9 @@ const WidgetSizeHeightValueMap: { [key in WidgetHeights]: string } = {
 
 
 
-const StyledGrid = styled(Grid)<{widgetSize: WidgetSize}>`
+const StyledGrid = styled(Grid, {
+  shouldForwardProp: (prop) => prop !== 'widgetSize'
+})<{widgetSize: WidgetSize}>`
   width: ${({ widgetSize }) => WidgetSizeWidthValueMap[widgetSize.width]};
   min-width: 25%;
   padding: 10px;
