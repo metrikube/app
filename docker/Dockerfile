@@ -22,9 +22,9 @@ COPY --from=build /app/node_modules/better-sqlite3/build ./node_modules/better-s
 
 ENV NODE_ENV=production
 ENV PORT=6661
-ENV SMTP_HOST=smtp.gmail.com
-ENV SMTP_PORT=587
-ENV SMTP_USERNAME=metrikube@gmail.com
-ENV SMTP_PASSWORD=metrikube123
+ENV SMTP_HOST=mail.infomaniak.com
+ENV SMTP_PORT=465
+ENV SMTP_USERNAME=metrikube@ik.me
+ENV SMTP_PASSWORD=Metrikube123
 
 CMD ["npm", "run", "start"]
