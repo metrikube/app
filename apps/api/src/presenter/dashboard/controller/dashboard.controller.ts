@@ -18,7 +18,7 @@ export class DashboardController {
   @Header('Content-Type', 'text/event-stream')
   @ApiOperation({ summary: 'Synchronize dashboard data using Serve Sent Events' })
   subscribeToDashboardMetricData(): Observable<{ data: string }> {
-    return interval(5000).pipe(
+    return interval(15000).pipe(
       switchMap(() => this.dashboardUseCase.refreshDashboard()),
       map((data) => ({ data: JSON.stringify(data) }))
     );
@@ -35,7 +35,7 @@ export class DashboardController {
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Get dashboard notifications' })
   subscribeToDashboardNotification(): Observable<{ data: string }> {
-    return interval(5000).pipe(
+    return interval(15000).pipe(
       switchMap(() => this.dashboardUseCase.getDashboardNotification()),
       map((data) => ({ data: JSON.stringify(data) }))
     );

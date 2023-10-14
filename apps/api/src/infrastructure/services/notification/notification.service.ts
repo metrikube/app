@@ -14,7 +14,7 @@ export class NotificationService implements NotificationInterface {
 
   sendMail(to: string, subject: string, content: string): Promise<SentMessageInfo> {
     return this.mailer.sendMail({
-      from: { name: 'Metrikube App', address: process.env.SMTP_USERNAME },
+      from: `MetriKube <${process.env.SMTP_USERNAME}>`,
       to: [to],
       subject,
       text: content,
