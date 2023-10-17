@@ -1,14 +1,15 @@
+import type { CipherGCMTypes } from 'crypto';
 import { createCipheriv, createDecipheriv, createHash, randomBytes } from 'node:crypto';
 
 import { Injectable } from '@nestjs/common';
 
-import { EncryptionServiceInterface } from '../../../domain/interfaces/common/encryption-service.interface';
+import type { EncryptionServiceInterface } from '../../../domain/interfaces/common/encryption-service.interface';
 
 type DynamicKeyValue = { [key: string]: string };
 
 @Injectable()
 export class EncryptionService implements EncryptionServiceInterface {
-  algorithm = 'aes-256-ctr';
+  algorithm: CipherGCMTypes = 'aes-256-gcm';
 
   constructor(private masterPassword: string) {}
 
@@ -34,25 +35,33 @@ export class EncryptionService implements EncryptionServiceInterface {
     const cipher = createCipheriv(this.algorithm, this.getKey(), iv);
 
     const encrypted = Buffer.concat([cipher.update(value), cipher.final()]);
+    const tag = cipher.getAuthTag();
 
     return this.encode64({
       iv: iv.toString('hex'),
-      encryptedData: encrypted.toString('hex')
+      encryptedData: encrypted.toString('hex'),
+      tag: tag.toString('hex')
     });
   }
 
   decrypt(hash: string): string {
-    const { iv: deIv, encryptedData } = this.decode64<{
+    const {
+      iv: deIv,
+      encryptedData,
+      tag
+    } = this.decode64<{
       iv: string;
       encryptedData: string;
+      tag: string;
     }>(hash);
 
     const decipher = createDecipheriv(this.algorithm, this.getKey(), Buffer.from(deIv, 'hex'));
+    decipher.setAuthTag(Buffer.from(tag, 'hex'));
 
     const encryptedHex = Buffer.from(encryptedData, 'hex');
-    const decrpyted = Buffer.concat([decipher.update(encryptedHex), decipher.final()]);
+    const decrypted = Buffer.concat([decipher.update(encryptedHex), decipher.final()]);
 
-    return decrpyted.toString();
+    return decrypted.toString();
   }
 
   private getKey(): Buffer {
