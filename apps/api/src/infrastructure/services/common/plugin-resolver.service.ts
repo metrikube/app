@@ -35,8 +35,7 @@ export class PluginResolverService implements PluginResolverInterface {
   }
 
   queryPluginDataByMetricType(type: MetricType, credentials: GenericCredentialType): Promise<PluginResult<MetricType>> {
-    const pluginConnector = this.getConnectorByMetricType(type);
-    return pluginConnector(credentials);
+    return this.getConnectorByMetricType(type)(credentials);
   }
 
   describeMetricTrackableFields(pluginType: string, metricType: MetricType): string[] {
@@ -44,20 +43,22 @@ export class PluginResolverService implements PluginResolverInterface {
   }
 
   getConnectorByMetricType(type: MetricType): PluginMetricMethod {
-    const connectors: PluginConnectorMap = new Map<MetricType, PluginMetricMethod>([
-      ['api-endpoint-health-check', this.apiMonitoringService.apiHealthCheck],
-      ['aws-bucket-multiple-instances', this.AWSService.getS3Buckets],
-      ['aws-bucket-single-instance', this.AWSService.getS3Bucket],
-      ['aws-ec2-multiple-instances-usage', this.AWSService.getEc2Instances],
-      ['aws-ec2-single-instance-usage', this.AWSService.getEc2Instance],
-      ['database-queries', this.databaseService.getNbQueries],
-      ['database-size', this.databaseService.getDbSize],
-      ['database-slow-queries', this.databaseService.getSlowQuery],
-      ['github-last-issues', this.githubService.getRepoIssues],
-      ['github-last-prs', this.githubService.getRepoPRs]
-    ]);
+    return (credentials: GenericCredentialType) => {
+      const connectors: PluginConnectorMap = new Map<MetricType, PluginMetricMethod>([
+        ['api-endpoint-health-check', this.apiMonitoringService.apiHealthCheck],
+        ['aws-bucket-multiple-instances', this.AWSService.getS3Buckets],
+        ['aws-bucket-single-instance', this.AWSService.getS3Bucket],
+        ['aws-ec2-multiple-instances-usage', this.AWSService.getEc2Instances],
+        ['aws-ec2-single-instance-usage', this.AWSService.getEc2Instance],
+        ['database-queries', this.databaseService.getNbQueries],
+        ['database-size', this.databaseService.getDbSize],
+        ['database-slow-queries', this.databaseService.getSlowQuery],
+        ['github-last-issues', this.githubService.getRepoIssues],
+        ['github-last-prs', this.githubService.getRepoPRs]
+      ]);
 
-    if (!connectors.has(type)) throw new BadRequestException(`No connector found for metric type ${type}`);
-    return connectors.get(type);
+      if (!connectors.has(type)) throw new BadRequestException(`No connector found for metric type ${type}`);
+      return connectors.get(type)(credentials);
+    };
   }
 }
